@@ -1767,8 +1767,12 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 			$Selezione.=' WHERE DataOblio<="'.ap_oggi().'" ';
 			$Selezione.=' AND Numero>0'; 
 			break;	
-		case 5:                 
-            $Selezione.=' WHERE  Oggetto like "%'.(isset($_REQUEST['s'])?$_REQUEST['s']:"").'%"';
+		case 5:
+			/* $_REQUEST['s'] finiva nella query senza escape: SQL injection.
+			   Raggiungibile solo dalla pagina Atti del backend (capability
+			   gest_atti_albo), quindi non sfruttabile in modo anonimo, ma
+			   consente comunque una escalation in lettura sul database. */
+            $Selezione.=' WHERE  Oggetto like "%'.esc_sql(isset($_REQUEST['s'])?$_REQUEST['s']:"").'%"';
 			break;
 		}
 	if ($Annullati)
@@ -1823,8 +1827,11 @@ function ap_searchAtti($Search,$OrderBy="",$DaRiga=0,$ARiga=20){
 		$Limite="";
 	else
 		$Limite=" Limit ".$DaRiga.",".$ARiga;
-	$Selezione=" WHERE Numero<>0 And Oggetto like '%".$Search."%' Or Riferimento like '%".$Search."%'";
-	return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa,Richiedente FROM $wpdb->table_name_Atti $Selezione $OrderBy $Limite;");	
+	/* $Search era interpolato senza escape (SQL injection) e la precedenza
+	   AND/OR lasciava il ramo Riferimento fuori dal filtro Numero<>0. */
+	$Search=esc_sql($Search);
+	$Selezione=" WHERE Numero<>0 And (Oggetto like '%".$Search."%' Or Riferimento like '%".$Search."%')";
+	return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa,Richiedente FROM $wpdb->table_name_Atti $Selezione $OrderBy $Limite;");
 }
 function ap_get_atto($id){
 	global $wpdb;

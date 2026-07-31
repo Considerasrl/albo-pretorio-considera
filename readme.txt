@@ -4,7 +4,7 @@ Donate link:
 Tags: Albo Pretorio, Codice Amministrazione Digitale, Upload File
 Requires at least: 3.5
 Tested up to: 6.4
-Stable tag: 4.9.1
+Stable tag: 4.9.2
 Albo Pretorio On Line permette la gestione dell'albo pretorio on line in base al nuovo Codice dell'Amministrazione Digitale
 == Description ==
 
@@ -48,6 +48,10 @@ Le vulnerabilita' di sicurezza vanno segnalate in privato, non con una issue pub
 
 Il repository originale di Ignazio Scimone, non piu' aggiornato, resta consultabile su https://github.com/ignazios/albo-pretorio-on-line
 == Changelog ==
+= 4.9.2 =
+- <strong>Corretta</strong> una SQL injection nella ricerca degli atti (ap_get_all_atti, ricerca per oggetto). Il parametro di ricerca finiva nella query senza escape. La ricerca e' raggiungibile solo dalla pagina Atti del backend (capability gest_atti_albo), quindi non sfruttabile da utenti anonimi, ma consentiva a un redattore una lettura non autorizzata del database.
+- <strong>Corretta</strong> la stessa vulnerabilita' e una precedenza AND/OR errata in ap_searchAtti.
+- <strong>Limitato</strong> il download degli allegati (action=dwnalle) agli atti effettivamente pubblici: non e' piu' possibile, scorrendo gli identificativi, scaricare gli allegati di atti non ancora pubblicati o oltre la data di oblio. Gli atti annullati restano scaricabili, coerentemente con la loro visibilita' nel front-end.
 = 4.9.1 =
 - <strong>Corretta</strong> una falla di controllo degli accessi: le quattro chiamate AJAX del plugin verificavano il nonce ma non i permessi dell'utente. Qualsiasi utente registrato, anche con ruolo Sottoscrittore, poteva leggere il nonce dal sorgente di una pagina di wp-admin e invocarle. La piu' grave, rimuoviAllegato, cancellava dal disco l'allegato di un qualsiasi atto.
 - <strong>Limitata</strong> l'emissione del nonce agli utenti che possono effettivamente usare le funzioni del plugin.

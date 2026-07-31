@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio On line (Considera)
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.9.1
+ * Version:           4.9.2
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
@@ -518,6 +518,23 @@ function admin_notice(){
 				$file_path	=$Allegato[0]->Allegato;
 				if (!is_file($file_path) or !is_readable($file_path))
 					wp_die(__("File non trovato, il file è stato cancellato o spostato!","albo-online"));
+				/* Il controllo sul Referer non basta a limitare l'accesso: chiunque
+				   scorra gli id puo' scaricare gli allegati di atti non ancora
+				   pubblicati o oltre la data di oblio, che il front-end non mostra.
+				   Qui si replica la stessa visibilita' del front-end (unione degli
+				   atti "in corso" e "storici entro l'oblio"): DataInizio<=oggi e
+				   DataOblio>oggi. Il valore '0000-00-00' significa "non impostato"
+				   e non deve bloccare. Gli atti annullati restano scaricabili,
+				   coerentemente con il fatto che il front-end li mostra ancora. */
+				$Atto = ap_get_atto((int)$Allegato[0]->IdAtto);
+				if (!empty($Atto)) {
+					$Atto = $Atto[0];
+					$Oggi = ap_oggi();
+					$NonPubblicato = ($Atto->DataInizio!="0000-00-00" And $Atto->DataInizio>$Oggi);
+					$OltreOblio    = ($Atto->DataOblio !="0000-00-00" And $Atto->DataOblio <=$Oggi);
+					if ($NonPubblicato Or $OltreOblio)
+						wp_die(__("Documento non disponibile","albo-online"),"",array('response'=>404));
+				}
 				$chunksize	= 2*(1024*1024);
 				$stat 		= stat($file_path);
 				$etag		= sprintf('%x-%x-%x', $stat['ino'], $stat['size'], $stat['mtime'] * 1000000);
