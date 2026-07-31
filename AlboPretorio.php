@@ -494,47 +494,53 @@ function admin_notice(){
 					        Non puoi accedere a questo file direttamente.','albo-online'));
 					break;
 				}
-				$file_path	= ap_get_allegato_atto($_REQUEST['id']);
-				$file_path	=$file_path[0]->Allegato;
-				global $is_IE;
+				$Allegato	= ap_get_allegato_atto($_REQUEST['id']);
+				if (empty($Allegato))
+					wp_die(__("Allegato non trovato","albo-online"));
+				$file_path	=$Allegato[0]->Allegato;
+				if (!is_file($file_path) or !is_readable($file_path))
+					wp_die(__("File non trovato, il file è stato cancellato o spostato!","albo-online"));
 				$chunksize	= 2*(1024*1024);
-				$stat 		= @stat($file_path);
+				$stat 		= stat($file_path);
 				$etag		= sprintf('%x-%x-%x', $stat['ino'], $stat['size'], $stat['mtime'] * 1000000);
-				$path 		= pathinfo($file_path);
-				if ( isset($path['extension']) && strtolower($path['extension']) == 'zip' && $is_IE && ini_get('zlib.output_compression') ) {
-					ini_set('zlib.output_compression', 'Off');
-					// apache_setenv('no-gzip', '1');
+				/* Il log va scritto PRIMA di inviare il file: dopo l'invio del corpo
+				   qualsiasi output aggiuntivo corromperebbe il download. */
+				if(is_numeric($_REQUEST['id']) and isset($_REQUEST['idAtto']) and is_numeric($_REQUEST['idAtto']))
+					ap_insert_log(6,5,(int)$_REQUEST['id'],"Download",(int)$_REQUEST['idAtto']);
+				/* Scarta tutto l'output gia' prodotto da tema o altri plugin (righe vuote
+				   dopo il ?>, BOM, avvisi PHP): finirebbe in testa al file scaricato e,
+				   sommandosi al Content-Length dichiarato, lo troncherebbe in coda. */
+				while (ob_get_level() > 0) {
+					@ob_end_clean();
 				}
+				/* La compressione ricalcola la lunghezza del corpo e va disattivata. */
+				@ini_set('zlib.output_compression', 'Off');
+				if (function_exists('apache_setenv')) @apache_setenv('no-gzip', '1');
+				nocache_headers();
 
 				header('Pragma: public');
 				header('Expires: 0');
 				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 				header('Cache-Control: private', FALSE);
-				header('Content-Type: application/force-download', FALSE);
-				header('Content-Type: application/octet-stream', FALSE);
-				header('Content-Type: application/download', FALSE);
-				header('Content-Disposition: attachment; filename="'.basename($file_path).'";');
+				header('Content-Type: application/octet-stream');
+				header('Content-Disposition: attachment; filename="'.basename($file_path).'"');
 				header('Content-Transfer-Encoding: binary');
 				header('Last-Modified: ' . date('r', $stat['mtime']));
 				header('Etag: "' . $etag . '"');
 				header('Content-Length: '.$stat['size']);
 				header('Accept-Ranges: bytes');
-				ob_flush();
 				flush();
 				if ($stat['size'] < $chunksize) {
-					@readfile($file_path);
+					readfile($file_path);
 				}
 				else {
 					$handle = fopen($file_path, 'rb');
 					while (!feof($handle)) {
 						echo fread($handle, $chunksize);
-						ob_flush();
 						flush();
 					}
 					fclose($handle);
 				}
-				if(is_numeric($_REQUEST['id']) and is_numeric($_REQUEST['idAtto']))
-					ap_insert_log(6,5,(int)$_REQUEST['id'],"Download",(int)$_REQUEST['idAtto']);
 				exit();
 				break;
 			}

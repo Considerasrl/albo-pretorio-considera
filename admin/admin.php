@@ -1070,7 +1070,14 @@ function Memo_allegato_atto(){
 				if (!ap_isAllowedExtension(strtolower($_FILES["files"]["name"][$i]))){
 					$messages= __("Tipo file non valido","albo-online");
 				}else{
-					if (($DimFile>(int)ini_get('upload_max_filesize')) and ($UnitM==" MB")){
+					/* upload_max_filesize puo' essere espresso in K, M o G: senza
+					   convertirlo, un limite di "2G" verrebbe letto come 2 Mb. */
+					$LimiteIni	= trim(ini_get('upload_max_filesize'));
+					$UnitaIni	= strtoupper(substr($LimiteIni,-1));
+					$LimiteMb	= (float)$LimiteIni;
+					if ($UnitaIni=="G")		$LimiteMb = $LimiteMb*1024;
+					elseif ($UnitaIni=="K")	$LimiteMb = $LimiteMb/1024;
+					if (($DimFile>$LimiteMb) and ($UnitM==" MB")){
 						$messages= sprintf(__("Il file caricato è di %s Mb, il limite massimo è di %s Mb","albo-online"),$DimFile,ini_get('upload_max_filesize'));
 					}else{
 					  	if ($_FILES["files"]["error"][$i] > 0){
