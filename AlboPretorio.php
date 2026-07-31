@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio On line (Considera)
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.9.2
+ * Version:           4.9.3
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
@@ -121,7 +121,7 @@ function admin_notice(){
     <div class="updated notice albo-notice-dismis is-dismissible" >
         <h3>Albo Online</h3>
         <p><?php echo sprintf(__('Aggiornato alla versione %s', 'albo-online' ),$this->version); ?></p>
-        <p><?php echo sprintf(__('Per visualizzare le modifiche apportate consultare il %sLog change%s', 'albo-online' ),'<a href="admin.php?page=logagg">','</a>'); ?></p>
+        <p><?php echo sprintf(__('Per visualizzare le modifiche apportate consultare il %sregistro delle modifiche su GitHub%s', 'albo-online' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>'); ?></p>
     </div>
 
 
@@ -843,7 +843,6 @@ static function add_albo_plugin_visatto($plugin_array) {
 		$parametri_page=add_submenu_page( 'Albo_Pretorio', 'Generale', __('Parametri','albo-online'), 'admin_albo', 'configAlboP', array( 'AlboPretorio','show_menu'));
 		$permessi=add_submenu_page( 'Albo_Pretorio', 'Permessi', __('Permessi','albo-online'), 'admin_albo', 'permessiAlboP', array('AlboPretorio', 'show_menu'));
 		$utility=add_submenu_page( 'Albo_Pretorio', 'Utility', __('Utility','albo-online'), 'admin_albo', 'utilityAlboP', array('AlboPretorio', 'show_menu'));
-		$LogAgg=add_submenu_page( 'Albo_Pretorio', 'LogAggiornamenti', __('Log Aggiornamenti','albo-online'), 'admin_albo', 'logagg', array('AlboPretorio', 'show_menu'));				
 		add_action( 'admin_head-'. $atti_page, array( 'AlboPretorio','ap_head' ));
 		add_action( "load-$atti_page", array('AlboPretorio', 'screen_option'));
 
@@ -911,11 +910,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 			case "unitao":
 			// interfaccia per la gestione dei permessi
 				include_once ( dirname (__FILE__) . '/admin/unitaorganizzative.php' );
-				break;		
-			case "logagg":
-			// interfaccia per la visualizzazione deaggiornamenti apportati all'albo
-				include_once ( dirname (__FILE__) . '/inc/logaggiornamenti.php' );
-				break;								
+				break;
 		}
 	}
 	

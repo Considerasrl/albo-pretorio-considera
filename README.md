@@ -3,6 +3,11 @@
 Fork mantenuto da [Considera](https://www.considera.it/) del plugin WordPress
 **Albo Pretorio On line** di Ignazio Scimone.
 
+Il plugin permette la pubblicazione degli atti nell'albo pretorio online di un
+ente, in adempimento dell'art. 32 della Legge 18 giugno 2009, n. 69, che dal
+1° gennaio 2011 richiede la pubblicazione degli atti sul sito istituzionale
+dell'ente perché abbiano efficacia legale.
+
 ## Perché un fork
 
 Il plugin originale è fermo alla versione 4.8 ed è stato **rimosso da
@@ -10,51 +15,99 @@ wordpress.org il 7 marzo 2024** per problemi di sicurezza. L'autore non lo
 aggiorna più. Questo fork parte dall'ultima release pubblicata e prosegue la
 manutenzione.
 
-## Lineage
+## Installazione
 
-La storia git è costruita in modo da poter sempre confrontare il fork con il
-punto di partenza:
+1. Scaricare l'ultimo `.zip` dalle
+   [release](https://github.com/Considerasrl/albo-pretorio-considera/releases).
+2. In WordPress: *Plugin → Aggiungi nuovo → Carica plugin*, oppure scompattare
+   nella cartella dei plugin.
+3. Attivare il plugin e inserire gli atti dal backend.
 
-| Commit | Contenuto |
+La cartella del plugin **deve chiamarsi `albo-pretorio-on-line`**. Lo slug non è
+stato cambiato di proposito: l'aggiornamento avviene così in place, senza
+disattivare il plugin e senza far ripartire la migrazione dei percorsi degli
+allegati che scatta all'attivazione. Non arriveranno aggiornamenti automatici
+da wordpress.org: il plugin non è più presente nella directory.
+
+## Shortcode
+
+### `[Albo]` — tabella degli atti nel front-end
+
+```
+[Albo stato="1" per_page="10" cat="1" filtri="si" minfiltri="no"]
+```
+
+| Parametro | Descrizione |
 |---|---|
-| `Import upstream ... 4.8` | zip ufficiale 4.8, intatto |
-| commit successivi | modifiche Considera |
+| `stato` | `1` solo atti in corso di validità · `2` solo atti scaduti (storico) |
+| `per_page` | numero massimo di atti per pagina |
+| `cat` | *(opzionale)* ID della categoria di cui mostrare gli atti |
+| `filtri` | *(opzionale)* mostra la finestra dei filtri; se omesso, i filtri sono mostrati. Utile disattivarli nelle pagine di Amministrazione Trasparente |
+| `minfiltri` | *(opzionale)* minimizza la finestra dei filtri; se omesso, è minimizzata |
 
-Lo zip di partenza proviene da
-`https://downloads.wordpress.org/plugin/albo-pretorio-on-line.4.8.zip`
-SHA-256 `c3e2b1e10ff7e21345203de104d495a344ff4cda4f4d210f37503ecd7445b4f2`.
+### `[AlboGruppiAtti]` — atti raggruppati per metadato
 
-Per vedere l'intero scostamento dall'upstream:
+```
+[AlboGruppiAtti titolo="" meta="" valore=""]
+```
+
+| Parametro | Descrizione |
+|---|---|
+| `titolo` | titolo mostrato sopra la tabella |
+| `meta` | metadato di raggruppamento |
+| `valore` | valore del metadato per cui raggruppare gli atti |
+
+Raggruppa un insieme eterogeneo di atti accomunati da un metadato con uno
+specifico valore — ad esempio tutti gli atti di una stessa gara d'acquisto.
+
+### `[AlboAtto]` — dati di un singolo atto
+
+```
+[AlboAtto titolo="" numero="" anno=""]
+```
+
+| Parametro | Descrizione |
+|---|---|
+| `titolo` | intestazione mostrata sopra i dati dell'atto |
+| `numero` | numero dell'atto da visualizzare |
+| `anno` | anno di riferimento del numero dell'atto |
+
+## Changelog
+
+Le modifiche sono documentate in [CHANGELOG.md](CHANGELOG.md) e pubblicate come
+[GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
+con il pacchetto installabile allegato a ciascuna.
+
+## Sicurezza
+
+Questo fork ha ricevuto una prima revisione di sicurezza (vedi il changelog:
+controllo accessi sulle chiamate AJAX in 4.9.1, SQL injection e accesso agli
+allegati in 4.9.2). **Non è però un audit completo**, e non è accertato che
+copra le vulnerabilità che portarono wordpress.org a rimuovere il plugin.
+Restano problemi noti non ancora affrontati. Vedi
+[SECURITY.md](SECURITY.md) per lo stato dettagliato e per come segnalare una
+vulnerabilità (in privato, non con una issue pubblica).
+
+## Rapporto con l'upstream
+
+La storia git parte dalla versione 4.8 originale, importata intatta. Per vedere
+l'intero scostamento dal punto di partenza:
 
 ```sh
 git diff $(git rev-list --max-parents=0 HEAD) HEAD
 ```
 
-## Nome del repository e slug del plugin
-
-Il repository si chiama `albo-pretorio-considera`, ma **la cartella del plugin
-installata su WordPress resta `albo-pretorio-on-line`**: sono due nomi
-indipendenti, e cambiare il secondo ha un costo (vedi sotto).
-
-## Installazione
-
-La cartella del plugin **deve continuare a chiamarsi `albo-pretorio-on-line`**.
-Lo slug non è stato cambiato di proposito: l'aggiornamento avviene così in
-place, senza disattivare il plugin e senza far ripartire la migrazione dei
-percorsi degli allegati che scatta all'attivazione (`AlboPretorio.php`).
-
-Non arriveranno aggiornamenti automatici da wordpress.org: il plugin non è più
-presente nella directory.
-
-## Stato della sicurezza
-
-La 4.8 è la versione **su cui** il plugin è stato ritirato, non quella che ne
-ha risolto i problemi. Le vulnerabilità che hanno motivato la rimozione non
-sono state analizzate né corrette in questo fork. Prima di considerarlo sicuro
-per un uso in produzione serve una revisione dedicata.
+Lo zip di partenza proviene da
+`https://downloads.wordpress.org/plugin/albo-pretorio-on-line.4.8.zip`
+(SHA-256 `c3e2b1e10ff7e21345203de104d495a344ff4cda4f4d210f37503ecd7445b4f2`).
+Il repository originale di Ignazio Scimone, non più aggiornato, resta
+consultabile su <https://github.com/ignazios/albo-pretorio-on-line>.
 
 ## Licenza
 
 GPL-2.0+, come l'originale. Opera derivata da "Albo Pretorio On line",
 Copyright (C) Ignazio Scimone (eduva.org). Le modifiche successive alla
 versione 4.8 sono di Considera e mantengono la stessa licenza.
+
+Si ringrazia Alessandro Cingolani per la consulenza in ambito sicurezza
+informatica sul progetto originale.
