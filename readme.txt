@@ -43,8 +43,8 @@ Di seguito sono riportati i passi necessari per l'installazione del plugin. la p
 	<strong>Uso</strong>: <em>Questo shortcode permette di visualizzare i dati dell'atto individuato dal numero/anno indicato nei parametri</em>
 
 Questo e' il fork mantenuto da Considera: https://github.com/Considerasrl/albo-pretorio-considera
-Per segnalare malfunzionamenti o proposte di modifica usare le issue del repository.
-Le vulnerabilita' di sicurezza vanno segnalate in privato, non con una issue pubblica: vedere SECURITY.md.
+Per segnalare malfunzionamenti o proposte di modifica usare le issue del repository, oppure l'indirizzo email info@considera.it
+Le vulnerabilita' di sicurezza vanno segnalate in privato, non con una issue pubblica: scrivere a info@considera.it con [SICUREZZA] nell'oggetto, oppure usare la segnalazione riservata dalla scheda Security del repository. Vedere SECURITY.md.
 
 Il repository originale di Ignazio Scimone, non piu' aggiornato, resta consultabile su https://github.com/ignazios/albo-pretorio-on-line
 == Changelog ==

@@ -158,7 +158,13 @@ background-color: #f9f9f9;
 	color: #99e59a;
 	border: none;
 }
-.row-actions{
+/* Rende sempre visibili le azioni di riga nell'elenco degli atti.
+   La regola va limitata a quella schermata: applicata globalmente
+   mostrerebbe le azioni anche negli elenchi di pagine, articoli,
+   custom post type e tassonomie (issue ignazios/albo-pretorio-on-line#2).
+   Il selettore usa una corrispondenza parziale perche' la prima parte
+   della classe deriva dal titolo del menu, che e' tradotto. */
+body[class*="_page_atti"] .row-actions{
 	position:initial;
 }
 span.cancella a, span.oblioallegati a{

@@ -1115,7 +1115,8 @@ static function add_albo_plugin_visatto($plugin_array) {
 					<p style="float:left;">
 						<img src="'.Albo_URL.'/img/LogoAlbo.png" alt="'.__('Logo Albo on line pubblicità legale','albo-online').'" style="width:100%;" />
 					<br />'.__('Versione','albo-online').' <strong>'.$this->version.'</strong></p>
-					<p style="font-size:1.2em;text-align: center;">'.__('Plugin sviluppato da','albo-online').' <strong><a href="mailto:ignazios@gmail.com" title="'.__('Invia email allo sviluppatore del plugin','albo-online').'" target="_blank">Scimone Ignazio</a></strong>
+					<p style="font-size:1.2em;text-align: center;">'.__('Plugin sviluppato da','albo-online').' <strong>Scimone Ignazio</strong><br />
+					<span style="font-size:0.85em;">'.__('Fork mantenuto da','albo-online').' <strong><a href="https://www.considera.it/" target="_blank" rel="noopener">Considera</a></strong> &middot; <a href="mailto:info@considera.it" title="'.__('Invia email a chi mantiene il fork','albo-online').'">info@considera.it</a></span>
 					</p>
 					<p style="float:left;">
 		 				<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FAlbo-Pretorio%2F1487571581520684%3Fref%3Dhl&amp;width&amp;height=230&amp;colorscheme=light&amp;show_faces=true&amp;header=true&amp;stream=false&amp;show_border=true" scrolling="no" frameborder="0" style="border:none; overflow:hidden;height:230px; width: 300px; margin-top:20px;margin-left: 50px;" allowTransparency="true"></iframe>
