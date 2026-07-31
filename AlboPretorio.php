@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio On line (Considera)
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.9.0
+ * Version:           4.9.1
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
@@ -132,21 +132,29 @@ function admin_notice(){
 		register_rest_route('alboonline/v1','/statistiche', 
 			 array('methods'  => WP_REST_Server::READABLE,
 		 	       'callback' => array($this,'rest_api_statistiche_get'),
+		 	       /* Dati pubblici per definizione: accesso libero, dichiarato esplicitamente. */
+		 	       'permission_callback' => '__return_true',
 		));
 // Registrazione route categorie
 		register_rest_route('alboonline/v1','/categorie', 
 			 array('methods'  => WP_REST_Server::READABLE,
 		 	       'callback' => array($this,'rest_api_categorie_get'),
+		 	       /* Dati pubblici per definizione: accesso libero, dichiarato esplicitamente. */
+		 	       'permission_callback' => '__return_true',
 		));
 // Registrazione route enti
 		register_rest_route('alboonline/v1','/enti', 
 			 array('methods'  => WP_REST_Server::READABLE,
 			 	   'callback' => array($this,'rest_api_enti_get'),
+			 	   /* Dati pubblici per definizione: accesso libero, dichiarato esplicitamente. */
+			 	   'permission_callback' => '__return_true',
 		));		
 // Registrazione route atto
 		register_rest_route('alboonline/v1','/atto/(?P<num>\d+)/(?P<anno>\d+)', 
 			 array('methods'  => WP_REST_Server::READABLE,
 		 	       'callback' => array($this,'rest_api_atto_get'),
+		 	       /* Dati pubblici per definizione: accesso libero, dichiarato esplicitamente. */
+		 	       'permission_callback' => '__return_true',
 		 	       'args' 	  => array('num' => array(
 								'validate_callback' => 
 									function($param, $request, $key) {
@@ -163,6 +171,8 @@ function admin_notice(){
 		register_rest_route('alboonline/v1','/atto/(?P<id>\d+)', 
 			 array('methods'  => WP_REST_Server::READABLE,
 		 	       'callback' => array($this,'rest_api_atto_get_byID'),
+		 	       /* Dati pubblici per definizione: accesso libero, dichiarato esplicitamente. */
+		 	       'permission_callback' => '__return_true',
 		 	       'args' 	  => array('id' => array(
 								'validate_callback' => 
 									function($param, $request, $key) {
@@ -174,6 +184,8 @@ function admin_notice(){
 		register_rest_route('alboonline/v1','/atti', 
 			 array('methods'  => WP_REST_Server::READABLE,
 		 	       'callback' => array($this,'rest_api_atti_get'),
+		 	       /* Dati pubblici per definizione: accesso libero, dichiarato esplicitamente. */
+		 	       'permission_callback' => '__return_true',
 				   'args'	  => array(
 		 	       	    
 		 	       	'stato' => array('default'=>1,
@@ -553,7 +565,14 @@ function admin_notice(){
 		}
 	}
 	function Albo_Admin_Enqueue_Scripts( $hook_suffix ) {
-		if($hook_suffix=="widgets.php") return;?>
+		if($hook_suffix=="widgets.php") return;
+		/* Il blocco seguente stampa il nonce usato dalle chiamate AJAX del
+		   plugin. Va emesso solo per chi puo' effettivamente usarle: altrimenti
+		   qualunque utente registrato lo leggerebbe dal sorgente di una
+		   pagina come profile.php. */
+		if(!current_user_can('edit_posts') And !current_user_can('admin_albo')
+		   And !current_user_can('editore_atti_albo') And !current_user_can('gest_atti_albo'))
+			return;?>
 <script type='text/javascript'>
 	var myajaxsec = "<?php echo wp_create_nonce('adminsecretAlboOnLine');?>",
 	    title_button_albo="<?php echo str_replace('"',"''",__('Albo OnLine','albo-online'));?>",

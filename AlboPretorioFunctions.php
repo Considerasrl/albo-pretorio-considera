@@ -3432,6 +3432,8 @@ function ap_oblio_atti($Atti){
 function ap_MemoFunzioni(){
 //	print_r($_POST);wp_die();
 	check_ajax_referer('adminsecretAlboOnLine','security');
+	if (!current_user_can('admin_albo'))
+		wp_die(__("Non hai i permessi per eseguire questa operazione","albo-online"),403);
 	$ValoriPost= explode("&", str_replace("%20"," ",filter_input(INPUT_POST, 'valori')));
 	$Valori=array();
 	$NumeroRighe=0;
@@ -3458,12 +3460,16 @@ function ap_MemoFunzioni(){
 }
 function ap_dismiss_alboonline_notice(){
 	check_ajax_referer('adminsecretAlboOnLine','security');
+	if (!current_user_can('admin_albo'))
+		wp_die(__("Non hai i permessi per eseguire questa operazione","albo-online"),403);
 	update_option("alboonline-notice-dismissed",TRUE);
 	wp_die();
 }
 function ap_rimuoviallegatoPP(){
 	global $wpdb;
 	check_ajax_referer('adminsecretAlboOnLine','security');
+	if (!current_user_can('editore_atti_albo'))
+		wp_die(__("Non hai i permessi per eseguire questa operazione","albo-online"),403);
 	$IDAllegato= intval(filter_input(INPUT_POST, 'idAllegato'));
 	$IDAtto= intval(filter_input(INPUT_POST, 'idAtto'));
 	$Motivo= sanitize_text_field(filter_input(INPUT_POST, 'desmotivo'));
@@ -3485,6 +3491,8 @@ function ap_rimuoviallegatoPP(){
 }
 function ap_LoadDefaultFunzioni(){
 	check_ajax_referer('adminsecretAlboOnLine','security');
+	if (!current_user_can('admin_albo'))
+		wp_die(__("Non hai i permessi per eseguire questa operazione","albo-online"),403);
 	$Default='[{"ID":"RP","Funzione":"Responsabile Procedimento","Display":"Si","StaCert":"No"},{"ID":"OP","Funzione":"Gestore procedura","Display":"Si","StaCert":"No"},{"ID":"SC","Funzione":"Segretario Comunale","Display":"No","StaCert":"No"},{"ID":"RB","Funzione":"Responsabile Pubblicazione","Display":"No","StaCert":"No"},{"ID":"DR","Funzione":"Direttore dei Servizi Generali e Ammistrativi","Display":"No","StaCert":"No"}]';
 	update_option('opt_AP_TabResp',$Default ); 
 	echo __('Caricamento valori di default avvenuto con successo','albo-online');

@@ -9,10 +9,16 @@ Il plugin originale è stato **rimosso da wordpress.org il 7 marzo 2024** perch�
 non superava i controlli di sicurezza richiesti dalla directory ufficiale.
 L'autore non lo mantiene più.
 
-Va detto con chiarezza: **le vulnerabilità che hanno motivato quella rimozione
-non sono state analizzate né corrette in questo fork.** Le release pubblicate
-finora intervengono su difetti funzionali. Chi installa il plugin lo fa su
-codice non ancora sottoposto a revisione di sicurezza.
+In **4.9.1** è stata condotta una prima revisione, che ha individuato e corretto
+una falla di controllo degli accessi (vedi il changelog). È una prima passata,
+non un audit completo: **non sappiamo se coincida con ciò che wordpress.org
+aveva contestato**, e altre vulnerabilità possono benissimo essere ancora
+presenti. Chi installa il plugin lo fa su codice non ancora sottoposto a una
+revisione di sicurezza sistematica.
+
+Fra i punti già noti e non ancora affrontati: il download degli allegati
+(`action=dwnalle`) serve qualsiasi allegato a chiunque, protetto dal solo
+controllo dell'header `Referer`, che è banale da falsificare.
 
 Il fork esiste perché diverse amministrazioni continuano a usare il plugin
 comunque: meglio una copia manutenuta e con un canale di segnalazione che una

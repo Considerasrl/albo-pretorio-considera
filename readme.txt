@@ -4,7 +4,7 @@ Donate link:
 Tags: Albo Pretorio, Codice Amministrazione Digitale, Upload File
 Requires at least: 3.5
 Tested up to: 6.4
-Stable tag: 4.9.0
+Stable tag: 4.9.1
 Albo Pretorio On Line permette la gestione dell'albo pretorio on line in base al nuovo Codice dell'Amministrazione Digitale
 == Description ==
 
@@ -42,9 +42,16 @@ Di seguito sono riportati i passi necessari per l'installazione del plugin. la p
 		<strong>anno</strong> Anno a cui si riferisce il numero dell'atto
 	<strong>Uso</strong>: <em>Questo shortcode permette di visualizzare i dati dell'atto individuato dal numero/anno indicato nei parametri</em>
 
-Per maggiori informazioni usare il repo si github https://github.com/ignazios/albo-pretorio-on-line
-Per segnalare problemi, proposte di modifiche utilizzare l'indirizzo email ignazios@gmail.com
+Questo e' il fork mantenuto da Considera: https://github.com/Considerasrl/albo-pretorio-considera
+Per segnalare malfunzionamenti o proposte di modifica usare le issue del repository.
+Le vulnerabilita' di sicurezza vanno segnalate in privato, non con una issue pubblica: vedere SECURITY.md.
+
+Il repository originale di Ignazio Scimone, non piu' aggiornato, resta consultabile su https://github.com/ignazios/albo-pretorio-on-line
 == Changelog ==
+= 4.9.1 =
+- <strong>Corretta</strong> una falla di controllo degli accessi: le quattro chiamate AJAX del plugin verificavano il nonce ma non i permessi dell'utente. Qualsiasi utente registrato, anche con ruolo Sottoscrittore, poteva leggere il nonce dal sorgente di una pagina di wp-admin e invocarle. La piu' grave, rimuoviAllegato, cancellava dal disco l'allegato di un qualsiasi atto.
+- <strong>Limitata</strong> l'emissione del nonce agli utenti che possono effettivamente usare le funzioni del plugin.
+- <strong>Dichiarato</strong> esplicitamente permission_callback sulle rotte REST, che ne erano prive.
 = 4.9.0 =
 Prima versione del fork mantenuto da Considera. Il plugin originale di Ignazio Scimone e' fermo alla 4.8 ed e' stato rimosso da wordpress.org il 7 marzo 2024.
 - <strong>Corretto</strong> il download degli allegati: gli archivi ZIP e RAR venivano scaricati corrotti perche' l'output emesso da altri componenti finiva in testa al file e ne faceva troncare la coda.
