@@ -1,10 +1,10 @@
-﻿=== Plugin Name ===
-Contributors: Scimone Ignazio
+﻿=== Albo Pretorio OnLine ===
+Contributors: Ignazios
 Donate link: 
 Tags: Albo Pretorio, Codice Amministrazione Digitale, Upload File
 Requires at least: 3.5
-Tested up to: 5.7.2
-Stable tag: 4.5.7
+Tested up to: 6.4
+Stable tag: 4.8
 Albo Pretorio On Line permette la gestione dell'albo pretorio on line in base al nuovo Codice dell'Amministrazione Digitale
 == Description ==
 
@@ -45,6 +45,33 @@ Di seguito sono riportati i passi necessari per l'installazione del plugin. la p
 Per maggiori informazioni usare il repo si github https://github.com/ignazios/albo-pretorio-on-line
 Per segnalare problemi, proposte di modifiche utilizzare l'indirizzo email ignazios@gmail.com
 == Changelog ==
+= 4.8 =
+- <strong>Corretti</strong> errori di sicurezza
+= 4.7 =
+- <strong>Corretti</strong> errori di sicurezza 
+= 4.6.5 =
+- <strong>Corretti</strong> errori minori 
+- <strong>Modificato</strong> il front-end nella visualizzazione dei link di <strong>Visualizzazione Allegato</strong> e <strong>Scarica Allegato</strong> che possono essere attivati o disattivati nel back-end in Albo > Parametri > Allegati  
+= 4.6.5 =
+- <strong>Corretto</strong> errore nello shortcode che permette la visualizzazione dell'albo, parametro categoria
+- <strong>Modificato</strong> CSS, modificate alcune classi che creavano conflitti con un tema 
+= 4.6.4 =
+- <strong>Revisionato</strong> il codice che gestisce le tabelle di base dell'Albo
+- <strong>Corretto</strong> problema con l'interfaccia per i temi compatibile con Bootstrap Italia di Designers Italia, la gestione dei pulsanti di apertura dei filtri
+- <strong>Corretti</strong> problema di sicurezzza.
+= 4.6.3 =
+- <strong>Revisionato</strong> il filtro degli atti nel frontend per tutte le versione dell'interfaccia
+- <strong>Corretto</strong> problema di sicurezzza.
+= 4.6.2 =
+- <strong>Verifica</strong> compatibilità con versione 6.2 di Wordpress.
+- <strong>Corretto</strong> problema di sicurezzza.
+= 4.6.1 =
+- <strong>Corretto</strong> problema di sicurezzza XSS.
+= 4.6 =
+- <strong>Adeguamento</strong> alla versione 8.0 di PHP.
+- <strong>Risolti</strong> alcuni errori minori.
+= 4.5.8 =
+- <strong>Adeguamento</strong> alla versione 5.9 di Wordpress.
 = 4.5.7 =
 - <strong>Risolti</strong> alcuni errori minori.
 - <strong>Modificato</strong> in meccanismo di gestione dell'interruzione del servizo di pubblicazione. Da questa versione gli atti non vengono più ripubblicati ma viene prorogata la data di scadenza dell'atto in base al numero di giorni di sospensione del servizio di pubblicazione.

@@ -2,7 +2,7 @@
 /**
  * Gestione Responsabili.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since      4.8
  *
  * @package    Albo On Line
  */
@@ -39,14 +39,14 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-tipidifiles"){
 		if (!wp_verify_nonce($_REQUEST['canctipfil'],'deletetipidifiles')){
 			$NC=$messages[80];
 		}else{
-			$risultato=ap_del_tipidifiles((int)$_REQUEST['id']);
+			$risultato=ap_del_tipidifiles(intval($_REQUEST['id']));
 			if(is_array($risultato)){
 				$NC=sprintf(__("Il Tipo di File non può essere cancellato perchè ci sono %s atti che lo utilizzano",$risultato["atti"]));
 			}
 		}
 	}	
 } 
-if ( (isset($_REQUEST['message']) && ( $msg = (int) $_REQUEST['message'])) or $NC!="") {
+if ( (isset($_REQUEST['message']) && ( $msg = intval($_REQUEST['message']))) or $NC!="") {
 	echo '<div id="message" class="updated"><p>'.$messages[$msg]. $NC;
 	if (isset($_REQUEST['errore'])) 
 		echo '<br />'.htmlentities($_REQUEST['errore']);
@@ -58,7 +58,6 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
 }else{
 	$edit=False;
 }
-
 ?>
 <br class="clear" />
 <div id="col-container">
@@ -136,6 +135,7 @@ foreach ($righe as $riga) {
 echo '    </tbody>
 	</table>
 </div>';
+$IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo($_REQUEST['id']):"";
 ?>
 </div><!-- /col-right -->
 
@@ -147,37 +147,39 @@ echo '    </tbody>
 <div class="form-wrap">
 	<form id="addtag" method="post" action="?page=tipifiles" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >
 		<input type="hidden" name="action" value="<?php if($edit ||(isset($_REQUEST['action']) And  $_REQUEST['action']=="edit_err")) echo "memo-tipofile"; else echo "add-tipofile"; ?>"/>
-		<input type="hidden" name="id" value="<?php echo isset($_REQUEST['id'])?$_REQUEST['id']:""; ?>" />
+		<input type="hidden" name="id" value="<?php echo $IDTipo; ?>" />
 		<input type="hidden" name="tipifiles" value="<?php echo wp_create_nonce('elabtipifiles')?>" />
 		<div class="form-required">
 			<label for="estensione"><?php _e("Tipo File","albo-online");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="id" id="<?php _e("Tipo File","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($_REQUEST['id']);?>" size="6" aria-required="true" <?php echo ($edit?'Disabled':"");?> class="richiesto"/>
+			<input name="id" id="<?php _e("Tipo File","albo-online");?>" type="text" value="<?php if($edit) echo $IDTipo;?>" size="6" aria-required="true" <?php echo ($edit?'Disabled':"");?> required/>
 		</div>
 		<div class="form-field form-required">
 			<label for="descrizione"><?php _e("Descrizione","albo-online");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="descrizione" id="<?php _e("Descrizione","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($lista[$_REQUEST['id']]["Descrizione"]); ?>" size="60" aria-required="true" class="richiesto"/>
+			<input name="descrizione" id="<?php _e("Descrizione","albo-online");?>" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Descrizione"])?$lista[$IDTipo]["Descrizione"]:""); ?>" size="60" aria-required="true" required/>
 		</div>
 		<div class="form-field form-required">
 			<label for="icona"><?php _e("Icona","albo-online");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="icona" id="<?php _e("Icona","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($lista[$_REQUEST['id']]["Icona"]);?>" size="60" aria-required="true" class="richiesto"/>
+			<input name="icona" id="<?php _e("Icona","albo-online");?>" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Icona"])?$lista[$IDTipo]["Icona"]:"");?>" size="60" aria-required="true" required/>
 				<div style="float:left;"><input id="icona_upload" class="button" type="button" value="Carica" />
 					<br /><?php _e("Dimensione max 30x30","albo-online");?>
 				</div>
 				<div style="float:left;margin-left:10%;margin-top:5px;">
-		<?php if(isset($_REQUEST['id']) And $lista[$_REQUEST['id']]["Icona"]){?>
-					<img src="<?php if($edit) echo stripslashes($lista[$_REQUEST['id']]["Icona"]);?>" width="30" height="30" id="IconaTipoFile"/>
+		<?php if(isset($lista[$IDTipo]["Icona"]) And $lista[$IDTipo]["Icona"]){?>
+					<img src="<?php if($edit) echo stripslashes($lista[$IDTipo]["Icona"]);?>" width="30" height="30" id="IconaTipoFile"/>
 		<?php }?>
 		</div>
 </div>
 	<div class="clear"></div>
 	<div class="form-field form-required">
 		<label for="verifica"><?php _e("Verifica","albo-online");?></label>
-		<input name="verifica" id="verifica" type="text" value="<?php if($edit) echo stripslashes($lista[$_REQUEST['id']]["Verifica"]);?>" size="60" aria-required="true" />
+		<input name="verifica" id="verifica" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Verifica"])?$lista[$IDTipo]["Verifica"]:"");?>" size="60" aria-required="true" />
 	</div>
 
 <?php
 if($edit) {
-	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-online").' '.$_REQUEST['id'].'" rel="'.$_REQUEST['id'].'" />';
+	if(isset($lista[$IDTipo])){
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-online").' '.$IDTipo.'" rel="'.$IDTipo.'" />';
+	}
 }else{
  	if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit_err")
 		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-online").' '.htmlentities($_GET['resp-cognome']).'" rel="'.htmlentities($_GET['resp-cognome']).'" />';

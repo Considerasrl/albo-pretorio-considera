@@ -3,13 +3,67 @@
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-clipboard" style="font-size:1em;"></span> <?php _e("Albo Online Change log","albo-online");?></h2>
 	</div>
 	<div class="wp-editor-container" style="margin-top: 2em;">
-	<ul style="padding: 0 1em 0 1em;">
+		<li class="lista">
+			<h3>4.6.6</h3>
+			<ol class="lista">
+				<li><strong>Corretti</strong> errori minori.</li>
+				<li><strong>Modificato</strong> il front-end nella visualizzazione dei link di <strong>Visualizzazione Allegato</strong> e <strong>Scarica Allegato</strong> che possono essere attivati o disattivati nel back-end in Albo > Parametri > Allegati.</li>
+			</ol>
+		</li>			
+		<li class="lista">
+			<h3>4.6.5</h3>
+			<ol class="lista">
+				<li><strong>Corretto</strong> errore nello shortcode che permette la visualizzazione dell'albo, parametro categoria.</li>
+				<li><strong>Modificato</strong> CSS, modificate alcune classi che creavano conflitti con un tema.</li>
+			</ol>
+		</li>	
+		<ul style="padding: 0 1em 0 1em;">
+		<li class="lista">
+			<h3>4.6.4</h3>
+			<ol class="lista">
+				<li><strong>Revisionato</strong>  il codice che gestisce le tabelle di base dell'Albo.</li>
+				<li><strong>Corretto</strong> problema con l'interfaccia per i temi compatibile con Bootstrap Italia di Designers Italia, la gestione dei pulsanti di apertura dei filtri.</li>
+				<li><strong>Corretto</strong> problema di sicurezzza.</li>
+			</ol>
+		</li>	
+		<li class="lista">
+			<h3>4.6.3</h3>
+			<ol class="lista">
+				<li><strong>Revisionato</strong> il filtro degli atti nel frontend per tutte le versione dell'interfaccia.</li>
+				<li><strong>Corretto</strong> problema di sicurezzza.</li>
+			</ol>
+		</li>	
+		<li class="lista">
+			<h3>4.6.2</h3>
+			<ol class="lista">
+				<li><strong>Verifica</strong> compatibilità con versione 6.2 di Wordpress.</li>
+				<li><strong>Corretto</strong> problema di sicurezzza.</li>
+			</ol>
+		</li>	
+		<li class="lista">
+			<h3>4.6.1</h3>
+			<ol class="lista">
+				<li><strong>Corretto</strong> problema di sicurezzza XSS.</li>
+			</ol>
+		</li>	
+		<li class="lista">
+			<h3>4.6</h3>
+			<ol class="lista">
+				<li><strong>Adeguamento</strong> alla versione 8.0 di PHP.</li>
+				<li><strong>Risolti</strong> alcuni errori minori.</li>
+			</ol>
+		</li>	
+		<li class="lista">
+			<h3>4.5.8</h3>
+			<ol class="lista">
+				<li><strong>Adeguamento</strong> alla versione 5.9 di Wordpress.</li>
+			</ol>
+		</li>	
 		<li class="lista">
 			<h3>4.5.7</h3>
 			<ol class="lista">
 				<li><strong>Risolti</strong> alcuni errori minori.</li>
 				<li><strong>Modificato</strong> in meccanismo di gestione dell'interruzione del servizo di pubblicazione. Da questa versione gli atti non vengono più ripubblicati ma viene prorogata la data di scadenza dell'atto in base al numero di giorni di sospensione del servizio di pubblicazione.</li>
-
 			</ol>
 		</li>	
 		<li class="lista">

@@ -2,7 +2,7 @@
 /**
  * WGestione Enti.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since      4.8
  *
  * @package    Albo On Line
  */
@@ -12,10 +12,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 function load_Data_Funzioni(){
 	$TabResponsabili=get_option('opt_AP_TabResp');
-	if($TabResponsabili){
+	if((is_string($TabResponsabili) && (is_object(json_decode($TabResponsabili)) || is_array(json_decode($TabResponsabili))))){
 		$TR=json_decode($TabResponsabili);
 	}else{
-		$TR=json_decode('[{"ID":"","Funzione":"","Display":"No"}]');
+		$Default='[{"ID":"RP","Funzione":"Responsabile Procedimento","Display":"Si","StaCert":"No"},{"ID":"OP","Funzione":"Gestore procedura","Display":"Si","StaCert":"No"},{"ID":"SC","Funzione":"Segretario Comunale","Display":"No","StaCert":"No"},{"ID":"RB","Funzione":"Responsabile Pubblicazione","Display":"No","StaCert":"No"},{"ID":"DR","Funzione":"Direttore dei Servizi Generali e Ammistrativi","Display":"No","StaCert":"No"}]';
+		update_option('opt_AP_TabResp',$Default ); 
+		$TR=json_decode($Default);
 	}
 ?>	  
 <script id="jsSourceRuoli" type="text/javascript">	  

@@ -2,7 +2,7 @@
 /**
  * Utility dell'albo.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since      4.8
  *
  * @package    Albo On Line
  */
@@ -33,8 +33,8 @@ if (isset($_REQUEST['action'])){
 				menu($Stato);
 				break;
 			}
-			ap_set_ente_orfani($_REQUEST["Ente"]);
-			$NewEnte=ap_get_ente($_REQUEST["Ente"]);
+			ap_set_ente_orfani(sanitize_text_field($_REQUEST["Ente"]));
+			$NewEnte=ap_get_ente(sanitize_text_field($_REQUEST["Ente"]));
 			$Stato=sprintf(__("Tutti gli atti con %s Ente non definito sono stati assegnati all'ente %s %s %s ","albo-online"),'<span style="color:red;">',"</span>","<strong>",$NewEnte->Nome,"</strong>");
 			menu($Stato);
 			break;	
@@ -63,7 +63,7 @@ if (isset($_REQUEST['action'])){
 			menu($Stato);
 			break;
 		case "menu":
-			menu(str_replace("%%br%%","<br />",htmlentities($_GET['stato'])));
+			menu(str_replace("%%br%%","<br />",sanitize_text_field($_GET['stato'])));
 			unset($_GET['action']);
 			break;
 		case "creafsic":
@@ -99,10 +99,11 @@ if (isset($_REQUEST['action'])){
 			} 			
 			$Data=date('Ymd_H_i_s');
 			$nf=ap_BackupDatiFiles($Data,"",AlboBCK,TRUE);
-			$filename=WP_CONTENT_DIR."/AlboOnLine/BackupDatiAlbo/tmp/msg.txt";
+/*			$filename=WP_CONTENT_DIR."/AlboOnLine/BackupDatiAlbo/tmp/msg.txt";
 			$fpmsg = @fopen($filename, "rb");
 				$Stato=fread($fpmsg,filesize($filename));
 			fclose($fpmsg);
+*/			$Stato=__("Backup Completato e pronto per il download","albo-online");
 			menu($Stato);
 			unset($_POST['action']);
 			break;
@@ -184,7 +185,7 @@ if (isset($_REQUEST['action'])){
 			}
 			break;
 		case "creaTabella":
-			creaTabella(htmlentities($_REQUEST['Tabella']));
+			creaTabella(sanitize_text_field($_REQUEST['Tabella']));
 			TestProcedura();
 			break;
 		case "creacategorie":
@@ -239,7 +240,7 @@ if (isset($_REQUEST['action'])){
 }
 
 function ArchivioAllegati(){
-	if (isset($_POST["esBackup"]) And $_POST["esBackup"]="Si") {
+	if (isset($_POST["esBackup"]) And $_POST["esBackup"]=="Si") {
 		echo "<h3>".__("Creazione Backup Albo OnLine","albo-online")."</h3>";
 		ap_BackupDatiFiles("Organizza_Archivio_Allegati_Mese_Anno",__("Modifica sistema archiviazione Allegati","albo-online"),AlboBCK,TRUE);
 		echo "<h3>".__("Fine creazione Backup Albo OnLine","albo-online")."</h3>
@@ -288,12 +289,10 @@ function ImplementaNINF(){
 				</div>';
 }
 
-function menu($Stato="",$passo="",$Data="",$GG=0){
+function menu($Stato="",$passo=0,$Data="",$GG=0){
 global $wpdb;
-if (isset($_REQUEST['p']))
-	$Pag=$_REQUEST['p'];
-else
-	$Pag=0;
+$Stato=sanitize_text_field($Stato);
+$passo=intval($passo);
 $upload_dir = wp_upload_dir();
 $basedir=substr( $upload_dir['basedir'],0,strlen($upload_dir['basedir'])-19);
 if (null===get_option( 'opt_AP_FolderUploadMeseAnno' ) Or get_option('opt_AP_FolderUploadMeseAnno')!="Si") {
@@ -308,7 +307,7 @@ echo '<div class="wrap">
 if ($Stato!="") 
 	echo '<div id="message" class="updated"><p>'.str_replace("%%br%%","<br />",$Stato).'</p></div>
       <meta http-equiv="refresh" content="2;url=admin.php?page=utilityAlboP"/>';
-echo '<input type="hidden" id="Pagina" value="'.$Pag.'" />
+echo '
 <div id="utility-tabs-container"  style="margin-top:20px;">
 					<ul>
 						<li><a href="#utility-tab-1">'.__("Proroga scadenza Atti","albo-online").'</a></li>
@@ -329,7 +328,7 @@ echo '					<li><a href="#utility-tab-10">'.__("Aggiornamento Impronta","albo-onl
 				<p>'.sprintf(__("Questa operazione PROROGA gli atti in corso di validità con motivazione %s Proroga validità Atti per interruzione del sevizio di pubblicazione %sLa nuova scadenza degli atti viene proroga di un numero di giorni uguale a quello dell'interruzione. %sEstratto dalle Linee Guida di Agid punto 7:%sLa pubblicazione si intende soddisfatta se un documento è rimasto disponibile sul sito complessivamente per almeno dodici ore per ciascun giorno di pubblicazione.%sIl periodo di pubblicazione è prorogato di un giorno per ciascun giorno di pubblicazione inferiore complessivamente a dodici ore, in base a un’attestazione del responsabile della pubblicazione o di un suo delegato.%s","albo-online"),'<span style="font-weight: bold;font-style: italic;color:red;">','</span><br />','<br /><br /><strong><em>','</em><br />','<br />','<strong>').'</p>
 				<p style="font-weight: bold;font-style: italic;color:red;">'.__("Questa è un'operazione irreversibile e modifica dati sostanziali degli Atti, si consiglia di eseguire un backup prima di procedere, per poter recuperare i dati originali in caso di errori.","albo-online").'</p>';
 switch ($passo){
-	case "":
+	case 0:
 		echo '<form action="?page=utilityAlboP" id="ripub" method="post"  class="validate">
 				<input type="hidden" name="action" value="setData" />
 				<input type="hidden" name="ripub" value="'.wp_create_nonce('ripubblicaatti').'" />
@@ -347,7 +346,7 @@ switch ($passo){
 				</form>
 				';
 		break;
-	case "1":
+	case 1:
 		$AData=ap_DateAdd($Data,$GG);
 		$TotAtti=ap_get_all_atti(10,0,0,0,'',$Data,$AData,'',0,0,true,false,'',-1,true);
 		echo'<p><span style="font-style: italic;color:green;"><strong>'.$TotAtti.'</strong> '.__("Atti in pubblicazione da data","albo-online").' '.ap_VisualizzaData($Data).' '.__("a data","albo-online").' '.ap_VisualizzaData($AData).'</span></p>';
@@ -468,7 +467,7 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 			'.__("Repertorio","albo-online").' <select id="Anno" onchange="document.location.href=this.options[this.selectedIndex].value;">
 				<option value="">'.__("Anno","albo-online").'</option>';
 			foreach($Anni as $Anno){
-				echo '<option value="'.admin_url().'/admin.php?page=utilityAlboP&amp;p=5&amp;Anno='.$Anno->Anno.'">'.$Anno->Anno.'</option>';
+				echo '<option value="'.admin_url().'/admin.php?page=utilityAlboP&amp;Anno='.$Anno->Anno.'#utility-tab-6">'.$Anno->Anno.'</option>';
 			}
 			echo '
 			</select>
@@ -701,6 +700,11 @@ switch ($Tabella){
 									  "Null" =>"No",
 									  "Key" => "",
 									  "Default" => "A",
+									  "Extra" =>""),
+					"Note" => array("Tipo" => "varchar(255)",
+									  "Null" =>"Si",
+									  "Key" => "",
+									  "Default" => "",
 									  "Extra" =>""));
 		break;
 	case $wpdb->table_name_Categorie:
@@ -893,24 +897,26 @@ switch ($Tabella){
         $result=$wpdb->get_results("Describe $Tabella");
         $Verificato=true;
         $Msg="";
+//		var_dump($Tabella);
 		foreach ( $result as $campo ) {
-			if (strtolower($Par[$campo->Field]["Tipo"])!=strtolower($campo->Type)){
+//		echo "<pre>";var_dump($campo->Field);var_dump($campo->Type);var_dump($Par[$campo->Field]["Default"]);echo "</pre>";
+			if (is_string($Par[$campo->Field]["Tipo"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Tipo"])!=strtolower($campo->Type)){
 				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo DB","albo-online")." <strong>". $campo->Type . "</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo Originale","albo-online")." <strong>".$Par[$campo->Field]["Tipo"]."</strong><br />";
 				$Verificato=false;
 			}
-			if (strtolower($Par[$campo->Field]["Null"])!=strtolower($campo->Null)){
+			if (is_string($Par[$campo->Field]["Null"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Null"])!=strtolower($campo->Null)){
 				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Null DB <strong>". $campo->Null . "</strong><br />&nbsp;&nbsp;&nbsp;Null ".__("Originale","albo-online")." <strong>".$Par[$campo->Field]["Null"]."</strong><br />";
 				$Verificato=false;
 			}
-			if (strtolower($Par[$campo->Field]["Default"])!=strtolower($campo->Default)){
+			if (is_string($Par[$campo->Field]["Default"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Default"])!=strtolower($campo->Default)){
 				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Default DB <strong>". $campo->Default . "</strong><br />&nbsp;&nbsp;&nbsp;Default ".__("Originale","albo-online")." <strong>".$Par[$campo->Field]["Default"]."</strong><br />";
 				$Verificato=false;
 			}
-			if (strtolower($Par[$campo->Field]["Extra"])!=strtolower($campo->Extra)){
+			if (is_string($Par[$campo->Field]["Extra"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Extra"])!=strtolower($campo->Extra)){
 				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Extra DB <strong>". $campo->Extra . "</strong><br />&nbsp;&nbsp;&nbsp;Extra ".__("Originale","albo-online")." <strong>".$Par[$campo->Field]["Extra"]."</strong><br />";
 				$Verificato=false;
 			}
-			if (strtolower($Par[$campo->Field]["Key"])!=strtolower($campo->Key)){
+			if (is_string($Par[$campo->Field]["Key"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Key"])!=strtolower($campo->Key)){
 				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Key DB <strong>". $campo->Key . "</strong><br />&nbsp;&nbsp;&nbsp;Key ".__("Originale","albo-online")." <strong>".$Par[$campo->Field]["Key"]."</strong><br />";
 				$Verificato=false;
 			}

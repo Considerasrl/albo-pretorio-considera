@@ -187,7 +187,7 @@ font-weight: bold;
 	font-size: 1.3em;
 	font-weight: bold;
 }
-.h, .s{
+.alboh, .albos{
  	display: inline-block;
 	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
@@ -245,11 +245,20 @@ div.VisInfo{
 .break-word {
     word-wrap: break-word;
 }
-.mycallout .callout-title {
+.mycallout .mycallout-title {
     text-transform: none;
     font-size: 1rem!important;
     margin-right: initial;
     margin-left: initial;
     letter-spacing: initial;
     padding: 0 0.5rem!important;
+}
+.mycallout .callout-title {
+    font-size: 1.1em!important;
+    text-transform: capitalize!important;
+    padding: 0 1rem!important;
+    margin-left: 1.22rem;
+}
+.HeadAllegati{
+	padding:1em 0 1em;
 }

@@ -2,7 +2,7 @@
 /**
  * Gestione Permessi.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since      4.8
  *
  * @package    Albo On Line
  */

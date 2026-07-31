@@ -2,7 +2,7 @@
 /**
  * Amministrazione richieste delle singole pagine.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since      4.8
  *
  * @package    Albo On Line
  */
@@ -32,10 +32,12 @@ function albo_post() {
 	if(isset($_REQUEST['action'] )){
 		switch ( $_REQUEST['action'] ) {		
 			case "ToCsv":
+				$Anno=intval($_REQUEST['Anno']);
 				$Testata=preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Nome Ente","albo-online")).";".
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Numero Atto","albo-online")).";".
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Riferimento","albo-online")).";".
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Oggetto","albo-online")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Registrazione","albo-online")).";".
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Inizio","albo-online")).";".
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Fine","albo-online")).";".
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Annullamento","albo-online")).";".
@@ -46,73 +48,76 @@ function albo_post() {
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Categoria","albo-online")).";".
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Informazioni","albo-online")).";";
 				$Atti="";
-				$Righe=ap_Repertorio($_REQUEST['Anno'],FALSE);
+				$Righe=ap_Repertorio($Anno,FALSE);
 				foreach($Righe as $Riga){
 					$Atti.=stripcslashes($Riga->NomeEnte).";";
 					$Atti.=$Riga->Numero.";";
-					$Atti.=str_replace("  "," ",preg_replace ("[.^A-Za-z0-9 ]", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Riferimento),TRUE)))).";";
-					$Atti.=str_replace("  "," ", preg_replace("[.^A-Za-z0-9 ]", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Oggetto),TRUE)))).";";
+					$Atti.=!is_null($Riga->Riferimento)?str_replace("  "," ",preg_replace ("[.^A-Za-z0-9 ]", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Riferimento),TRUE)))).";":";";
+					$Atti.=!is_null($Riga->Oggetto)?str_replace("  "," ", preg_replace("[.^A-Za-z0-9 ]", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Oggetto),TRUE)))).";":";";
+					$Atti.=$Riga->DataRegistrazione.";";
 					$Atti.=$Riga->DataInizio.";";
 					$Atti.=$Riga->DataFine.";";
 					$Atti.=$Riga->DataAnnullamento.";";
-					$Atti.=str_replace("  "," ",preg_replace ("[.^A-Za-z0-9 ]", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->MotivoAnnullamento),TRUE)))).";";	
-					$Atti.=str_replace("  "," ",preg_replace ("[.^A-Za-z0-9 ]", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Richiedente),TRUE)))).";";
-					$Atti.=str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->UnitaOrganizzativa),TRUE)))).";";
-					$Atti.=str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->ResponsabileProcedimento),TRUE)))).";";
-					$Atti.=str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Categoria),TRUE)))).";";
-					$Atti.=str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Informazioni),TRUE)))).";\n";
+					$Atti.=!is_null($Riga->MotivoAnnullamento)?str_replace("  "," ",preg_replace ("[.^A-Za-z0-9 ]", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->MotivoAnnullamento),TRUE)))).";":";";	
+					$Atti.=!is_null($Riga->Richiedente)?str_replace("  "," ",preg_replace ("[.^A-Za-z0-9 ]", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Richiedente),TRUE)))).";":";";
+					$Atti.=!is_null($Riga->UnitaOrganizzativa)?str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->UnitaOrganizzativa),TRUE)))).";":";";
+					$Atti.=!is_null($Riga->ResponsabileProcedimento)?str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->ResponsabileProcedimento),TRUE)))).";":";";
+					$Atti.=!is_null($Riga->Categoria)?str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Categoria),TRUE)))).";":";";
+					$Atti.=!is_null($Riga->Informazioni)?str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -\/ :]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Informazioni),TRUE)))).";\n":";";
 				}	
 //				echo $Atti;die();
 				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');
 				if (!is_dir ( $Dir))
 					if (!mkdir($Dir, 0744)) 
 						break;
-				$file_path=$Dir."/repertorio_".$_REQUEST['Anno'].".csv";
+				$file_path=$Dir."/repertorio_".$Anno.".csv";
 				$file = fopen($file_path, "w") or die;
 				fwrite($file, $Testata."\n".$Atti);
 				fclose($file);
 				DownloadFile($file_path);
 				break;
 			case "ToXML":
+				$Anno=intval($_REQUEST['Anno']);
 				$xml=new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes" ?><'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-online")).'></'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-online")).'>'); 
 				$MetaData=$xml->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Meta dati","albo-online")));
-				$MetaData->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Anno","albo-online")),$_REQUEST['Anno']);
-				$Righe=ap_Repertorio($_REQUEST['Anno'],FALSE);
+				$MetaData->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Anno","albo-online")),$Anno);
+				$Righe=ap_Repertorio($Anno,FALSE);
 				$Atti=$xml->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Atti","albo-online")));
 				foreach($Righe as $Riga){
 					$Atto=$Atti->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Atto","albo-online")));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Nome Ente","albo-online")), stripslashes(wp_strip_all_tags($Riga->NomeEnte)));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Numero Atto","albo-online")), $Riga->Numero);
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Riferimento","albo-online")), stripslashes(wp_strip_all_tags($Riga->Riferimento)));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Oggetto","albo-online")), stripslashes(wp_strip_all_tags($Riga->Oggetto)));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data di registrazione","albo-online")), $Riga->Data);
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Inizio","albo-online")), $Riga->DataInizio);
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Fine","albo-online")), $Riga->DataFine);
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Annullamento","albo-online")),$Riga->DataAnnullamento);
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Motivo Annullamento","albo-online")),stripslashes(wp_strip_all_tags($Riga->MotivoAnnullamento)));					
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Richiedente","albo-online")),stripslashes(wp_strip_all_tags($Riga->Richiedente)));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Unità Organizzativa Responsabile","albo-online")),stripslashes(wp_strip_all_tags($Riga->UnitaOrganizzativa)));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Responsabile del procedimento amministrativo","albo-online")),stripslashes(wp_strip_all_tags($Riga->ResponsabileProcedimento)));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Categoria","albo-online")),stripslashes(wp_strip_all_tags($Riga->Categoria)));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Informazioni","albo-online")),wp_strip_all_tags($Riga->Informazioni));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Nome Ente","albo-online")), ap_sanifica_testo($Riga->NomeEnte));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Numero Atto","albo-online")), ap_sanifica_testo($Riga->Numero));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Riferimento","albo-online")), ap_sanifica_testo($Riga->Riferimento));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Oggetto","albo-online")), ap_sanifica_testo($Riga->Oggetto));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data di registrazione","albo-online")), ap_sanifica_testo($Riga->DataRegistrazione));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Inizio","albo-online")), ap_sanifica_testo($Riga->DataInizio));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Fine","albo-online")), ap_sanifica_testo($Riga->DataFine));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Annullamento","albo-online")),ap_sanifica_testo($Riga->DataAnnullamento));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Motivo Annullamento","albo-online")),ap_sanifica_testo($Riga->MotivoAnnullamento));					
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Richiedente","albo-online")),ap_sanifica_testo($Riga->Richiedente));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Unita Organizzativa Responsabile","albo-online")),ap_sanifica_testo($Riga->UnitaOrganizzativa));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Responsabile del procedimento amministrativo","albo-online")),ap_sanifica_testo($Riga->ResponsabileProcedimento));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Categoria","albo-online")),ap_sanifica_testo($Riga->Categoria));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Informazioni","albo-online")),ap_sanifica_testo($Riga->Informazioni));
 				}	
 				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');
 				if (!is_dir ( $Dir))
 					if (!mkdir($Dir, 0755)) 
 						break;
-				$file_path=$Dir."/repertorio_".$_REQUEST['Anno'].".xml";
+				$file_path=$Dir."/repertorio_".$Anno.".xml";
 				$file = fopen($file_path, "w") or die;
 				fwrite($file, $xml->asXML());
 				fclose($file);
 				DownloadFile($file_path);
 				break;
 			case "ToJson": 
-				$Repertorio=ap_Repertorio($_REQUEST['Anno'],FALSE);
+				$Anno=intval($_REQUEST['Anno']);
+				$Repertorio=ap_Repertorio($Anno,FALSE);
 				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');
 				if (!is_dir ( $Dir))
 					if (!mkdir($Dir, 0755)) 
 						break;
-				$file_path=$Dir."/repertorio_".$_REQUEST['Anno'].".json";
+				$file_path=$Dir."/repertorio_".$Anno.".json";
 				$file = fopen($file_path, "w") or die;
 				$txt = json_encode($Repertorio);
 				fwrite($file, $txt);
@@ -129,18 +134,18 @@ function albo_post() {
 				break;			
 */			case "delete_bulk_atti":
 		        if ( isset( $_GET['_wpnonce'] ) && ! empty( $_GET['_wpnonce'] ) ) {
-	            	$nonce  = filter_input( INPUT_GET, '_wpnonce', FILTER_SANITIZE_STRING );
+	            	$nonce  = filter_input( INPUT_GET, '_wpnonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 	            	$action = 'bulk-atti' ;
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
 		        }
-			 	$Msg=ap_oblio_atti($_GET['IdAtto']);
+			 	$Msg=ap_oblio_atti(intval($_GET['IdAtto']));
 			 	$location = "?page=atti&stato_atti=Eliminare&message=".urlencode($Msg);
 				wp_redirect( $location );
 				break;
  			case "avviso_affissione-atto":
 				if ( isset( $_GET['avvisoatto'] ) && ! empty( $_GET['avvisoatto'] ) ) {
-		            $nonce  = filter_input( INPUT_GET, 'avvisoatto', FILTER_SANITIZE_STRING );
+		            $nonce  = filter_input( INPUT_GET, 'avvisoatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazioneavviso_affissione';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti&stato_atti=Correnti") );
@@ -155,7 +160,7 @@ function albo_post() {
 			break;
  			case "certificato_pubblicazione-atto":
 				if ( isset( $_GET['certificatoatto'] ) && ! empty( $_GET['certificatoatto'] ) ) {
-		            $nonce  = filter_input( INPUT_GET, 'certificatoatto', FILTER_SANITIZE_STRING );
+		            $nonce  = filter_input( INPUT_GET, 'certificatoatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionecertificato_pubblicazione';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti&stato_atti=Correnti") );
@@ -170,13 +175,13 @@ function albo_post() {
 			break;
  			case "oblia-atto":
 				if ( isset( $_GET['oatto'] ) && ! empty( $_GET['oatto'] ) ) {
-		            $nonce  = filter_input( INPUT_GET, 'oatto', FILTER_SANITIZE_STRING );
+		            $nonce  = filter_input( INPUT_GET, 'oatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionebliaatto';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		$location = "?page=atti&stato_atti=Scaduti" ;
 			 		if (is_numeric($_REQUEST['id'])) {
- 	                    $MessaggiRitorno=ap_setOblioOggi((int)$_REQUEST['id']);
+ 	                    $MessaggiRitorno=ap_setOblioOggi(intval($_REQUEST['id']));
 					}
 					$location = add_query_arg( 'message',$MessaggiRitorno, $location );
 					wp_redirect( $location );
@@ -186,12 +191,12 @@ function albo_post() {
  
  			case "elimina-atto":
 				if ( isset( $_GET['cancellatto'] ) && ! empty( $_GET['cancellatto'] ) ) {
-		            $nonce  = filter_input( INPUT_GET, 'cancellatto', FILTER_SANITIZE_STRING );
+		            $nonce  = filter_input( INPUT_GET, 'cancellatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionecancelaatto';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		               wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti") );
 			 		$location = "?page=atti&stato_atti=Eliminare" ;
-			 		$MessaggiRitorno=ap_oblio_atti((int)$_GET['id']);
+			 		$MessaggiRitorno=ap_oblio_atti(intval($_GET['id']));
 					$location = add_query_arg( 'message',$MessaggiRitorno["Message"], $location );
 					$location = add_query_arg( 'message2',$MessaggiRitorno["Message2"], $location );
 					wp_redirect( $location );
@@ -216,7 +221,7 @@ function albo_post() {
 						if(substr($Parametro,0,5)=="Alle:")
 							$Allegati[]=$ValoreParametro;
 					}
-					$Risultato=ap_annulla_atto((int)$_REQUEST['id'],$_REQUEST['Motivo'],$Allegati);
+					$Risultato=ap_annulla_atto(intval($_REQUEST['id']),sanitize_textarea_field($_REQUEST['Motivo']),$Allegati);
 				}				
 			}else{
 				$Risultato=wp_die( __("Operazione Annullata","albo-online"));
@@ -238,13 +243,13 @@ function albo_post() {
 			break;
 		case "delete-allegato-atto" :
 			$location = "?page=atti" ;
-			ap_del_allegato_atto((int)$_REQUEST['idAllegato'],(int)$_REQUEST['idAtto'],htmlentities($_REQUEST['Allegato']));
+			ap_del_allegato_atto(intval($_REQUEST['idAllegato']),intval($_REQUEST['idAtto']),intval(htmlentities($_REQUEST['Allegato'])));
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), $_SERVER['REQUEST_URI']);
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('idAllegato'), $_SERVER['REQUEST_URI']);
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('Allegato'), $_SERVER['REQUEST_URI']);
 			$location= add_query_arg( array ( 'action' => 'allegati-atto', 
-									          'id' => $_REQUEST['idAtto'],
+									          'id' => intval($_REQUEST['idAtto']),
 									          'allegatoatto'=>wp_create_nonce('gestallegatiatto')));
 			wp_redirect( $location );
 			break;
@@ -271,7 +276,13 @@ function albo_post() {
 				$location = add_query_arg( 'action', 'add', $location );
 			}
 			else{
-				$ret=ap_insert_responsabile(strip_tags($_POST['resp-cognome']),strip_tags($_POST['resp-nome']),strip_tags($_POST['resp-funzione']),strip_tags($_POST['resp-email']),strip_tags($_POST['resp-telefono']),strip_tags($_POST['resp-orario']),strip_tags($_POST['resp-note']));
+				$ret=ap_insert_responsabile(ap_sanifica_testo($_POST['resp-cognome']),
+											ap_sanifica_testo($_POST['resp-nome']),
+											ap_sanifica_testo($_POST['resp-funzione']),
+											ap_sanifica_testo($_POST['resp-email']),
+											ap_sanifica_testo($_POST['resp-telefono']),
+											ap_sanifica_testo($_POST['resp-orario']),
+											sanitize_textarea_field($_POST['resp-note']));
 				if ( !$ret && !is_wp_error( $ret ) )
 					$location = add_query_arg( 'message', 1, $location );
 				else
@@ -289,7 +300,7 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=soggetti" ;
-			$location = add_query_arg( 'id', (int)$_GET['id'], $location );
+			$location = add_query_arg( 'id', intval($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
 			wp_redirect( $location );
 			break;
@@ -303,7 +314,7 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=tipifiles" ;
-			$location = add_query_arg( 'id', $_GET['id'], $location );
+			$location = add_query_arg( 'id', ap_sanifica_testo($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
 			wp_redirect( $location );
 			break;			
@@ -336,7 +347,7 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=tipifiles" ;
-			if(ap_delete_tipofiles($_REQUEST['id'])){
+			if(ap_delete_tipofiles(ap_sanifica_testo($_REQUEST['id']))){
 				$location = add_query_arg( 'message', 2, $location );
 			}else{
 				$location = add_query_arg( 'message', 6, $location );
@@ -359,7 +370,10 @@ function albo_post() {
 			   (!isset($_REQUEST['icona']) OR $_REQUEST['icona']=='')){
 				$location = add_query_arg( 'message', 8, $location );
 			}else{
-				if(ap_add_tipofiles($_REQUEST['id'],$_REQUEST['descrizione'],$_REQUEST['icona'],$_REQUEST['verifica'])){
+				if(ap_add_tipofiles(ap_sanifica_testo($_REQUEST['id']),
+									ap_sanifica_testo($_REQUEST['descrizione']),
+									ap_sanifica_testo($_REQUEST['icona']),
+									ap_sanifica_testo($_REQUEST['verifica']))){
 					$location = add_query_arg( 'message', 1, $location );
 				}else{
 					$location = add_query_arg( 'message', 4, $location );
@@ -387,7 +401,7 @@ function albo_post() {
 				$location = add_query_arg( 'action', 'edit_err', $location );
 				$location = add_query_arg( 'id', $_REQUEST['id'], $location );
 			}else
-				if (ap_memo_tipofiles($_REQUEST['id'],$_REQUEST['descrizione'],$_REQUEST['icona'],$_REQUEST['verifica']))
+				if (ap_memo_tipofiles(ap_sanifica_testo($_REQUEST['id']),ap_sanifica_testo($_REQUEST['descrizione']),ap_sanifica_testo($_REQUEST['icona']),ap_sanifica_testo($_REQUEST['verifica'])))
 					$location = add_query_arg( 'message', 3, $location );
 				else
 					$location = add_query_arg( 'message', 5, $location );
@@ -417,14 +431,14 @@ function albo_post() {
 				$location = add_query_arg( 'id', (int)$_REQUEST['id'], $location );
 			}
 			else
-				if (!is_wp_error(ap_memo_responsabile((int)$_REQUEST['id'],
-									  strip_tags($_REQUEST['resp-cognome']),
-									  strip_tags($_REQUEST['resp-nome']),
-									  strip_tags($_REQUEST['resp-funzione']),
-									  strip_tags($_REQUEST['resp-email']),
-									  strip_tags($_REQUEST['resp-telefono']),
-									  strip_tags($_REQUEST['resp-orario']),
-									  strip_tags($_REQUEST['resp-note']))))
+				if (!is_wp_error(ap_memo_responsabile(intval($_REQUEST['id']),
+														ap_sanifica_testo($_REQUEST['resp-cognome']),
+														ap_sanifica_testo($_REQUEST['resp-nome']),
+														ap_sanifica_testo($_REQUEST['resp-funzione']),
+														ap_sanifica_testo($_REQUEST['resp-email']),
+														ap_sanifica_testo($_REQUEST['resp-telefono']),
+														ap_sanifica_testo($_REQUEST['resp-orario']),
+														ap_sanifica_areatesto($_REQUEST['resp-note']))))
 					$location = add_query_arg( 'message', 3, $location );
 				else
 					$location = add_query_arg( 'message', 5, $location );
@@ -442,7 +456,7 @@ function albo_post() {
 				break;
 			} 			
 			$location = "?page=enti" ;
-			$res=ap_del_ente((int)$_GET['id']);
+			$res=ap_del_ente(intval($_GET['id']));
 			if (!is_array($res))
 				$location = add_query_arg( 'message', 2, $location );
 			else{
@@ -481,7 +495,14 @@ function albo_post() {
 				$location = add_query_arg( 'action', 'add', $location );
 			}
 			else{
-				$ret=ap_insert_ente(strip_tags($_REQUEST['ente-nome']),strip_tags($_REQUEST['ente-indirizzo']),strip_tags($_REQUEST['ente-url']),strip_tags($_REQUEST['ente-email']),strip_tags($_REQUEST['ente-pec']),strip_tags($_REQUEST['ente-telefono']),strip_tags($_REQUEST['ente-fax']),strip_tags($_REQUEST['ente-note']));
+				$ret=ap_insert_ente(ap_sanifica_testo($_REQUEST['ente-nome']),
+									ap_sanifica_testo($_REQUEST['ente-indirizzo']),
+									ap_sanifica_testo($_REQUEST['ente-url']),
+									ap_sanifica_testo($_REQUEST['ente-email']),
+									ap_sanifica_testo($_REQUEST['ente-pec']),
+									ap_sanifica_testo($_REQUEST['ente-telefono']),
+									ap_sanifica_testo($_REQUEST['ente-fax']),
+									ap_sanifica_areatesto($_REQUEST['ente-note']));
 				if ( !$ret && !is_wp_error( $ret ) )
 					$location = add_query_arg( 'message', 1, $location );
 				else
@@ -499,7 +520,7 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=enti" ;
-			$location = add_query_arg( 'id', (int)$_GET['id'], $location );
+			$location = add_query_arg( 'id', intval($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
 			wp_redirect( $location );
 			break;
@@ -532,15 +553,15 @@ function albo_post() {
 				$location = add_query_arg( 'id', $_REQUEST['id'], $location );
 			}
 			else
-				if (!is_wp_error(ap_memo_ente((int)$_REQUEST['id'],
-									  strip_tags($_REQUEST['ente-nome']),
-									  strip_tags($_REQUEST['ente-indirizzo']),
-									  strip_tags($_REQUEST['ente-url']),
-									  strip_tags($_REQUEST['ente-email']),
-									  strip_tags($_REQUEST['ente-pec']),
-									  strip_tags($_REQUEST['ente-telefono']),
-									  strip_tags($_REQUEST['ente-fax']),
-									  strip_tags($_REQUEST['ente-note']))))
+				if (!is_wp_error(ap_memo_ente(intval($_REQUEST['id']),
+										ap_sanifica_testo($_REQUEST['ente-nome']),
+										ap_sanifica_testo($_REQUEST['ente-indirizzo']),
+										ap_sanifica_testo($_REQUEST['ente-url']),
+										ap_sanifica_testo($_REQUEST['ente-email']),
+										ap_sanifica_testo($_REQUEST['ente-pec']),
+										ap_sanifica_testo($_REQUEST['ente-telefono']),
+										ap_sanifica_testo($_REQUEST['ente-fax']),
+									    sanitize_textarea_field($_REQUEST['ente-note']))))
 					$location = add_query_arg( 'message', 3, $location );
 				else
 					$location = add_query_arg( 'message', 5, $location );
@@ -558,7 +579,7 @@ function albo_post() {
 				break;
 			} 			
 			$location = "?page=unitao" ;
-			$res=ap_del_unitao((int)$_GET['id']);
+			$res=ap_del_unitao(intval($_GET['id']));
 			if (!is_array($res))
 				$location = add_query_arg( 'message', 2, $location );
 			else{
@@ -596,7 +617,14 @@ function albo_post() {
 				$location = add_query_arg( 'action', 'add', $location );
 			}
 			else{
-				$ret=ap_insert_unitao(strip_tags($_REQUEST['unitao-nome']),strip_tags($_REQUEST['unitao-indirizzo']),strip_tags($_REQUEST['unitao-url']),strip_tags($_REQUEST['unitao-email']),strip_tags($_REQUEST['unitao-pec']),strip_tags($_REQUEST['unitao-telefono']),strip_tags($_REQUEST['unitao-fax']),strip_tags($_REQUEST['unitao-note']));
+				$ret=ap_insert_unitao(ap_sanifica_testo($_REQUEST['unitao-nome']),
+									  ap_sanifica_testo($_REQUEST['unitao-indirizzo']),
+									  ap_sanifica_testo($_REQUEST['unitao-url']),
+									  ap_sanifica_testo($_REQUEST['unitao-email']),
+									  ap_sanifica_testo($_REQUEST['unitao-pec']),
+									  ap_sanifica_testo($_REQUEST['unitao-telefono']),
+									  ap_sanifica_testo($_REQUEST['unitao-fax']),
+									  ap_sanifica_areatesto($_REQUEST['unitao-note']));
 				if ( !$ret && !is_wp_error( $ret ) )
 					$location = add_query_arg( 'message', 1, $location );
 				else
@@ -614,7 +642,7 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=unitao" ;
-			$location = add_query_arg( 'id', (int)$_GET['id'], $location );
+			$location = add_query_arg( 'id', intval($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
 			wp_redirect( $location );
 			break;
@@ -646,15 +674,15 @@ function albo_post() {
 				$location = add_query_arg( 'id', $_REQUEST['id'], $location );
 			}
 			else
-				if (!is_wp_error(ap_memo_unitao((int)$_REQUEST['id'],
-									  strip_tags($_REQUEST['unitao-nome']),
-									  strip_tags($_REQUEST['unitao-indirizzo']),
-									  strip_tags($_REQUEST['unitao-url']),
-									  strip_tags($_REQUEST['unitao-email']),
-									  strip_tags($_REQUEST['unitao-pec']),
-									  strip_tags($_REQUEST['unitao-telefono']),
-									  strip_tags($_REQUEST['unitao-fax']),
-									  strip_tags($_REQUEST['unitao-note']))))
+				if (!is_wp_error(ap_memo_unitao(intval($_REQUEST['id']),
+								 ap_sanifica_testo($_REQUEST['unitao-nome']),
+								 ap_sanifica_testo($_REQUEST['unitao-indirizzo']),
+								 ap_sanifica_testo($_REQUEST['unitao-url']),
+								 ap_sanifica_testo($_REQUEST['unitao-email']),
+								 ap_sanifica_testo($_REQUEST['unitao-pec']),
+								 ap_sanifica_testo($_REQUEST['unitao-telefono']),
+								 ap_sanifica_testo($_REQUEST['unitao-fax']),
+								 ap_sanifica_areatesto($_REQUEST['unitao-note']))))
 					$location = add_query_arg( 'message', 3, $location );
 				else
 					$location = add_query_arg( 'message', 5, $location );
@@ -675,7 +703,10 @@ function albo_post() {
 			if ($_POST['cat-name']=='')
 				$location = add_query_arg( 'message', 9, $location );
 			else{
-				$ret=ap_insert_categoria($_POST['cat-name'],$_POST['cat-parente'],$_POST['cat-descrizione'],$_POST['cat-durata']);
+				$ret=ap_insert_categoria(ap_sanifica_testo($_POST['cat-name']),
+										 intval($_POST['cat-parente']),
+										 ap_sanifica_areatesto($_POST['cat-descrizione']),
+										 intval($_POST['cat-durata']));
 				if ( !$ret && !is_wp_error( $ret ) )
 					$location = add_query_arg( 'message', 1, $location );
 				else
@@ -693,7 +724,7 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=categorie" ;
-			$res=ap_del_categorie((int)$_GET['id']);
+			$res=ap_del_categorie(intval($_GET['id']));
 			if (!is_array($res))
 				$location = add_query_arg( 'message', 2, $location );
 			else{
@@ -717,7 +748,7 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=categorie" ;
-			$location = add_query_arg( 'id', (int)$_GET['id'], $location );
+			$location = add_query_arg( 'id', intval($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
 			wp_redirect( $location );
 			break;
@@ -731,11 +762,11 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=categorie" ;
-			if (!is_wp_error( ap_memo_categorie((int)$_REQUEST['id'],
-								  $_REQUEST['cat-name'],
-								  $_REQUEST['cat-parente'],
-								  $_REQUEST['cat-descrizione'],
-								  $_REQUEST['cat-durata'])))
+			if (!is_wp_error( ap_memo_categorie(intval($_REQUEST['id']),
+												ap_sanifica_testo($_REQUEST['cat-name']),
+												intval($_REQUEST['cat-parente']),
+												ap_sanifica_areatesto($_REQUEST['cat-descrizione']),
+												intval($_REQUEST['cat-durata']))))
 				$location = add_query_arg( 'message', 3, $location );
 			else
 				$location = add_query_arg( 'message', 5, $location );
@@ -751,11 +782,11 @@ function albo_post() {
 				break;
 			} 		
 			$location = "?page=atti&stato_atti=Nuovi" ;
-			if(ap_del_allegati_atto((int)$_GET['id']))
+			if(ap_del_allegati_atto(intval($_GET['id'])))
 				$location = add_query_arg( 'message2',10, $location );
 			else
 				$location = add_query_arg( 'message2',11, $location );
-			$res=ap_del_atto($_GET['id']);
+			$res=ap_del_atto(intval($_GET['id']));
 			if (!is_array($res))
 				$location = add_query_arg( 'message', 2, $location );
 			else{
@@ -782,27 +813,29 @@ function albo_post() {
 			}
 			$location = "?page=atti&stato_atti=Nuovi" ;
 			$NewIDAtto=ap_insert_atto($_POST['Ente'],
-					            $_POST['Data'],
-			                    $_POST['Riferimento'],
-								$_POST['Oggetto'],
-								$_POST['DataInizio'],
-								$_POST['DataFine'],
-								$_POST['DataOblio'],
-								$_POST['Note'],
-								$_POST['Categoria'],
-								$_POST['Responsabile'],
+								ap_sanifica_testo($_POST['Data']),
+			                    ap_sanifica_testo($_POST['Riferimento']),
+								ap_sanifica_areatesto($_POST['Oggetto']),
+								ap_sanifica_testo($_POST['DataInizio']),
+								ap_sanifica_testo($_POST['DataFine']),
+								ap_sanifica_testo($_POST['DataOblio']),
+								ap_sanifica_areatesto($_POST['Note']),
+								intval($_POST['Categoria']),
+								intval($_POST['Responsabile']),
 								$Soggetti,
-								$_POST['Unitao'],
-								$_POST['Richiedente']);
+								intval($_POST['Unitao']),
+								sanitize_text_field($_POST['Richiedente']));
 			if ( is_numeric( $NewIDAtto ))
 				$location = add_query_arg( 'message', 1, $location );
 			else{
 				$location = add_query_arg( 'message', 4, $location );
 				$location = add_query_arg( 'errore', $ret , $location );		
 			}
-			if(is_array($_REQUEST['newMetaName'])){
+			if(is_numeric( $NewIDAtto ) And is_array($_REQUEST['newMetaName'])){
 				for($i=0;$i<count($_REQUEST['newMetaName']);$i++){
-					ap_add_attimeta($NewIDAtto,$_REQUEST['newMetaName'][$i],$_REQUEST['newValue'][$i]);
+					ap_add_attimeta($NewIDAtto,
+									ap_sanifica_testo($_REQUEST['newMetaName'][$i]),
+									ap_sanifica_testo($_REQUEST['newValue'][$i]));
 				}				
 			}
 			wp_redirect( $location );
@@ -824,26 +857,28 @@ function albo_post() {
 			$location = "?page=atti&stato_atti=Nuovi" ;
 			$ret=ap_memo_atto((int)$_REQUEST['id'],
 							  $_REQUEST['Ente'],
-			                  $_POST['Data'],
-			                  $_POST['Riferimento'],
-							  $_POST['Oggetto'],
-							  $_POST['DataInizio'],
-							  $_POST['DataFine'],
-							  $_POST['DataOblio'],
-							  $_POST['Note'],
-							  $_POST['Categoria'], 
-							  $_POST['Responsabile'],
+							  ap_sanifica_testo($_POST['Data']),
+							  ap_sanifica_testo($_POST['Riferimento']),
+							  ap_sanifica_areatesto($_POST['Oggetto']),
+							  ap_sanifica_testo($_POST['DataInizio']),
+							  ap_sanifica_testo($_POST['DataFine']),
+							  ap_sanifica_testo($_POST['DataOblio']),
+							  ap_sanifica_areatesto($_POST['Note']),
+							  intval($_POST['Categoria']),
+							  intval($_POST['Responsabile']),
 							  $Soggetti,
-							  $_POST['Unitao'],
-							  $_POST['Richiedente']);
-			if ( !$ret && !is_wp_error( $ret ) )
+							  intval($_POST['Unitao']),
+							  sanitize_text_field($_POST['Richiedente']));
+							  if ( !$ret && !is_wp_error( $ret ) )
 				$location = add_query_arg( 'message', 3, $location );
 			else
 				$location = add_query_arg( 'message', 5, $location );
-			ap_remove_metasatto((int)$_REQUEST['id'],(is_array($_REQUEST['newMetaName'])?$_REQUEST['newMetaName']:""));
+			ap_remove_metasatto(intval( $_REQUEST['id']),(is_array($_REQUEST['newMetaName'])?$_REQUEST['newMetaName']:""));
 			if(is_array($_REQUEST['newMetaName'])){
 				for($i=0;$i<count($_REQUEST['newMetaName']);$i++){
-					ap_add_attimeta((int)$_REQUEST['id'],$_REQUEST['newMetaName'][$i],$_REQUEST['newValue'][$i]);
+					ap_add_attimeta(intval($_REQUEST['id']),
+									ap_sanifica_testo($_REQUEST['newMetaName'][$i]),
+									ap_sanifica_testo($_REQUEST['newValue'][$i]));
 				}				
 			}
 			wp_redirect( $location );
@@ -861,14 +896,16 @@ function albo_post() {
 			$location = add_query_arg( 'message',12, $location );
 			if(is_array($_REQUEST['newMetaName']) And count($_REQUEST['newMetaName'])>0){
 				for($i=0;$i<count($_REQUEST['newMetaName']);$i++){
-					ap_add_attimeta((int)$_REQUEST['id'],$_REQUEST['newMetaName'][$i],$_REQUEST['newValue'][$i]);
+					ap_add_attimeta(intval($_REQUEST['id']),
+									ap_sanifica_testo($_REQUEST['newMetaName'][$i]),
+									ap_sanifica_testo($_REQUEST['newValue'][$i]));
 				}				
 			}
-			ap_remove_metasatto((int)$_REQUEST['id'],$_REQUEST['newMetaName']);
+			ap_remove_metasatto(intval($_REQUEST['id']),$_REQUEST['newMetaName']);
 			wp_redirect( $location );
 			break;
 		case "memo-allegato-atto-associato":
-			$location='?page=atti&action=allegati-atto&id='.(int)$_REQUEST['id'].'&allegatoatto='.wp_create_nonce('gestallegatiatto');
+			$location='?page=atti&action=allegati-atto&id='.intval($_REQUEST['id']).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 
 			if (!isset($_REQUEST['secure'])) {
 				Go_Atti();
@@ -887,20 +924,20 @@ function albo_post() {
 						array ( 'action' => $_REQUEST['ref'], 
 								'messaggio' => $messaggio,
 								'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
-								'id' => (int)$_REQUEST['id']) , 
+								'id' => intval($_REQUEST['id'])) , 
 						$location );
 				else
 					$location = add_query_arg(
 						array ( 'action' => 'allegati-atto', 
 				                'messaggio' => $messaggio,
 								'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
-								'id' => (int)$_REQUEST['id']) , 
+								'id' => intval($_REQUEST['id'])) , 
 						$location );
 			}
 			wp_redirect( $location );
 			break;
 		case "memo-allegato-atto":
-			$location='?page=atti&action=allegati-atto&id='.(int)$_REQUEST['id'].'&allegatoatto='.wp_create_nonce('gestallegatiatto');
+			$location='?page=atti&action=allegati-atto&id='.intval($_REQUEST['id']).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 			if (!isset($_REQUEST['uploallegato'])) {
 				Go_Atti();
 				break;	
@@ -918,20 +955,20 @@ function albo_post() {
 						array ( 'action' => $_REQUEST['ref'], 
 								'messaggio' => $messaggio,
 								'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
-								'id' => (int)$_REQUEST['id']) , 
+								'id' => intval($_REQUEST['id'])) , 
 						$location );
 				else
 					$location = add_query_arg(
 						array ( 'action' => 'allegati-atto', 
 				                'messaggio' => $messaggio,
 								'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
-								'id' => (int)$_REQUEST['id']) , 
+								'id' => intval($_REQUEST['id'])) , 
 						$location );
 			}
 			wp_redirect( $location );	
 			break;	
 		case "memo-allegati-atto":
-			$location='?page=atti&action=allegati-atto&id='.(int)$_REQUEST['id'].'&allegatoatto='.wp_create_nonce('gestallegatiatto');
+			$location='?page=atti&action=allegati-atto&id='.intval($_REQUEST['id']).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 			if (!isset($_REQUEST['uploallegato'])) {
 				Go_Atti();
 				break;	
@@ -948,12 +985,12 @@ function albo_post() {
 					$location = add_query_arg(array ( 'action' => $_REQUEST['ref'], 
 												  'messaggio' => $messaggio,
 												  'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
-												  'id' => (int)$_REQUEST['id']) , $location );
+												  'id' => intval($_REQUEST['id'])) , $location );
 				else
 					$location = add_query_arg(array ( 'action' => 'allegati-atto', 
 				                                  'messaggio' => $messaggio,
 												  'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
-												  'id' => (int)$_REQUEST['id']) , $location );
+												  'id' => intval($_REQUEST['id'])) , $location );
 			}
 			wp_redirect( $location );	
 			break;	
@@ -966,12 +1003,16 @@ function albo_post() {
 				Go_Atti();
 				break;
 			}		
-			$location='?page=atti&action=allegati-atto&id='.(int)$_REQUEST['id'].'&allegatoatto='.wp_create_nonce('gestallegatiatto');
+			$location='?page=atti&action=allegati-atto&id='.intval($_REQUEST['id']).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 			if ($_REQUEST['submit']=="Annulla"){
 				wp_redirect( $location );
 			}else{
 //				var_dump($_REQUEST);wp_die();
-				$ret=ap_memo_allegato($_REQUEST['idAlle'],$_REQUEST['titolo'],(int)$_REQUEST['id'],(int)$_REQUEST['Integrale'], $_REQUEST['Natura']);
+				$ret=ap_memo_allegato(intval($_REQUEST['idAlle']),
+									   ap_sanifica_testo($_REQUEST['titolo']),
+									   intval($_REQUEST['id']),
+									   intval($_REQUEST['Integrale']), 
+									   ap_sanifica_testo($_REQUEST['Natura']));
 				if ( is_object($ret)){
 					$location = add_query_arg( 'messaggio', str_replace(' ',"%20",$ret->get_error_message()), $location );	
 				}
@@ -994,7 +1035,11 @@ function Memo_allegato_atto_collegato(){
 		} 		
 		$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/';
 		$targetfile = $_REQUEST['AllegatiSpuri'];
-		$Impronta=ap_insert_allegato($_POST['Descrizione'],str_replace("//","/",str_replace("\\","/",$targetfile)),$_POST['id'], $_REQUEST['Integrale'],$_REQUEST['Natura']);
+		$Impronta=ap_insert_allegato(sanitize_textarea_field($_POST['Descrizione']),
+									 str_replace("//","/",str_replace("\\","/",$targetfile)),
+									 intval($_POST['id']), 
+									 intval($_REQUEST['Integrale']),
+									 ap_sanifica_testo($_REQUEST['Natura']));
 	}
 	return __("File associato","albo-online")."%25%25br%25%25Nome: " . basename( $targetfile)." %25%25br%25%25".__("Percorso completo","albo-online")." : ".str_replace("//","/",str_replace("\\","/",$targetfile))." %25%25br%25%25".__("Impronta","albo-online")." : ".$Impronta."%25%25br%25%25".__("Documento Integrale","albo-online").": " .(isset($_REQUEST['Integrale'])?"Si":"No")."%25%25br%25%25".__("Natura documento","albo-online").": " .($_REQUEST['Natura']=="D"?"Documento firmato":"Allegato");
 }
@@ -1042,7 +1087,10 @@ function Memo_allegato_atto(){
 			    				$messages= __("File caricato","albo-online")."%25%25br%25%25".__("Nome","albo-online").": " . basename( $target_path)." %25%25br%25%25".__("Percorso completo","albo-online")." : ".str_replace("\\","/",$target_path);
 			    				$Natura=(isset($_POST['Natura'][$i])?"D":"A");
 			    				$Integrale=(isset($_POST['Integrale'][$i])?1:0);
-			    				$Impronta=ap_insert_allegato($_POST['Descrizione'][$i],str_replace("\\","/",$target_path),$_POST['id'],$Integrale,$Natura);
+			    				$Impronta=ap_insert_allegato(ap_sanifica_testo($_POST['Descrizione'][$i]),
+															str_replace("\\","/",$target_path),$_POST['id'],
+															intval($Integrale),
+															ap_sanifica_testo($Natura));
 			    				$messages.= "%25%25br%25%25".__("Impronta","albo-online").": " .$Impronta;
 			    				$messages.= "%25%25br%25%25".__("Documento Integrale","albo-online").": " .(isset($_POST['Integrale'][$i])?"Si":"No");
 			    				$messages.= "%25%25br%25%25".__("Natura documento","albo-online").": " .(isset($_POST['Natura'][$i])?"Documento firmato":"Allegato");

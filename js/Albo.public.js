@@ -57,14 +57,14 @@ jQuery(document).ready(function($){
 	$('#pp-tabs-container').tabs();
 	$('#fe-tabs-container').tabs();
 	$('#maxminfiltro').on('click',function(){
-		if($('#maxminfiltro').attr('class')==='s'){
+		if($('#maxminfiltro').attr('class')==='albos'){
 			$('#fe-tabs-container').hide();
-			$('#maxminfiltro').attr('class','h');
+			$('#maxminfiltro').attr('class','alboh');
 			$('#maxminfiltro').html('<span class=\"dashicons dashicons-filter\"></span> Apri Ricerca atti mediante filtri');
 			
 		}else{
 			$('#fe-tabs-container').show();
-			$('#maxminfiltro').attr('class','s');
+			$('#maxminfiltro').attr('class','albos');
 			$('#maxminfiltro').html('<span class=\"dashicons dashicons-filter\"></span> Chiudi Ricerca atti mediante filtri');
 		}
 	});

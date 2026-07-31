@@ -2,7 +2,7 @@
 /**
  * Gestione Soggetti Procedimento.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since     4.8
  *
  * @package    Albo On Line
  */
@@ -38,23 +38,23 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-responsabile"){
 		if (!wp_verify_nonce($_REQUEST['cancresp'],'deleteresponsabile')){
 			$NC=$messages[80];
 		}else{
-			if(isset($SoggettiAtti[(int)$_REQUEST['id']]) And $SoggettiAtti[(int)$_REQUEST['id']]>0){
+			if(isset($SoggettiAtti[intval($_REQUEST['id'])]) And $SoggettiAtti[intval($_REQUEST['id'])]>0){
 				$NC=__('Impossibile cancellare Soggetti che sono collegati ad Atti','albo-online');
 			}else{
-				$NC=ap_del_responsabile((int)$_REQUEST['id']);
+				$NC=ap_del_responsabile(intval($_REQUEST['id']));
 			}
 		}
 	}	
 } 
-if ( (isset($_REQUEST['message']) && ( $msg = (int) $_REQUEST['message'])) or $NC!="") {
+if ( (isset($_REQUEST['message']) && ( $msg = intval($_REQUEST['message']))) or $NC!="") {
 	echo '<div id="message" class="updated"><p>'.(isset($msg)?$messages[$msg]:""). $NC;
 	if (isset($_REQUEST['errore'])) 
-		echo '<br />'.htmlentities($_REQUEST['errore']);
+		echo '<br />'.sanitize_text_field($_REQUEST['errore']);
 	echo '</p></div>';
 	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
 }
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
-	$risultato=ap_get_responsabile((int)$_REQUEST['id']);
+	$risultato=ap_get_responsabile(intval($_REQUEST['id']));
 	$edit=True;
 }else{
 	$edit=False;
@@ -150,44 +150,46 @@ echo '    </tbody>
 <div class="form-wrap">
 <form id="addtag" method="post" action="?page=soggetti" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >
 	<input type="hidden" name="action" value="<?php if($edit ||(isset($_REQUEST['action']) And  $_REQUEST['action']=="edit_err")) echo "memo-responsabile"; else echo "add-responsabile"; ?>"/>
-	<input type="hidden" name="id" value="<?php echo (int)isset($_REQUEST['id'])?$_REQUEST['id']:0; ?>" />
+	<input type="hidden" name="id" value="<?php echo isset($_REQUEST['id'])?intval($_REQUEST['id']):0; ?>" />
 	<input type="hidden" name="responsabili" value="<?php echo wp_create_nonce('elabresponsabili')?>" />
 
 <div class="form-field form-required">
 	<label for="resp-cognome"><?php _e("Cognome","albo-online");?><span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-cognome" id="<?php _e("Cognome","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($risultato[0]->Cognome); else echo htmlentities((isset($_GET['resp-cognome'])?$_GET['resp-cognome']:"")); ?>" size="20" class="richiesto" />
+	<input name="resp-cognome" id="<?php _e("Cognome","albo-online");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Cognome)?ap_sanifica_testo($risultato[0]->Cognome):__("Non Definito","albo-online"); else echo ap_sanifica_testo((isset($_GET['resp-cognome'])?$_GET['resp-cognome']:"")); ?>" size="20" required />
 </div>
 <div class="form-field form-required">
 	<label for="resp-nome"><?php _e("Nome","albo-online");?> <span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-nome" id="<?php _e("Nome","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($risultato[0]->Nome); else echo htmlentities((isset($_GET['resp-nome'])?$_GET['resp-nome']:"")); ?>" size="20" class="richiesto" />
+	<input name="resp-nome" id="<?php _e("Nome","albo-online");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Nome)?ap_sanifica_testo($risultato[0]->Nome):__("Non Definito","albo-online"); else echo ap_sanifica_testo((isset($_GET['resp-nome'])?$_GET['resp-nome']:"")); ?>" size="20" required />
 </div>
 <div class="form-field form-required">
 	<label for="resp-funzione"><?php _e("Funzione","albo-online");?></label>
-	<?php echo ap_get_Funzioni_Responsabili($Output="Select",$ID="resp-funzione",$Name="resp-funzione",$Selezionato=($edit)?$risultato[0]->Funzione:"");?>
+	<?php echo ap_get_Funzioni_Responsabili($Output="Select",$ID="resp-funzione",$Name="resp-funzione",$Selezionato=($edit)?(isset($risultato[0]->Funzione)?$risultato[0]->Funzione:""):"");?>
 <div class="form-field form-required">
 	<label for="resp-email"><?php _e("Email","albo-online");?> <span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-email" id="<?php _e("Email","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($risultato[0]->Email); else echo htmlentities((isset($_GET['resp-email'])?$_GET['resp-email']:""));?>" size="100" class="richiesto" />
+	<input name="resp-email" id="<?php _e("Email","albo-online");?>" type="email" value="<?php if($edit) echo isset($risultato[0]->Email)?ap_sanifica_testo($risultato[0]->Email):__("Non Definito","albo-online"); else echo sanitize_text_field((isset($_GET['resp-email'])?$_GET['resp-email']:""));?>" size="100" required />
 </div>
 <div class="form-field form-required">
 	<label for="resp-telefono"><?php _e("Telefono","albo-online");?></label>
-	<input name="resp-telefono" id="resp-telefono" type="text" value="<?php if($edit) echo stripslashes($risultato[0]->Telefono); else echo htmlentities((isset($_GET['resp-telefono'])?$_GET['resp-telefono']:"")); ?>" size="30" aria-required="true" />
+	<input name="resp-telefono" id="resp-telefono" type="text" value="<?php if($edit) echo isset($risultato[0]->Telefono)?ap_sanifica_testo($risultato[0]->Telefono):__("Non Definito","albo-online"); else echo ap_sanifica_testo((isset($_GET['resp-telefono'])?$_GET['resp-telefono']:"")); ?>" size="30" aria-required="true" />
 </div>
 <div class="form-field form-required">
 	<label for="resp-orario"><?php _e("Orario ricevimento","albo-online");?></label>
-	<input name="resp-orario" id="resp-orario" type="text" value="<?php if($edit) echo stripslashes($risultato[0]->Orario);  else echo htmlentities((isset($_GET['resp-orario'])?$_GET['resp-orario']:""));?>" size="60" aria-required="true" />
+	<input name="resp-orario" id="resp-orario" type="text" value="<?php if($edit) echo isset($risultato[0]->Orario)?ap_sanifica_testo($risultato[0]->Orario):__("Non Definito","albo-online");  else echo ap_sanifica_testo((isset($_GET['resp-orario'])?$_GET['resp-orario']:""));?>" size="60" aria-required="true" />
 </div>
 <div class="form-field">
 	<label for="resp-description"><?php _e("Note","albo-online");?></label>
-	<textarea name="resp-note" id="resp-note" rows="5" cols="40"><?php if($edit) echo stripslashes($risultato[0]->Note); else echo htmlentities((isset($_GET['resp-note'])?$_GET['resp-note']:"")); ?></textarea>
+	<textarea name="resp-note" id="resp-note" rows="5" cols="40"><?php if($edit) echo isset($risultato[0]->Note)?ap_sanifica_areatesto($risultato[0]->Note):__("Non Definito","albo-online"); else echo ap_sanifica_areatesto((isset($_GET['resp-note'])?$_GET['resp-note']:"")); ?></textarea>
 	<p><?php _e("inserire eventuali informazioni aggiuntive","albo-online");?></p>
 </div>
 
 <?php
 if($edit) {
-	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Soggetto","albo-online").' '.$risultato[0]->Cognome.'" rel="'.stripslashes($risultato[0]->Cognome).'" />';
+	if(isset($risultato[0]->Cognome)){
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Soggetto","albo-online").' '.(isset($risultato[0]->Cognome)?ap_sanifica_testo($risultato[0]->Cognome):"").'" rel="'.(isset($risultato[0]->Cognome)?ap_sanifica_testo($risultato[0]->Cognome):"").'" />';
+	}
 }else{
  	if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit_err")
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Dati Soggetto","albo-online").' '.htmlentities($_GET['resp-cognome']).'" rel="'.htmlentities($_GET['resp-cognome']).'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Dati Soggetto","albo-online").' '.(isset($_GET['resp-cognome'])?ap_sanifica_testo($_GET['resp-cognome']):"").'" rel="'.(isset($_GET['resp-cognome'])?ap_sanifica_testo($_GET['resp-cognome']):"").'" />';
 	else
 		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Aggiungi nuovo Soggetto","albo-online").'"  />';	
 }

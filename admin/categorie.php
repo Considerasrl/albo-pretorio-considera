@@ -2,7 +2,7 @@
 /**
  * Gestione Categorie.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since      4.8
  *
  * @package    Albo On Line
  */
@@ -30,12 +30,12 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 		<a href="?page=categorie" class="add-new-h2"><?php _e("Aggiungi nuovo","albo-online");?></a></h2>
 	</div>
 <?php 
-if ( isset($_REQUEST['message']) && ( $msg = (int) $_REQUEST['message'] ) ) {
+if ( isset($_REQUEST['message']) && ( $msg = intval($_REQUEST['message'] )) ) {
 	echo '<div id="message" class="updated"><p>'.$messages[$msg].'</p></div>';
 	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
 }
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
-	$risultato=ap_get_categoria($_REQUEST['id']);
+	$risultato=ap_get_categoria(intval($_REQUEST['id']));
 //	print_r($risultato);
 	$edit=True;
 }else{
@@ -61,10 +61,10 @@ echo '<tr>
 			<ul>';
 if ($lista){
 	foreach($lista as $riga){
-	 $shift=(((int)$riga[2])*30)+5;
+	 $shift=((intval($riga[2]))*30)+5;
 	 echo'<li style="text-align:left;padding-left:'.$shift.'px;">';
 	 $Tab=0;
-	 $Testo_da=__("Confermi la cancellazione della Categoria","albo-online")." ".stripslashes($riga[1]). "?\n\n".__("Sei sicuro di voler proseguire con la CANCELLAZIONE?","albo-online");
+	 $Testo_da=__("Confermi la cancellazione della Categoria","albo-online")." ".ap_sanifica_testo($riga[1]). "?\n\n".__("Sei sicuro di voler proseguire con la CANCELLAZIONE?","albo-online");
  	 if (ap_num_atti_categoria($riga[0])==0)
 		echo'<span class="cancella">
 			<a href="?page=categorie&amp;action=delete-categorie&amp;id='.$riga[0].'&amp;canccategoria='.wp_create_nonce('delcategoria').'" rel="'.$Testo_da.'" class="confdel">			
@@ -117,7 +117,7 @@ foreach ($righe as $riga) {
 	echo '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
 			<td >'.$riga->Data.'</th>
 			<td >'.$Operazione.'</th>
-			<td >'.stripslashes($riga->Operazione).'</td>
+			<td >'.ap_sanifica_testo($riga->Operazione).'</td>
 		</tr>';
 }
 echo '    </tbody>
@@ -133,19 +133,19 @@ echo '    </tbody>
 <div class="form-wrap">
 	<form id="addtag" method="post" action="?page=categorie" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >
 		<input type="hidden" name="action" value="<?php if($edit) echo "memo-categoria"; else echo "add-categorie"; ?>"/>
-		<input type="hidden" name="id" value="<?php echo (int)(isset($_REQUEST['id'])?$_REQUEST['id']:0); ?>" />
+		<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?intval($_REQUEST['id']):0); ?>" />
 		<input type="hidden" name="categoria" value="<?php echo wp_create_nonce('categoria')?>" />
 
 		<div class="form-field form-required">
 			<label for="tag-name"><?php _e("Nome","albo-online");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="cat-name" id="<?php _e("Nome","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($risultato[0]->Nome); ?>" size="40" class="richiesto"/>
+			<input name="cat-name" id="<?php _e("Nome","albo-online");?>" type="text" value="<?php if($edit) echo ap_sanifica_testo($risultato[0]->Nome); ?>" size="40" request/>
 			<p><?php _e("Nome della categoria.","albo-online");?></p>
 		</div>
 		<div class="form-field">
 			<label for="parent"><?php _e("Parente di","albo-online");?>:</label>
 			<?php 
 			if($edit){
-				echo ap_get_dropdown_categorie('cat-parente','cat-parente','','',$risultato[0]->Genitore);
+				echo ap_get_dropdown_categorie('cat-parente','cat-parente','','',ap_sanifica_testo($risultato[0]->Genitore));
 			}else{
 				echo ap_get_dropdown_categorie('cat-parente','cat-parente','postform','',0); 
 			}
@@ -154,18 +154,18 @@ echo '    </tbody>
 		</div>
 		<div class="form-field">
 			<label for="tag-description"><?php _e("Descrizione","albo-online");?></label>
-			<textarea name="cat-descrizione" id="cat-descrizione" rows="5" cols="40"><?php if($edit) echo stripslashes($risultato[0]->Descrizione); ?></textarea>
+			<textarea name="cat-descrizione" id="cat-descrizione" rows="5" cols="40"><?php if($edit) echo ap_sanifica_areatesto($risultato[0]->Descrizione); ?></textarea>
 			<p><?php _e("Breve descrizione della categoria","albo-online");?></p>
 		</div>
 		<div class="form-field  form-required">
 			<label for="tag-durata"><?php _e("Durata","albo-online");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="cat-durata" id="<?php _e("Durata","albo-online");?>" type="text" value="<?php if($edit) echo $risultato[0]->Giorni; else echo "0"; ?>" size="4" alt="Durata Atto" class="richiesto ValValue(>0)"/>
+			<input name="cat-durata" id="<?php _e("Durata","albo-online");?>" type="number" minval=0 value="<?php if($edit) echo intval($risultato[0]->Giorni); else echo "0"; ?>" size="4" style="width:6em;" alt="<?php _e("Durata Atto","albo-online");?>" required />
 			<p><?php _e("Durata di default, espressa in giorni, di validità degli atti di questa categoria","albo-online");?></p>
 		</div>
 
 <?php
 if($edit) {
-	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Categoria","albo-online").' '.$risultato[0]->Nome.'" rel="'.stripslashes($risultato[0]->Nome).'" />';
+	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Categoria","albo-online").' '.ap_sanifica_testo($risultato[0]->Nome).'" rel="'.ap_sanifica_testo($risultato[0]->Nome).'" />';
 }else{
 	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Aggiungi nuova Categoria","albo-online").'"  />';	
 }

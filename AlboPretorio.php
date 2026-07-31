@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio On line
  * Plugin URI:        https://it.wordpress.org/plugins/albo-pretorio-on-line/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente.
- * Version:           4.5.7
+ * Version:           4.8
  * Author:            Ignazio Scimone
  * Author URI:        eduva.org
  * License:           GPL-2.0+
@@ -50,6 +50,7 @@ if (!class_exists('AlboPretorio')) {
 	var $version;
 	var $minium_WP   = '3.1';
 	var $options     = '';
+	var $plugin_name = '';
 
 	function __construct() {
 		load_plugin_textdomain( 'albo-online', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
@@ -85,6 +86,7 @@ if (!class_exists('AlboPretorio')) {
 		add_action( 'wp_ajax_dismiss_alboonline_notice','ap_dismiss_alboonline_notice' );
 		add_action( 'wp_ajax_rimuoviAllegato','ap_rimuoviallegatoPP' );
 
+		add_filter( 'post_link',array($this,'permalinkSearchAlbo'), 10, 3);
 		$RestApi=get_option('opt_AP_RestApi');
 	  	if($RestApi=="Si"){
 			add_action( 'rest_api_init', array($this, 'Reg_rest_api_route'));
@@ -99,6 +101,14 @@ if (!class_exists('AlboPretorio')) {
   			add_action( 'admin_notices', array($this, 'admin_notice' ));
 		}
 	}
+function permalinkSearchAlbo($permalink, $post, $leavename){
+//	var_dump($post);
+	if($post->post_type=="attiAlboOnLine"){
+		$permalink=$post->guid;
+	}
+//	var_dump($permalink);
+	return $permalink;
+}
 	
 function admin_notice(){
 ?>
@@ -478,7 +488,6 @@ function admin_notice(){
 		if(isset($_REQUEST['action'])){
 			switch ($_REQUEST['action']){
 			case "dwnalle":
-//			var_dump($_SERVER);wp_die();
 				if(!isset($_SERVER["HTTP_REFERER"])){
 					wp_die(__('Oooooo!<br />
 					        Stai tentando di fare il furbo!<br />
@@ -487,10 +496,8 @@ function admin_notice(){
 				}
 				$file_path	= ap_get_allegato_atto($_REQUEST['id']);
 				$file_path	=$file_path[0]->Allegato;
-//				echo "<pre>".$file_path."</pre>";
 				global $is_IE;
 				$chunksize	= 2*(1024*1024);
-//				wp_die($file_path);
 				$stat 		= @stat($file_path);
 				$etag		= sprintf('%x-%x-%x', $stat['ino'], $stat['size'], $stat['mtime'] * 1000000);
 				$path 		= pathinfo($file_path);
@@ -571,14 +578,14 @@ function admin_notice(){
 		wp_enqueue_script( 'jquery-ui-datepicker', '', array('jquery'));
 		wp_enqueue_script( 'wp-color-picker', '', array('jquery'));
 		wp_enqueue_script( 'my-public-admin', $path.'/js/Albo.admin.public.js');
-	    if(strpos($hook_suffix,$TitoloAlbo)===false)
+		if (strpos($hook_suffix,$TitoloAlbo)===false)
 			return;
+		wp_register_style('AdminAlbo', $path.'/css/styleAdmin.css');
+		wp_enqueue_style( 'AdminAlbo');
 	    wp_enqueue_script( 'my-admin-fields', $path.'/js/Fields.js');
 	    wp_enqueue_script( 'my-admin', $path.'/js/Albo.admin.js');
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_style( 'jquery.ui.theme', $path.'/css/jquery-ui-custom.css');	
-		wp_register_style('AdminAlbo', $path.'/css/styleAdmin.css');
-        wp_enqueue_style( 'AdminAlbo');
 		if(strpos($hook_suffix,"_page_tipifiles")!==false or strpos($hook_suffix,"page_configAlboP")!==false){
 			wp_enqueue_media();
 			wp_register_script('uploader_tipi_files', $path.'/js/Uploader.js', array('jquery'));
@@ -768,7 +775,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 			$HtmlTesto.= '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
 						<td >'.ap_VisualizzaData($riga->Data)." ".ap_VisualizzaOra($riga->Data).'</td>
 						<td >'.$Operazione.'</td>
-						<td >'.stripslashes($riga->Operazione).'</td>
+						<td >'.stripslashes(ap_removeCaratteriSpeciali($riga->Operazione)).'</td>
 					</tr>';
 		}
 		$HtmlTesto.= '    </tbody>
@@ -788,7 +795,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 		$parametri_page=add_submenu_page( 'Albo_Pretorio', 'Generale', __('Parametri','albo-online'), 'admin_albo', 'configAlboP', array( 'AlboPretorio','show_menu'));
 		$permessi=add_submenu_page( 'Albo_Pretorio', 'Permessi', __('Permessi','albo-online'), 'admin_albo', 'permessiAlboP', array('AlboPretorio', 'show_menu'));
 		$utility=add_submenu_page( 'Albo_Pretorio', 'Utility', __('Utility','albo-online'), 'admin_albo', 'utilityAlboP', array('AlboPretorio', 'show_menu'));
-		$utility=add_submenu_page( 'Albo_Pretorio', 'LogAggiornamenti', __('Log Aggiornamenti','albo-online'), 'admin_albo', 'logagg', array('AlboPretorio', 'show_menu'));				
+		$LogAgg=add_submenu_page( 'Albo_Pretorio', 'LogAggiornamenti', __('Log Aggiornamenti','albo-online'), 'admin_albo', 'logagg', array('AlboPretorio', 'show_menu'));				
 		add_action( 'admin_head-'. $atti_page, array( 'AlboPretorio','ap_head' ));
 		add_action( "load-$atti_page", array('AlboPretorio', 'screen_option'));
 
@@ -896,9 +903,9 @@ static function add_albo_plugin_visatto($plugin_array) {
 	function head_Front_End() {
 		global $wp_query;
 		$postObj=$wp_query->get_queried_object();
-		if(is_object($postObj) And 
-		  ($postObj->post_type=="avcp" Or 
-		   strpos($postObj->post_content,"[Albo")!== FALSE)){
+		if(is_object($postObj) And  
+		  ((isset($postObj->post_type) And $postObj->post_type=="avcp") Or 
+		   (isset($postObj->post_content) And strpos($postObj->post_content,"[Albo")!== FALSE))){
 			echo "
 	<!--HEAD Albo Preotrio On line -->
 	";
@@ -938,7 +945,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 		wp_enqueue_script( 'jquery-ui-datepicker', '', array('jquery'));
 		if(get_option('opt_AP_BootstrapItalia')!="Si")
 			wp_enqueue_script( 'Albo-Public', plugins_url('js/Albo.public.js', __FILE__ ));
-//		var_dump($OldInterfaccia);var_dump($UploadCSSNI);
+//		var_dump($OldInterfaccia);var_dump($UploadCSSNI);var_dump(get_option('opt_AP_BootstrapItalia'));
     if($OldInterfaccia!="Si"  AND $UploadCSSNI!="Si"){
 		wp_register_style('AlboPretorioWTS', plugins_url( 'css/build/build.css', __FILE__ ) );
         wp_enqueue_style( 'AlboPretorioWTS');
@@ -1072,8 +1079,8 @@ static function add_albo_plugin_visatto($plugin_array) {
 		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
-		echo ' <div class="welcome-panel" class="welcome-panel" >
-	         	<div class="welcome-panel-content" style="display:inline;float:left;width:35%;">
+		echo ' <div class="my-welcome-panel">
+	         	<div class="my-welcome-panel-content" style="display:inline;float:left;width:35%;">
 					<p style="float:left;">
 						<img src="'.Albo_URL.'/img/LogoAlbo.png" alt="'.__('Logo Albo on line pubblicità legale','albo-online').'" style="width:100%;" />
 					<br />'.__('Versione','albo-online').' <strong>'.$this->version.'</strong></p>
@@ -1083,7 +1090,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 		 				<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FAlbo-Pretorio%2F1487571581520684%3Fref%3Dhl&amp;width&amp;height=230&amp;colorscheme=light&amp;show_faces=true&amp;header=true&amp;stream=false&amp;show_border=true" scrolling="no" frameborder="0" style="border:none; overflow:hidden;height:230px; width: 300px; margin-top:20px;margin-left: 50px;" allowTransparency="true"></iframe>
 					</p>	
 				</div>
-				<div class="welcome-panel-content"  style="display:inline;float:right;width:60%;">
+				<div class="my-welcome-panel-content"  style="display:inline;float:right;width:60%;">
 					<div class="widefat" style="display:inline;">
 						<table style="margin-bottom:20px;border: 1px solid #e5e5e5;">
 							<caption style="font-size:1.2em;font-weight:bold;">'.__('Sommario','albo-online').'</caption>
@@ -1190,24 +1197,24 @@ static function add_albo_plugin_visatto($plugin_array) {
 		</table>
 		<p><em>'.__('per maggiori dettagli eseguire la verifica della procedura presente nel menu Utility','albo-online').'</em></p>
 	</div>';
-if (ap_get_num_categorie()==0){
-	echo'<div class="welcome-panel" >
+if (ap_get_num_categorie()==0) {
+	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
 					'.__('Non risultano categorie codificate, se vuoi posso impostare le categorie di default','albo-online').' &ensp;&ensp;<a href="?page=utilityAlboP&amp;action=creacategorie">'.__('Crea Categorie di Default','albo-online').'</a></p>
 				</div>
 			</div>';
 }
-if (ap_num_responsabili()==0){
-	echo'<div class="welcome-panel" >
+if (ap_num_responsabili()==0) {
+	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
 					'.sprintf(__('Non risultano %sResponsabili%s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti','albo-online'),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'.__('Crea Soggetti','albo-online').'</a></p>
 				</div>
 			</div>';
 }
-if (ap_num_unitao()==0){
-	echo'<div class="welcome-panel" >
+if (ap_num_unitao()==0) {
+	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
 				'. sprintf(__("Non risulta nessuna %sUnità Organizzativa%s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-online"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-online").'</a>
@@ -1268,6 +1275,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	  $Testi				= json_decode(get_option('opt_AP_Testi'),TRUE);
 	  $IconaDocumenti		= get_option('opt_AP_IconaDocumenti');
 	  $RestApi				= get_option('opt_AP_RestApi');
+	  $StatoAllegati		= get_option('opt_AP_Allegati');
 	  if($RestApi=="Si"){
 	  	$ChkRestApi=" checked='checked' ";
 	  }else{
@@ -1372,6 +1380,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			<li><a href="#Conf-tab-5">'.__('Testi','albo-online').'</a></li>
 			<li><a href="#Conf-tab-6">'.__('Soggetti predefiniti','albo-online').'</a></li>
 			<li><a href="#Conf-tab-7">'.__('Rest Api','albo-online').'</a></li>
+			<li><a href="#Conf-tab-8">'.__('Allegati','albo-online').'</a></li>
 		</ul>	 
 		<div id="Conf-tab-1">
 		  <table class="albo_cell">
@@ -1687,7 +1696,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	   	<div id="Conf-tab-5">
 			  <table class="albo_cell">
 				<tr>
-					<th scope="row"><label>'.__('No Responsabile','albo-online').'</label></th>
+					<th scope="row"><label>'.__('Nome Responsabile','albo-online').'</label></th>
 					<td>
 						<input type="text" id="NoResp" name="NoResp" maxlength="255" value="'.$Testi["NoResp"].'" style="width:100%;"/>
 					</td>
@@ -1859,7 +1868,36 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</tr>
 		  </table>		
 		</div>
+	<div id="Conf-tab-8">
+		<p>'.__('Impostazione dello stato dei link degli Allegati nel Back-End','albo-online').'</p>
+		<table class="albo_cell">
+		  <tr>
+			  <th scope="row">
+				  <label for="all">'.__('Link visualizza e scarica Allegati','albo-online').'</label>
+			  </th>
+			  <td>
+				  <input type="radio" name="allegati" id="all" value="all" '.($StatoAllegati=="all"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto il link per la Visualizzazione ed il link di Scaricamento degli Allegati",'albo-online').'
+			  </td>
+		  </tr>
+		  <tr>
+			  <th scope="row">
+				  <label for="vis">'.__('SOLO Link visualizza Allegati','albo-online').'</label>
+			  </th>
+			  <td>
+				  <input type="radio" name="allegati" id="vis" value="vis" '.($StatoAllegati=="vis"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per la Visualizzazione degli Allegati",'albo-online').'
+			  </td>
+		  </tr>
+		  <tr>
+			  <th scope="row">
+				  <label for="dwn">'.__('SOLO Link scarica Allegati','albo-online').'</label>
+			  </th>
+			  <td>
+				  <input type="radio" name="allegati" id="dwn" value="dwn" '.($StatoAllegati=="dwn"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per il Download degli Allegati",'albo-online').'
+			  </td>
+		  </tr>
+		</table>
 	</div>
+  </div>
 	    <p class="submit">
 	        <input type="submit" name="AlboPretorio_submit_button" value="'.__('Salva Modifiche','albo-online').'" />
 	    </p> 
@@ -1991,19 +2029,6 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 * 
 */
 //Impostazione Opzioni Plugin
-	$sprite="";
-	$it = new RecursiveDirectoryIterator(get_template_directory());
-	foreach (new RecursiveIteratorIterator($it) as $file) {
-		if (basename($file)=="sprite.svg")
-			$sprite= $file;
-	}
-	if ($sprite!="") {
-		$pos=strpos($sprite,"wp-content");
-		$tema=substr($sprite,$pos,strlen($sprite)-$pos);
-		update_option('opt_AP_UrlSprite', get_site_url()."/".$tema);
-	} else {
-		update_option('opt_AP_UrlSprite',"");
-	}
 	if(get_option('opt_AP_DefaultSoggetti')  == '' || !get_option('opt_AP_DefaultSoggetti')){
 		$DefaultSoggetti=array("RP"=>0,"RB"=>0,"AM"=>0);
 		add_option('opt_AP_DefaultSoggetti',json_encode($opt_AP_DefaultSoggetti));
@@ -2024,6 +2049,9 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		}
 	if (!get_option( 'opt_AP_FolderUploadMeseAnno' )) {
 			add_option('opt_AP_FolderUploadMeseAnno', '');
+		}
+	if (!get_option( 'opt_AP_Allegati' )) {
+			add_option('opt_AP_Allegati', 'all');
 		}
 	if(get_option('opt_AP_TipidiFiles')  == '' || !get_option('opt_AP_TipidiFiles')){
 		$TipidiFiles=array();
@@ -2109,7 +2137,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		add_option('opt_AP_BootstrapItalia', 'No');
 	}	
 	if(get_option('opt_AP_TabResp')  == '' || !get_option('opt_AP_TabResp')){
-		$Default='[{"ID":"RP","Funzione":"'.__('Responsabile Procedimento','albo-online').'","Display":"Si"},{"ID":"OP","Funzione":"'.__('Gestore procedura','albo-online').'","Display":"Si"},{"ID":"SC","Funzione":"'.__('Segretario Comunale','albo-online').'","Display":"No"},{"ID":"RB","Funzione":"'.__('Responsabile Pubblicazione','albo-online').'","Display":"No"},{"ID":"DR","Funzione":"'.__('Direttore dei Servizi e Amministrativi','albo-online').'","Display":"No"}]';
+		$Default='[{"ID":"RP","Funzione":"Responsabile Procedimento","Display":"Si","StaCert":"No"},{"ID":"OP","Funzione":"Gestore procedura","Display":"Si","StaCert":"No"},{"ID":"SC","Funzione":"Segretario Comunale","Display":"No","StaCert":"No"},{"ID":"RB","Funzione":"Responsabile Pubblicazione","Display":"No","StaCert":"No"},{"ID":"DR","Funzione":"Direttore dei Servizi Generali e Ammistrativi","Display":"No","StaCert":"No"}]';
 		update_option('opt_AP_TabResp',$Default ); 
 	}	
 /**
@@ -2245,19 +2273,6 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				$StRuoliVA=implode(",",$_POST['RuoliPulsVA']);
 				update_option('opt_AP_RuoliPulsVisualizzaAtto',$StRuoliVA);
 			}
-			$sprite="";
-			$it = new RecursiveDirectoryIterator(get_template_directory());
-			foreach(new RecursiveIteratorIterator($it) as $file) {
-			 	if(basename($file)=="sprite.svg")
-			 		$sprite= $file;
-			}
-			if ($sprite!="") {
-				$pos=strpos($sprite,"wp-content");
-				$tema=substr($sprite,$pos,strlen($sprite)-$pos);
-				update_option('opt_AP_UrlSprite', get_home_url()."/".$tema);
-			} else {
-				update_option('opt_AP_UrlSprite',"");
-			}
 			update_option('opt_AP_Ente',stripslashes($_POST['c_Ente']));
 		    update_option('opt_AP_AnnoProgressivo',$_POST['c_AnnoProgressivo'] );
 		    update_option('opt_AP_LivelloTitoloPagina',$_POST['c_LTP'] );
@@ -2271,6 +2286,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			update_option('opt_AP_PAttiCor', $_POST['P_AttiCor']);
 			update_option('opt_AP_PAttiSto', $_POST['P_AttiSto']);
 			update_option('opt_AP_PAtto', $_POST['P_Atto']);
+			update_option('opt_AP_Allegati', $_POST['allegati']);
 			update_option('opt_AP_AutoShortcode',(isset($_POST['AutoShortCode'])?$_POST['AutoShortCode']:0));
 			update_option('opt_AP_OldInterfaccia',(isset($_POST['visoldstyle'])?$_POST['visoldstyle']:0));
 			update_option('opt_AP_UpCSSNewInterface',(isset($_POST['uploadCSSNI'])?$_POST['uploadCSSNI']:0));

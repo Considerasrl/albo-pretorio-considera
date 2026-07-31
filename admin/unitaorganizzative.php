@@ -2,7 +2,7 @@
 /**
  * WGestione Enti.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since      4.8
  *
  * @package    Albo On Line
  */
@@ -135,49 +135,51 @@ echo '    </tbody>
 	<form id="addtag" method="post" action="?page=unitao" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >
 		<input type="hidden" name="action" value="<?php if($edit || (isset($_REQUEST['action']) And  $_REQUEST['action']=="edit_err")) echo "memo-unitao"; else echo "add-unitao"; ?>"/>
 		<input type="hidden" name="action2" value="<?php echo htmlentities(isset($_REQUEST['action'])?$_REQUEST['action']:""); ?>"/>
-		<input type="hidden" name="id" value="<?php echo (int)isset($_REQUEST['id'])?$_REQUEST['id']:0; ?>" />
+		<input type="hidden" name="id" value="<?php echo isset($_REQUEST['id'])?intval($_REQUEST['id']):0; ?>" />
 		<input type="hidden" name="unitao" value="<?php echo wp_create_nonce('unitao')?>" />
 
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-nome"><?php _e("Nome Unità Organizzativa","albo-online");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="unitao-nome" id="<?php _e("Nome Unità Organizzativa","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($risultato->Nome); else echo htmlentities((isset($_REQUEST['unitao-nome'])?$_REQUEST['unitao-nome']:"")); ?>" size="30" class="richiesto"/>
+			<input name="unitao-nome" id="<?php _e("Nome Unità Organizzativa","albo-online");?>" type="text" value="<?php if($edit) echo (isset($risultato->Nome)?ap_sanifica_testo($risultato->Nome):__("Non Definito","albo-online")); else echo (isset($_REQUEST['unitao-nome'])?ap_sanifica_testo($_REQUEST['unitao-nome']):""); ?>" size="30" required/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-indirizzo"><?php _e("Indirizzo","albo-online");?></label>
-			<input name="unitao-indirizzo" id="unitao-indirizzo" type="text" value="<?php if($edit) echo stripslashes($risultato->Indirizzo); else echo htmlentities((isset($_REQUEST['unitao-indirizzo'])?$_REQUEST['unitao-indirizzo']:"")); ?>" size="150"/>
+			<input name="unitao-indirizzo" id="unitao-indirizzo" type="text" value="<?php if($edit) echo (isset($risultato->Indirizzo)?ap_sanifica_testo($risultato->Indirizzo):__("Non Definito","albo-online")); else echo (isset($_REQUEST['unitao-indirizzo'])?ap_sanifica_testo($_REQUEST['unitao-indirizzo']):""); ?>" size="150"/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-url"><?php _e("Url","albo-online");?></label>
-			<input name="unitao-url" id="unitao-url" type="text" value="<?php if($edit) echo stripslashes($risultato->Url); else echo htmlentities((isset($_REQUEST['unitao-url'])?$_REQUEST['unitao-url']:""));?>" size="100"/>
+			<input name="unitao-url" id="unitao-url" type="url" value="<?php if($edit) echo (isset($risultato->Url)?ap_sanifica_testo($risultato->Url):__("Non Definito","albo-online")); else echo (isset($_REQUEST['unitao-url'])?ap_sanifica_testo($_REQUEST['unitao-url']):"");?>" size="100"/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-email"><?php _e("Email","albo-online");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="unitao-email" id="<?php _e("Email","albo-online");?>" type="text" value="<?php if($edit) echo stripslashes($risultato->Email); else echo htmlentities((isset($_REQUEST['unitao-email'])?$_REQUEST['unitao-email']:""));?>" size="100" class="richiesto"/>
+			<input name="unitao-email" id="<?php _e("Email","albo-online");?>" type="email" required value="<?php if($edit) echo (isset($risultato->Email)?ap_sanifica_testo($risultato->Email):__("Non Definito","albo-online")); else echo ((isset($_REQUEST['unitao-email'])?ap_sanifica_testo($_REQUEST['unitao-email']):""));?>" size="100"/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-pec"><?php _e("Pec","albo-online");?></label>
-			<input name="unitao-pec" id="unitao-pec" type="text" value="<?php if($edit) echo stripslashes($risultato->Pec); else echo htmlentities((isset($_REQUEST['unitao-pec'])?$_REQUEST['unitao-pec']:""));?>" size="100"/>
+			<input name="unitao-pec" id="unitao-pec" type="email" value="<?php if($edit) echo (isset($risultato->Pec)?ap_sanifica_testo($risultato->Pec):__("Non Definito","albo-online")); else echo ((isset($_REQUEST['unitao-pec'])?ap_sanifica_testo($_REQUEST['unitao-pec']):""));?>" size="100"/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-telefono"><?php _e("Telefono","albo-online");?></label>
-			<input name="unitao-telefono" id="unitao-telefono" type="text" value="<?php if($edit) echo stripslashes($risultato->Telefono); else echo htmlentities((isset($_REQUEST['unitao-telefono'])?$_REQUEST['unitao-telefono']:"")); ?>"' size="30"/>
+			<input name="unitao-telefono" id="unitao-telefono" type="text" value="<?php if($edit) echo (isset($risultato->Telefono)?ap_sanifica_testo($risultato->Telefono):__("Non Definito","albo-online")); else echo ((isset($_REQUEST['unitao-telefono'])?ap_sanifica_testo($_REQUEST['unitao-telefono']):"")); ?>"' size="30"/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-fax"><?php _e("Fax","albo-online");?></label>
-			<input name="unitao-fax" id="unitao-fax" type="text" value="<?php if($edit) echo stripslashes($risultato->Fax); else echo htmlentities((isset($_REQUEST['unitao-fax'])?$_REQUEST['unitao-fax']:"")); ?>" size="30"/>
+			<input name="unitao-fax" id="unitao-fax" type="text" value="<?php if($edit) echo (isset($risultato->Fax)?ap_sanifica_testo($risultato->Fax):__("Non Definito","albo-online")); else echo ((isset($_REQUEST['unitao-fax'])?ap_sanifica_testo($_REQUEST['unitao-fax']):"")); ?>" size="30"/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="tag-description"><?php _e("Note","albo-online");?></label>
-			<textarea name="unitao-note" id="unitao-note" rows="5" cols="40"><?php if($edit) echo stripslashes($risultato->Note); else echo htmlentities((isset($_REQUEST['unitao-note'])?$_REQUEST['unitao-note']:"")); ?></textarea>
+			<textarea name="unitao-note" id="unitao-note" rows="5" cols="40"><?php if($edit) echo (isset($risultato->Note)?ap_sanifica_areatesto($risultato->Note):__("Non Definito","albo-online")); else echo ((isset($_REQUEST['unitao-note'])?ap_sanifica_areatesto($_REQUEST['unitao-note']):"")); ?></textarea>
 			<p><?php _e("inserire eventuali informazioni aggiuntive","albo-online");?></p>
 		</div>
 
 <?php
 if($edit) {
-	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Unità Organizzativa","albo-online").' '.stripslashes($risultato->Nome).'" rel="'.stripslashes($risultato->Nome).'" />';
+	if(isset($risultato->Nome)){
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Unità Organizzativa","albo-online").' '.(isset($risultato->Nome)?ap_sanifica_testo($risultato->Nome):"").'" rel="'.(isset($risultato->Nome)?ap_sanifica_testo($risultato->Nome):"").'" />';
+	}
 }else{
  	if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit_err")
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Unità Organizzativa","albo-online").' '.stripslashes($risultato->Nome).'" rel="'.htmlentities($_REQUEST['unitao-nome']).'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Unità Organizzativa","albo-online").' '.(isset($_GET['unitao-nome'])?ap_sanifica_testo($_GET['unitao-nome']):"").'" rel="'.(isset($_GET['unitao-nome'])?ap_sanifica_testo($_GET['unitao-nome']):"").'" />';
 	else
 		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Aggiungi nuovo Unità Organizzativa","albo-online").'"  />';
 }

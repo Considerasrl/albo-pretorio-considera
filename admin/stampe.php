@@ -2,7 +2,7 @@
 /**
  * Gestione Stampe.
  * @link       http://www.eduva.org
- * @since      4.5.7
+ * @since      4.8
  *
  * @package    Albo On Line
  */
@@ -62,7 +62,7 @@ function StampaAtto($id, $tipo) {
         $riga_tipo = __("AVVISO DI INIZIO AFFISSIONE","albo-online");
         $idtipo = 'printAvviso';
     }
-    echo '<button class="h" onclick="printContent(\'' . $idtipo . '\')"><span class="dashicons dashicons-migrate"></span> '.__("Stampa","albo-online").' ' . $label . '</button>';
+    echo '<button class="h" onclick="printContent(\'' . $idtipo . '\')"><span class="dashicons dashicons-migrate"></span> '.__("Stampa","albo-online"). '</button>';
 	$Soggetti=unserialize($risultato->Soggetti);
 	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	$DatiSeg=ap_get_Funzione_StampaCertificatoSX();
