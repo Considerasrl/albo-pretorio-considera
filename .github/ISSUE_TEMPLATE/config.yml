@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Segnalare una vulnerabilità (non usare le issue)
+    url: https://github.com/Considerasrl/albo-pretorio-considera/security/advisories/new
+    about: Le falle di sicurezza vanno segnalate in privato. Un albo pretorio pubblica atti con valore legale e le installazioni sono facilmente individuabili.
+  - name: Politica di sicurezza e stato del progetto
+    url: https://github.com/Considerasrl/albo-pretorio-considera/blob/master/SECURITY.md
+    about: Cosa è stato corretto, cosa no, e cosa aspettarsi da questo fork.

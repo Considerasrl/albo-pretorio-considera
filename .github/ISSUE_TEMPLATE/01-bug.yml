@@ -1,0 +1,59 @@
+name: Segnalazione di un malfunzionamento
+description: Qualcosa non funziona come dovrebbe
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Se il problema è una **vulnerabilità di sicurezza**, non usare questo
+        modulo: segnalala in privato dalla scheda *Security* del repository.
+
+  - type: textarea
+    id: cosa-succede
+    attributes:
+      label: Cosa succede
+      description: Descrivi il comportamento che osservi e quello che ti aspettavi.
+      placeholder: |
+        Scaricando un allegato ZIP dal front-end, il file arriva con il nome
+        corretto ma non si apre. Mi aspettavo un archivio integro.
+    validations:
+      required: true
+
+  - type: textarea
+    id: riproduzione
+    attributes:
+      label: Come riprodurlo
+      description: I passi minimi per rivederlo accadere.
+      placeholder: |
+        1. Pubblicare un atto con un allegato .zip
+        2. Aprire l'atto nel front-end
+        3. Cliccare "Scarica allegato"
+    validations:
+      required: true
+
+  - type: input
+    id: versione-plugin
+    attributes:
+      label: Versione del plugin
+      placeholder: "4.9.0"
+    validations:
+      required: true
+
+  - type: input
+    id: ambiente
+    attributes:
+      label: WordPress e PHP
+      placeholder: "WordPress 6.4.3, PHP 8.1, LiteSpeed"
+    validations:
+      required: true
+
+  - type: textarea
+    id: contesto
+    attributes:
+      label: Altro che può servire
+      description: |
+        Tema in uso, altri plugin attivi, eventuali override del plugin nella
+        cartella del tema, messaggi di errore, presenza di una CDN o di una
+        cache davanti al sito.
+    validations:
+      required: false
