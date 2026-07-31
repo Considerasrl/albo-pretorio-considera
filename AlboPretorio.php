@@ -1,15 +1,21 @@
 <?php
 /**
  * @wordpress-plugin
- * Plugin Name:       Albo Pretorio On line
- * Plugin URI:        https://it.wordpress.org/plugins/albo-pretorio-on-line/
- * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente.
- * Version:           4.8
- * Author:            Ignazio Scimone
- * Author URI:        eduva.org
+ * Plugin Name:       Albo Pretorio On line (Considera)
+ * Plugin URI:        https://www.considera.it/
+ * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
+ * Version:           4.9.0
+ * Author:            Considera
+ * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       albo-online
+*/
+/*
+ * Opera derivata da "Albo Pretorio On line" di Ignazio Scimone (eduva.org),
+ * Copyright (C) Ignazio Scimone, rilasciata con licenza GPL-2.0+.
+ * Le modifiche successive alla versione 4.8 sono di Considera e sono
+ * distribuite con la stessa licenza.
 */
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }

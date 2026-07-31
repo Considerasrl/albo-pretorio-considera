@@ -1,10 +1,10 @@
 ﻿=== Albo Pretorio OnLine ===
-Contributors: Ignazios
-Donate link: 
+Contributors: Considera, Ignazios
+Donate link:
 Tags: Albo Pretorio, Codice Amministrazione Digitale, Upload File
 Requires at least: 3.5
 Tested up to: 6.4
-Stable tag: 4.8
+Stable tag: 4.9.0
 Albo Pretorio On Line permette la gestione dell'albo pretorio on line in base al nuovo Codice dell'Amministrazione Digitale
 == Description ==
 
@@ -45,6 +45,10 @@ Di seguito sono riportati i passi necessari per l'installazione del plugin. la p
 Per maggiori informazioni usare il repo si github https://github.com/ignazios/albo-pretorio-on-line
 Per segnalare problemi, proposte di modifiche utilizzare l'indirizzo email ignazios@gmail.com
 == Changelog ==
+= 4.9.0 =
+Prima versione del fork mantenuto da Considera. Il plugin originale di Ignazio Scimone e' fermo alla 4.8 ed e' stato rimosso da wordpress.org il 7 marzo 2024.
+- <strong>Corretto</strong> il download degli allegati: gli archivi ZIP e RAR venivano scaricati corrotti perche' l'output emesso da altri componenti finiva in testa al file e ne faceva troncare la coda.
+- <strong>Corretto</strong> il controllo sul limite di upload: un valore di upload_max_filesize espresso in gigabyte veniva interpretato come megabyte.
 = 4.8 =
 - <strong>Corretti</strong> errori di sicurezza
 = 4.7 =
