@@ -53,7 +53,7 @@ if (isset($_REQUEST['action'])){
 			menu();
 			break;
 		case "rip":
-			$AttiDaAggiornare=unserialize($_GET['AttiDaAgg']);
+			$AttiDaAggiornare=unserialize(wp_unslash($_GET['AttiDaAgg']), array('allowed_classes'=>false));
 //			echo "<pre>";var_dump($AttiDaAggiornare);echo "</pre>";
 			$AttiAggiornati=ap_ripubblica_atti_correnti($AttiDaAggiornare);
 			if(count($AttiDaAggiornare)==$AttiAggiornati)

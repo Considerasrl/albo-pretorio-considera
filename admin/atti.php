@@ -109,8 +109,11 @@ class AdminTableAtti extends WP_List_Table
 
     // Calcolo le variabili che contengono il numero dei record totali
     // e l'elenco dei record da visualizzare per una singola pagina
-    $total_items = ap_get_all_atti($this->Codstato_atti(),0,0,0,'', 0,0,"",0,0,true);
-    $this->items = ap_get_all_atti($this->Codstato_atti(),0,0,0,'', 0,0,$orderby." ".$order ,$paged,$per_page);
+    // In stato "Cerca" il termine va passato come Oggetto: lo stato 5 e'
+    // solo la base (WHERE 1) e il filtro Oggetto e' preparato a valle.
+    $Termine = ($this->stato_atti=="Cerca" && isset($_REQUEST['s'])) ? $_REQUEST['s'] : '';
+    $total_items = ap_get_all_atti($this->Codstato_atti(),0,0,0,$Termine, 0,0,"",0,0,true);
+    $this->items = ap_get_all_atti($this->Codstato_atti(),0,0,0,$Termine, 0,0,$orderby." ".$order ,$paged,$per_page);
     $this->set_pagination_args(array(
     'total_items' => $total_items,
     'per_page'    => $per_page,
@@ -627,7 +630,7 @@ function Gestione_Metadati($IdAtto){
 					<th>'.__("Soggetti","albo-online").'</th>
 						<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">	
 					<ul>';
-	$Soggetti=unserialize($risultato->Soggetti);
+	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	foreach($Soggetti as $Soggetto){
 		echo "
@@ -992,7 +995,7 @@ echo '    </tbody>
 				<th>'. __("Soggetti","albo-online").'</th>
 				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
-	$Soggetti=unserialize($atto->Soggetti);
+	$Soggetti=unserialize($atto->Soggetti, array('allowed_classes'=>false));
 	if ($Soggetti){
 		$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 		foreach($Soggetti as $Soggetto){
@@ -1357,7 +1360,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-online");?>"><?php _e(
 					</p>
 					<ul>
 <?php
-		$Soggetti=unserialize($atto->Soggetti);
+		$Soggetti=unserialize($atto->Soggetti, array('allowed_classes'=>false));
 		$Ana_Soggetti=ap_get_responsabili();
 		foreach($Ana_Soggetti as $Soggetto){
 			if($Soggetto->Funzione!="RP"){
@@ -1578,7 +1581,7 @@ if($MetaDati!==FALSE){
 				<th>'. __("Soggetti","albo-online").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
-	$Soggetti=unserialize($risultato->Soggetti);
+	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	foreach($Soggetti as $Soggetto){
 		echo "
@@ -1736,7 +1739,7 @@ echo'
 				<th>'. __("Soggetti","albo-online").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
-	$Soggetti=unserialize($risultato->Soggetti);
+	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 	if ($Soggetti){
 		$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 		foreach($Soggetti as $Soggetto){
@@ -2006,7 +2009,7 @@ echo'
 				<th>'. __("Soggetti","albo-online").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
-	$Soggetti=unserialize($risultato->Soggetti);
+	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 	if ($Soggetti){
 		$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 		foreach($Soggetti as $Soggetto){
@@ -2103,7 +2106,7 @@ function Annulla_Atto($IdAtto){
 					<th>'. __("Soggetti","albo-online").'</th>
 						<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">	
 					<ul>';
-	$Soggetti=unserialize($risultato->Soggetti);
+	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	foreach($Soggetti as $Soggetto){
 		echo "

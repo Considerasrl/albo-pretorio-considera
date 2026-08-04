@@ -223,13 +223,13 @@ echo '
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Codice di Riferimento","albo-online").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
-			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.stripslashes($risultato->Riferimento).'</div>
+			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(stripslashes($risultato->Riferimento)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Oggetto","albo-online").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
-			<div class="u-margin-bottom-xs u-margin-top-xs u-padding-left-m u-padding-right-m u-padding-top-xxs u-padding-bottom-s u-border-bottom-xxs">'.stripslashes($risultato->Oggetto).'</div>
+			<div class="u-margin-bottom-xs u-margin-top-xs u-padding-left-m u-padding-right-m u-padding-top-xxs u-padding-bottom-s u-border-bottom-xxs">'.esc_html(stripslashes($risultato->Oggetto)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data di registrazione","albo-online").'</div>
@@ -259,7 +259,7 @@ echo '
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Richiedente","albo-online").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
-			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.stripslashes($risultato->Richiedente).'</div>
+			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(stripslashes($risultato->Richiedente)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Unità Organizzativa Responsabile","albo-online").'</div>
@@ -298,11 +298,11 @@ echo'		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 				<div class="u-background-50 u-color-white u-margin-bottom-xxs u-borderRadius-m u-padding-all-m">'.__("Note","albo-online").'</div>
 			</div>
 			<div class="Grid-cell u-size1of2 u-lg-size1of2">
-				<div class="u-margin-bottom-xs u-margin-top-xs u-padding-left-m u-padding-right-m u-padding-top-xxs u-padding-bottom-s u-border-bottom-xxs">'.(strlen(stripslashes($risultato->Informazioni))>0?stripslashes($risultato->Informazioni):"&nbsp;&nbsp;").'</div>
+				<div class="u-margin-bottom-xs u-margin-top-xs u-padding-left-m u-padding-right-m u-padding-top-xxs u-padding-bottom-s u-border-bottom-xxs">'.(strlen(stripslashes($risultato->Informazioni))>0?wp_kses_post(stripslashes($risultato->Informazioni)):"&nbsp;&nbsp;").'</div>
 			</div>
 		</div>
 </div>';
-$Soggetti=unserialize($risultato->Soggetti);
+$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 $Ruolo="";
 if($Soggetti){
 	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));

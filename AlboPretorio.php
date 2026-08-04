@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio On line (Considera)
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.9.3
+ * Version:           4.9.4
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
@@ -290,7 +290,7 @@ function admin_notice(){
 			$DatiEnte["Note"]		=$D_Ente->Note;
 //Fine Ente Atto
 // Soggetti
-			$Soggetti=unserialize($D_Atto->Soggetti);
+			$Soggetti=unserialize($D_Atto->Soggetti, array('allowed_classes'=>false));
 			if($Soggetti){
 				$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 				$Ruolo="";

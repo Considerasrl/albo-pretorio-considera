@@ -63,7 +63,7 @@ function Visualizza_Atto($Parametri){
 ?>
 <section  id="DatiAtto">
 	<div class="container clearfix mb-3 pb-3">
-		<button class="btn btn-primary" onclick="window.location.href='<?php echo $_SERVER['HTTP_REFERER'];?>'"><span class="fas fa-arrow-circle-left"></span> <?php _e("Torna alla Lista","albo-online");?></button>
+		<button class="btn btn-primary" onclick="window.location.href='<?php echo esc_url(wp_get_referer());?>'"><span class="fas fa-arrow-circle-left"></span> <?php _e("Torna alla Lista","albo-online");?></button>
 		<h2 class="u-text-h2 pt-3 pl-2"><?php echo $Titolo;?></h2>
 		<?php echo ($Annullato?"<h3>".$Annullato."</h3>":"");?>
 	   	<div class="row">
@@ -80,11 +80,11 @@ function Visualizza_Atto($Parametri){
 					</tr>
 					<tr>
 						<th class="w-25 text-right"><?php _e("Codice di Riferimento","albo-online");?></th>
-						<td class="align-middle"><?php echo stripslashes($risultato->Riferimento);?></td>
+						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Riferimento));?></td>
 					</tr>
 					<tr>
 						<th class="w-25 text-right"><?php _e("Oggetto","albo-online");?></th>
-						<td class="align-middle"><?php echo stripslashes($risultato->Oggetto);?></td>
+						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Oggetto));?></td>
 					</tr>
 					<tr>
 						<th class="w-25 text-right"><?php _e("Data di registrazione","albo-online");?></th>
@@ -104,7 +104,7 @@ function Visualizza_Atto($Parametri){
 					</tr>
 					<tr>
 						<th class="w-25 text-right"><?php _e("Richiedente","albo-online");?></th>
-						<td class="align-middle"><?php echo stripslashes($risultato->Richiedente);?></td>
+						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Richiedente));?></td>
 					</tr>
 					<tr>
 						<th class="w-25 text-right"><?php _e("Unità Organizzativa Responsabile","albo-online");?></th>
@@ -133,13 +133,13 @@ if($MetaDati!==FALSE){
 <?php }?>
 					<tr>
 						<th class="w-25 text-right"><?php _e("Note","albo-online");?></th>
-						<td class="align-middle"><?php echo stripslashes($risultato->Informazioni);?></td>
+						<td class="align-middle"><?php echo wp_kses_post(stripslashes($risultato->Informazioni));?></td>
 					</tr>
 		 	    </tbody>
 			</table>
 		</div>
 <?php 		
-$Soggetti=unserialize($risultato->Soggetti);
+$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 if(count($Soggetti)>0){
 	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	$Ruolo="";

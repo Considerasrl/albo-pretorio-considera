@@ -1458,7 +1458,7 @@ function ap_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,
 			$NomeResp=$NomeResp[0]->Nome." ".$NomeResp[0]->Cognome;
 		else
 			$NomeResp=__("Non Definito","albo-online");
-		$Sogs=unserialize($Soggetti);
+		$Sogs=unserialize($Soggetti, array('allowed_classes'=>false));
 		foreach($Sogs as $Soggetto){
 			$NomeResponsabile=ap_get_responsabile($Soggetto);
 			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".ap_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
@@ -1537,7 +1537,7 @@ function ap_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFin
 	}
 	if($Atto->Soggetti!=$Soggetti){
 		$Responsabili="";
-		$Sogs=unserialize($Soggetti);
+		$Sogs=unserialize($Soggetti, array('allowed_classes'=>false));
 		foreach($Sogs as $Soggetto){
 			$NomeResponsabile=ap_get_responsabile($Soggetto);
 			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".ap_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
@@ -1716,13 +1716,21 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 */	
 	global $wpdb;
 	$Selezione="";
+	$OrderBySql="";
 	if ($OrderBy!=""){
-		$OrderBy=" Order By ".$OrderBy;
+		$allowed_order_columns=array('Numero','Anno','Data','DataInizio','DataFine','DataOblio','Oggetto','Riferimento');
+		$order_parts=array();
+		foreach(explode(',', $OrderBy) as $order_part){
+			if(preg_match('/^\s*([A-Za-z]+)(?:\s+(ASC|DESC))?\s*$/i', $order_part, $matches) && in_array($matches[1], $allowed_order_columns, true))
+				$order_parts[]=$matches[1].(isset($matches[2])?' '.strtoupper($matches[2]):'');
+		}
+		if(count($order_parts)>0)
+			$OrderBySql=" ORDER BY ".implode(',', $order_parts);
 	}
 	if ($DaRiga==0 AND $ARiga==0)
 		$Limite="";
 	else
-		$Limite=" Limit ".$DaRiga.",".$ARiga;
+		$Limite=$wpdb->prepare(" LIMIT %d,%d", max(0,(int)$DaRiga), max(1,(int)$ARiga));
 	
 	switch ($Stato){
 		case 0:
@@ -1768,11 +1776,7 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 			$Selezione.=' AND Numero>0'; 
 			break;	
 		case 5:
-			/* $_REQUEST['s'] finiva nella query senza escape: SQL injection.
-			   Raggiungibile solo dalla pagina Atti del backend (capability
-			   gest_atti_albo), quindi non sfruttabile in modo anonimo, ma
-			   consente comunque una escalation in lettura sul database. */
-            $Selezione.=' WHERE  Oggetto like "%'.esc_sql(isset($_REQUEST['s'])?$_REQUEST['s']:"").'%"';
+			$Selezione=' WHERE 1';
 			break;
 		}
 	if ($Annullati)
@@ -1781,57 +1785,63 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 		$Selezione.=' And DataAnnullamento="0000-00-00"';
 	if ($Anno!=0){
 		if ($Numero!=0){
-			$Selezione.=' And (Anno="'.$Anno.'" And Numero="'.$Numero.'")';
+			$Selezione.=$wpdb->prepare(' And (Anno=%d And Numero=%d)', (int)$Anno, (int)$Numero);
 		}else{
-			$Selezione.=' And Anno="'.$Anno.'"';
+			$Selezione.=$wpdb->prepare(' And Anno=%d', (int)$Anno);
 		}
 	}else{
 		if ($Numero!=0){
-			$Selezione.=' And Numero="'.$Numero.'"';
+			$Selezione.=$wpdb->prepare(' And Numero=%d', (int)$Numero);
 		}
 	}
 	if (is_array($Categoria) Or $Categoria!=0){
 		$Categs="(";
 		if (is_array($Categoria)){
 			foreach($Categoria as $Cate){
-				$Categs.=$Cate.",";
+				$Categs.=(int)$Cate.",";
 			}
 			$Categs=substr($Categs,0, strlen($Categs)-1).")";
 			$Selezione.=' And IdCategoria in '.$Categs;
 		}else{
-			$Selezione.=' And IdCategoria="'.$Categoria.'"';
+			$Selezione.=$wpdb->prepare(' And IdCategoria=%d', (int)$Categoria);
 		}
 	}
 	if ($Oggetto!='')
-		$Selezione.=' And Oggetto like "%'.$Oggetto.'%"';
+		$Selezione.=$wpdb->prepare(' And Oggetto LIKE %s', '%'.$wpdb->esc_like(wp_unslash($Oggetto)).'%');
 	if ($Ente!=-1)
-		$Selezione.=' And Ente ="'.$Ente.'"';
+		$Selezione.=$wpdb->prepare(' And Ente=%d', (int)$Ente);
 	if ($Riferimento!='')
-		$Selezione.=' And Riferimento like "%'.$Riferimento.'%"';
+		$Selezione.=$wpdb->prepare(' And Riferimento LIKE %s', '%'.$wpdb->esc_like(wp_unslash($Riferimento)).'%');
 	
 //echo "<BR /><BR />SELECT COUNT(*) FROM $wpdb->table_name_Atti $Selezione;";
 //echo $Stato."SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa,Richiedente FROM $wpdb->table_name_Atti $Selezione $OrderBy $Limite;<br />";
 	if ($Conteggio){
 		return $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Atti $Selezione;");	
 	}else{
-		return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa,Richiedente FROM $wpdb->table_name_Atti $Selezione $OrderBy $Limite;");	
+		return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa,Richiedente FROM $wpdb->table_name_Atti $Selezione $OrderBySql $Limite;");
 	}
 	
 }	
 function ap_searchAtti($Search,$OrderBy="",$DaRiga=0,$ARiga=20){
 	global $wpdb;
+	$OrderBySql="";
 	if ($OrderBy!=""){
-		$OrderBy=" Order By ".$OrderBy;
+		$allowed_order_columns=array('Numero','Anno','Data','DataInizio','DataFine','DataOblio','Oggetto','Riferimento');
+		$order_parts=array();
+		foreach(explode(',', $OrderBy) as $order_part){
+			if(preg_match('/^\s*([A-Za-z]+)(?:\s+(ASC|DESC))?\s*$/i', $order_part, $matches) && in_array($matches[1], $allowed_order_columns, true))
+				$order_parts[]=$matches[1].(isset($matches[2])?' '.strtoupper($matches[2]):'');
+		}
+		if(count($order_parts)>0)
+			$OrderBySql=" ORDER BY ".implode(',', $order_parts);
 	}
 	if ($DaRiga==0 AND $ARiga==0)
 		$Limite="";
 	else
-		$Limite=" Limit ".$DaRiga.",".$ARiga;
-	/* $Search era interpolato senza escape (SQL injection) e la precedenza
-	   AND/OR lasciava il ramo Riferimento fuori dal filtro Numero<>0. */
-	$Search=esc_sql($Search);
-	$Selezione=" WHERE Numero<>0 And (Oggetto like '%".$Search."%' Or Riferimento like '%".$Search."%')";
-	return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa,Richiedente FROM $wpdb->table_name_Atti $Selezione $OrderBy $Limite;");
+		$Limite=$wpdb->prepare(" LIMIT %d,%d", max(0,(int)$DaRiga), max(1,(int)$ARiga));
+	$Like='%'.$wpdb->esc_like(wp_unslash($Search)).'%';
+	$Selezione=$wpdb->prepare(" WHERE Numero<>0 And (Oggetto LIKE %s Or Riferimento LIKE %s)", $Like, $Like);
+	return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa,Richiedente FROM $wpdb->table_name_Atti $Selezione $OrderBySql $Limite;");
 }
 function ap_get_atto($id){
 	global $wpdb;
@@ -2311,7 +2321,7 @@ function ap_get_NumAttiSoggetto($idSoggetto){
 	$Atti=$wpdb->get_results("SELECT * FROM $wpdb->table_name_Atti");
 	$NumAtti=0;
 	foreach($Atti as $Soggetto){
-		$SoggettiAtto=unserialize($Soggetto->Soggetti);
+		$SoggettiAtto=unserialize($Soggetto->Soggetti, array('allowed_classes'=>false));
 		if(is_array($SoggettiAtto) And in_array($idSoggetto,$SoggettiAtto)) $NumAtti++;
 	}
 	return $NumAtti;
@@ -2321,7 +2331,7 @@ function ap_get_NumAttiSoggetti(){
 	$Atti=$wpdb->get_results("SELECT * FROM $wpdb->table_name_Atti");
 	$Soggetti=array();
 	foreach($Atti as $Soggetto){
-		$SoggettiAtto=unserialize($Soggetto->Soggetti);
+		$SoggettiAtto=unserialize($Soggetto->Soggetti, array('allowed_classes'=>false));
 		if(is_array($SoggettiAtto)){
 			foreach($SoggettiAtto as $SoggettoAtto)
 				if(!isset($Soggetti[$SoggettoAtto])){

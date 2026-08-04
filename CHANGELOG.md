@@ -11,6 +11,31 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+## [4.9.4] - 2026-08-04
+
+### Corretto (sicurezza)
+- **SQL injection via `ORDER BY`** in `ap_get_all_atti` e `ap_searchAtti`: la
+  clausola di ordinamento veniva interpolata grezza nella query. Ora le colonne
+  sono validate contro una allowlist e la direzione è limitata a `ASC`/`DESC`.
+- Parametri numerici (`Anno`, `Numero`, `Categoria`, `Ente`) e `LIMIT` ora
+  passano da `$wpdb->prepare` con cast a intero; i filtri testuali (`Oggetto`,
+  `Riferimento`, ricerca) usano `prepare` + `esc_like` al posto della
+  concatenazione diretta.
+- **XSS memorizzato** nelle viste dell'atto (front-end e backend): i campi
+  `Oggetto`, `Riferimento`, `Richiedente` sono ora emessi con `esc_html()` e le
+  Note con `wp_kses_post()`, invece di essere stampati grezzi.
+- **XSS via `Referer`**: il bottone "Torna alla lista" costruiva l'URL da
+  `$_SERVER['HTTP_REFERER']` senza escape; ora usa `esc_url(wp_get_referer())`.
+- **PHP object injection**: tutte le chiamate `unserialize()` sui dati degli atti
+  (incluso il parametro `AttiDaAgg` da GET in `utility.php`) impostano ora
+  `allowed_classes => false`.
+
+### Corretto
+- Ricerca "Cerca in Oggetto" del backend: con l'irrobustimento della query lo
+  stato di ricerca era diventato un `WHERE 1` privo di filtro e la lista mostrava
+  tutti gli atti. Il termine viene ora instradato attraverso il filtro `Oggetto`
+  già preparato, ripristinando il comportamento corretto.
+
 ## [4.9.3] - 2026-07-31
 
 ### Rimosso
@@ -77,7 +102,8 @@ Le versioni fino alla **4.8** sono opera di Ignazio Scimone. La loro cronologia
 non è ripercorsa qui in dettaglio; resta consultabile nel repository originale:
 <https://github.com/ignazios/albo-pretorio-on-line>
 
-[Non rilasciato]: https://github.com/Considerasrl/albo-pretorio-considera/compare/v4.9.3...HEAD
+[Non rilasciato]: https://github.com/Considerasrl/albo-pretorio-considera/compare/v4.9.4...HEAD
+[4.9.4]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.4
 [4.9.3]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.3
 [4.9.2]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.2
 [4.9.1]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.1

@@ -63,7 +63,7 @@ function StampaAtto($id, $tipo) {
         $idtipo = 'printAvviso';
     }
     echo '<button class="h" onclick="printContent(\'' . $idtipo . '\')"><span class="dashicons dashicons-migrate"></span> '.__("Stampa","albo-online"). '</button>';
-	$Soggetti=unserialize($risultato->Soggetti);
+	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	$DatiSeg=ap_get_Funzione_StampaCertificatoSX();
 	$Segretario="";

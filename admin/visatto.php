@@ -81,11 +81,11 @@ echo '
 		</tr>
 		<tr>
 			<th>'.__("Codice di Riferimento","albo-online").'</th>
-			<td style="vertical-align: middle;">'.stripslashes($risultato->Riferimento).'</td>
+			<td style="vertical-align: middle;">'.esc_html(stripslashes($risultato->Riferimento)).'</td>
 		</tr>
 		<tr>
 			<th>'.__("Oggetto","albo-online").'</th>
-			<td style="vertical-align: middle;">'.stripslashes($risultato->Oggetto).'</td>
+			<td style="vertical-align: middle;">'.esc_html(stripslashes($risultato->Oggetto)).'</td>
 		</tr>
 		<tr>
 			<th>'.__("Data di registrazione","albo-online").'</th>
@@ -105,7 +105,7 @@ echo '
 		</tr>
 		<tr>
 			<th>'.__("Richiedente","albo-online").'</th>
-			<td style="vertical-align: middle;">'.stripslashes($risultato->Richiedente).'</td>
+			<td style="vertical-align: middle;">'.esc_html(stripslashes($risultato->Richiedente)).'</td>
 		</tr>
 		<tr>
 			<th>'.__("Unità Organizzativa Responsabile","albo-online").'</th>
@@ -134,11 +134,11 @@ if($MetaDati!==FALSE){
 }
 echo'		<tr>
 				<th>'.__("Note","albo-online").'</th>
-				<td style="vertical-align: middle;">'.stripslashes($risultato->Informazioni).'</td>
+				<td style="vertical-align: middle;">'.wp_kses_post(stripslashes($risultato->Informazioni)).'</td>
 			</tr>
  	    </tbody>
 	</table>';
-$Soggetti=unserialize($risultato->Soggetti);
+$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 $Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 $Ruolo="";
 if($Soggetti){
