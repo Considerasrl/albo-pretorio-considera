@@ -1699,7 +1699,7 @@ function ap_get_num_anno($IdAtto){
 	return ($wpdb->get_var( $wpdb->prepare( "SELECT LPAD(Numero,7,0) as Numero FROM $wpdb->table_name_Atti WHERE IdAtto=%d",$IdAtto)));
 }
 
-function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Dadata=0,$Adata=0,$OrderBy="",$DaRiga=0,$ARiga=20,$Conteggio=false,$Annullati=false,$Riferimento='',$Ente=-1,$SenzaAnnullati=FALSE){
+function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Dadata=0,$Adata=0,$OrderBy="",$DaRiga=0,$ARiga=20,$Conteggio=false,$Annullati=false,$Riferimento='',$Ente=-1,$SenzaAnnullati=FALSE,$NumeroParziale=''){
 //var_dump($Dadata,$Adata);
 /* Stato:
 		 0 - tutti
@@ -1793,6 +1793,13 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 		if ($Numero!=0){
 			$Selezione.=$wpdb->prepare(' And Numero=%d', (int)$Numero);
 		}
+	}
+	if ($NumeroParziale!==''){
+		// Ricerca per numero anche parziale: confronto sul valore grezzo
+		// (senza zeri iniziali) del numero, non su quello impaginato a 7 cifre.
+		$NumeroParziale=ltrim(preg_replace('/\D/','',(string)$NumeroParziale),'0');
+		if ($NumeroParziale!=='')
+			$Selezione.=$wpdb->prepare(' And CAST(Numero AS CHAR) LIKE %s', '%'.$wpdb->esc_like($NumeroParziale).'%');
 	}
 	if (is_array($Categoria) Or $Categoria!=0){
 		$Categs="(";

@@ -11,6 +11,18 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+## [4.10.0] - 2026-08-04
+
+### Aggiunto
+- Filtri di ricerca nella pagina **Atti** del backend. Oltre alla ricerca per
+  stato e alla "Cerca in Oggetto" già presenti, è ora possibile filtrare per:
+  - **Riferimento** (corrispondenza parziale);
+  - **Numero** (anche parziale: la ricerca avviene sul valore del numero senza
+    gli zeri di riempimento, quindi "12" trova 12, 120, 512, …);
+  - **Categoria** (menu a tendina con il numero di atti per categoria).
+  I filtri si combinano tra loro e con la ricerca per oggetto, restano
+  impostati nel modulo e vengono mantenuti su ordinamento e paginazione.
+
 ## [4.9.4] - 2026-08-04
 
 ### Corretto (sicurezza)
@@ -102,7 +114,8 @@ Le versioni fino alla **4.8** sono opera di Ignazio Scimone. La loro cronologia
 non è ripercorsa qui in dettaglio; resta consultabile nel repository originale:
 <https://github.com/ignazios/albo-pretorio-on-line>
 
-[Non rilasciato]: https://github.com/Considerasrl/albo-pretorio-considera/compare/v4.9.4...HEAD
+[Non rilasciato]: https://github.com/Considerasrl/albo-pretorio-considera/compare/v4.10.0...HEAD
+[4.10.0]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.10.0
 [4.9.4]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.4
 [4.9.3]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.3
 [4.9.2]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.2

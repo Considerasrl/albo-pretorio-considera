@@ -109,11 +109,18 @@ class AdminTableAtti extends WP_List_Table
 
     // Calcolo le variabili che contengono il numero dei record totali
     // e l'elenco dei record da visualizzare per una singola pagina
-    // In stato "Cerca" il termine va passato come Oggetto: lo stato 5 e'
-    // solo la base (WHERE 1) e il filtro Oggetto e' preparato a valle.
-    $Termine = ($this->stato_atti=="Cerca" && isset($_REQUEST['s'])) ? $_REQUEST['s'] : '';
-    $total_items = ap_get_all_atti($this->Codstato_atti(),0,0,0,$Termine, 0,0,"",0,0,true);
-    $this->items = ap_get_all_atti($this->Codstato_atti(),0,0,0,$Termine, 0,0,$orderby." ".$order ,$paged,$per_page);
+    // In stato "Cerca" i filtri (oggetto, riferimento, numero parziale,
+    // categoria) vanno passati come parametri: lo stato 5 e' solo la base
+    // (WHERE 1) e i singoli filtri sono preparati a valle in ap_get_all_atti.
+    $Termine = ''; $Rif = ''; $NumParz = ''; $Cat = 0;
+    if ($this->stato_atti=="Cerca"){
+    	$Termine = isset($_REQUEST['s'])            ? $_REQUEST['s']                 : '';
+    	$Rif     = isset($_REQUEST['f_riferimento'])? $_REQUEST['f_riferimento']     : '';
+    	$NumParz = isset($_REQUEST['f_numero'])     ? $_REQUEST['f_numero']          : '';
+    	$Cat     = isset($_REQUEST['f_categoria'])  ? (int)$_REQUEST['f_categoria']  : 0;
+    }
+    $total_items = ap_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,"",0,0,true,false,$Rif,-1,false,$NumParz);
+    $this->items = ap_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,$orderby." ".$order ,$paged,$per_page,false,false,$Rif,-1,false,$NumParz);
     $this->set_pagination_args(array(
     'total_items' => $total_items,
     'per_page'    => $per_page,
@@ -2308,12 +2315,21 @@ echo'
   	$tablenew->prepare_items(); // Metodo per elenco campi
   	$page = filter_input(INPUT_GET,'page' ,FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   	$paged = filter_input(INPUT_GET,'paged',FILTER_SANITIZE_NUMBER_INT);
-	echo '<h3>'.$Titolo.'</h3>	
+	// Valori correnti dei filtri di ricerca (per renderli persistenti nel form)
+	$f_rif = isset($_REQUEST['f_riferimento']) ? $_REQUEST['f_riferimento']    : '';
+	$f_num = isset($_REQUEST['f_numero'])      ? $_REQUEST['f_numero']         : '';
+	$f_cat = isset($_REQUEST['f_categoria'])   ? (int)$_REQUEST['f_categoria'] : 0;
+	echo '<h3>'.$Titolo.'</h3>
 		</div>
 		<div class="wrap">
 	  	<form method="get">
 	  		<input type="hidden" name="page" value="'.$page. '"/>
-	  		<input type="hidden" name="stato_atti" value="Cerca"/>'; /* mr */
+	  		<input type="hidden" name="stato_atti" value="Cerca"/>
+	  		<div class="ap-filtri-cerca" style="margin:8px 0;display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+	  			<label>'.__("Riferimento","albo-online").' <input type="search" name="f_riferimento" value="'.esc_attr($f_rif).'"/></label>
+	  			<label>'.__("Numero","albo-online").' <input type="search" name="f_numero" size="10" value="'.esc_attr($f_num).'" placeholder="'.esc_attr__("anche parziale","albo-online").'"/></label>
+	  			<label>'.__("Categoria","albo-online").' '.ap_get_dropdown_ricerca_categorie("f_categoria","f_categoria","","",$f_cat).'</label>
+	  		</div>'; /* mr */
 	    	$tablenew->search_box(__("Cerca in Oggetto","albo-online"),'search_id'); /* mr  */
 	    	$tablenew->views();
 	echo '</form>
