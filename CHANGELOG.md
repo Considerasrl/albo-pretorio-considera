@@ -11,6 +11,16 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+### Modificato
+- Backup dati/allegati e oblio: sostituita la libreria di terze parti PclZip con
+  l'estensione nativa `ZipArchive` (rimosso `inc/pclzip.php`). Il formato degli
+  archivi prodotti è invariato.
+- L'esportazione del Repertorio (CSV/XML/JSON) viene ora scritta nella cartella
+  uploads del sito invece che dentro la cartella del plugin.
+
+### Rimosso
+- File `Repertori/repertorio_2020.csv` erroneamente incluso nel pacchetto.
+
 ## [4.11.1] - 2026-08-05
 
 ### Sicurezza
