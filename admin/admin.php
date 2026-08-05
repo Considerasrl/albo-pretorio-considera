@@ -29,9 +29,13 @@ function DownloadFile($filename){
 }
 
 function albo_post() {
+	if(!is_user_logged_in())
+		return;
 	if(isset($_REQUEST['action'] )){
-		switch ( $_REQUEST['action'] ) {		
+		switch ( $_REQUEST['action'] ) {
 			case "ToCsv":
+				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'repertorio_export' ) )
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
 				$Anno=intval($_REQUEST['Anno']);
 				$Testata=preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Nome Ente","albo-online")).";".
 				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Numero Atto","albo-online")).";".
@@ -77,8 +81,10 @@ function albo_post() {
 				DownloadFile($file_path);
 				break;
 			case "ToXML":
+				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'repertorio_export' ) )
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
 				$Anno=intval($_REQUEST['Anno']);
-				$xml=new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes" ?><'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-online")).'></'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-online")).'>'); 
+				$xml=new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes" ?><'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-online")).'></'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-online")).'>');
 				$MetaData=$xml->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Meta dati","albo-online")));
 				$MetaData->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Anno","albo-online")),$Anno);
 				$Righe=ap_Repertorio($Anno,FALSE);
@@ -110,7 +116,9 @@ function albo_post() {
 				fclose($file);
 				DownloadFile($file_path);
 				break;
-			case "ToJson": 
+			case "ToJson":
+				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'repertorio_export' ) )
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
 				$Anno=intval($_REQUEST['Anno']);
 				$Repertorio=ap_Repertorio($Anno,FALSE);
 				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');

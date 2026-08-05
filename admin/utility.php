@@ -471,11 +471,11 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 			}
 			echo '
 			</select>
-					<a href="?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToXML&amp;Anno='.$AnnoRepertorio.'">
+					<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToXML&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
 					<img src="'.Albo_URL.'/img/XML.png" title="'.sprintf(__("Esporta il repertorio del %s in XML","albo-online"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
-				<a href="?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToJson&amp;Anno='.$AnnoRepertorio.'">
+				<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToJson&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
 					<img src="'.Albo_URL.'/img/Json.png" title="'.sprintf(__("Esporta il repertorio del %s in Json","albo-online"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
-				<a href="?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToCsv&amp;Anno='.$AnnoRepertorio.'">
+				<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToCsv&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
 					<img src="'.Albo_URL.'/img/Csv.png" title="'.sprintf(__("Esporta il repertorio del %s in csv","albo-online"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
 	</div>
 			<h3 style="text-align:center">'.__("Repertorio Anno","albo-online").' '.$AnnoRepertorio.'</h3>
