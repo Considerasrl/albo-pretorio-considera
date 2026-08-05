@@ -25,6 +25,11 @@ con il pacchetto `.zip` installabile allegato.
   versione esplicito (derivato dalla versione del plugin), utile per il
   cache-busting sugli aggiornamenti; gli handle di jQuery UI del core sono
   accodati per solo handle.
+- Adeguamento agli standard di WordPress.org (Plugin Check): commenti
+  `translators` e segnaposto numerati nelle stringhe traducibili; correzione di
+  un dominio di testo errato in un messaggio; uso di `gmdate()` al posto di
+  `date()` (comportamento invariato: WordPress opera in UTC). Nessun cambiamento
+  funzionale per l'utente.
 
 - I dialog dei pulsanti dell'editor (Albo, Gruppi Atti, Vis. Atto) sono ora
   serviti tramite `admin-ajax.php` con verifica delle capability, invece che da
