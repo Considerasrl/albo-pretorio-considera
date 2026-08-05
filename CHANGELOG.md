@@ -11,6 +11,10 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+### Sicurezza
+- Creazione delle cartelle di lavoro (allegati, backup, oblio) tramite
+  `wp_mkdir_p()` invece di `mkdir()` diretto.
+
 ### Modificato
 - Backup dati/allegati e oblio: sostituita la libreria di terze parti PclZip con
   l'estensione nativa `ZipArchive` (rimosso `inc/pclzip.php`). Il formato degli

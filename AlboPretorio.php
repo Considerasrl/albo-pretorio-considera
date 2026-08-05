@@ -581,6 +581,7 @@ function admin_notice(){
 				header('Accept-Ranges: bytes');
 				flush();
 				if ($stat['size'] < $chunksize) {
+	// phpcs:disable WordPress.WP.AlternativeFunctions -- I/O su file di export/download nelle cartelle di lavoro in wp-content/uploads: streaming e download non gestibili da WP_Filesystem.
 					readfile($file_path);
 				}
 				else {
@@ -590,6 +591,7 @@ function admin_notice(){
 						flush();
 					}
 					fclose($handle);
+	// phpcs:enable WordPress.WP.AlternativeFunctions
 				}
 				exit();
 				break;
@@ -1991,15 +1993,15 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 */
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine');
 	if(!is_dir($Dir)){
-		mkdir($Dir, 0744,TRUE);		
+		wp_mkdir_p($Dir);		
 	}
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/BackupDatiAlbo');
 	if(!is_dir($Dir)){
-		mkdir($Dir, 0744,TRUE);
+		wp_mkdir_p($Dir);
 	}
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/OblioDatiAlbo');
 	if(!is_dir($Dir)){
-		mkdir($Dir, 0744,TRUE);
+		wp_mkdir_p($Dir);
 	}
 /**
 * Impostazione Ruoli
@@ -2118,7 +2120,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	}
 	if(get_option('opt_AP_FolderUpload') == '' || !get_option('opt_AP_FolderUpload') ){
 		if(!is_dir(AP_BASE_DIR.'AllegatiAttiAlboPretorio')){   
-			mkdir(AP_BASE_DIR.'AllegatiAttiAlboPretorio', 0755);
+			wp_mkdir_p(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 		}
 		add_option('opt_AP_FolderUpload', 'AllegatiAttiAlboPretorio');
 	}else{

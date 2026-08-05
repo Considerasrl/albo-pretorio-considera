@@ -28,12 +28,12 @@ function ap_get_PathAllegati($IDAtto){
 	$DataAtto=explode("-",$DataAtto);
 	$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/'.$DataAtto[0];
 	if (!is_dir ( $destination_path)) {
-		if (!mkdir($destination_path, 0755))
+		if (!wp_mkdir_p($destination_path))
 			return __('Errore','albo-pretorio-considera');
 	}
 	$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/'.$DataAtto[0]."/".$DataAtto[1];
 	if (!is_dir ( $destination_path)) {
-		if (!mkdir($destination_path, 0755))
+		if (!wp_mkdir_p($destination_path))
 			return __('Errore','albo-pretorio-considera');
 	}
 	return $destination_path;
@@ -45,11 +45,12 @@ function ap_Move_Allegati_CartellaMeseAnno(){
 	$DirLog=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/BackupDatiAlbo/log');
 	$nomefileLog=$DirLog."/Backup_Sposta_Allegati_Cartella_Anno_Mese.log";
 	if (!is_dir ( $DirLog)){
-		if (!mkdir($DirLog, 0744)){
+		if (!wp_mkdir_p($DirLog)){
 			sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog);
 			return;
 		}
 	}
+	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 	if(($fplog = @fopen($nomefileLog, "ab"))===FALSE){
 		sprintf(__('Non sono riuscito a creare il file %s Fine Operazione','albo-pretorio-considera'),$nomefileLog);
 		return;
@@ -89,7 +90,7 @@ function ap_Move_Allegati_CartellaMeseAnno(){
 }
 function ap_get_fileperm($dir){
 	if(!is_dir($dir)){
-		mkdir($dir, 0744,TRUE);		
+		wp_mkdir_p($dir);		
 	}
 	$perms =  substr(sprintf('%o', fileperms($dir)), -4);
 	return $perms;
@@ -104,7 +105,7 @@ function ap_decodenamefile(){
 }
 function ap_get_fileperm_Gruppo($dir,$Gruppo){
 	if(!is_dir($dir)){
-		mkdir($dir, 0744,TRUE);		
+		wp_mkdir_p($dir);		
 	}		 
 	$perms =  substr(sprintf('%o', fileperms($dir)), -4);
 
@@ -247,6 +248,7 @@ if($Return){
 		$Stato.=__("File index.php creato con successo in","albo-pretorio-considera")." ".$dir;
 	}
 	fclose($id);
+	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
 	return $Stato;
 }
 
@@ -2132,6 +2134,7 @@ global $wpdb;
 	$idAtto=(int)$idAtto;
 	$allegato=ap_get_allegato_atto($idAllegato);
 	if (file_exists($allegato[0]->Allegato) && is_file($allegato[0]->Allegato))
+	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 		if (unlink($allegato[0]->Allegato)){
 			if($SoloFile=="N"){
 				$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Allegati WHERE IdAllegato=%d",$idAllegato));
@@ -2270,6 +2273,7 @@ function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 	$fpmsg = @fopen($FileMsg, "wb");
 	fwrite($fpmsg,$msg);
 	fclose($fpmsg);
+	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
 }
 
 function ap_allinea_allegati(){
@@ -2868,6 +2872,7 @@ function ap_sql_addslashes($a_string = '', $is_like = false) {
 function ap_backup_table($table,$fp,$Filtro="",$Delete=TRUE) {
 	global $wpdb;
 	if($table==$wpdb->table_name_Enti){
+	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 		@fwrite($fp,"SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';"."\r\n");
 	}
 	$table_structure = $wpdb->get_results("DESCRIBE $table");
@@ -2971,7 +2976,7 @@ global $wpdb;
 	if (class_exists('ZipArchive')) {
 //		echo $Dir." <br />".$DirTmp." <br />".$DirAllegati." <br />".$DirLog."";wp_die();
 		if (!is_dir ( $Destinazione)){
-			if (!mkdir($Destinazione, 0744)){
+			if (!wp_mkdir_p($Destinazione)){
 				if ($Echo){
 					echo "<li>".sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Destinazione)."</li>";
 				}else{
@@ -2982,7 +2987,7 @@ global $wpdb;
 		}
 		if (is_dir($Destinazione)){
 			if (!is_dir ( $Dir)){
-				if (!mkdir($Dir, 0744)) {
+				if (!wp_mkdir_p($Dir)) {
 					if ($Echo){
 						echo "<li>".sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Dir)."</li>";
 					}else{
@@ -2993,7 +2998,7 @@ global $wpdb;
 			}
 		}
 		if (!is_dir ( $DirTmp)){	
-			if (!mkdir($DirTmp, 0744)){
+			if (!wp_mkdir_p($DirTmp)){
 				if ($Echo){
 					echo "<li>".sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirTmp)."</li>";
 				}else{
@@ -3003,7 +3008,7 @@ global $wpdb;
 			}
 		}
 		if (!is_dir ( $DirLog)){							
-			if (!mkdir($DirLog, 0744)){
+			if (!wp_mkdir_p($DirLog)){
 				if ($Echo){
 					 echo "<li>".sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog)."</li>";
 				}else{
@@ -3163,7 +3168,7 @@ function ap_MakeZipOblio(){
 	$DirTmp=$Dir."/tmp";
 	$DirTmpBox=$DirTmp."/BoxSingAtto";
 	if(!is_dir($DirTmp))
-		if (!mkdir($DirTmp, 0744))
+		if (!wp_mkdir_p($DirTmp))
 			return FALSE;
 	$nomefileZip=$Dir."/oblio".date("Ymdgis").".zip";
 	if (class_exists('ZipArchive')) {	
@@ -3196,22 +3201,22 @@ function ap_BackupFilesAllegatiOblio($idAtto){
 	if (class_exists('ZipArchive')) {
 //		echo $Dir." <br />".$DirTmp." <br />".$DirAllegati." <br />".$DirLog."";exit;
 		if (!is_dir ( $Dir)){
-			if (!mkdir($Dir, 0744)) 
+			if (!wp_mkdir_p($Dir)) 
 				$ControlloDir=FALSE;
 			else{
 				if(!is_dir($DirTmp))
-					if (!mkdir($DirTmp, 0744))
+					if (!wp_mkdir_p($DirTmp))
 						$ControlloDir=FALSE;
 				if(!is_dir($DirTmpBox))				
-					if (!mkdir($DirTmpBox, 0744))
+					if (!wp_mkdir_p($DirTmpBox))
 						$ControlloDir=FALSE;			
 			}
 		}else{
 			if(!is_dir($DirTmp))
-				if (!mkdir($DirTmp, 0744))
+				if (!wp_mkdir_p($DirTmp))
 				  $ControlloDir=FALSE;
 			if(!is_dir($DirTmpBox))
-				if (!mkdir($DirTmpBox, 0744))
+				if (!wp_mkdir_p($DirTmpBox))
 				  $ControlloDir=FALSE;			
 		}
 		if (!$ControlloDir){
@@ -3252,16 +3257,16 @@ function ap_oblio_atti($Atti){
 	$MessaggiRitorno=array("Message"=>"","Message2"=>"");
 	$ControlloDir=TRUE;
 	if (!is_dir ( $Dir)){
-		if (!mkdir($Dir, 0744)) 
+		if (!wp_mkdir_p($Dir)) 
 			$ControlloDir=FALSE;
 		else{
 			if(!is_dir($DirTmp))
-				if (!mkdir($DirTmp, 0744))
+				if (!wp_mkdir_p($DirTmp))
 					$ControlloDir=FALSE;
 		}
 	}else{
 		if(!is_dir($DirTmp))
-			if (!mkdir($DirTmp, 0744))
+			if (!wp_mkdir_p($DirTmp))
 			  $ControlloDir=FALSE;
 	}
 	if(!$ControlloDir){
@@ -3275,6 +3280,7 @@ function ap_oblio_atti($Atti){
 				@file_put_contents($DirDaProteggere."/index.php", "<?php\n// Silence is golden.\n");
 			if(!is_file($DirDaProteggere."/.htaccess"))
 				@file_put_contents($DirDaProteggere."/.htaccess", "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\nDeny from all\n</IfModule>\n");
+	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
 		}
 	}
 	ap_SvuotaDirectory($DirTmp,NULL);
@@ -3583,6 +3589,7 @@ function ap_rimuoviallegatoPP(){
 	
 	$allegato=ap_get_allegato_atto($IDAllegato);
 	if (file_exists($allegato[0]->Allegato) && is_file($allegato[0]->Allegato))
+	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 		if (unlink($allegato[0]->Allegato)){
 			$wpdb->update(	$wpdb->table_name_Allegati,
 		 					array('Note' => $Motivo, 'Allegato'=>basename($allegato[0]->Allegato)),
@@ -3634,5 +3641,6 @@ function ap_Rmdir($src) {
     }
     closedir($dir);
     rmdir($src);
+	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
 }
 ?>

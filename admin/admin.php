@@ -18,8 +18,8 @@ function DownloadFile($filename){
     // Check file is exists on given path.
     if(file_exists($filename))
     {
-      header('Content-Disposition: attachment; filename=' . basename($filename));  
-      readfile($filename); 
+      header('Content-Disposition: attachment; filename=' . basename($filename));
+      readfile($filename); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- streaming del file in download, non gestibile da WP_Filesystem
       exit;
     }
     else
@@ -73,9 +73,10 @@ function albo_post() {
 //				echo $Atti;die();
 				$Dir=str_replace("\\","/",AP_BASE_DIR.'AlboOnLine/Repertori');
 				if (!is_dir ( $Dir))
-					if (!mkdir($Dir, 0744)) 
+					if (!wp_mkdir_p($Dir)) 
 						break;
 				$file_path=$Dir."/repertorio_".$Anno.".csv";
+	// phpcs:disable WordPress.WP.AlternativeFunctions -- I/O su file di export/download nelle cartelle di lavoro in wp-content/uploads: streaming e download non gestibili da WP_Filesystem.
 				$file = fopen($file_path, "w") or die;
 				fwrite($file, $Testata."\n".$Atti);
 				fclose($file);
@@ -109,7 +110,7 @@ function albo_post() {
 				}	
 				$Dir=str_replace("\\","/",AP_BASE_DIR.'AlboOnLine/Repertori');
 				if (!is_dir ( $Dir))
-					if (!mkdir($Dir, 0755)) 
+					if (!wp_mkdir_p($Dir)) 
 						break;
 				$file_path=$Dir."/repertorio_".$Anno.".xml";
 				$file = fopen($file_path, "w") or die;
@@ -124,13 +125,14 @@ function albo_post() {
 				$Repertorio=ap_Repertorio($Anno,FALSE);
 				$Dir=str_replace("\\","/",AP_BASE_DIR.'AlboOnLine/Repertori');
 				if (!is_dir ( $Dir))
-					if (!mkdir($Dir, 0755)) 
+					if (!wp_mkdir_p($Dir)) 
 						break;
 				$file_path=$Dir."/repertorio_".$Anno.".json";
 				$file = fopen($file_path, "w") or die;
 				$txt = json_encode($Repertorio);
 				fwrite($file, $txt);
 				fclose($file);
+	// phpcs:enable WordPress.WP.AlternativeFunctions
 				DownloadFile($file_path);
 				break;
 /*			case "ToPdf":
