@@ -4,7 +4,7 @@ Tags: albo pretorio, pubblica amministrazione, atti, trasparenza, comuni
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 4.11.0
+Stable tag: 4.11.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -78,6 +78,11 @@ Sì. Il plugin lavora sulle stesse tabelle e cartelle dell'originale.
 == Changelog ==
 
 Il changelog completo è mantenuto nel file CHANGELOG.md del repository.
+
+= 4.11.1 =
+Hardening di sicurezza guidato da Plugin Check: escaping dell'output delle
+stringhe tradotte, redirect interni resi sicuri, protezione contro l'accesso
+diretto ai file.
 
 = 4.11.0 =
 Icone di ripiego per i tipi di file noti. Preparazione alla distribuzione su

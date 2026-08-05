@@ -11,6 +11,8 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+## [4.11.1] - 2026-08-05
+
 ### Sicurezza
 - Hardening guidato da Plugin Check, limitato ai rilievi meccanici a basso
   rischio: output delle stringhe tradotte ora escapato (`_e` → `esc_html_e`),
@@ -178,7 +180,8 @@ Le versioni fino alla **4.8** sono opera di Ignazio Scimone. La loro cronologia
 non è ripercorsa qui in dettaglio; resta consultabile nel repository originale:
 <https://github.com/ignazios/albo-pretorio-on-line>
 
-[Non rilasciato]: https://github.com/Considerasrl/albo-pretorio-considera/compare/v4.11.0...HEAD
+[Non rilasciato]: https://github.com/Considerasrl/albo-pretorio-considera/compare/v4.11.1...HEAD
+[4.11.1]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.11.1
 [4.11.0]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.11.0
 [4.10.1]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.10.1
 [4.10.0]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.10.0
