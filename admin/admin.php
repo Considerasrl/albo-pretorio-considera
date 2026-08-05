@@ -247,7 +247,7 @@ function albo_post() {
 				Go_Utility();
 				break;
 			} 		
-			DownloadFile(WP_CONTENT_DIR ."/AlboOnLine/BackupDatiAlbo/".$_REQUEST['elenco_Backup_Expo']);
+			DownloadFile(WP_CONTENT_DIR ."/AlboOnLine/BackupDatiAlbo/".basename($_REQUEST['elenco_Backup_Expo']));
 			break;
 		case "delete-allegato-atto" :
 			$location = "?page=atti" ;
