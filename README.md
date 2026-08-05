@@ -106,7 +106,9 @@ Lo zip di partenza proviene da
 `https://downloads.wordpress.org/plugin/albo-pretorio-on-line.4.8.zip`
 (SHA-256 `c3e2b1e10ff7e21345203de104d495a344ff4cda4f4d210f37503ecd7445b4f2`).
 Il repository originale di Ignazio Scimone, non più aggiornato, resta
-consultabile su <https://github.com/ignazios/albo-pretorio-on-line>.
+consultabile su <https://github.com/ignazios/albo-pretorio-on-line>. Il post
+originale dell'autore sulla pagina Facebook dedicata al plugin è consultabile
+[qui](https://www.facebook.com/permalink.php?story_fbid=pfbid0aiTSK3UFbRQznASFbJKJG9DjKV1pZhumd6um9RjopeAtWVDYkTVQRVxkpPQvGSdgl&id=100057680101833).
 
 ## Licenza
 
