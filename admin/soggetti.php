@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Gestione Soggetti Procedimento.
  * @link       http://www.eduva.org
@@ -18,15 +19,15 @@ $messages[6] = __('Elemento non cancellato.','albo-pretorio-considera');
 $messages[7] = __('Impossibile cancellare Soggetti che sono collegati ad Atti','albo-pretorio-considera');
 $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 ?>
-<div id="errori" title="<?php _e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
-  <h3><?php _e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3>
+<div id="errori" title="<?php esc_html_e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
+  <h3><?php esc_html_e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3>
   	<p id="ElencoCampiConErrori"></p>
-  	<p style='color:red;font-weight: bold;'><?php  _e("Correggere gli errori per continuare","albo-pretorio-considera");?></p>
+  	<p style='color:red;font-weight: bold;'><?php  esc_html_e("Correggere gli errori per continuare","albo-pretorio-considera");?></p>
 </div>
 <div class="wrap nosubsub">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-businessman" style="font-size: 1.1em;"></span> <?php _e("Soggetti Procedimento","albo-pretorio-considera");?>
-		<a href="?page=soggetti" class="add-new-h2"><?php _e("Aggiungi nuovo","albo-pretorio-considera");?></a></h2>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-businessman" style="font-size: 1.1em;"></span> <?php esc_html_e("Soggetti Procedimento","albo-pretorio-considera");?>
+		<a href="?page=soggetti" class="add-new-h2"><?php esc_html_e("Aggiungi nuovo","albo-pretorio-considera");?></a></h2>
 	</div>
 <?php
 $SoggettiAtti=ap_get_NumAttiSoggetti();
@@ -65,11 +66,11 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
 <div id="col-container">
 <div id="col-right">
 <div class="col-wrap">
-<h3><?php  _e("Elenco Soggetti","albo-pretorio-considera");?></h3>
+<h3><?php  esc_html_e("Elenco Soggetti","albo-pretorio-considera");?></h3>
 <table class="widefat" id="elenco-responsabili"> 
     <thead>
     	<tr>
-        	<th scope="col" style="text-align:center;"><?php  _e("Soggetti","albo-pretorio-considera");?></th>
+        	<th scope="col" style="text-align:center;"><?php  esc_html_e("Soggetti","albo-pretorio-considera");?></th>
 		</tr>
     </thead>
     <tbody id="the-list">
@@ -154,32 +155,32 @@ echo '    </tbody>
 	<input type="hidden" name="responsabili" value="<?php echo wp_create_nonce('elabresponsabili')?>" />
 
 <div class="form-field form-required">
-	<label for="resp-cognome"><?php _e("Cognome","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-cognome" id="<?php _e("Cognome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Cognome)?ap_sanifica_testo($risultato[0]->Cognome):__("Non Definito","albo-pretorio-considera"); else echo ap_sanifica_testo((isset($_GET['resp-cognome'])?$_GET['resp-cognome']:"")); ?>" size="20" required />
+	<label for="resp-cognome"><?php esc_html_e("Cognome","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
+	<input name="resp-cognome" id="<?php esc_html_e("Cognome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Cognome)?ap_sanifica_testo($risultato[0]->Cognome):__("Non Definito","albo-pretorio-considera"); else echo ap_sanifica_testo((isset($_GET['resp-cognome'])?$_GET['resp-cognome']:"")); ?>" size="20" required />
 </div>
 <div class="form-field form-required">
-	<label for="resp-nome"><?php _e("Nome","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-nome" id="<?php _e("Nome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Nome)?ap_sanifica_testo($risultato[0]->Nome):__("Non Definito","albo-pretorio-considera"); else echo ap_sanifica_testo((isset($_GET['resp-nome'])?$_GET['resp-nome']:"")); ?>" size="20" required />
+	<label for="resp-nome"><?php esc_html_e("Nome","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
+	<input name="resp-nome" id="<?php esc_html_e("Nome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Nome)?ap_sanifica_testo($risultato[0]->Nome):__("Non Definito","albo-pretorio-considera"); else echo ap_sanifica_testo((isset($_GET['resp-nome'])?$_GET['resp-nome']:"")); ?>" size="20" required />
 </div>
 <div class="form-field form-required">
-	<label for="resp-funzione"><?php _e("Funzione","albo-pretorio-considera");?></label>
+	<label for="resp-funzione"><?php esc_html_e("Funzione","albo-pretorio-considera");?></label>
 	<?php echo ap_get_Funzioni_Responsabili($Output="Select",$ID="resp-funzione",$Name="resp-funzione",$Selezionato=($edit)?(isset($risultato[0]->Funzione)?$risultato[0]->Funzione:""):"");?>
 <div class="form-field form-required">
-	<label for="resp-email"><?php _e("Email","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-email" id="<?php _e("Email","albo-pretorio-considera");?>" type="email" value="<?php if($edit) echo isset($risultato[0]->Email)?ap_sanifica_testo($risultato[0]->Email):__("Non Definito","albo-pretorio-considera"); else echo sanitize_text_field((isset($_GET['resp-email'])?$_GET['resp-email']:""));?>" size="100" required />
+	<label for="resp-email"><?php esc_html_e("Email","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
+	<input name="resp-email" id="<?php esc_html_e("Email","albo-pretorio-considera");?>" type="email" value="<?php if($edit) echo isset($risultato[0]->Email)?ap_sanifica_testo($risultato[0]->Email):__("Non Definito","albo-pretorio-considera"); else echo sanitize_text_field((isset($_GET['resp-email'])?$_GET['resp-email']:""));?>" size="100" required />
 </div>
 <div class="form-field form-required">
-	<label for="resp-telefono"><?php _e("Telefono","albo-pretorio-considera");?></label>
+	<label for="resp-telefono"><?php esc_html_e("Telefono","albo-pretorio-considera");?></label>
 	<input name="resp-telefono" id="resp-telefono" type="text" value="<?php if($edit) echo isset($risultato[0]->Telefono)?ap_sanifica_testo($risultato[0]->Telefono):__("Non Definito","albo-pretorio-considera"); else echo ap_sanifica_testo((isset($_GET['resp-telefono'])?$_GET['resp-telefono']:"")); ?>" size="30" aria-required="true" />
 </div>
 <div class="form-field form-required">
-	<label for="resp-orario"><?php _e("Orario ricevimento","albo-pretorio-considera");?></label>
+	<label for="resp-orario"><?php esc_html_e("Orario ricevimento","albo-pretorio-considera");?></label>
 	<input name="resp-orario" id="resp-orario" type="text" value="<?php if($edit) echo isset($risultato[0]->Orario)?ap_sanifica_testo($risultato[0]->Orario):__("Non Definito","albo-pretorio-considera");  else echo ap_sanifica_testo((isset($_GET['resp-orario'])?$_GET['resp-orario']:""));?>" size="60" aria-required="true" />
 </div>
 <div class="form-field">
-	<label for="resp-description"><?php _e("Note","albo-pretorio-considera");?></label>
+	<label for="resp-description"><?php esc_html_e("Note","albo-pretorio-considera");?></label>
 	<textarea name="resp-note" id="resp-note" rows="5" cols="40"><?php if($edit) echo isset($risultato[0]->Note)?ap_sanifica_areatesto($risultato[0]->Note):__("Non Definito","albo-pretorio-considera"); else echo ap_sanifica_areatesto((isset($_GET['resp-note'])?$_GET['resp-note']:"")); ?></textarea>
-	<p><?php _e("inserire eventuali informazioni aggiuntive","albo-pretorio-considera");?></p>
+	<p><?php esc_html_e("inserire eventuali informazioni aggiuntive","albo-pretorio-considera");?></p>
 </div>
 
 <?php

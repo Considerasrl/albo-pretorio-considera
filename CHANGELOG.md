@@ -11,6 +11,15 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+### Sicurezza
+- Hardening guidato da Plugin Check, limitato ai rilievi meccanici a basso
+  rischio: output delle stringhe tradotte ora escapato (`_e` → `esc_html_e`),
+  redirect interni resi sicuri (`wp_redirect` → `wp_safe_redirect`),
+  `strip_tags` → `wp_strip_all_tags`, e protezione contro l'accesso diretto ai
+  file (guard `ABSPATH`) nei file che non fanno da entry-point. I rilievi
+  restanti (escaping dell'output HTML, prefisso dei simboli globali,
+  sanitizzazione degli input) richiedono interventi non automatici.
+
 ## [4.11.0] - 2026-08-05
 
 ### Aggiunto

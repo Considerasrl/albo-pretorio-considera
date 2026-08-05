@@ -24,7 +24,7 @@ if ( !is_user_logged_in() || !current_user_can('edit_posts') )
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><?php _e("Albo OnLine visualizza atto","albo-pretorio-considera");?></title>
+	<title><?php esc_html_e("Albo OnLine visualizza atto","albo-pretorio-considera");?></title>
 	<base target="_self" />
 	<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_option('blog_charset'); ?>" />
 	<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/tinymce/tiny_mce_popup.js"></script>
@@ -64,21 +64,21 @@ $Lista.="</select>";
 <body onload="tinyMCEPopup.executeOnLoad('init();');">
 	<div class="mceActionPanel">
 		<form name="form" action="#" method="get" accept-charset="utf-8">
-				<label for="Titolo"><strong><?php _e("Titolo","albo-pretorio-considera");?></strong></label><br /> 
+				<label for="Titolo"><strong><?php esc_html_e("Titolo","albo-pretorio-considera");?></strong></label><br /> 
 				<input type="text" name="Titolo" id="Titolo" size="45">
 				</p>				
 				<p>
-				<label for="listaAtti"><strong><?php _e("Atto","albo-pretorio-considera");?></strong></label>
+				<label for="listaAtti"><strong><?php esc_html_e("Atto","albo-pretorio-considera");?></strong></label>
 				<?php echo $Lista;?>
 				</p>
 			
 		</form>
 	</div>
 		<div style="float: left">
-			<input type="submit" id="insert" name="insert" value="<?php _e("Inserisci","albo-pretorio-considera");?>" onclick="insertAlboShortCode();" />
+			<input type="submit" id="insert" name="insert" value="<?php esc_html_e("Inserisci","albo-pretorio-considera");?>" onclick="insertAlboShortCode();" />
 		</div>
 		<div style="float: right">
-			<input type="button" id="cancel" name="cancel" value="<?php _e("Annulla","albo-pretorio-considera");?>" onclick="tinyMCEPopup.close();" />
+			<input type="button" id="cancel" name="cancel" value="<?php esc_html_e("Annulla","albo-pretorio-considera");?>" onclick="tinyMCEPopup.close();" />
 		</div>
 </body>
 </html>

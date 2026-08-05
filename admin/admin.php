@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Amministrazione richieste delle singole pagine.
  * @link       http://www.eduva.org
@@ -151,7 +152,7 @@ function albo_post() {
 		        }
 			 	$Msg=ap_oblio_atti(intval($_GET['IdAtto']));
 			 	$location = "?page=atti&stato_atti=Eliminare&message=".urlencode($Msg);
-				wp_redirect( $location );
+				wp_safe_redirect( $location );
 				break;
  			case "avviso_affissione-atto":
 				if ( isset( $_GET['avvisoatto'] ) && ! empty( $_GET['avvisoatto'] ) ) {
@@ -194,7 +195,7 @@ function albo_post() {
  	                    $MessaggiRitorno=ap_setOblioOggi(intval($_REQUEST['id']));
 					}
 					$location = add_query_arg( 'message',$MessaggiRitorno, $location );
-					wp_redirect( $location );
+					wp_safe_redirect( $location );
 				}else
 					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;	
@@ -209,7 +210,7 @@ function albo_post() {
 			 		$MessaggiRitorno=ap_oblio_atti(intval($_GET['id']));
 					$location = add_query_arg( 'message',$MessaggiRitorno["Message"], $location );
 					$location = add_query_arg( 'message2',$MessaggiRitorno["Message2"], $location );
-					wp_redirect( $location );
+					wp_safe_redirect( $location );
 				}else
 					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;
@@ -238,7 +239,7 @@ function albo_post() {
 			}
 	 		$location = "?page=atti&stato_atti=Correnti" ;
 			$location = add_query_arg( 'message', $Risultato, $location );
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case "ExportBackupData":
 			if (!isset($_REQUEST['exportbckdata'])) {
@@ -263,7 +264,7 @@ function albo_post() {
 			$location= add_query_arg( array ( 'action' => 'allegati-atto', 
 									          'id' => intval($_REQUEST['idAtto']),
 									          'allegatoatto'=>wp_create_nonce('gestallegatiatto')));
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'add-responsabile':
 			if (!isset($_REQUEST['responsabili'])) {
@@ -300,7 +301,7 @@ function albo_post() {
 				else
 					$location = add_query_arg( 'message', 4, $location );
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'edit-responsabile':
 			if (!isset($_REQUEST['modresp'])) {
@@ -314,7 +315,7 @@ function albo_post() {
 			$location = "?page=soggetti" ;
 			$location = add_query_arg( 'id', intval($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'edit-tipofile':
 			if (!isset($_REQUEST['modtipfil'])) {
@@ -328,7 +329,7 @@ function albo_post() {
 			$location = "?page=tipifiles" ;
 			$location = add_query_arg( 'id', ap_sanifica_testo($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;			
 		case 'set-default':
 //			var_dump($_REQUEST);die();
@@ -346,7 +347,7 @@ function albo_post() {
 			$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-pretorio-considera'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
 			$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-considera'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-considera')."</a>"));
 			update_option('opt_AP_TipidiFiles', $TipidiFiles);
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;			
 		case 'delete-tipofile':
 //			var_dump($_REQUEST);die();
@@ -364,7 +365,7 @@ function albo_post() {
 			}else{
 				$location = add_query_arg( 'message', 6, $location );
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;	
 		case 'add-tipofile':
 //			var_dump($_REQUEST);die();
@@ -391,7 +392,7 @@ function albo_post() {
 					$location = add_query_arg( 'message', 4, $location );
 				}				
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;	
 		case 'memo-tipofile':
 			if (!isset($_REQUEST['tipifiles'])) {
@@ -417,7 +418,7 @@ function albo_post() {
 					$location = add_query_arg( 'message', 3, $location );
 				else
 					$location = add_query_arg( 'message', 5, $location );
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'memo-responsabile':
 			if (!isset($_REQUEST['responsabili'])) {
@@ -456,7 +457,7 @@ function albo_post() {
 					$location = add_query_arg( 'message', 5, $location );
 	//		global $wpdb;
 	//		echo $wpdb->last_query;exit; 
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'delete-ente':
 			if (!isset($_REQUEST['cancellaente'])) {
@@ -477,7 +478,7 @@ function albo_post() {
 				else
 					$location = add_query_arg( 'message', 6, $location );
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'add-ente':
 			if (!isset($_REQUEST['enti'])) {
@@ -520,7 +521,7 @@ function albo_post() {
 				else
 					$location = add_query_arg( 'message', 4, $location );
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'edit-ente':
 			if (!isset($_REQUEST['modificaente'])) {
@@ -534,7 +535,7 @@ function albo_post() {
 			$location = "?page=enti" ;
 			$location = add_query_arg( 'id', intval($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'memo-ente':
 			if (!isset($_REQUEST['enti'])) {
@@ -579,7 +580,7 @@ function albo_post() {
 					$location = add_query_arg( 'message', 5, $location );
 	//		global $wpdb;
 	//		echo $wpdb->last_query;exit; 
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'delete-unitao':
 			if (!isset($_REQUEST['cancellaunitao'])) {
@@ -600,7 +601,7 @@ function albo_post() {
 				else
 					$location = add_query_arg( 'message', 6, $location );
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'add-unitao':
 			if (!isset($_REQUEST['unitao'])) {
@@ -642,7 +643,7 @@ function albo_post() {
 				else
 					$location = add_query_arg( 'message', 4, $location );
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'edit-unitao':
 			if (!isset($_REQUEST['modificaunitao'])) {
@@ -656,7 +657,7 @@ function albo_post() {
 			$location = "?page=unitao" ;
 			$location = add_query_arg( 'id', intval($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'memo-unitao':
 			if (!isset($_REQUEST['unitao'])) {
@@ -700,7 +701,7 @@ function albo_post() {
 					$location = add_query_arg( 'message', 5, $location );
 	//		global $wpdb;
 	//		echo $wpdb->last_query;exit; 
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'add-categorie':
 			if (!isset($_POST['categoria'])) {
@@ -724,7 +725,7 @@ function albo_post() {
 				else
 					$location = add_query_arg( 'message', 4, $location );
 			}			
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'delete-categorie':
 			if (!isset($_GET['canccategoria'])) {
@@ -748,7 +749,7 @@ function albo_post() {
 					}
 				}
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'edit-categorie':
 			if (!isset($_GET['modcategoria'])) {
@@ -762,7 +763,7 @@ function albo_post() {
 			$location = "?page=categorie" ;
 			$location = add_query_arg( 'id', intval($_GET['id']), $location );
 			$location = add_query_arg( 'action', 'edit', $location );
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case 'memo-categoria':
 			if (!isset($_POST['categoria'])) {
@@ -782,7 +783,7 @@ function albo_post() {
 				$location = add_query_arg( 'message', 3, $location );
 			else
 				$location = add_query_arg( 'message', 5, $location );
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 	 	case "delete-atto":
 			if (!isset($_GET['cancellaatto'])) {
@@ -807,7 +808,7 @@ function albo_post() {
 				}else
 					$location = add_query_arg( 'message', 6, $location );
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case "add-atto" :
 			if (!isset($_POST['nuovoatto'])) {
@@ -850,7 +851,7 @@ function albo_post() {
 									ap_sanifica_testo($_REQUEST['newValue'][$i]));
 				}				
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case "memo-atto" :
 			if (!isset($_REQUEST['modificaatto'])) {
@@ -893,7 +894,7 @@ function albo_post() {
 									ap_sanifica_testo($_REQUEST['newValue'][$i]));
 				}				
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case "memo_metadati_atto":
 			if (!isset($_REQUEST['mmda'])) {
@@ -914,7 +915,7 @@ function albo_post() {
 				}				
 			}
 			ap_remove_metasatto(intval($_REQUEST['id']),$_REQUEST['newMetaName']);
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case "memo-allegato-atto-associato":
 			$location='?page=atti&action=allegati-atto&id='.intval($_REQUEST['id']).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
@@ -928,7 +929,7 @@ function albo_post() {
 				break;
 			}
 			if (isset($_REQUEST['annulla'])){
-				wp_redirect( $location );
+				wp_safe_redirect( $location );
 			}else{
 				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto_collegato()));
 				if (isset($_REQUEST['ref']))
@@ -946,7 +947,7 @@ function albo_post() {
 								'id' => intval($_REQUEST['id'])) , 
 						$location );
 			}
-			wp_redirect( $location );
+			wp_safe_redirect( $location );
 			break;
 		case "memo-allegato-atto":
 			$location='?page=atti&action=allegati-atto&id='.intval($_REQUEST['id']).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
@@ -959,7 +960,7 @@ function albo_post() {
 				break;
 			}
 			if (isset($_REQUEST['annulla'])){
-				wp_redirect( $location );
+				wp_safe_redirect( $location );
 			}else{
 				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto()));
 				if (isset($_REQUEST['ref']))
@@ -977,7 +978,7 @@ function albo_post() {
 								'id' => intval($_REQUEST['id'])) , 
 						$location );
 			}
-			wp_redirect( $location );	
+			wp_safe_redirect( $location );	
 			break;	
 		case "memo-allegati-atto":
 			$location='?page=atti&action=allegati-atto&id='.intval($_REQUEST['id']).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
@@ -990,7 +991,7 @@ function albo_post() {
 				break;
 			}
 			if (isset($_REQUEST['annulla'])){
-				wp_redirect( $location );
+				wp_safe_redirect( $location );
 			}else{
 				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto()));
 				if (isset($_REQUEST['ref']))
@@ -1004,7 +1005,7 @@ function albo_post() {
 												  'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
 												  'id' => intval($_REQUEST['id'])) , $location );
 			}
-			wp_redirect( $location );	
+			wp_safe_redirect( $location );	
 			break;	
 		case "update-allegato-atto":
 			if (!isset($_REQUEST['modificaallegatoatto'])) {
@@ -1017,7 +1018,7 @@ function albo_post() {
 			}		
 			$location='?page=atti&action=allegati-atto&id='.intval($_REQUEST['id']).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 			if ($_REQUEST['submit']=="Annulla"){
-				wp_redirect( $location );
+				wp_safe_redirect( $location );
 			}else{
 //				var_dump($_REQUEST);wp_die();
 				$ret=ap_memo_allegato(intval($_REQUEST['idAlle']),
@@ -1031,7 +1032,7 @@ function albo_post() {
 				else{
 				 	$location = add_query_arg( 'messaggio', "Allegato%20Aggiornato", $location );
 				}
-				wp_redirect( $location );		
+				wp_safe_redirect( $location );		
 			}
 			break;
 	}		
@@ -1136,36 +1137,36 @@ function Memo_allegato_atto(){
 function Go_Atti(){
 	$location = "?page=atti&p=1" ;
 	$location = add_query_arg( 'message', 80, $location );
-	wp_redirect( $location );
+	wp_safe_redirect( $location );
 }
 function Go_Enti(){
 	$location = "?page=enti" ;
 	$location = add_query_arg( 'message', 80, $location );
-	wp_redirect( $location );
+	wp_safe_redirect( $location );
 }
 function Go_Unitao(){
 	$location = "?page=unitao" ;
 	$location = add_query_arg( 'message', 80, $location );
-	wp_redirect( $location );
+	wp_safe_redirect( $location );
 }
 function Go_Categorie(){
 	$location = "?page=categorie" ;
 	$location = add_query_arg( 'message', 80, $location );
-	wp_redirect( $location );
+	wp_safe_redirect( $location );
 }
 function Go_Responsabili(){
 	$location = "?page=soggetti" ;
 	$location = add_query_arg( 'message', 80, $location );
-	wp_redirect( $location );
+	wp_safe_redirect( $location );
 }
 function Go_TipiFiles(){
 	$location = "?page=tipifiles" ;
 	$location = add_query_arg( 'message', 80, $location );
-	wp_redirect( $location );
+	wp_safe_redirect( $location );
 }
 function Go_Utility(){
 	$location = "?page=utilityAlboP" ;
 	$location = add_query_arg( 'message', 80, $location );
-	wp_redirect( $location );
+	wp_safe_redirect( $location );
 }
 ?>

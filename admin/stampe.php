@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Gestione Stampe.
  * @link       http://www.eduva.org
@@ -117,14 +118,14 @@ function StampaAtto($id, $tipo) {
                     </td></tr>
                 <tr>
                     <td colspan="2" style="background: #fff; border: none">
-                        <h2 style="font-size: 210%;"><?php  _e("Albo Pretorio","albo-pretorio-considera");?></h2>
+                        <h2 style="font-size: 210%;"><?php  esc_html_e("Albo Pretorio","albo-pretorio-considera");?></h2>
                     </td></tr>
                 <tr>
                     <td colspan="2" style="background: #fff; border: none;">
                         <ul style="list-style: none;">
-                        	<li><h4 style="font-size: 120%;"><?php  _e("Richidente","albo-pretorio-considera");?>: <span style="font-weight:normal"><?php echo $risultato->Richiedente ?></span></h4></li>
-                        	<li><h4 style="font-size: 120%;"><?php  _e("Unità Organizzativa Responsabile","albo-pretorio-considera");?>: <span style="font-weight:normal"><?php echo stripslashes($Unitao->Nome); ?></span></h4></li>
-                         	<li><h4 style="font-size: 120%;"><?php  _e("Responsabile Del Procedimento Amministrativo","albo-pretorio-considera");?>: <span style="font-weight:normal"><?php echo $Responsabile; ?></span></h4></li>   
+                        	<li><h4 style="font-size: 120%;"><?php  esc_html_e("Richidente","albo-pretorio-considera");?>: <span style="font-weight:normal"><?php echo $risultato->Richiedente ?></span></h4></li>
+                        	<li><h4 style="font-size: 120%;"><?php  esc_html_e("Unità Organizzativa Responsabile","albo-pretorio-considera");?>: <span style="font-weight:normal"><?php echo stripslashes($Unitao->Nome); ?></span></h4></li>
+                         	<li><h4 style="font-size: 120%;"><?php  esc_html_e("Responsabile Del Procedimento Amministrativo","albo-pretorio-considera");?>: <span style="font-weight:normal"><?php echo $Responsabile; ?></span></h4></li>   
                          </ul>                
                     </td>
                 </tr>
@@ -136,39 +137,39 @@ function StampaAtto($id, $tipo) {
                         <table style=" width:100%; border: none; margin-top: 10px; text-align: left; font-size: 130%; padding: 0">                            
                             <tr>
                                 <td colspan="2" style="text-align:center;background: #fff; border: none;">
-                                    <h3 style="font-weight: normal; font-size:130%; "><?php  _e("Sezione","albo-pretorio-considera");?>: <?php echo stripslashes($risultatocategoria->Nome); ?></h3>
+                                    <h3 style="font-weight: normal; font-size:130%; "><?php  esc_html_e("Sezione","albo-pretorio-considera");?>: <?php echo stripslashes($risultatocategoria->Nome); ?></h3>
                                 </td>
                             </tr>
                             <?php if ($tipo == 'c'): ?>
                                 <tr>
                                     <td colspan="2" style="text-align:center;background: #fff; border: none; margin-bottom: 30px;">
-                                        <?php  _e("Estremi del documento pubblicato","albo-pretorio-considera");?>:
+                                        <?php  esc_html_e("Estremi del documento pubblicato","albo-pretorio-considera");?>:
                                     </td>
                                 </tr>
                             <?php endif; ?>
                             <tr>
-                                <td style="font-weight: bold; text-align: right; width: 35%; padding: 5px; background: #efefef; border: none"><?php  _e("Ente titolare dell'Atto","albo-pretorio-considera");?></td>
+                                <td style="font-weight: bold; text-align: right; width: 35%; padding: 5px; background: #efefef; border: none"><?php  esc_html_e("Ente titolare dell'Atto","albo-pretorio-considera");?></td>
                                 <td style="text-align: left; width: 65%; padding: 5px; vertical-align: middle; background: #efefef; border: none"><?php echo stripslashes(ap_get_ente($risultato->Ente)->Nome); ?></td>
                             </tr>
                             <tr>
-                                <td style="font-weight: bold; text-align: right; padding: 5px; background: #f6f6f6; border: none"><?php  _e("Numero Albo","albo-pretorio-considera");?></td>
+                                <td style="font-weight: bold; text-align: right; padding: 5px; background: #f6f6f6; border: none"><?php  esc_html_e("Numero Albo","albo-pretorio-considera");?></td>
                                 <td style="text-align: left; padding: 5px;vertical-align: middle; background: #f6f6f6; border: none"><?php echo $risultato->Numero . "/" . $risultato->Anno; ?></td>
                             </tr>
                             <tr>
-                                <td style="font-weight: bold; text-align: right; padding: 5px; background: #efefef; border: none"><?php  _e("Codice di Riferimento","albo-pretorio-considera");?></td>
+                                <td style="font-weight: bold; text-align: right; padding: 5px; background: #efefef; border: none"><?php  esc_html_e("Codice di Riferimento","albo-pretorio-considera");?></td>
                                 <td style="text-align: left; padding: 5px; vertical-align: middle;background: #efefef; border: none"><?php echo stripslashes($risultato->Riferimento); ?></td>
                             </tr>
                             <tr>
-                                <td style="font-weight: bold; text-align: right; padding: 5px; background: #efefef; border: none"><?php  _e("Data atto","albo-pretorio-considera");?></td>
+                                <td style="font-weight: bold; text-align: right; padding: 5px; background: #efefef; border: none"><?php  esc_html_e("Data atto","albo-pretorio-considera");?></td>
                                 <td style="text-align: left; padding: 5px; vertical-align: middle;background: #efefef; border: none"><?php echo ap_VisualizzaData($risultato->Data); ?></td>
                             </tr>
                             <tr>
-                                <td style="font-weight: bold; text-align: right; padding: 5px; background: #f6f6f6; border: none"><?php  _e("Oggetto","albo-pretorio-considera");?></td>
+                                <td style="font-weight: bold; text-align: right; padding: 5px; background: #f6f6f6; border: none"><?php  esc_html_e("Oggetto","albo-pretorio-considera");?></td>
                                 <td style="text-align: left; padding: 5px;vertical-align: middle; background: #f6f6f6; border: none"><?php echo stripslashes($risultato->Oggetto); ?></td>
                             </tr>
                             <?php if ($risultato->Informazioni): ?>
                                 <tr>
-                                    <td style="font-weight: bold; text-align: right; padding: 5px; background: #efefef; border: none"><?php  _e("Soggetti","albo-pretorio-considera");?>Note</td>
+                                    <td style="font-weight: bold; text-align: right; padding: 5px; background: #efefef; border: none"><?php  esc_html_e("Soggetti","albo-pretorio-considera");?>Note</td>
                                     <td style="text-align: left; padding: 5px; vertical-align: middle;background: #efefef; border: none"><?php echo stripslashes($risultato->Informazioni); ?></td>
                                 </tr>
                             <?php endif; ?>
@@ -194,7 +195,7 @@ function StampaAtto($id, $tipo) {
                             ?><?php endif; ?>
                     </td>
                     <td style="font-size:130%; background: #fff; border: none; width:60%; padding-top:50px; padding-right:20px; text-align:right">
-                        <strong><?php  _e("Il responsabile della pubblicazione","albo-pretorio-considera");?></strong><br /><br />
+                        <strong><?php  esc_html_e("Il responsabile della pubblicazione","albo-pretorio-considera");?></strong><br /><br />
                         <em><?php 
                         if($ResponsabilePub==''){ 
                             echo $Testi["NoResp"];

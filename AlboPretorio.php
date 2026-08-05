@@ -46,7 +46,7 @@ if (isset($_REQUEST['action'])){
 			ap_crearobots();
 			$newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
 			ap_NoIndexNoDirectLink($newPathAllegati);
-			wp_redirect("?page=Albo_Pretorio");
+			wp_safe_redirect("?page=Albo_Pretorio");
 			break;
 	}
 }
@@ -2301,7 +2301,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			if (!wp_verify_nonce($_POST['confAP'],'configurazionealbo')){
 				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 			}
-		    ap_set_ente_me(strip_tags($_POST['c_Ente']));
+		    ap_set_ente_me(wp_strip_all_tags($_POST['c_Ente']));
 			if (isset($_POST['c_VEnte']) And $_POST['c_VEnte']=='Si')
 			    update_option('opt_AP_VisualizzaEnte','Si' );
 			else
@@ -2329,9 +2329,9 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		    update_option('opt_AP_LivelloTitoloPagina',$_POST['c_LTP'] );
 		    update_option('opt_AP_LivelloTitoloEnte',$_POST['c_LTE'] );
 		    update_option('opt_AP_LivelloTitoloFiltri',$_POST['c_LTF'] );
-			update_option('opt_AP_ColoreAnnullati',strip_tags($_POST['color']) );
-			update_option('opt_AP_ColorePari',strip_tags($_POST['colorp']) );
-			update_option('opt_AP_ColoreDispari',strip_tags($_POST['colord']) );
+			update_option('opt_AP_ColoreAnnullati',wp_strip_all_tags($_POST['color']) );
+			update_option('opt_AP_ColorePari',wp_strip_all_tags($_POST['colorp']) );
+			update_option('opt_AP_ColoreDispari',wp_strip_all_tags($_POST['colord']) );
 			update_option('opt_AP_LogOp', $_POST['LogOperazioni']);
 			update_option('opt_AP_LogAc', $_POST['LogAccessi']);
 			update_option('opt_AP_PAttiCor', $_POST['P_AttiCor']);

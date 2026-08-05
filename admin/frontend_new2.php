@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Gestione FrontEnd.
  * @link       http://www.eduva.org
@@ -205,7 +206,7 @@ function VisualizzaAtto($id){
 ?>
 <section  id="DatiAtto">
 	<div class="container clearfix mb-3 pb-3">
-		<button class="btn btn-primary" onclick="window.location.href='<?php echo esc_url(wp_get_referer());?>'"><span class="fas fa-arrow-circle-left"></span> <?php _e("Torna alla Lista","albo-pretorio-considera");?></button>
+		<button class="btn btn-primary" onclick="window.location.href='<?php echo esc_url(wp_get_referer());?>'"><span class="fas fa-arrow-circle-left"></span> <?php esc_html_e("Torna alla Lista","albo-pretorio-considera");?></button>
 		<h2 class="u-text-h2 pt-3 pl-2">Dati atto</h2>
 		<?php echo ($Annullato?"<h3>".$Annullato."</h3>":"");?>
 	   	<div class="row">
@@ -213,51 +214,51 @@ function VisualizzaAtto($id){
 				<table class="table table-striped table-hover table-responsive-md">
 				    <tbody id="dati-atto">
 					<tr>
-						<th class="w-25 text-right"><?php _e("Ente titolare dell'Atto","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Ente titolare dell'Atto","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo stripslashes(ap_get_ente($risultato->Ente)->Nome);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Numero Albo","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Numero Albo","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo $risultato->Numero."/".$risultato->Anno;?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Codice di Riferimento","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Codice di Riferimento","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Riferimento));?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Oggetto","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Oggetto","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Oggetto));?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Data di registrazione","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Data di registrazione","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo ap_VisualizzaData($risultato->Data);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Data inizio Pubblicazione","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Data inizio Pubblicazione","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo ap_VisualizzaData($risultato->DataInizio);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Data fine Pubblicazione","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Data fine Pubblicazione","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo ap_VisualizzaData($risultato->DataFine)?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Data oblio","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Data oblio","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo ap_VisualizzaData($risultato->DataOblio);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Richiedente","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Richiedente","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Richiedente));?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Unità Organizzativa Responsabile","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Unità Organizzativa Responsabile","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo (isset($Unitao->Nome)?stripslashes($Unitao->Nome):"");?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Responsabile del procedimento amministrativo","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Responsabile del procedimento amministrativo","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo (is_object($NomeResp)?$NomeResp->Nome." ".$NomeResp->Cognome:$NomeResp);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Categoria","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Categoria","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo stripslashes($risultatocategoria->Nome)?></td>
 					</tr>
 <?php
@@ -269,12 +270,12 @@ if($MetaDati!==FALSE){
 	}
 	$Meta=substr($Meta,0,-3);?>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Meta Dati","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Meta Dati","albo-pretorio-considera");?></th>
 						<td style="vertical-align: middle;"><?php echo $Meta;?></td>
 					</tr>
 <?php }?>
 					<tr>
-						<th class="w-25 text-right"><?php _e("Note","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Note","albo-pretorio-considera");?></th>
 						<td class="align-middle"><?php echo wp_kses_post(stripslashes($risultato->Informazioni));?></td>
 					</tr>
 		 	    </tbody>
@@ -327,7 +328,7 @@ $StatoAllegati= get_option('opt_AP_Allegati');
 if(count($documenti)>0){?>
 	<div class="row">
 	   	<div class="col">
-			<h3 class="u-text-h2 pt-3 pb-2"><?php _e("Documenti firmati","albo-pretorio-considera");?></h3>
+			<h3 class="u-text-h2 pt-3 pb-2"><?php esc_html_e("Documenti firmati","albo-pretorio-considera");?></h3>
 <?php
 foreach ($documenti as $allegato) {
 	$Estensione=ap_ExtensionType($allegato->Allegato);?>
@@ -343,7 +344,7 @@ foreach ($documenti as $allegato) {
 				</div>
 				<div class="col-11 break-word">  				
 				<?php 
-				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-considera").'</strong>: '.strip_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br />';
+				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-considera").'</strong>: '.wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br />';
 				if(!is_file($allegato->Allegato) And $allegato->Note!=""){
 					echo '<strong>'.__("Documento rimosso","albo-pretorio-considera").'</strong>: '.$allegato->Note.'<br /><strong><br />';
 				}else{
@@ -376,7 +377,7 @@ $allegati=ap_get_allegati_atto($id);
 if(count($allegati)>0) { ?>
 	<div class="row">
 	   	<div class="col">
-			<h3 class="u-text-h2 pt-3 pb-2"><?php _e("Allegati","albo-pretorio-considera");?></h3>
+			<h3 class="u-text-h2 pt-3 pb-2"><?php esc_html_e("Allegati","albo-pretorio-considera");?></h3>
 <?php
 foreach ($allegati as $allegato) {
 	$Estensione=ap_ExtensionType($allegato->Allegato);?>
@@ -392,7 +393,7 @@ foreach ($allegati as $allegato) {
 				</div>
 				<div class="col-11 break-word">  				
 				<?php 
-				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-considera").'</strong>: '.strip_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br />';
+				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-considera").'</strong>: '.wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br />';
 				if(!is_file($allegato->Allegato) And $allegato->Note!=""){
 					echo '<strong>'.__("Allegato rimosso","albo-pretorio-considera").'</strong>: '.$allegato->Note.'<br /><strong>';
 				}else{
@@ -423,8 +424,8 @@ foreach ($allegati as $allegato) {
 <?php	}?>
 	</div>	
 	<div class="alert alert-info" role="alert">
-	    <h3 class="u-text-h3"><?php _e("Informazioni","albo-pretorio-considera");?></h3>
-	    <p class="u-text-p"><?php _e("L'impronta dei files è calcolata con algoritmo SHA256 al momento dell'upload","albo-pretorio-considera");?></p>
+	    <h3 class="u-text-h3"><?php esc_html_e("Informazioni","albo-pretorio-considera");?></h3>
+	    <p class="u-text-p"><?php esc_html_e("L'impronta dei files è calcolata con algoritmo SHA256 al momento dell'upload","albo-pretorio-considera");?></p>
 	</div>
 </section>
 <?php
@@ -516,12 +517,12 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 			</script>
 	<section  id="FiltroAtti">
 		<div class="container shadow clearfix mb-3 pb-3">
-			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php _e("Filtri", 'wpscuola');?></<?php echo $titFiltri;?>>
+			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'wpscuola');?></<?php echo $titFiltri;?>>
 			<div class="row">
 				<div class="col-12 col-lg-6">
 					<div id="FiltriParametri" class="ml-lg-2" role="tablist">
 						<div>
-							<button id="headingFP" aria-expanded="false" aria-controls="Parametri" class="btn btn-primary w-100"><?php _e("Parametri", 'wpscuola');?></button>
+							<button id="headingFP" aria-expanded="false" aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'wpscuola');?></button>
 						</div>
 						<div id="Parametri" class="collapse" role="tabpanel" aria-labelledby="headingFP" data-parent="#FiltriParametri">
 							<div class="collapse-body border border-primary rounded-bottom pt-5">
@@ -533,7 +534,7 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 				<div class="col-12 col-lg-6">
 					<div id="FiltriCategorie" class="mr-lg-2" role="tablist">
 						<div>
-							<button  id="headingC" aria-expanded="false" aria-controls="Categorie" class="btn btn-primary w-100"><?php _e("Categorie", 'wpscuola');?></button>    	
+							<button  id="headingC" aria-expanded="false" aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'wpscuola');?></button>    	
 						</div>
 						<div id="Categorie" class="collapse" role="tabpanel" aria-labelledby="headingC" data-parent="#FiltriCategorie">
 							<div class="collapse-body border border-primary rounded-bottom">
@@ -548,11 +549,11 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 	<?php	}else{?>
 	<section  id="FiltroAtti">
 		<div class="container shadow clearfix mb-3 pb-3">
-			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php _e("Filtri", 'wpscuola');?></<?php echo $titFiltri;?>>
+			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'wpscuola');?></<?php echo $titFiltri;?>>
 			<div class="row">
 				<div class="col-12 col-lg-6">
 				<div>
-						<button aria-controls="Parametri" class="btn btn-primary w-100"><?php _e("Parametri", 'wpscuola');?></button>
+						<button aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'wpscuola');?></button>
 					</div>
 					<div class="collapse-body border border-primary rounded-bottom pt-5">
 						<?php echo get_FiltriParametri($Parametri['stato']);?>
@@ -560,7 +561,7 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 				</div>
 				<div class="col-12 col-lg-6">
 				<div>
-						<button aria-controls="Categorie" class="btn btn-primary w-100"><?php _e("Categorie", 'wpscuola');?></button>    	
+						<button aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'wpscuola');?></button>    	
 					</div>
 					<div class="collapse-body border border-primary rounded-bottom">
 						<?php echo get_FiltriCategorie($Parametri['stato']);?>

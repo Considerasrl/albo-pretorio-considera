@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Gestione Categorie.
  * @link       http://www.eduva.org
@@ -19,15 +20,15 @@ $messages[8] = __('Impossibile cancellare Categorie che sono collegate ad Atti',
 $messages[9] = __('Bisogna assegnare il nome alla nuova categoria','albo-pretorio-considera');
 $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 ?>
-<div id="errori" title="<?php _e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
-  <h3><?php _e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3>
+<div id="errori" title="<?php esc_html_e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
+  <h3><?php esc_html_e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3>
   	<p id="ElencoCampiConErrori"></p>
-  	<p style='color:red;font-weight: bold;'><?php  _e("Correggere gli errori per continuare","albo-pretorio-considera");?></p>
+  	<p style='color:red;font-weight: bold;'><?php  esc_html_e("Correggere gli errori per continuare","albo-pretorio-considera");?></p>
 </div>
 <div class="wrap nosubsub">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-category"></span> <?php _e("Categorie Atti","albo-pretorio-considera");?>
-		<a href="?page=categorie" class="add-new-h2"><?php _e("Aggiungi nuovo","albo-pretorio-considera");?></a></h2>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-category"></span> <?php esc_html_e("Categorie Atti","albo-pretorio-considera");?>
+		<a href="?page=categorie" class="add-new-h2"><?php esc_html_e("Aggiungi nuovo","albo-pretorio-considera");?></a></h2>
 	</div>
 <?php 
 if ( isset($_REQUEST['message']) && ( $msg = intval($_REQUEST['message'] )) ) {
@@ -46,11 +47,11 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
 <div id="col-container">
 <div id="col-right">
 <div class="col-wrap">
-<h3><?php _e("Elenco Categorie codificate","albo-pretorio-considera");?></h3>
+<h3><?php esc_html_e("Elenco Categorie codificate","albo-pretorio-considera");?></h3>
 <table class="widefat" id="elenco-categorie"> 
     <thead>
     	<tr>
-        	<th scope="col" style="text-align:center;"><?php _e("Categorie","albo-pretorio-considera");?></th>
+        	<th scope="col" style="text-align:center;"><?php esc_html_e("Categorie","albo-pretorio-considera");?></th>
 		</tr>
     </thead>
     <tbody id="the-list">
@@ -137,12 +138,12 @@ echo '    </tbody>
 		<input type="hidden" name="categoria" value="<?php echo wp_create_nonce('categoria')?>" />
 
 		<div class="form-field form-required">
-			<label for="tag-name"><?php _e("Nome","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="cat-name" id="<?php _e("Nome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo ap_sanifica_testo($risultato[0]->Nome); ?>" size="40" request/>
-			<p><?php _e("Nome della categoria.","albo-pretorio-considera");?></p>
+			<label for="tag-name"><?php esc_html_e("Nome","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
+			<input name="cat-name" id="<?php esc_html_e("Nome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo ap_sanifica_testo($risultato[0]->Nome); ?>" size="40" request/>
+			<p><?php esc_html_e("Nome della categoria.","albo-pretorio-considera");?></p>
 		</div>
 		<div class="form-field">
-			<label for="parent"><?php _e("Parente di","albo-pretorio-considera");?>:</label>
+			<label for="parent"><?php esc_html_e("Parente di","albo-pretorio-considera");?>:</label>
 			<?php 
 			if($edit){
 				echo ap_get_dropdown_categorie('cat-parente','cat-parente','','',ap_sanifica_testo($risultato[0]->Genitore));
@@ -150,17 +151,17 @@ echo '    </tbody>
 				echo ap_get_dropdown_categorie('cat-parente','cat-parente','postform','',0); 
 			}
 			?>
-			<p><?php _e("Se si sta creando una sottocategoria, selezionare il genitore. Questo sistema permette di creare una struttura gerarchica di categorie.","albo-pretorio-considera");?></p>
+			<p><?php esc_html_e("Se si sta creando una sottocategoria, selezionare il genitore. Questo sistema permette di creare una struttura gerarchica di categorie.","albo-pretorio-considera");?></p>
 		</div>
 		<div class="form-field">
-			<label for="tag-description"><?php _e("Descrizione","albo-pretorio-considera");?></label>
+			<label for="tag-description"><?php esc_html_e("Descrizione","albo-pretorio-considera");?></label>
 			<textarea name="cat-descrizione" id="cat-descrizione" rows="5" cols="40"><?php if($edit) echo ap_sanifica_areatesto($risultato[0]->Descrizione); ?></textarea>
-			<p><?php _e("Breve descrizione della categoria","albo-pretorio-considera");?></p>
+			<p><?php esc_html_e("Breve descrizione della categoria","albo-pretorio-considera");?></p>
 		</div>
 		<div class="form-field  form-required">
-			<label for="tag-durata"><?php _e("Durata","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="cat-durata" id="<?php _e("Durata","albo-pretorio-considera");?>" type="number" minval=0 value="<?php if($edit) echo intval($risultato[0]->Giorni); else echo "0"; ?>" size="4" style="width:6em;" alt="<?php _e("Durata Atto","albo-pretorio-considera");?>" required />
-			<p><?php _e("Durata di default, espressa in giorni, di validità degli atti di questa categoria","albo-pretorio-considera");?></p>
+			<label for="tag-durata"><?php esc_html_e("Durata","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
+			<input name="cat-durata" id="<?php esc_html_e("Durata","albo-pretorio-considera");?>" type="number" minval=0 value="<?php if($edit) echo intval($risultato[0]->Giorni); else echo "0"; ?>" size="4" style="width:6em;" alt="<?php esc_html_e("Durata Atto","albo-pretorio-considera");?>" required />
+			<p><?php esc_html_e("Durata di default, espressa in giorni, di validità degli atti di questa categoria","albo-pretorio-considera");?></p>
 		</div>
 
 <?php

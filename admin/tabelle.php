@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * WGestione Enti.
  * @link       http://www.eduva.org
@@ -49,19 +50,19 @@ load_Data_Funzioni();
 </div>
 <div class="wrap nosubsub">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-media-spreadsheet" style="font-size: 1.1em;"></span> <?php _e("Tabelle","albo-pretorio-considera");?>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-media-spreadsheet" style="font-size: 1.1em;"></span> <?php esc_html_e("Tabelle","albo-pretorio-considera");?>
 	</div>
 
 	<div id="config-tabs-container" style="margin-top:20px;">
 		<ul>
-			<li><a href="#Conf-tab-1"><?php _e("Funzioni","albo-pretorio-considera");?></a></li>
+			<li><a href="#Conf-tab-1"><?php esc_html_e("Funzioni","albo-pretorio-considera");?></a></li>
 		</ul>	 
 		<div id="Conf-tab-1">
 
 		  <form action="" method="post" id="FormFunzioni">
 		  	<table id="GridFunzioni"></table>
-		  	<button type="button" id="MemoFunzioni" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="dashicons dashicons-edit"></span> <?php _e("Memorizza Tabella Funzioni","albo-pretorio-considera");?></button>
-		  	<button type="button" id="LoadDefaultFunzioni" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="dashicons dashicons-update"></span> <?php _e("Carica i valori di default","albo-pretorio-considera");?></button>
+		  	<button type="button" id="MemoFunzioni" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="dashicons dashicons-edit"></span> <?php esc_html_e("Memorizza Tabella Funzioni","albo-pretorio-considera");?></button>
+		  	<button type="button" id="LoadDefaultFunzioni" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="dashicons dashicons-update"></span> <?php esc_html_e("Carica i valori di default","albo-pretorio-considera");?></button>
 		  </form>
 		</div>
 	</div>

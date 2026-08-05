@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Gestione Allegati.
  * @link       http://www.eduva.org
@@ -63,12 +64,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	          des.className="des";
 	          
 	          var LBLnatura=document.createElement('span');
-	          LBLnatura.textContent = '<?php _e("Documento firmato","albo-pretorio-considera");?>  ';
+	          LBLnatura.textContent = '<?php esc_html_e("Documento firmato","albo-pretorio-considera");?>  ';
 	          var natura= document.createElement('input');
 	          natura.setAttribute("type", "checkbox");
 	          natura.setAttribute("name", "Natura["+ i.toString() +"]");
 	          var LBLintegrale=document.createElement('span');
-	          LBLintegrale.textContent = '<?php _e("Documento Integrale","albo-pretorio-considera");?>  ';
+	          LBLintegrale.textContent = '<?php esc_html_e("Documento Integrale","albo-pretorio-considera");?>  ';
 	          var integrale= document.createElement('input');
 	          integrale.setAttribute("type", "checkbox");
 	          integrale.setAttribute("name", "Integrale["+ i.toString() +"]");

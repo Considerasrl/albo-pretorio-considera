@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Widget utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente.
  * @link       http://www.eduva.org
@@ -176,13 +177,13 @@ $HtmlW.= '</div>';
 	{
 			$instance = $old_instance;
 	
-	        $instance['titolo'] = strip_tags( $new_instance['titolo'] );
-	        $instance['titolo_statistiche'] = strip_tags( $new_instance['titolo_statistiche'] );
-	        $instance['titolo_elenco'] = strip_tags( $new_instance['titolo_elenco'] );
-	        $instance['numero_atti'] = strip_tags( $new_instance['numero_atti'] );
-	        $instance['pagina_albo'] = strip_tags( $new_instance['pagina_albo'] );
-	        $instance['ordine_campo'] = strip_tags( $new_instance['ordine_campo'] );
-	        $instance['ordinamento'] = strip_tags( $new_instance['ordinamento'] );
+	        $instance['titolo'] = wp_strip_all_tags( $new_instance['titolo'] );
+	        $instance['titolo_statistiche'] = wp_strip_all_tags( $new_instance['titolo_statistiche'] );
+	        $instance['titolo_elenco'] = wp_strip_all_tags( $new_instance['titolo_elenco'] );
+	        $instance['numero_atti'] = wp_strip_all_tags( $new_instance['numero_atti'] );
+	        $instance['pagina_albo'] = wp_strip_all_tags( $new_instance['pagina_albo'] );
+	        $instance['ordine_campo'] = wp_strip_all_tags( $new_instance['ordine_campo'] );
+	        $instance['ordinamento'] = wp_strip_all_tags( $new_instance['ordinamento'] );
 	        
 			return $instance;
 	}
@@ -325,11 +326,11 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
         {
                 $instance = $old_instance;
 
-                $instance['titolo'] = strip_tags( $new_instance['titolo'] );
-                $instance['numero_atti'] = strip_tags( $new_instance['numero_atti'] );
-                $instance['pagina_albo'] = strip_tags( $new_instance['pagina_albo'] );
-                $instance['ordine_campo'] = strip_tags( $new_instance['ordine_campo'] );
-                $instance['ordinamento'] = strip_tags( $new_instance['ordinamento'] );
+                $instance['titolo'] = wp_strip_all_tags( $new_instance['titolo'] );
+                $instance['numero_atti'] = wp_strip_all_tags( $new_instance['numero_atti'] );
+                $instance['pagina_albo'] = wp_strip_all_tags( $new_instance['pagina_albo'] );
+                $instance['ordine_campo'] = wp_strip_all_tags( $new_instance['ordine_campo'] );
+                $instance['ordinamento'] = wp_strip_all_tags( $new_instance['ordinamento'] );
 
                 return $instance;
         }
