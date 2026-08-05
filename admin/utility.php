@@ -458,10 +458,10 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 	</div>
 	<div id="utility-tab-6" style="margin-bottom:20px; height: 600px;">';
 
-		if (isset($_GET['Anno']))
-			$AnnoRepertorio=$_GET['Anno'];
-		else
-			$AnnoRepertorio=date("Y");
+	if (isset($_GET['Anno']))
+		$AnnoRepertorio=intval($_GET['Anno']);
+	else
+		$AnnoRepertorio=date("Y");
 		if (($Anni=ap_AnniAtti())!=FALSE){
 			echo '<div style="display:inline">
 			'.__("Repertorio","albo-online").' <select id="Anno" onchange="document.location.href=this.options[this.selectedIndex].value;">

@@ -1343,6 +1343,7 @@ function ap_AnniAtti(){
 
 function ap_Repertorio($Anno,$Echo=TRUE){
 	global $wpdb;
+	$Anno=(int)$Anno;
 	$Docu="";
 	$Sql="SELECT $wpdb->table_name_Enti.Nome as NomeEnte,LPAD(Numero,7,0) as Numero,Anno,Riferimento,Oggetto,$wpdb->table_name_Atti.Data as DataRegistrazione,DataInizio,DataFine, DataAnnullamento, MotivoAnnullamento,Richiedente,$wpdb->table_name_UO.Nome as UnitaOrganizzativa,CONCAT($wpdb->table_name_RespProc.Nome, \" \",$wpdb->table_name_RespProc.Cognome) as ResponsabileProcedimento,$wpdb->table_name_Categorie.Nome as Categoria,Informazioni
 		FROM $wpdb->table_name_Atti inner join $wpdb->table_name_Categorie on ($wpdb->table_name_Atti.IdCategoria =$wpdb->table_name_Categorie.IdCategoria) inner join $wpdb->table_name_Enti on ($wpdb->table_name_Atti.Ente=$wpdb->table_name_Enti.IdEnte) left join $wpdb->table_name_UO on ($wpdb->table_name_Atti.IdUnitaOrganizzativa =$wpdb->table_name_UO.IdUO) left join $wpdb->table_name_RespProc on ($wpdb->table_name_Atti.RespProc =$wpdb->table_name_RespProc.IdResponsabile)
