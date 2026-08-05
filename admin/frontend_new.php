@@ -196,7 +196,7 @@ function VisualizzaAtto($id){
 	}
 echo '
 <div>
-	<button class="alboh" onclick="window.location.href=\''.$_SERVER['HTTP_REFERER'].'\'"><span class="dashicons dashicons-controls-back"></span>'.__("Torna alla Lista","albo-online").'</button>
+	<button class="alboh" onclick="window.location.href=\''.esc_url(wp_get_referer()).'\'"><span class="dashicons dashicons-controls-back"></span>'.__("Torna alla Lista","albo-online").'</button>
 	<h3 class="u-padding-top-s">'.__("Dati atto","albo-online").'</h3>
 	<div class="Grid Grid--withGutter u-padding-all-l">';
 	if($risultato->DataAnnullamento!='0000-00-00'){

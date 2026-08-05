@@ -196,7 +196,7 @@ function VisualizzaAtto($id){
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
 echo '
 <div class="Visalbo">
-	<button class="alboh" onclick="window.location.href=\''.$_SERVER['HTTP_REFERER'].'\'"><span class="dashicons dashicons-controls-back"></span>'.__("Torna alla Lista","albo-online").'</button> 
+	<button class="alboh" onclick="window.location.href=\''.esc_url(wp_get_referer()).'\'"><span class="dashicons dashicons-controls-back"></span>'.__("Torna alla Lista","albo-online").'</button> 
 	<h3>'.__("Dati atto","albo-online").' </h3>';
 
 	if($risultato->DataAnnullamento!='0000-00-00'){
