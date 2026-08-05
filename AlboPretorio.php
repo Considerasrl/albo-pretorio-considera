@@ -1990,15 +1990,6 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	if(!is_dir($Dir)){
 		mkdir($Dir, 0744,TRUE);
 	}
-	if (file_exists(Albo_DIR."/js/gencode.php")){
-		chmod(Albo_DIR."/js/gencode.php", 0755);
-	}
-	if (file_exists(Albo_DIR."/js/buttonEditorGruppiAlbo.php")){
-		chmod(Albo_DIR."/js/buttonEditorGruppiAlbo.php", 0755);
-	}
-	if (file_exists(Albo_DIR."/js/buttonEditorVisAtto.php")){
-		chmod(Albo_DIR."/js/buttonEditorVisAtto.php", 0755);
-	}
 /**
 * Impostazione Ruoli
 * 

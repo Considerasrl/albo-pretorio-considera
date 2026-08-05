@@ -435,16 +435,16 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 	ob_start();
 	switch ($Parametri['stato']){
 			case 0:
-				$TitoloAtti=__("Tutti gli AttiTutti gli Atti", 'wpscuola');
+				$TitoloAtti=__("Tutti gli AttiTutti gli Atti", 'albo-pretorio-considera');
 				break;
 			case 1:
-				$TitoloAtti=__("Atti in corso di Validit&agrave;", 'wpscuola');
+				$TitoloAtti=__("Atti in corso di Validit&agrave;", 'albo-pretorio-considera');
 				break;
 			case 2:
-				$TitoloAtti=__("Atti scaduti", 'wpscuola');
+				$TitoloAtti=__("Atti scaduti", 'albo-pretorio-considera');
 				break;
 			case 3:
-				$TitoloAtti=__("Atti da Pubblicare", 'wpscuola');
+				$TitoloAtti=__("Atti da Pubblicare", 'albo-pretorio-considera');
 				break;
 	}
 	if (isset($Parametri['per_page'])){
@@ -517,12 +517,12 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 			</script>
 	<section  id="FiltroAtti">
 		<div class="container shadow clearfix mb-3 pb-3">
-			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'wpscuola');?></<?php echo $titFiltri;?>>
+			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'albo-pretorio-considera');?></<?php echo $titFiltri;?>>
 			<div class="row">
 				<div class="col-12 col-lg-6">
 					<div id="FiltriParametri" class="ml-lg-2" role="tablist">
 						<div>
-							<button id="headingFP" aria-expanded="false" aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'wpscuola');?></button>
+							<button id="headingFP" aria-expanded="false" aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'albo-pretorio-considera');?></button>
 						</div>
 						<div id="Parametri" class="collapse" role="tabpanel" aria-labelledby="headingFP" data-parent="#FiltriParametri">
 							<div class="collapse-body border border-primary rounded-bottom pt-5">
@@ -534,7 +534,7 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 				<div class="col-12 col-lg-6">
 					<div id="FiltriCategorie" class="mr-lg-2" role="tablist">
 						<div>
-							<button  id="headingC" aria-expanded="false" aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'wpscuola');?></button>    	
+							<button  id="headingC" aria-expanded="false" aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'albo-pretorio-considera');?></button>    	
 						</div>
 						<div id="Categorie" class="collapse" role="tabpanel" aria-labelledby="headingC" data-parent="#FiltriCategorie">
 							<div class="collapse-body border border-primary rounded-bottom">
@@ -549,11 +549,11 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 	<?php	}else{?>
 	<section  id="FiltroAtti">
 		<div class="container shadow clearfix mb-3 pb-3">
-			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'wpscuola');?></<?php echo $titFiltri;?>>
+			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'albo-pretorio-considera');?></<?php echo $titFiltri;?>>
 			<div class="row">
 				<div class="col-12 col-lg-6">
 				<div>
-						<button aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'wpscuola');?></button>
+						<button aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'albo-pretorio-considera');?></button>
 					</div>
 					<div class="collapse-body border border-primary rounded-bottom pt-5">
 						<?php echo get_FiltriParametri($Parametri['stato']);?>
@@ -561,7 +561,7 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 				</div>
 				<div class="col-12 col-lg-6">
 				<div>
-						<button aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'wpscuola');?></button>    	
+						<button aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'albo-pretorio-considera');?></button>    	
 					</div>
 					<div class="collapse-body border border-primary rounded-bottom">
 						<?php echo get_FiltriCategorie($Parametri['stato']);?>
@@ -598,7 +598,7 @@ if ($TotAtti>$N_A_pp){
 			$Npag++;
 		}
 		$Nav.= '<div> 
-    		<strong>'.__("N. Atti", 'wpscuola').' '.$TotAtti.'</strong>
+    		<strong>'.__("N. Atti", 'albo-pretorio-considera').' '.$TotAtti.'</strong>
     		<nav class="pagination-wrapper" aria-label="Navigazione Pagine Albo">
   				<ul class="pagination">';
      	if (isset($_REQUEST['Pag']) And $_REQUEST['Pag']>1 ){
@@ -669,7 +669,7 @@ echo '	<div class="tabalbo">
 		<table class="table table-striped table-hover table-responsive-sm"> 
 		<thead>
 	    	<tr>
-	        	<th scope="col">'.__("Prog.", 'wpscuola').'</th>';
+	        	<th scope="col">'.__("Prog.", 'albo-pretorio-considera').'</th>';
 foreach($FEColsOption as $Opzione => $Valore){
 		if($Valore==1){
 			echo '			<th scope="col">'.$Opzione.'</th>';
@@ -693,7 +693,7 @@ echo '	</tr>
 	//		Bonifica_Url();
 			$ParCella='';
 			if($riga->DataAnnullamento!='0000-00-00'){
-				$ParCella='style="background-color: '.$coloreAnnullati.';" title="'.__("Atto Annullato. Motivo Annullamento", 'wpscuola').': '.$riga->MotivoAnnullamento.'"';
+				$ParCella='style="background-color: '.$coloreAnnullati.';" title="'.__("Atto Annullato. Motivo Annullamento", 'albo-pretorio-considera').': '.$riga->MotivoAnnullamento.'"';
 				$CeAnnullato=true;
 			}
 			echo '<tr >
@@ -755,7 +755,7 @@ echo '	</tr>
 			}
 	} else {
 			echo '<tr>
-					<td colspan="6">'.__("Nessun Atto Codificato", 'wpscuola').'</td>
+					<td colspan="6">'.__("Nessun Atto Codificato", 'albo-pretorio-considera').'</td>
 				  </tr>';
 	}
 	echo '
@@ -763,7 +763,7 @@ echo '	</tr>
     </table>';
 echo '</div>';
 	if ($CeAnnullato) 
-		echo '<p>'.__("Le righe evidenziate con questo sfondo", 'wpscuola').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '.__("indicano Atti Annullati", 'wpscuola').'</p>';
+		echo '<p>'.__("Le righe evidenziate con questo sfondo", 'albo-pretorio-considera').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '.__("indicano Atti Annullati", 'albo-pretorio-considera').'</p>';
 echo '</div><!-- /wrap -->	';
 echo $Nav;
 return ob_get_clean();
