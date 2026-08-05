@@ -29,6 +29,7 @@ if ( ! defined( 'AP_VERSION' ) ) {
 
 include_once(dirname (__FILE__) .'/AlboPretorioFunctions.php');			/* libreria delle funzioni */
 include_once(dirname (__FILE__) .'/AlboPretorioWidget.php');
+include_once(dirname (__FILE__) .'/inc/editor-dialogs.php');			/* dialog AJAX dei pulsanti editor */
 
 define("Albo_URL",plugin_dir_url(dirname (__FILE__).'/AlboPretorio.php'));
 define("Albo_DIR",dirname (__FILE__));
@@ -639,6 +640,7 @@ function admin_notice(){
 	    wp_enqueue_script('jquery-ui-dialog');    
 		wp_enqueue_script( 'jquery-ui-datepicker');
 		wp_enqueue_script( 'wp-color-picker');
+		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.NotInFooter -- caricati in head: le pagine admin del plugin (tabelle/appendGrid, uploader allegati, ecc.) eseguono script inline che richiamano queste librerie prima del footer.
 		wp_enqueue_script( 'my-public-admin', $path.'/js/Albo.admin.public.js', array(), AP_VERSION);
 		if (strpos($hook_suffix,$TitoloAlbo)===false)
 			return;
@@ -662,6 +664,7 @@ function admin_notice(){
 			wp_enqueue_style("Albo_ui_structure_table", $path.'/plugin/appendGrid/jquery-ui.structure.min.css', array(), AP_VERSION);
 			wp_enqueue_script( 'my-admin_grid', $path.'/js/Albo.admin.grid.js', array(), AP_VERSION);
 		}
+		// phpcs:enable WordPress.WP.EnqueuedResourceParameters.NotInFooter
 		if(strpos($hook_suffix,"_page_atti")!==false And isset($_GET['action']) And $_GET['action']=='UpAllegati'){
 			wp_register_style('AdminAlboMultiUpload', $path.'/css/stylemultiupload.css', array(), AP_VERSION);
        	 	wp_enqueue_style( 'AdminAlboMultiUpload');
@@ -997,6 +1000,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 <?php
 	}
 	    wp_enqueue_script('jquery');
+		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.NotInFooter -- caricati in head: gli shortcode dell'Albo emettono markup/script inline che dipendono da jQuery UI e da Albo.public.js prima del footer.
 	    wp_enqueue_script('Albo-Public-Jquery-UI',plugins_url('js/jquery-ui.min.js', __FILE__ ), array(), AP_VERSION);
 	    wp_enqueue_script('jquery-ui-tabs');
 		wp_enqueue_script( 'jquery-ui-datepicker');
@@ -1010,6 +1014,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 //        wp_enqueue_style( 'AlboPretorioNewStyle');
 		wp_enqueue_script('Albo-PublicDesignItalia', plugins_url('css/build/IWT.min.js', __FILE__ ), array(), AP_VERSION);
 	}
+		// phpcs:enable WordPress.WP.EnqueuedResourceParameters.NotInFooter
         wp_register_style('AlboPretorioStyle', plugins_url( 'css/style.css', __FILE__ ), array(), AP_VERSION );
         wp_enqueue_style( 'AlboPretorioStyle');
 		echo "<!--FINE HEAD Albo Preotrio On line -->";	

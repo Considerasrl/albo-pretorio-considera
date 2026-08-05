@@ -9,7 +9,7 @@
     		ed.addCommand('frmAlbovisatto', function() {
 				ed.windowManager.open({
 					title : title_button_atto,
-					file : url + '/buttonEditorVisAtto.php',
+					file : ajaxurl + '?action=ap_editor_visatto',
 					width : 350, 
 					height : 200,
 					inline : 1

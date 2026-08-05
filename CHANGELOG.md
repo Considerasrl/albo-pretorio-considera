@@ -22,8 +22,15 @@ con il pacchetto `.zip` installabile allegato.
   cache-busting sugli aggiornamenti; gli handle di jQuery UI del core sono
   accodati per solo handle.
 
+- I dialog dei pulsanti dell'editor (Albo, Gruppi Atti, Vis. Atto) sono ora
+  serviti tramite `admin-ajax.php` con verifica delle capability, invece che da
+  file PHP autonomi che si auto-caricavano l'ambiente WordPress: nessun accesso
+  diretto ai file e nessun bootstrap manuale di `wp-load.php`.
+
 ### Rimosso
 - File `Repertori/repertorio_2020.csv` erroneamente incluso nel pacchetto.
+- File `js/gencode.php`, `js/buttonEditorGruppiAlbo.php`, `js/buttonEditorVisAtto.php`
+  (sostituiti dagli handler AJAX dei dialog editor).
 
 ## [4.11.1] - 2026-08-05
 

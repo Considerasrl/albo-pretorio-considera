@@ -344,6 +344,7 @@ function AlboWidget_register()
 }
 function AlboWidget_required_scripts()
 {
+    // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter -- caricato in head: il markup del widget inizializza i tab jQuery UI inline prima del footer.
     wp_enqueue_script('AlboPretorio-tabs', Albo_URL . 'js/Albo.jquery.tabs.js', array('jquery-ui-tabs'), AP_VERSION);
     wp_enqueue_style('AlboPretorio-ui-style', Albo_URL . 'css/jquery-ui-custom.css', array(), AP_VERSION);
 }
