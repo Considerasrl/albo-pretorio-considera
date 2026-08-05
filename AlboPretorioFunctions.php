@@ -3012,10 +3012,19 @@ global $wpdb;
 				$ControlloDir.=sprintf(__('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-online'),$DirLog);
 			} 
 		}
-		if ($Echo) echo "</ul>";
-		if ($ControlloDir!=""){
-			return $ControlloDir;
+	if ($Echo) echo "</ul>";
+	if ($ControlloDir!=""){
+		return $ControlloDir;
+	}
+// Protezione delle directory di backup dall'accesso diretto via web
+	foreach(array($Destinazione,$Dir,$DirLog) as $DirDaProteggere){
+		if(is_dir($DirDaProteggere)){
+			if(!is_file($DirDaProteggere."/index.php"))
+				@file_put_contents($DirDaProteggere."/index.php", "<?php\n// Silence is golden.\n");
+			if(!is_file($DirDaProteggere."/.htaccess"))
+				@file_put_contents($DirDaProteggere."/.htaccess", "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\nDeny from all\n</IfModule>\n");
 		}
+	}
 		
 	/*		if ($Tipo==""){
 			$nomefileZip=$Dir."/".$NomeFile.".zip";
@@ -3233,7 +3242,16 @@ function ap_oblio_atti($Atti){
 	}
 	if(!$ControlloDir){
 		$Msg=" ".__("Non riesco a creare le cartelle necessarie all'operazione","albo-online");
-		return $Msg;	
+		return $Msg;
+	}
+// Protezione delle directory dell'oblio dall'accesso diretto via web
+	foreach(array($Dir,$DirTmp) as $DirDaProteggere){
+		if(is_dir($DirDaProteggere)){
+			if(!is_file($DirDaProteggere."/index.php"))
+				@file_put_contents($DirDaProteggere."/index.php", "<?php\n// Silence is golden.\n");
+			if(!is_file($DirDaProteggere."/.htaccess"))
+				@file_put_contents($DirDaProteggere."/.htaccess", "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\nDeny from all\n</IfModule>\n");
+		}
 	}
 	ap_SvuotaDirectory($DirTmp,NULL);
 	$Msg="";
