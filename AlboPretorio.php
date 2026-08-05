@@ -2288,12 +2288,15 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 
 	function update_AlboPretorio_settings(){
 	    if(isset($_POST['AlboPretorio_submit_button']) And $_POST['AlboPretorio_submit_button'] == __('Salva Modifiche','albo-online')){
+	    	if (!current_user_can('admin_albo')) {
+	    		wp_die(esc_html__("Non hai i permessi per modificare la configurazione dell'Albo","albo-online"));
+	    	}
 	    	if (!isset($_POST['confAP'])) {
-	    		header('Location: '.get_bloginfo('wpurl').'/wp-admin/admin.php?page=configAlboP&update=false'); 		
+	    		wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
 	    	}
 			if (!wp_verify_nonce($_POST['confAP'],'configurazionealbo')){
-				header('Location: '.get_bloginfo('wpurl').'/wp-admin/admin.php?page=configAlboP&update=false'); 
-			} 		
+				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+			}
 		    ap_set_ente_me(strip_tags($_POST['c_Ente']));
 			if (isset($_POST['c_VEnte']) And $_POST['c_VEnte']=='Si')
 			    update_option('opt_AP_VisualizzaEnte','Si' );
@@ -2371,8 +2374,9 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		  	}else{
 		  		update_option('opt_AP_RestApi', ""); 
 		  	}
-			header('Location: '.get_bloginfo('wpurl').'/wp-admin/admin.php?page=configAlboP&update=true'); 
-  		}
+		header('Location: '.get_bloginfo('wpurl').'/wp-admin/admin.php?page=configAlboP&update=true');
+		exit;
+   		}
 	}
 }
 	global $AP_OnLine;
