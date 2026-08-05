@@ -146,6 +146,8 @@ function albo_post() {
 	            	$action = 'bulk-atti' ;
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
+		        }else{
+		        	wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
 		        }
 			 	$Msg=ap_oblio_atti(intval($_GET['IdAtto']));
 			 	$location = "?page=atti&stato_atti=Eliminare&message=".urlencode($Msg);
