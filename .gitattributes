@@ -1,0 +1,5 @@
+# File di sviluppo esclusi dai pacchetti prodotti con `git archive`
+# (workflow di release e archivi sorgente generati da GitHub).
+/.github        export-ignore
+/.gitignore     export-ignore
+/.gitattributes export-ignore

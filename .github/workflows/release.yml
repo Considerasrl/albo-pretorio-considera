@@ -1,0 +1,69 @@
+name: Release
+
+# Si attiva al push di un tag di versione (es. v4.10.1).
+# Flusso: PR -> merge su master -> git tag vX.Y.Z && git push --tags -> parte questo workflow.
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del tag
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determina la versione dal tag
+        id: ver
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Verifica che l'header del plugin combaci col tag
+        run: |
+          HEADER=$(grep -m1 'Version:' AlboPretorio.php | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          if [ "$HEADER" != "${{ steps.ver.outputs.version }}" ]; then
+            echo "::error::La versione nell'header ($HEADER) non combacia col tag (${{ steps.ver.outputs.version }})."
+            exit 1
+          fi
+
+      - name: Lint PHP (esclude le librerie di terze parti)
+        run: |
+          find . -name '*.php' -not -path './inc/*' -not -path './plugin/*' -print0 \
+            | xargs -0 -n1 -P4 php -l > /dev/null
+
+      - name: Costruisci lo zip pulito
+        run: |
+          OUT="albo-pretorio-on-line-${{ steps.ver.outputs.version }}.zip"
+          git archive --format=zip --prefix=albo-pretorio-on-line/ -o "$OUT" "${GITHUB_REF_NAME}"
+          unzip -t "$OUT" > /dev/null
+          echo "OUT=$OUT" >> "$GITHUB_ENV"
+
+      - name: Estrai le note di questa versione dal CHANGELOG
+        run: |
+          awk -v v="${{ steps.ver.outputs.version }}" '
+            $0 ~ "^## \\["v"\\]" {f=1; next}
+            f && /^## \[/ {exit}
+            f {print}
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "Release ${{ steps.ver.outputs.version }}" > RELEASE_NOTES.md
+          fi
+          {
+            echo ""
+            echo "SHA-256 dello zip: \`$(sha256sum "$OUT" | cut -d' ' -f1)\`"
+          } >> RELEASE_NOTES.md
+
+      - name: Crea la Release con lo zip allegato
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" "$OUT" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file RELEASE_NOTES.md
