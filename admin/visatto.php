@@ -12,7 +12,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 function Visualizza_Atto($Parametri){
 	ob_start();
 	if(isset($_GET["titolo"])){
-		$Titolo=$_GET["titolo"];
+		$Titolo=sanitize_text_field(wp_unslash($_GET["titolo"]));
 	}else{
 		if (isset($Parametri['titolo'])){
 			$Titolo=$Parametri['titolo'];	
@@ -62,7 +62,7 @@ function Visualizza_Atto($Parametri){
 		$Stato=__("In corso di Validità","albo-online");
 echo '
 <div class="Visalbo">
-<h3>'.$Titolo.'</h3>
+<h3>'.esc_html($Titolo).'</h3>
 <p>'.$Annullato.'</p>
 <table class="tabVisalbo">
 	    <tbody id="dati-atto">

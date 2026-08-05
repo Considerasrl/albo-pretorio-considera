@@ -12,7 +12,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 function Visualizza_Atto($Parametri){
 	ob_start();
 	if(isset($_GET["titolo"])){
-		$Titolo=$_GET["titolo"];
+		$Titolo=sanitize_text_field(wp_unslash($_GET["titolo"]));
 	}else{
 		if (isset($Parametri['titolo'])){
 			$Titolo=$Parametri['titolo'];	
@@ -64,7 +64,7 @@ function Visualizza_Atto($Parametri){
 <section  id="DatiAtto">
 	<div class="container clearfix mb-3 pb-3">
 		<button class="btn btn-primary" onclick="window.location.href='<?php echo esc_url(wp_get_referer());?>'"><span class="fas fa-arrow-circle-left"></span> <?php _e("Torna alla Lista","albo-online");?></button>
-		<h2 class="u-text-h2 pt-3 pl-2"><?php echo $Titolo;?></h2>
+		<h2 class="u-text-h2 pt-3 pl-2"><?php echo esc_html($Titolo);?></h2>
 		<?php echo ($Annullato?"<h3>".$Annullato."</h3>":"");?>
 	   	<div class="row">
 	   		<div class="col-12">

@@ -12,7 +12,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 function Visualizza_Atto($Parametri){
 	ob_start();
 	if(isset($_GET["titolo"])){
-		$Titolo=$_GET["titolo"];
+		$Titolo=sanitize_text_field(wp_unslash($_GET["titolo"]));
 	}else{
 		if (isset($Parametri['titolo'])){
 			$Titolo=$Parametri['titolo'];	
@@ -67,7 +67,7 @@ echo '
 	<p style="margin-bottom:1.5em;">
 	'.$Annullato.'
 	</p>
-	<h3>'.$Titolo.'</h3>
+	<h3>'.esc_html($Titolo).'</h3>
 	<div class="Grid Grid--withGutter u-padding-all-l">
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Stato Atto","albo-online").'</div>
