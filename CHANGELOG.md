@@ -17,6 +17,10 @@ con il pacchetto `.zip` installabile allegato.
   archivi prodotti è invariato.
 - L'esportazione del Repertorio (CSV/XML/JSON) viene ora scritta nella cartella
   uploads del sito invece che dentro la cartella del plugin.
+- Gli script e i fogli di stile del plugin vengono ora accodati con un numero di
+  versione esplicito (derivato dalla versione del plugin), utile per il
+  cache-busting sugli aggiornamenti; gli handle di jQuery UI del core sono
+  accodati per solo handle.
 
 ### Rimosso
 - File `Repertori/repertorio_2020.csv` erroneamente incluso nel pacchetto.

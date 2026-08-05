@@ -344,8 +344,8 @@ function AlboWidget_register()
 }
 function AlboWidget_required_scripts()
 {
-    wp_enqueue_script('AlboPretorio-tabs', Albo_URL . 'js/Albo.jquery.tabs.js', array('jquery-ui-tabs'));
-    wp_enqueue_style('AlboPretorio-ui-style', Albo_URL . 'css/jquery-ui-custom.css');
+    wp_enqueue_script('AlboPretorio-tabs', Albo_URL . 'js/Albo.jquery.tabs.js', array('jquery-ui-tabs'), AP_VERSION);
+    wp_enqueue_style('AlboPretorio-ui-style', Albo_URL . 'css/jquery-ui-custom.css', array(), AP_VERSION);
 }
 add_action('wp_enqueue_scripts', 'AlboWidget_required_scripts');
 add_action( 'widgets_init', 'AlboWidget_register' );

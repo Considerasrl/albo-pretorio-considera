@@ -22,6 +22,11 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
+if ( ! defined( 'AP_VERSION' ) ) {
+	$ap_plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
+	define( 'AP_VERSION', $ap_plugin_data['Version'] );
+}
+
 include_once(dirname (__FILE__) .'/AlboPretorioFunctions.php');			/* libreria delle funzioni */
 include_once(dirname (__FILE__) .'/AlboPretorioWidget.php');
 
@@ -630,35 +635,35 @@ function admin_notice(){
 		$path=plugins_url('', __FILE__ );
 	    wp_enqueue_script('jquery');
 	    wp_enqueue_script('jquery-ui-core');
-	    wp_enqueue_script('jquery-ui-tabs', '', array('jquery'));
-	    wp_enqueue_script('jquery-ui-dialog', '', array('jquery'));    
-		wp_enqueue_script( 'jquery-ui-datepicker', '', array('jquery'));
-		wp_enqueue_script( 'wp-color-picker', '', array('jquery'));
-		wp_enqueue_script( 'my-public-admin', $path.'/js/Albo.admin.public.js');
+	    wp_enqueue_script('jquery-ui-tabs');
+	    wp_enqueue_script('jquery-ui-dialog');    
+		wp_enqueue_script( 'jquery-ui-datepicker');
+		wp_enqueue_script( 'wp-color-picker');
+		wp_enqueue_script( 'my-public-admin', $path.'/js/Albo.admin.public.js', array(), AP_VERSION);
 		if (strpos($hook_suffix,$TitoloAlbo)===false)
 			return;
-		wp_register_style('AdminAlbo', $path.'/css/styleAdmin.css');
+		wp_register_style('AdminAlbo', $path.'/css/styleAdmin.css', array(), AP_VERSION);
 		wp_enqueue_style( 'AdminAlbo');
-	    wp_enqueue_script( 'my-admin-fields', $path.'/js/Fields.js');
-	    wp_enqueue_script( 'my-admin', $path.'/js/Albo.admin.js');
+	    wp_enqueue_script( 'my-admin-fields', $path.'/js/Fields.js', array(), AP_VERSION);
+	    wp_enqueue_script( 'my-admin', $path.'/js/Albo.admin.js', array(), AP_VERSION);
 		wp_enqueue_style( 'wp-color-picker' );
-		wp_enqueue_style( 'jquery.ui.theme', $path.'/css/jquery-ui-custom.css');	
+		wp_enqueue_style( 'jquery.ui.theme', $path.'/css/jquery-ui-custom.css', array(), AP_VERSION);
 		if(strpos($hook_suffix,"_page_tipifiles")!==false or strpos($hook_suffix,"page_configAlboP")!==false){
 			wp_enqueue_media();
-			wp_register_script('uploader_tipi_files', $path.'/js/Uploader.js', array('jquery'));
+			wp_register_script('uploader_tipi_files', $path.'/js/Uploader.js', array('jquery'), AP_VERSION);
 			wp_enqueue_script( 'uploader_tipi_files');
 		}
 		if(strpos($hook_suffix,"_page_tabelle")!==false ){
-			wp_enqueue_script( 'jquery-ui-tooltip', '', array('jquery'));
-			wp_enqueue_script( "Albo_appendGrid", $path . '/plugin/appendGrid/jquery.appendGrid-1.7.1.js');
-			wp_enqueue_style("Albo_appendGrid", $path . '/plugin/appendGrid/jquery.appendGrid-1.7.1.css');
-			wp_enqueue_style("Albo_ui_tema", $path. '/plugin/appendGrid/jquery-ui.theme.min.css');
+			wp_enqueue_script( 'jquery-ui-tooltip');
+			wp_enqueue_script( "Albo_appendGrid", $path . '/plugin/appendGrid/jquery.appendGrid-1.7.1.js', array(), '1.7.1');
+			wp_enqueue_style("Albo_appendGrid", $path . '/plugin/appendGrid/jquery.appendGrid-1.7.1.css', array(), '1.7.1');
+			wp_enqueue_style("Albo_ui_tema", $path. '/plugin/appendGrid/jquery-ui.theme.min.css', array(), AP_VERSION);
 //			wp_enqueue_style( "Albo_ui", $path . '/css/jquery-ui.css' );
-			wp_enqueue_style("Albo_ui_structure_table", $path.'/plugin/appendGrid/jquery-ui.structure.min.css');
-			wp_enqueue_script( 'my-admin_grid', $path.'/js/Albo.admin.grid.js');
-		}		
+			wp_enqueue_style("Albo_ui_structure_table", $path.'/plugin/appendGrid/jquery-ui.structure.min.css', array(), AP_VERSION);
+			wp_enqueue_script( 'my-admin_grid', $path.'/js/Albo.admin.grid.js', array(), AP_VERSION);
+		}
 		if(strpos($hook_suffix,"_page_atti")!==false And isset($_GET['action']) And $_GET['action']=='UpAllegati'){
-			wp_register_style('AdminAlboMultiUpload', $path.'/css/stylemultiupload.css');
+			wp_register_style('AdminAlboMultiUpload', $path.'/css/stylemultiupload.css', array(), AP_VERSION);
        	 	wp_enqueue_style( 'AdminAlboMultiUpload');
 		}
 	}
@@ -992,20 +997,20 @@ static function add_albo_plugin_visatto($plugin_array) {
 <?php
 	}
 	    wp_enqueue_script('jquery');
-	    wp_enqueue_script('Albo-Public-Jquery-UI',plugins_url('js/jquery-ui.min.js', __FILE__ ));
-	    wp_enqueue_script('jquery-ui-tabs', '', array('jquery'));
-		wp_enqueue_script( 'jquery-ui-datepicker', '', array('jquery'));
+	    wp_enqueue_script('Albo-Public-Jquery-UI',plugins_url('js/jquery-ui.min.js', __FILE__ ), array(), AP_VERSION);
+	    wp_enqueue_script('jquery-ui-tabs');
+		wp_enqueue_script( 'jquery-ui-datepicker');
 		if(get_option('opt_AP_BootstrapItalia')!="Si")
-			wp_enqueue_script( 'Albo-Public', plugins_url('js/Albo.public.js', __FILE__ ));
+			wp_enqueue_script( 'Albo-Public', plugins_url('js/Albo.public.js', __FILE__ ), array(), AP_VERSION);
 //		var_dump($OldInterfaccia);var_dump($UploadCSSNI);var_dump(get_option('opt_AP_BootstrapItalia'));
     if($OldInterfaccia!="Si"  AND $UploadCSSNI!="Si"){
-		wp_register_style('AlboPretorioWTS', plugins_url( 'css/build/build.css', __FILE__ ) );
+		wp_register_style('AlboPretorioWTS', plugins_url( 'css/build/build.css', __FILE__ ), array(), AP_VERSION );
         wp_enqueue_style( 'AlboPretorioWTS');
 //		wp_register_style('AlboPretorioNewStyle', plugins_url( 'css/stylenew.css', __FILE__ ) );
 //        wp_enqueue_style( 'AlboPretorioNewStyle');
-		wp_enqueue_script('Albo-PublicDesignItalia', plugins_url('css/build/IWT.min.js', __FILE__ ));
+		wp_enqueue_script('Albo-PublicDesignItalia', plugins_url('css/build/IWT.min.js', __FILE__ ), array(), AP_VERSION);
 	}
-        wp_register_style('AlboPretorioStyle', plugins_url( 'css/style.css', __FILE__ ) );
+        wp_register_style('AlboPretorioStyle', plugins_url( 'css/style.css', __FILE__ ), array(), AP_VERSION );
         wp_enqueue_style( 'AlboPretorioStyle');
 		echo "<!--FINE HEAD Albo Preotrio On line -->";	
 		}
