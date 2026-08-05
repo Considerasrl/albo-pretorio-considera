@@ -1047,6 +1047,14 @@ function Memo_allegato_atto_collegato(){
 		} 		
 		$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/';
 		$targetfile = $_REQUEST['AllegatiSpuri'];
+		// Il file deve trovarsi dentro la cartella upload dell'Albo: si risolve
+		// il path reale e si verifica il prefisso per impedire path traversal
+		$real_target = realpath(str_replace("//","/",str_replace("\\","/",$targetfile)));
+		$real_upload = realpath($destination_path);
+		if ($real_target===FALSE || $real_upload===FALSE || strpos($real_target, $real_upload.DIRECTORY_SEPARATOR)!==0){
+			return __("ATTENZIONE. Il file indicato non si trova nella cartella di upload dell'Albo, l'operazione è stata annullata","albo-online");
+		}
+		$targetfile = $real_target;
 		$Impronta=ap_insert_allegato(sanitize_textarea_field($_POST['Descrizione']),
 									 str_replace("//","/",str_replace("\\","/",$targetfile)),
 									 intval($_POST['id']), 
