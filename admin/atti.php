@@ -266,7 +266,7 @@ class AdminTableAtti extends WP_List_Table
 						<span class="dashicons dashicons-upload" title="'.__('Allegati','albo-online').'"></span>
 					</a>';
 			if (current_user_can('editore_atti_albo')){
-				$actions['pubblica'] ='<a href="?page=atti&amp;action=approva-atto&amp;id='.$item->IdAtto.'"  >
+				$actions['pubblica'] ='<a href="?page=atti&amp;action=approva-atto&amp;id='.$item->IdAtto.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$item->IdAtto).'"  >
 	<span class="dashicons dashicons-share-alt" title="'.__('Pubblica atto','albo-online').'"></span>
 					</a>';
 			}
@@ -325,7 +325,7 @@ class AdminTableAtti extends WP_List_Table
 					<span class="dashicons dashicons-upload" title="'.__('Allegati','albo-online').'"></span>
 				</a>';
 				if (current_user_can('editore_atti_albo')){
-				$actions['pubblica'] ='<a href="?page=atti&amp;action=approva-atto&amp;id='.$item->IdAtto.'"  >
+				$actions['pubblica'] ='<a href="?page=atti&amp;action=approva-atto&amp;id='.$item->IdAtto.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$item->IdAtto).'"  >
 	<span class="dashicons dashicons-share-alt" title="'.__('Pubblica atto','albo-online').'"></span>
 					</a>';
 				}         
@@ -452,15 +452,27 @@ if(isset($_REQUEST['action'])){
 			Edit_atto((int)$_REQUEST['id']);
 			break;
 		case "pubblica-atto":
+			if ( ! isset( $_REQUEST['pubblicaatto'] ) || ! wp_verify_nonce( $_REQUEST['pubblicaatto'], 'pubblicaatto-'.(int)$_REQUEST['id'] ) ) {
+				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				break;
+			}
 			Lista_Atti(ap_approva_atto((int)$_REQUEST['id']));
 			break;
 		case "setta-anno":
+			if ( ! isset( $_REQUEST['settaanno'] ) || ! wp_verify_nonce( $_REQUEST['settaanno'], 'settaanno-'.(int)$_REQUEST['id'] ) ) {
+				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				break;
+			}
 			update_option('opt_AP_AnnoProgressivo',date("Y") );
 		  	update_option('opt_AP_NumeroProgressivo',1 );
 			PreApprovazione((int)$_REQUEST['id'],sprintf(__('Anno Albo settato a %s Numero progressivo settato a 0','albo-online'),date("Y")));
 			break;
 		case "approva-atto" :
 			$ret="";
+			if ( ! isset( $_REQUEST['approvaatto'] ) || ! wp_verify_nonce( $_REQUEST['approvaatto'], 'approvaatto-'.(int)$_REQUEST['id'] ) ) {
+				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				break;
+			}
 			if (isset($_REQUEST['apa'])){
 				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('Anno' => $_REQUEST['apa']),array('%s'),__('Modifica in Approvazione','albo-online')."\n");
 			}
@@ -716,6 +728,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				<form id="agg_anno_progressivo" method="post" action="?page=atti">
 				<input type="hidden" name="action" value="setta-anno" />
 				<input type="hidden" name="id" value="'.$id.'" />
+				<input type="hidden" name="settaanno" value="'.wp_create_nonce('settaanno-'.$id).'" />
 				<input type="submit" name="submit" id="submit" class="button" value="'.__("Aggiorna Anno Albo ed Azzera numero Progressivo","albo-online").'"  />
 				</form>
 			</div>
@@ -742,7 +755,7 @@ echo'<br />
 		}else{
 		 	$Passato=false;
 			echo '<td>'.__("Verificata incongruenza, bisogna rimediare prima di proseguire","albo-online").'</td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;apa='.date("Y").'" class="add-new-h2">Imposta Anno Pubblicazione a '.date("Y").'</td>';
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;apa='.date("Y").'" class="add-new-h2">Imposta Anno Pubblicazione a '.date("Y").'</td>';
 		}
 		echo '</tr>';
 		if($Passato){
@@ -755,7 +768,7 @@ echo'<br />
 			}else{
 			 	$Passato=false;
 				echo '<td>'.__("Verificata incongruenza, bisogna rimediare prima di proseguire","albo-online").'</td>
-				      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;pnp='.$NumeroDaDb.'" class="add-new-h2">'.__("Imposta Parametro a","albo-online").' '.$NumeroDaDb.'</td>';
+				      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;pnp='.$NumeroDaDb.'" class="add-new-h2">'.__("Imposta Parametro a","albo-online").' '.$NumeroDaDb.'</td>';
 			}
 			echo '</tr>';
 		}
@@ -769,7 +782,7 @@ echo'<br />
 			}else{
 	 			$Passato=false;
 	   			echo '<td>'.__("Aggiornare la data di Inizio Pubblicazione","albo-online").'</td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;udi='.ap_oggi().'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData(ap_oggi()).'</td>';
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udi='.ap_oggi().'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData(ap_oggi()).'</td>';
 			}
 			echo "</tr>";
 		}
@@ -796,13 +809,13 @@ echo'<br />
 					echo '<td>'.__("Ok","albo-online").'</td>';
 				}else{
 					echo '<td>'.__("Ok","albo-online").'</td>';
-					echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;udf='.$newDataFine.'" class="add-new-h2">Aggiorna a '.ap_VisualizzaData($newDataFine).'</a></td>';
+					echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">Aggiorna a '.ap_VisualizzaData($newDataFine).'</a></td>';
 				}
 			}else{
 	 			$Passato=false;
 	   			echo '<td><span style="color:red;">'.sprintf(__("La data di fine Pubblicazione %s è antecedente della data di inizio pubblicazione %s","albo-online"),ap_VisualizzaData($atto->DataFine),ap_VisualizzaData($atto->DataInizio)).'</span></td>
 				   <td><span style="font-weight:bold;">'.__("Aggiornare la data di Fine Pubblicazione con i giorni della categoria o tornare indietro e modificare l'atto","albo-online").'</span></td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;udf='.$newDataFine.'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData($newDataFine).'</a></td>';
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData($newDataFine).'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -819,7 +832,7 @@ echo'<br />
 				echo '<td>'.__("Ok","albo-online").'</td>';
 			}else{
 				echo '<td>'.__("Ok","albo-online").'</td>';
-				echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;udo='.$DataOblioStandard.'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData($DataOblioStandard).'</a></td>';
+				echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udo='.$DataOblioStandard.'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData($DataOblioStandard).'</a></td>';
 			}
 		echo '</tr>';
 		}
@@ -880,6 +893,7 @@ echo'
 		<form id="approva-atto" method="post" action="?page=atti">
 		<input type="hidden" name="action" value="pubblica-atto" />
 		<input type="hidden" name="id" value="'.$id.'" />
+		<input type="hidden" name="pubblicaatto" value="'.wp_create_nonce('pubblicaatto-'.$id).'" />
 		<input type="hidden" name="stato_atti" value="Correnti" />
 		<input type="submit" name="submit" id="submit" class="button" value="Pubblica Atto"  />
 		</form>
