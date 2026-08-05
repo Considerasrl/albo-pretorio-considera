@@ -80,13 +80,18 @@ con il pacchetto installabile allegato a ciascuna.
 
 ## Sicurezza
 
-Questo fork ha ricevuto una prima revisione di sicurezza (vedi il changelog:
-controllo accessi sulle chiamate AJAX in 4.9.1, SQL injection e accesso agli
-allegati in 4.9.2). **Non è però un audit completo**, e non è accertato che
-copra le vulnerabilità che portarono wordpress.org a rimuovere il plugin.
-Restano problemi noti non ancora affrontati. Vedi
-[SECURITY.md](SECURITY.md) per lo stato dettagliato e per come segnalare una
-vulnerabilità (in privato, non con una issue pubblica).
+Questo fork è stato sottoposto a una **revisione di sicurezza sistematica**,
+conclusa con la release **4.10.1**: audit del codice con proof-of-concept
+eseguiti su installazione reale, che ha individuato e corretto vulnerabilità
+anche critiche (modifica della configurazione e SQL injection sfruttabili da
+anonimi, path traversal sui backup, CSRF sulle cancellazioni, XSS riflessi).
+Il dettaglio è nel [CHANGELOG.md](CHANGELOG.md); le release precedenti (4.9.x)
+avevano corretto controllo accessi AJAX, SQL injection nella ricerca e accesso
+agli allegati.
+
+L'audit non garantisce l'assenza di altri problemi: per segnalare una
+vulnerabilità vedi [SECURITY.md](SECURITY.md) (in privato, non con una issue
+pubblica).
 
 ## Rapporto con l'upstream
 

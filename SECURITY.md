@@ -9,16 +9,20 @@ Il plugin originale è stato **rimosso da wordpress.org il 7 marzo 2024** perch�
 non superava i controlli di sicurezza richiesti dalla directory ufficiale.
 L'autore non lo mantiene più.
 
-In **4.9.1** è stata condotta una prima revisione, che ha individuato e corretto
-una falla di controllo degli accessi (vedi il changelog). È una prima passata,
-non un audit completo: **non sappiamo se coincida con ciò che wordpress.org
-aveva contestato**, e altre vulnerabilità possono benissimo essere ancora
-presenti. Chi installa il plugin lo fa su codice non ancora sottoposto a una
-revisione di sicurezza sistematica.
+Il fork è stato sottoposto a revisioni progressive:
 
-Fra i punti già noti e non ancora affrontati: il download degli allegati
-(`action=dwnalle`) serve qualsiasi allegato a chiunque, protetto dal solo
-controllo dell'header `Referer`, che è banale da falsificare.
+- **4.9.1 – 4.9.4**: controllo degli accessi sulle chiamate AJAX, SQL injection
+  nella ricerca atti, accesso agli allegati (`dwnalle`), SQL injection via
+  `ORDER BY`, XSS memorizzato, PHP object injection;
+- **4.10.1**: **audit di sicurezza completo**, con proof-of-concept eseguiti su
+  installazione reale. Sono state corrette, fra le altre: modifica della
+  configurazione senza autenticazione, SQL injection non autenticata sulla
+  REST API, path traversal nel download dei backup, CSRF sulle cancellazioni
+  di atti e allegati, XSS riflessi. Il dettaglio è nel
+  [changelog](CHANGELOG.md).
+
+L'audit non garantisce l'assenza di vulnerabilità residue: le segnalazioni
+restano benvenute tramite i canali indicati sotto.
 
 Il fork esiste perché diverse amministrazioni continuano a usare il plugin
 comunque: meglio una copia manutenuta e con un canale di segnalazione che una
@@ -58,5 +62,6 @@ Non c'è un programma di ricompense.
 
 | Versione | Supporto |
 |---|---|
-| 4.9.x (questo fork) | sì |
+| 4.10.x (questo fork) | sì |
+| 4.9.x (questo fork) | solo aggiornamento alla 4.10.x consigliato |
 | 4.8 e precedenti (upstream) | no, non più mantenute dall'autore |
