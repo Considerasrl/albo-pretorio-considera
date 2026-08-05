@@ -53,7 +53,15 @@ if (isset($_REQUEST['action'])){
 			menu();
 			break;
 		case "rip":
+			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'ripubblica_atti' ) ) {
+				menu(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				break;
+			}
 			$AttiDaAggiornare=unserialize(wp_unslash($_GET['AttiDaAgg']), array('allowed_classes'=>false));
+			if(!is_array($AttiDaAggiornare)){
+				menu(__("ATTENZIONE. Parametro non valido, l'operazione è stata annullata","albo-online"));
+				break;
+			}
 //			echo "<pre>";var_dump($AttiDaAggiornare);echo "</pre>";
 			$AttiAggiornati=ap_ripubblica_atti_correnti($AttiDaAggiornare);
 			if(count($AttiDaAggiornare)==$AttiAggiornati)
@@ -380,7 +388,7 @@ switch ($passo){
 				$ArrAggSca[$a->IdAtto]=(int)$NggInc;
 			}
 			echo "</ul>";
-			echo '<a href="?page=utilityAlboP&action=rip&AttiDaAgg='.serialize($ArrAggSca).'" class="ripubblica" rel="'.$TotAtti.'">'.__("Ripubblica gli atti a causa dell'interruzione del servizio","albo-online").'</a>?';
+			echo '<a href="'.wp_nonce_url('?page=utilityAlboP&action=rip&AttiDaAgg='.serialize($ArrAggSca),'ripubblica_atti').'" class="ripubblica" rel="'.$TotAtti.'">'.__("Ripubblica gli atti a causa dell'interruzione del servizio","albo-online").'</a>?';
 		}
 }
 echo '		</div> 
