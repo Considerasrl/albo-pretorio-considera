@@ -1004,11 +1004,10 @@ function ap_update_attimeta($IDAtto,$MetaName,$MetaValue){
 	}
 function ap_remove_metasatto($IDAtto,$MetaDati=""){
 	global $wpdb;
+	$IDAtto=(int)$IDAtto;
 	if( is_array( $MetaDati )){
-		$AttiRimasti=implode("','",$MetaDati);
-		$AttiRimasti="'".$AttiRimasti."'";
-//		echo "SELECT Meta FROM $wpdb->table_name_Attimeta WHERE IdAtto=$IDAtto And Meta not in(".$AttiRimasti.");";die();
-		$Res=$wpdb->get_results("SELECT Meta FROM $wpdb->table_name_Attimeta WHERE IdAtto=$IDAtto And Meta not in(".$AttiRimasti.");");		
+		$Placeholders=implode(",", array_fill(0,count($MetaDati),'%s'));
+		$Res=$wpdb->get_results($wpdb->prepare("SELECT Meta FROM $wpdb->table_name_Attimeta WHERE IdAtto=%d And Meta not in($Placeholders);",array_merge(array($IDAtto),$MetaDati)));
 		if($Res){
 			foreach($Res as $Rs){
 				$StatoRes=ap_delete_metaatto($IDAtto,$Rs->Meta);
@@ -2383,8 +2382,9 @@ function ap_get_responsabili(){
 }
 function ap_get_alcuni_soggetti_ruolo($Soggetti){
 	global $wpdb;
-//	echo "SELECT * FROM $wpdb->table_name_RespProc Where IdResponsabile in((".$Soggetti.") ORDER BY Funzione, Cognome , Nome;";
-	$Res=$wpdb->get_results("SELECT * FROM $wpdb->table_name_RespProc Where IdResponsabile in(".$Soggetti.") ORDER BY Funzione Desc, Cognome , Nome;");	
+//	La lista deve contenere solo ID numerici separati da virgole
+	$Soggetti=implode(",",array_map('intval',explode(",",$Soggetti)));
+	$Res=$wpdb->get_results("SELECT * FROM $wpdb->table_name_RespProc Where IdResponsabile in(".$Soggetti.") ORDER BY Funzione Desc, Cognome , Nome;");
 	return $Res;
 }
 function ap_get_responsabile($Id){
