@@ -108,7 +108,7 @@ if (isset($_REQUEST['action'])){
 				menu($Stato);
 				break;
 			} 			
-			$Data=date('Ymd_H_i_s');
+			$Data=gmdate('Ymd_H_i_s');
 			$nf=ap_BackupDatiFiles($Data,"",AlboBCK,TRUE);
 /*			$filename=WP_CONTENT_DIR."/AlboOnLine/BackupDatiAlbo/tmp/msg.txt";
 			$fpmsg = @fopen($filename, "rb");
@@ -346,7 +346,7 @@ switch ($passo){
 				<table class="widefat" style="border: thin solid #f9f9f9;">
 					<tr>
 						<th style="width:10em;">'.__("Giorno di inizio Interruzione","albo-pretorio-considera").'</th>
-						<td><input name="DataInterruzione" id="DataInterruzione" type="date" max="'.date("Y-m-d").'"/></td>
+						<td><input name="DataInterruzione" id="DataInterruzione" type="date" max="'.gmdate("Y-m-d").'"/></td>
 					</tr>
 					<tr>
 						<th>'.__("Giorni di Interruzione","albo-pretorio-considera").'</th>
@@ -472,7 +472,7 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 	if (isset($_GET['Anno']))
 		$AnnoRepertorio=intval($_GET['Anno']);
 	else
-		$AnnoRepertorio=date("Y");
+		$AnnoRepertorio=gmdate("Y");
 		if (($Anni=ap_AnniAtti())!=FALSE){
 			echo '<div style="display:inline">
 			'.__("Repertorio","albo-pretorio-considera").' <select id="Anno" onchange="document.location.href=this.options[this.selectedIndex].value;">

@@ -235,7 +235,7 @@ class AdminTableAtti extends WP_List_Table
 			$Annullato = false;
 		}
 
-		if ((ap_cvdate($item->DataInizio) <= ap_cvdate(date("Y-m-d"))) and (ap_cvdate($item->DataFine) >= ap_cvdate(date("Y-m-d"))))
+		if ((ap_cvdate($item->DataInizio) <= ap_cvdate(gmdate("Y-m-d"))) and (ap_cvdate($item->DataFine) >= ap_cvdate(gmdate("Y-m-d"))))
 			$Scaduto=False;
 		else	
 			$Scaduto=True;
@@ -464,9 +464,9 @@ if(isset($_REQUEST['action'])){
 				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
-			update_option('opt_AP_AnnoProgressivo',date("Y") );
+			update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		  	update_option('opt_AP_NumeroProgressivo',1 );
-			PreApprovazione((int)$_REQUEST['id'],sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),date("Y")));
+			PreApprovazione((int)$_REQUEST['id'],sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),gmdate("Y")));
 			break;
 		case "approva-atto" :
 			$ret="";
@@ -701,7 +701,7 @@ if (!current_user_can('editore_atti_albo')){
 if ($ret!=""){
 	$ret=str_replace("%%br%%","<br />",$ret);
 }
-	$NumeroDaDb=ap_get_last_num_anno(date("Y"));
+	$NumeroDaDb=ap_get_last_num_anno(gmdate("Y"));
 	$atto=ap_get_atto($id);
 	$atto=$atto[0];
 	//$dif=ap_datediff("d",ap_cvdate($atto->DataInizio),ap_cvdate($atto->DataFine));
@@ -723,7 +723,7 @@ echo'
 		<h3>'.__("Approvazione Atto","albo-pretorio-considera").'</h3>	
 	</div>
 	<br class="clear" />';
-if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
+if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	echo '<div style="border: medium groove Blue;margin-top:10px;">
 			<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 				<form id="agg_anno_progressivo" method="post" action="?page=atti">
@@ -750,13 +750,13 @@ echo'<br />
 	<tr>
 		<td>'.__("Anno Atto","albo-pretorio-considera").'</td>
 		<td>'.$atto->Anno.'</td>';
-		if ($atto->Anno==date("Y")){
+		if ($atto->Anno==gmdate("Y")){
 		 	$Passato=true;
 			echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 		}else{
 		 	$Passato=false;
 			echo '<td>'.__("Verificata incongruenza, bisogna rimediare prima di proseguire","albo-pretorio-considera").'</td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;apa='.date("Y").'" class="add-new-h2">Imposta Anno Pubblicazione a '.date("Y").'</td>';
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;apa='.gmdate("Y").'" class="add-new-h2">Imposta Anno Pubblicazione a '.gmdate("Y").'</td>';
 		}
 		echo '</tr>';
 		if($Passato){
@@ -822,7 +822,7 @@ echo'<br />
 		}
 		if($Passato){
   			$incrementoStandard=get_option('opt_AP_GiorniOblio');
- 			$DataOblioStandard=(date("Y")+6)."-01-01";
+ 			$DataOblioStandard=(gmdate("Y")+6)."-01-01";
  			//echo $atto->DataInizio."   -  ".$incrementoStandard;
 			echo '<tr>
 					<td>'.__("Data Oblio","albo-pretorio-considera").'</td>
@@ -1048,7 +1048,7 @@ function Nuovo_atto(){
 	if (isset($_REQUEST['Data']) And $_REQUEST['Data']!="")
 		$dataCorrente=sanitize_text_field($_REQUEST['Data']);
 	else
-		$dataCorrente=date("d/m/Y");
+		$dataCorrente=gmdate("d/m/Y");
 	if (isset($_REQUEST['Ente']))
 		$defEnte=intval($_REQUEST['Ente']);
 	else
@@ -1064,15 +1064,15 @@ function Nuovo_atto(){
 /*	if ($_REQUEST['DataInizio'])
 		$DataI=$_REQUEST['DataInizio'];
 	else*/
-	$DataI=date("d/m/Y");
+	$DataI=gmdate("d/m/Y");
 	if (isset($_REQUEST['DataFine']))
 		$DataF=sanitize_text_field($_REQUEST['DataFine']);
 	else
-		$DataF=date("d/m/Y");
+		$DataF=gmdate("d/m/Y");
 	if (isset($_REQUEST['DataOblio']))
 		$DataO=sanitize_text_field($_REQUEST['DataOblio']);
 	else
-		$DataO=ap_VisualizzaData((date("Y")+6)."-01-01");
+		$DataO=ap_VisualizzaData((gmdate("Y")+6)."-01-01");
 	if (isset($_REQUEST['Note']))
 		$Note=sanitize_textarea_field($_REQUEST['Note']);
 	else	
@@ -1105,7 +1105,7 @@ function Nuovo_atto(){
 	if(!is_array($DefaultSoggetti)){
 		$DefaultSoggetti=json_decode($DefaultSoggetti,TRUE);
 	}
-$DataOblioStandard=(date("Y")+6)."-01-01";		
+$DataOblioStandard=(gmdate("Y")+6)."-01-01";		
 ?>
 <div id="errori" title="<?php esc_html_e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
   <h3><?php esc_html_e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3><p id="ElencoCampiConErrori"></p><p style='color:red;font-weight: bold;'><?php esc_html_e("Correggere gli errori per continuare","albo-pretorio-considera");?></p>
@@ -1176,7 +1176,7 @@ $DataOblioStandard=(date("Y")+6)."-01-01";
 				<h2 class='hndle'><span><?php esc_html_e("Memorizza","albo-pretorio-considera");?>Memorizza</span></h2>
 				<div class="inside">
 					<p><?php esc_html_e("Numero Albo","albo-pretorio-considera");?>: 
-						<span style="font-weight: bold;">0000000/<?php echo date("Y");?></span>
+						<span style="font-weight: bold;">0000000/<?php echo gmdate("Y");?></span>
 					</p>
 					<p class="hide-if-no-js">
 					<input type="submit" name="MemorizzaDati" id="MemorizzaDati" class="button button-primary button-large" value="<?php esc_html_e("Memorizza Atto","albo-pretorio-considera");?>">
@@ -1258,7 +1258,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 function Edit_atto($id){
 $atto=ap_get_atto($id);
 $atto=$atto[0];
-$DataOblioStandard=(date("Y")+6)."-01-01";
+$DataOblioStandard=(gmdate("Y")+6)."-01-01";
 ?>
 <div id="errori" title="<?php esc_html_e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
   <h3><?php esc_html_e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3>

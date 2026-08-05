@@ -61,7 +61,7 @@ function Visualizza_Atto($Parametri){
 	else
 		$Annullato='';
 	$Stato="Scaduto";
-	if ($risultato->DataFine>date("Y-m-d"))
+	if ($risultato->DataFine>gmdate("Y-m-d"))
 		$Stato=__("In corso di Validità","albo-pretorio-considera");
 echo '
 <div>

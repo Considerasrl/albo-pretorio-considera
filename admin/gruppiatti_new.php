@@ -71,7 +71,7 @@ function Lista_AttiGruppo($Parametri){
 				$CeAnnullato=true;
 			}
 			$Stato=__("Scaduto","albo-pretorio-considera");
-			if ($riga->DataFine>date("Y-m-d")){
+			if ($riga->DataFine>gmdate("Y-m-d")){
 				$Stato=__("Corrente","albo-pretorio-considera");
 				$Link='<a href="'.$PaginaAttiCor.$sep.'action=visatto&amp;id='.$riga->IdAtto.'"  style="text-decoration: underline;">';
 			}else{

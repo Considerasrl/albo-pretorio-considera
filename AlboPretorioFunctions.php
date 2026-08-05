@@ -562,12 +562,12 @@ function ap_cvdate($data){
 }
 
 function ap_oggi(){
-	return date('Y-m-d');
+	return gmdate('Y-m-d');
 }
 
 function ap_DateAdd($data,$incremento){
 	$secondi=ap_cvdate($data)+($incremento*86400);
-	return date("Y-m-d",$secondi);
+	return gmdate("Y-m-d",$secondi);
 }
 
 function ap_SeDate($test,$data1,$data2){
@@ -627,10 +627,10 @@ function ap_datediff($interval, $date1, $date2) {
 	$seconds = ap_cvdate($date2) - ap_cvdate($date1);
     switch ($interval) {
         case "y":    // years
-            list($year1, $month1, $day1) = split('-', date('Y-m-d', $date1));
-            list($year2, $month2, $day2) = split('-', date('Y-m-d', $date2));
-            $time1 = (date('H',$date1)*3600) + (date('i',$date1)*60) + (date('s',$date1));
-            $time2 = (date('H',$date2)*3600) + (date('i',$date2)*60) + (date('s',$date2));
+            list($year1, $month1, $day1) = split('-', gmdate('Y-m-d', $date1));
+            list($year2, $month2, $day2) = split('-', gmdate('Y-m-d', $date2));
+            $time1 = (gmdate('H',$date1)*3600) + (gmdate('i',$date1)*60) + (gmdate('s',$date1));
+            $time2 = (gmdate('H',$date2)*3600) + (gmdate('i',$date2)*60) + (gmdate('s',$date2));
             $diff = $year2 - $year1;
             if($month1 > $month2) {
                 $diff -= 1;
@@ -645,10 +645,10 @@ function ap_datediff($interval, $date1, $date2) {
             }
             break;
         case "m":    // months
-            list($year1, $month1, $day1) = split('-', date('Y-m-d', $date1));
-            list($year2, $month2, $day2) = split('-', date('Y-m-d', $date2));
-            $time1 = (date('H',$date1)*3600) + (date('i',$date1)*60) + (date('s',$date1));
-            $time2 = (date('H',$date2)*3600) + (date('i',$date2)*60) + (date('s',$date2));
+            list($year1, $month1, $day1) = split('-', gmdate('Y-m-d', $date1));
+            list($year2, $month2, $day2) = split('-', gmdate('Y-m-d', $date2));
+            $time1 = (gmdate('H',$date1)*3600) + (gmdate('i',$date1)*60) + (gmdate('s',$date1));
+            $time2 = (gmdate('H',$date2)*3600) + (gmdate('i',$date2)*60) + (gmdate('s',$date2));
             $diff = ($year2 * 12 + $month2) - ($year1 * 12 + $month1);
             if($day1 > $day2) {
                 $diff -= 1;
@@ -715,9 +715,9 @@ function ap_IsDataFestiva($Data){
 	// calcolo le date di Pasqua e Pasquetta
 	$gg_pasqua = easter_days($anno);
 	$gg_pasquetta = $gg_pasqua+1;
-	$tmp = date('Y-m-d', strtotime('21 march ' . $anno));
-	$data_pasqua = date('m-d', strtotime($tmp . ' +' . $gg_pasqua . 'day'));
-	$data_pasquetta = date('m-d', strtotime($tmp . ' +' . $gg_pasquetta . 'day'));
+	$tmp = gmdate('Y-m-d', strtotime('21 march ' . $anno));
+	$data_pasqua = gmdate('m-d', strtotime($tmp . ' +' . $gg_pasqua . 'day'));
+	$data_pasquetta = gmdate('m-d', strtotime($tmp . ' +' . $gg_pasquetta . 'day'));
 	
 	// aggiungo le date di Pasqua e Pasquetta nel nostro elenco di festività
 	$feste[$data_pasqua] = 'Pasqua';
@@ -729,7 +729,7 @@ function ap_IsDataFestiva($Data){
 			return TRUE;
 	}
     $d_ts=mktime(0,0,0,$d_ex[1],$d_ex[2],$d_ex[0]);
-    $num_gg=(int)date("N",$d_ts);
+    $num_gg=(int)gmdate("N",$d_ts);
 	if($num_gg==7)
 		return TRUE;
 	else
@@ -822,23 +822,23 @@ global $wpdb;
 
 function ap_get_Stat_Visite($IdAtto){
 global $wpdb;			
-	return $wpdb->get_results("SELECT date( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
+	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
 							   INNER JOIN $wpdb->table_name_Allegati 
 							   	ON $wpdb->table_name_Log.`IdOggetto` = $wpdb->table_name_Allegati.IdAllegato
 							   WHERE `Oggetto` =5
 							   AND $wpdb->table_name_Allegati.`IdAtto` =". (int)$IdAtto."
-							   GROUP BY date( `Data` ) , IdOggetto
+							   GROUP BY gmdate( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
 function ap_get_Stat_VisiteRagg($IdAtto){
 global $wpdb;		
-	return $wpdb->get_results("SELECT date( `Data` ) AS Data, \" \", \" \", count( `Data` ) AS Accessi
+	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, \" \", \" \", count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
 							   WHERE `Oggetto` =5
 							   AND $wpdb->table_name_Log.`IdAtto` =". (int)$IdAtto."
 							   And $wpdb->table_name_Log.`IdAtto` =$wpdb->table_name_Log.`IdOggetto`
-							   GROUP BY date( `Data` ) , IdOggetto
+							   GROUP BY gmdate( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
 function ap_get_Stat_Num_log($IdAtto,$Oggetto){
@@ -848,13 +848,13 @@ global $wpdb;
 
 function ap_get_Stat_Download($IdAtto){
 global $wpdb;
-	return $wpdb->get_results("SELECT date( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
+	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
 							   INNER JOIN $wpdb->table_name_Allegati 
 							   	ON $wpdb->table_name_Log.`IdOggetto` = $wpdb->table_name_Allegati.IdAllegato
 							   WHERE `Oggetto` =6
 							   AND $wpdb->table_name_Allegati.`IdAtto` =". (int)$IdAtto."
-							   GROUP BY date( `Data` ) , IdOggetto
+							   GROUP BY gmdate( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
 function ap_get_Stat_Log($TipoInformazione){
@@ -1325,7 +1325,7 @@ function ap_categorie_orfane(){
 
 function ap_setOblioOggi($IdAtto){
 	global $wpdb;
-	$DataOblio=date('Y-m-d');
+	$DataOblio=gmdate('Y-m-d');
 	if ( $wpdb->update($wpdb->table_name_Atti,
 			array('DataOblio' => $DataOblio),
 			array( 'IdAtto' => $IdAtto),
@@ -1334,7 +1334,7 @@ function ap_setOblioOggi($IdAtto){
 	ap_insert_log(1,2,$IdAtto,"{Data Oblio}==> ".$DataOblio);
 	$atto=ap_get_atto($IdAtto);
 	$atto=$atto[0];
-	return "Data Oblio dell'Atto:".$atto->Numero."/".$atto->Anno." Impostata ad oggi:".date('d/m/Y');	}
+	return "Data Oblio dell'Atto:".$atto->Numero."/".$atto->Anno." Impostata ad oggi:".gmdate('d/m/Y');	}
 }
 function ap_AnniAtti(){
 	global $wpdb;
@@ -1404,7 +1404,7 @@ function ap_SetDefaultDataScadenza(){
 }
 function ap_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,$DataOblio,$Note,$Categoria,$Responsabile,$Soggetti,$IdUI,$Richiedente){
 	global $wpdb;
-	$Anno=date("Y");
+	$Anno=gmdate("Y");
 	$Numero=0;
 	$Data=ap_convertiData($Data);
 	$DataInizio=ap_convertiData($DataInizio);
@@ -1608,7 +1608,7 @@ function ap_update_selettivo_atto($id,$ArrayCampiValori,$ArrayTipi,$TestaMsg){
 function ap_approva_atto($IdAtto){
 	global $wpdb;
 	$IdAtto=(int)$IdAtto;
-	$NumeroDaDb=ap_get_last_num_anno(date("Y"));
+	$NumeroDaDb=ap_get_last_num_anno(gmdate("Y"));
 	$risultato=ap_get_atto($IdAtto);
 	$risultato=$risultato[0];
 	$NumeroOpzione=get_option('opt_AP_NumeroProgressivo');
@@ -1641,7 +1641,7 @@ function ap_annulla_atto($IdAtto,$Motivo,$Allegati=array()){
 	$IdAtto=(int)$IdAtto;
 //	$risultato=ap_get_atto($IdAtto);
 //	$risultato=$risultato[0];
-	$Sql = "UPDATE `$wpdb->table_name_Atti` SET DataAnnullamento='".date('Y-m-d')."', MotivoAnnullamento=%s  WHERE IdAtto=%d";
+	$Sql = "UPDATE `$wpdb->table_name_Atti` SET DataAnnullamento='".gmdate('Y-m-d')."', MotivoAnnullamento=%s  WHERE IdAtto=%d";
 	$Sql=$wpdb->prepare($Sql,array($Motivo,$IdAtto));
 	$Result=$wpdb->query($Sql);
 //	echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
@@ -3043,10 +3043,10 @@ global $wpdb;
 			$nomefileLog=$DirLog."/Backup_".$Tipo."_AlboPretorio_".$NomeFile.".log";
 		}*/	
 		$fplog = @fopen($nomefileLog, "wb");
-		fwrite($fplog,__("Avvio Backup Dati ed Allegati Albo Pretrorio \n effettuato in data","albo-pretorio-considera")." ".date("Ymd_Hi")."\n");
+		fwrite($fplog,__("Avvio Backup Dati ed Allegati Albo Pretrorio \n effettuato in data","albo-pretorio-considera")." ".gmdate("Ymd_Hi")."\n");
 		ap_SvuotaDirectory($DirTmp,$fplog);
 		fwrite($fplog,__("Svuotamento tabella","albo-pretorio-considera")." ".$DirTmp."\n");
-		$fp = @fopen($DirTmp."/AlboPretorio".date("Ymd_Hi").".sql", "wb");
+		$fp = @fopen($DirTmp."/AlboPretorio".gmdate("Ymd_Hi").".sql", "wb");
 		$Risultato="";
 		if ($Echo) echo "<h3>".__("Avvio Backup Dati (Tabelle del Data Base)","albo-pretorio-considera")."</h3>"
 			. "</ul>";
@@ -3174,7 +3174,7 @@ function ap_MakeZipOblio(){
 	if(!is_dir($DirTmp))
 		if (!wp_mkdir_p($DirTmp))
 			return FALSE;
-	$nomefileZip=$Dir."/oblio".date("Ymdgis").".zip";
+	$nomefileZip=$Dir."/oblio".gmdate("Ymdgis").".zip";
 	if (class_exists('ZipArchive')) {	
 	 	$zip = new ZipArchive();
 			$zip->open($nomefileZip, ZipArchive::CREATE | ZipArchive::OVERWRITE);
@@ -3303,7 +3303,7 @@ function ap_oblio_atti($Atti){
 			$Msg.="Atto ".$riga->IdAtto;
 			$MsgAlle=" ".__("Allegati","albo-pretorio-considera");
 			ap_BackupFilesAllegatiOblio($riga->IdAtto);
-			if (ap_cvdate($riga->DataOblio) <= ap_cvdate(date("Y-m-d"))){
+			if (ap_cvdate($riga->DataOblio) <= ap_cvdate(gmdate("Y-m-d"))){
 				if(ap_del_allegati_atto((int)$Atto)){
 					$MessaggiRitorno["Message2"]=10;// Allegati all'Atto Cancellati
 					$MsgAlle.=" ".__("all'Atto Cancellati","albo-pretorio-considera");

@@ -577,7 +577,7 @@ function admin_notice(){
 				header('Content-Type: application/octet-stream');
 				header('Content-Disposition: attachment; filename="'.basename($file_path).'"');
 				header('Content-Transfer-Encoding: binary');
-				header('Last-Modified: ' . date('r', $stat['mtime']));
+				header('Last-Modified: ' . gmdate('r', $stat['mtime']));
 				header('Etag: "' . $etag . '"');
 				header('Content-Length: '.$stat['size']);
 				header('Accept-Ranges: bytes');
@@ -1106,7 +1106,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 	function ShowBacheca(){
 	global $wpdb;
 		if (isset($_REQUEST['action']) And $_REQUEST['action']=="setta-anno"){
-		  update_option('opt_AP_AnnoProgressivo',date("Y") );
+		  update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		  update_option('opt_AP_NumeroProgressivo',1 );
 		  $_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), $_SERVER['REQUEST_URI']);
 		}
@@ -1268,7 +1268,7 @@ if (ap_num_unitao()==0) {
 				</p>
 			</div>';
 }
-if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
+if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	echo '<div style="border: medium groove Blue;margin-top:10px;">
 			<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 				<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
@@ -1283,7 +1283,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	function AP_config(){
 	$stato="";
 	  if (isset($_REQUEST['action']) And $_REQUEST['action']=="setta-anno"){
-		update_option('opt_AP_AnnoProgressivo',date("Y") );
+		update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		update_option('opt_AP_NumeroProgressivo',1 );
 		$_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), $_SERVER['REQUEST_URI']);
 	  }
@@ -1382,7 +1382,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	  else
 	  	$ve_selezionato='';
 	  if (!$nanno){
-		$nanno=date("Y");
+		$nanno=gmdate("Y");
 		}
 	  $dirUpload =  stripslashes(get_option('opt_AP_FolderUpload'));
 	  if($OldInterfaccia=="Si"){
@@ -1950,7 +1950,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	    </p> 
 	    </form>
 	    </div>';
-		if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
+		if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			echo '<div style="border: medium groove Blue;margin-top:10px;margin-right:250px;">
 					<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 						<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
@@ -2115,7 +2115,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		if ($TdF_mod) { update_option('opt_AP_TipidiFiles', $TdF); }
 	}
 	if(get_option('opt_AP_AnnoProgressivo')  == '' || !get_option('opt_AP_AnnoProgressivo')){
-		add_option('opt_AP_AnnoProgressivo', ''.date("Y").'');
+		add_option('opt_AP_AnnoProgressivo', ''.gmdate("Y").'');
 	}
 	if(get_option('opt_AP_NumeroProgressivo')  == '' || !get_option('opt_AP_NumeroProgressivo')){
 		add_option('opt_AP_NumeroProgressivo', '1');

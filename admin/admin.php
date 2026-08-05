@@ -139,7 +139,7 @@ function albo_post() {
 				if (isset($_GET['Anno']))
 					$AnnoRepertorio=$_GET['Anno'];
 				else
-					$AnnoRepertorio=date("Y");
+					$AnnoRepertorio=gmdate("Y");
 				$ToPdf= new ap_cls_Repertorio("Portrait","mm","A4");
 				$ToPdf->ToTable($AnnoRepertorio);
 				break;			

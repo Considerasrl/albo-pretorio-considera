@@ -26,7 +26,7 @@ define("AP_BASE_DIR",$uploads['basedir']."/");
 // Backup di sicurezza
 // creo copia dei dati e dei files allegati prima di disinstallare e cancellare tutto
 
-		$Data=date('Ymd_H_i_s');
+		$Data=gmdate('Ymd_H_i_s');
 		$wpdb->table_name_Atti = $table_prefix . "albopretorio_atti";
 		$wpdb->table_name_Attimeta = $table_prefix . "albopretorio_attimeta";
 		$wpdb->table_name_Categorie = $table_prefix . "albopretorio_categorie";
