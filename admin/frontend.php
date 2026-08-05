@@ -73,6 +73,14 @@ if(isset($_REQUEST['action'])){
 	switch ($_REQUEST['action']){
         case 'printatto':
             if (is_numeric($_REQUEST['id'])) {
+                include_once(dirname (__FILE__) .'/stampe.php');
+                $AttoStampa = ap_get_atto((int)$_REQUEST['id']);
+                if (!empty($AttoStampa)) {
+                    $AttoStampa = $AttoStampa[0];
+                    $Oggi = ap_oggi();
+                    if (($AttoStampa->DataInizio!="0000-00-00" And $AttoStampa->DataInizio>$Oggi) Or ($AttoStampa->DataOblio!="0000-00-00" And $AttoStampa->DataOblio<=$Oggi))
+                        wp_die(__("Documento non disponibile","albo-online"),"",array('response'=>404));
+                }
                 if ($_REQUEST['pdf'] == 'c') {
                     StampaAtto($_REQUEST['id'], 'c');
                 } elseif ($_REQUEST['pdf'] == 'a') {
