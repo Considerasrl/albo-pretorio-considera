@@ -32,16 +32,16 @@ function Lista_AttiGruppo($Parametri){
 	echo '	<div class="TabellaAtti">    
 		<h3>'.$Parametri['titolo'].'</h3>                    
 		<table id="elenco-atti" class="Table Table--withBorder u-text-r-xs js-TableResponsive tablesaw tablesaw-stack" data-tablesaw-mode="stack">
-		    <caption class="u-hiddenVisually">'. __("Atti","albo-online").'</caption>
+		    <caption class="u-hiddenVisually">'. __("Atti","albo-pretorio-considera").'</caption>
 		<thead>
 	    	<tr class="u-border-bottom-xs">
-				<th scope="col">'. __("Stato","albo-online").'</th>
-	        	<th scope="col">'. __("Prog.","albo-online").'</th>';
+				<th scope="col">'. __("Stato","albo-pretorio-considera").'</th>
+	        	<th scope="col">'. __("Prog.","albo-pretorio-considera").'</th>';
 	foreach($FEColsOption as $Opzione => $Valore){
 		if($Opzione=="Validita") $Opzione="Validità";
 		if($Opzione=="DataOblio") $Opzione="Data Oblio";
 		if($Valore==1){
-			echo '			<th scope="col">'.__($Opzione,"albo-online").'</th>';
+			echo '			<th scope="col">'.__($Opzione,"albo-pretorio-considera").'</th>';
 		}
 	}
 	echo '	</tr>
@@ -69,9 +69,9 @@ function Lista_AttiGruppo($Parametri){
 				$classe='style="background-color: '.$coloreAnnullati.';"';
 				$CeAnnullato=true;
 			}
-			$Stato=__("Scaduto","albo-online");
+			$Stato=__("Scaduto","albo-pretorio-considera");
 			if ($riga->DataFine>date("Y-m-d")){
-				$Stato=__("Corrente","albo-online");
+				$Stato=__("Corrente","albo-pretorio-considera");
 				$Link='<a href="'.$PaginaAttiCor.$sep.'action=visatto&amp;id='.$riga->IdAtto.'"  style="text-decoration: underline;">';
 			}else{
 				$Link='<a href="'.$PaginaAttiSto.$sep.'action=visatto&amp;id='.$riga->IdAtto.'"  style="text-decoration: underline;">';
@@ -125,7 +125,7 @@ function Lista_AttiGruppo($Parametri){
 			}
 	} else {
 			echo '<tr>
-					<td colspan="6">'. __("Nessun Atto Codificato","albo-online").'</td>
+					<td colspan="6">'. __("Nessun Atto Codificato","albo-pretorio-considera").'</td>
 				  </tr>';
 	}
 	echo '
@@ -133,7 +133,7 @@ function Lista_AttiGruppo($Parametri){
     </table>';
 echo '</div>';
 	if ($CeAnnullato) 
-		echo '<p>'. __('Le righe evidenziate con questo sfondo','albo-online').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '. __('indicano Atti Annullati','albo-online').'</p>';
+		echo '<p>'. __('Le righe evidenziate con questo sfondo','albo-pretorio-considera').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '. __('indicano Atti Annullati','albo-pretorio-considera').'</p>';
 return ob_get_clean();
 }
 ?>

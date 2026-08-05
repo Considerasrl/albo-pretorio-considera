@@ -11,6 +11,8 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+## [4.11.0] - 2026-08-05
+
 ### Aggiunto
 - Icone di ripiego per i tipi di file noti (documenti, fogli di calcolo,
   presentazioni, immagini, archivi, testo, audio, video) mostrate accanto agli
@@ -18,6 +20,17 @@ con il pacchetto `.zip` installabile allegato.
   Le icone (set Tango, pubblico dominio) sono incluse nel plugin in
   `img/tipifiles/` e risolte a runtime da `Albo_URL`, quindi restano valide
   anche se cambia il nome della cartella del plugin.
+
+### Modificato
+- **Cambio di identità in preparazione alla distribuzione su wordpress.org**: il
+  plugin si chiama ora "Albo Pretorio Considera", il text domain è
+  `albo-pretorio-considera` e lo slug/cartella diventa `albo-pretorio-considera`
+  (lo slug originale `albo-pretorio-on-line`, del plugin chiuso, non è
+  riassegnabile). Aggiunto l'header `Domain Path`; i file di traduzione sono
+  stati rinominati di conseguenza.
+- All'attivazione le URL delle icone dei Tipi di Files vengono riallineate alla
+  cartella corrente del plugin, così un aggiornamento che cambia cartella non
+  lascia icone rotte.
 
 ## [4.10.1] - 2026-08-05
 
@@ -156,7 +169,9 @@ Le versioni fino alla **4.8** sono opera di Ignazio Scimone. La loro cronologia
 non è ripercorsa qui in dettaglio; resta consultabile nel repository originale:
 <https://github.com/ignazios/albo-pretorio-on-line>
 
-[Non rilasciato]: https://github.com/Considerasrl/albo-pretorio-considera/compare/v4.10.0...HEAD
+[Non rilasciato]: https://github.com/Considerasrl/albo-pretorio-considera/compare/v4.11.0...HEAD
+[4.11.0]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.11.0
+[4.10.1]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.10.1
 [4.10.0]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.10.0
 [4.9.4]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.4
 [4.9.3]: https://github.com/Considerasrl/albo-pretorio-considera/releases/tag/v4.9.3

@@ -14,38 +14,38 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 $Stato="";
 if (isset($_REQUEST['message']))
 	if($_REQUEST['message']==80)
-		$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+		$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 if (isset($_REQUEST['action'])){
 	switch($_REQUEST['action']){
 		case "ImpostaEnteND":
 			if (!isset($_REQUEST['ImpostaEnteND'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['ImpostaEnteND'],'securimpostaentend')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 		
 			if(!isset($_REQUEST["Ente"]) Or intval($_REQUEST["Ente"])==-1){
-				$Stato=__("ATTENZIONE. Devi impostare un Ente valido","albo-online");
+				$Stato=__("ATTENZIONE. Devi impostare un Ente valido","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			ap_set_ente_orfani(sanitize_text_field($_REQUEST["Ente"]));
 			$NewEnte=ap_get_ente(sanitize_text_field($_REQUEST["Ente"]));
-			$Stato=sprintf(__("Tutti gli atti con %s Ente non definito sono stati assegnati all'ente %s %s %s ","albo-online"),'<span style="color:red;">',"</span>","<strong>",$NewEnte->Nome,"</strong>");
+			$Stato=sprintf(__("Tutti gli atti con %s Ente non definito sono stati assegnati all'ente %s %s %s ","albo-pretorio-considera"),'<span style="color:red;">',"</span>","<strong>",$NewEnte->Nome,"</strong>");
 			menu($Stato);
 			break;	
 		case "Crearobots":
 			if (!isset($_REQUEST['creasic'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['creasic'],'creasicurezza')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 			
@@ -54,12 +54,12 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "rip":
 			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'ripubblica_atti' ) ) {
-				menu(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				menu(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			$AttiDaAggiornare=unserialize(wp_unslash($_GET['AttiDaAgg']), array('allowed_classes'=>false));
 			if(!is_array($AttiDaAggiornare)){
-				menu(__("ATTENZIONE. Parametro non valido, l'operazione è stata annullata","albo-online"));
+				menu(__("ATTENZIONE. Parametro non valido, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 //			echo "<pre>";var_dump($AttiDaAggiornare);echo "</pre>";
@@ -80,12 +80,12 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "posttrasf":
 			if (!isset($_REQUEST['posttrasf'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['posttrasf'],'posttrasferimento')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 			
@@ -96,12 +96,12 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "BackupData":
 			if (!isset($_REQUEST['bckdata'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['bckdata'],'BackupDatiAlbo')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 			
@@ -111,18 +111,18 @@ if (isset($_REQUEST['action'])){
 			$fpmsg = @fopen($filename, "rb");
 				$Stato=fread($fpmsg,filesize($filename));
 			fclose($fpmsg);
-*/			$Stato=__("Backup Completato e pronto per il download","albo-online");
+*/			$Stato=__("Backup Completato e pronto per il download","albo-pretorio-considera");
 			menu($Stato);
 			unset($_POST['action']);
 			break;
 		case "setData":
 			if (!isset($_REQUEST['ripub'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['ripub'],'ripubblicaatti')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 	
@@ -137,12 +137,12 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "verificaproc":
 			if (!isset($_REQUEST['verproc'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['verproc'],'verificaprocedura')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 			
@@ -150,12 +150,12 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "agghash":
 			if (!isset($_REQUEST['verproc'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['verproc'],'verificaprocedura')) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
@@ -163,12 +163,12 @@ if (isset($_REQUEST['action'])){
 			break;	
 		case "creaninf":
 			if (!isset($_REQUEST['rigenera'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['rigenera'],'rigenerasic')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 		
@@ -176,20 +176,20 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "DelIPLog":
 			if (!isset($_REQUEST['securdeliplog'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['securdeliplog'],'svuotavaloriipnelfiledilog')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			$Ris=ap_del_ip_log();
 			if(is_numeric($Ris)){
-				menu(sprintf(__("N° %s IP nel file di log CANCELLATI","albo-online"),$Ris));		
+				menu(sprintf(__("N° %s IP nel file di log CANCELLATI","albo-pretorio-considera"),$Ris));		
 			}else{
-				menu(__("Non è sono stati cancellati gli indirizzi IP nel file di log per il seguente errore: ","albo-online").$Ris);
+				menu(__("Non è sono stati cancellati gli indirizzi IP nel file di log per il seguente errore: ","albo-pretorio-considera").$Ris);
 			}
 			break;
 		case "creaTabella":
@@ -201,12 +201,12 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "svuotalog":
 			if (!isset($_REQUEST['svuotalog'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['svuotalog'],'svuotafilelog')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 		
@@ -215,12 +215,12 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "puliscilog":
 			if (!isset($_REQUEST['puliscilog'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['puliscilog'],'puliscifilelog')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			} 		
@@ -229,12 +229,12 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "ArchivioAnnoMese":
 		if (!isset($_REQUEST['securarchivioannomese'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['securarchivioannomese'],'archivioannomese')) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				menu($Stato);
 				break;
 			}
@@ -249,27 +249,27 @@ if (isset($_REQUEST['action'])){
 
 function ArchivioAllegati(){
 	if (isset($_POST["esBackup"]) And $_POST["esBackup"]=="Si") {
-		echo "<h3>".__("Creazione Backup Albo OnLine","albo-online")."</h3>";
-		ap_BackupDatiFiles("Organizza_Archivio_Allegati_Mese_Anno",__("Modifica sistema archiviazione Allegati","albo-online"),AlboBCK,TRUE);
-		echo "<h3>".__("Fine creazione Backup Albo OnLine","albo-online")."</h3>
-		<p>".__("Il backup si trova nella cartella","albo-online").": <strong>".AlboBCK."</strong></p>";
+		echo "<h3>".__("Creazione Backup Albo OnLine","albo-pretorio-considera")."</h3>";
+		ap_BackupDatiFiles("Organizza_Archivio_Allegati_Mese_Anno",__("Modifica sistema archiviazione Allegati","albo-pretorio-considera"),AlboBCK,TRUE);
+		echo "<h3>".__("Fine creazione Backup Albo OnLine","albo-pretorio-considera")."</h3>
+		<p>".__("Il backup si trova nella cartella","albo-pretorio-considera").": <strong>".AlboBCK."</strong></p>";
 	}
-	echo "<h3>".__("Spostamento Allegati Albo OnLine","albo-online")."</h3>";
+	echo "<h3>".__("Spostamento Allegati Albo OnLine","albo-pretorio-considera")."</h3>";
 	ap_Move_Allegati_CartellaMeseAnno();
-	echo "<h3>".__("Operazione eseguita","albo-online")."</h3>";
+	echo "<h3>".__("Operazione eseguita","albo-pretorio-considera")."</h3>";
 	update_option('opt_AP_FolderUploadMeseAnno',"Si" );
 }
 function CreaCategorie(){
 echo '<div class="wrap">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-generic" style="font-size:1em;" style="font-size:1em;"></span> '.__("Creazione Categorie","albo-online").'
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-generic" style="font-size:1em;" style="font-size:1em;"></span> '.__("Creazione Categorie","albo-pretorio-considera").'
 	</div>
 		<div class="widefat">
 			<table style="width:99%;">
 				<thead>
 					<tr>
-						<th style="text-align:left;width:380px;">'.__("Categorie","albo-online").'</th>
-						<th style="text-align:left;width:100px;">'.__("Stato","albo-online").'</th>
+						<th style="text-align:left;width:380px;">'.__("Categorie","albo-pretorio-considera").'</th>
+						<th style="text-align:left;width:100px;">'.__("Stato","albo-pretorio-considera").'</th>
 					</tr>
 					</thead>
 					<tbody>';
@@ -282,17 +282,17 @@ echo AP_CreaCategorieBase().'
 function SvuotaLog($Tipo){
 	$NumRow=ap_svuota_log($Tipo);
 	if ($NumRow==0)
-		return (__("Non sono state cancellate righe dal file di Log","albo-online"));
+		return (__("Non sono state cancellate righe dal file di Log","albo-pretorio-considera"));
 	else
-		return(__("Log cancellato correttamente, sono state cancellate","albo-online")." ".$NumRow." righe");	
+		return(__("Log cancellato correttamente, sono state cancellate","albo-pretorio-considera")." ".$NumRow." righe");	
 }
 function ImplementaNINF(){
 	$newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
 	ap_NoIndexNoDirectLink($newPathAllegati);
 	echo'<div id="message" class="updated"> 
-				<p><strong>'.__("File .htaccess e index.php necessari per il diritto all'oblio sono stati ricreati.","albo-online").'</strong></p>
-				<p>'.__("Operazione terminata","albo-online").'&nbsp;&nbsp;
-				<a href="'.site_url().'/wp-admin/admin.php?page=Albo_Pretorio" class="add-new-h2 tornaindietro">'.__("Torna indietro","albo-online").'</a>
+				<p><strong>'.__("File .htaccess e index.php necessari per il diritto all'oblio sono stati ricreati.","albo-pretorio-considera").'</strong></p>
+				<p>'.__("Operazione terminata","albo-pretorio-considera").'&nbsp;&nbsp;
+				<a href="'.site_url().'/wp-admin/admin.php?page=Albo_Pretorio" class="add-new-h2 tornaindietro">'.__("Torna indietro","albo-pretorio-considera").'</a>
 				</p>
 				</div>';
 }
@@ -310,7 +310,7 @@ if (null===get_option( 'opt_AP_FolderUploadMeseAnno' ) Or get_option('opt_AP_Fol
 }
 echo '<div class="wrap">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-generic" style="font-size:1em;"></span> '.__("Utility","albo-online").'</h2>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-generic" style="font-size:1em;"></span> '.__("Utility","albo-pretorio-considera").'</h2>
 	</div>';
 if ($Stato!="") 
 	echo '<div id="message" class="updated"><p>'.str_replace("%%br%%","<br />",$Stato).'</p></div>
@@ -318,23 +318,23 @@ if ($Stato!="")
 echo '
 <div id="utility-tabs-container"  style="margin-top:20px;">
 					<ul>
-						<li><a href="#utility-tab-1">'.__("Proroga scadenza Atti","albo-online").'</a></li>
-						<li><a href="#utility-tab-2">'.__("Verifica procedura","albo-online").'</a></li>
-						<li><a href="#utility-tab-3">'.__("Diritto all'Oblio","albo-online").'</a></li>
-						<li><a href="#utility-tab-4">'.__("Pulizia file di Log","albo-online").'</a></li>
-						<li><a href="#utility-tab-5">'.__("Backup Albo OnLine","albo-online").'</a></li>
-						<li><a href="#utility-tab-6">'.__("Repertorio","albo-online").'</a></li>
+						<li><a href="#utility-tab-1">'.__("Proroga scadenza Atti","albo-pretorio-considera").'</a></li>
+						<li><a href="#utility-tab-2">'.__("Verifica procedura","albo-pretorio-considera").'</a></li>
+						<li><a href="#utility-tab-3">'.__("Diritto all'Oblio","albo-pretorio-considera").'</a></li>
+						<li><a href="#utility-tab-4">'.__("Pulizia file di Log","albo-pretorio-considera").'</a></li>
+						<li><a href="#utility-tab-5">'.__("Backup Albo OnLine","albo-pretorio-considera").'</a></li>
+						<li><a href="#utility-tab-6">'.__("Repertorio","albo-pretorio-considera").'</a></li>
 						<li><a href="#utility-tab-7">GDPR</a></li>
-						<li><a href="#utility-tab-8">'.__("Utility Dati","albo-online").'</a></li>';
+						<li><a href="#utility-tab-8">'.__("Utility Dati","albo-pretorio-considera").'</a></li>';
 						if ($dirUploadMA)
-							echo '<li><a href="#utility-tab-9">'.__("Archiviazione Allegati","albo-online").'</a></li>';
-echo '					<li><a href="#utility-tab-10">'.__("Aggiornamento Impronta","albo-online").'</a></li>
+							echo '<li><a href="#utility-tab-9">'.__("Archiviazione Allegati","albo-pretorio-considera").'</a></li>';
+echo '					<li><a href="#utility-tab-10">'.__("Aggiornamento Impronta","albo-pretorio-considera").'</a></li>
 						</ul>
 		<div id="utility-tab-1" style="margin-bottom:20px;">
-				<h3 style="text-align:center;">'.__("Attenzione","albo-online").'!!!!!<br />
-				'.__("Operazione di proroga della scadenza degli atti in corso di validità a causa di interruzione del servizio di pubblicazione","albo-online").'</h3>
-				<p>'.sprintf(__("Questa operazione PROROGA gli atti in corso di validità con motivazione %s Proroga validità Atti per interruzione del sevizio di pubblicazione %sLa nuova scadenza degli atti viene proroga di un numero di giorni uguale a quello dell'interruzione. %sEstratto dalle Linee Guida di Agid punto 7:%sLa pubblicazione si intende soddisfatta se un documento è rimasto disponibile sul sito complessivamente per almeno dodici ore per ciascun giorno di pubblicazione.%sIl periodo di pubblicazione è prorogato di un giorno per ciascun giorno di pubblicazione inferiore complessivamente a dodici ore, in base a un’attestazione del responsabile della pubblicazione o di un suo delegato.%s","albo-online"),'<span style="font-weight: bold;font-style: italic;color:red;">','</span><br />','<br /><br /><strong><em>','</em><br />','<br />','<strong>').'</p>
-				<p style="font-weight: bold;font-style: italic;color:red;">'.__("Questa è un'operazione irreversibile e modifica dati sostanziali degli Atti, si consiglia di eseguire un backup prima di procedere, per poter recuperare i dati originali in caso di errori.","albo-online").'</p>';
+				<h3 style="text-align:center;">'.__("Attenzione","albo-pretorio-considera").'!!!!!<br />
+				'.__("Operazione di proroga della scadenza degli atti in corso di validità a causa di interruzione del servizio di pubblicazione","albo-pretorio-considera").'</h3>
+				<p>'.sprintf(__("Questa operazione PROROGA gli atti in corso di validità con motivazione %s Proroga validità Atti per interruzione del sevizio di pubblicazione %sLa nuova scadenza degli atti viene proroga di un numero di giorni uguale a quello dell'interruzione. %sEstratto dalle Linee Guida di Agid punto 7:%sLa pubblicazione si intende soddisfatta se un documento è rimasto disponibile sul sito complessivamente per almeno dodici ore per ciascun giorno di pubblicazione.%sIl periodo di pubblicazione è prorogato di un giorno per ciascun giorno di pubblicazione inferiore complessivamente a dodici ore, in base a un’attestazione del responsabile della pubblicazione o di un suo delegato.%s","albo-pretorio-considera"),'<span style="font-weight: bold;font-style: italic;color:red;">','</span><br />','<br /><br /><strong><em>','</em><br />','<br />','<strong>').'</p>
+				<p style="font-weight: bold;font-style: italic;color:red;">'.__("Questa è un'operazione irreversibile e modifica dati sostanziali degli Atti, si consiglia di eseguire un backup prima di procedere, per poter recuperare i dati originali in caso di errori.","albo-pretorio-considera").'</p>';
 switch ($passo){
 	case 0:
 		echo '<form action="?page=utilityAlboP" id="ripub" method="post"  class="validate">
@@ -342,22 +342,22 @@ switch ($passo){
 				<input type="hidden" name="ripub" value="'.wp_create_nonce('ripubblicaatti').'" />
 				<table class="widefat" style="border: thin solid #f9f9f9;">
 					<tr>
-						<th style="width:10em;">'.__("Giorno di inizio Interruzione","albo-online").'</th>
+						<th style="width:10em;">'.__("Giorno di inizio Interruzione","albo-pretorio-considera").'</th>
 						<td><input name="DataInterruzione" id="DataInterruzione" type="date" max="'.date("Y-m-d").'"/></td>
 					</tr>
 					<tr>
-						<th>'.__("Giorni di Interruzione","albo-online").'</th>
+						<th>'.__("Giorni di Interruzione","albo-pretorio-considera").'</th>
 						<td><input name="ggInterruzione" id="ggInterruzione" type="number" min="1" style="width:5em;"/></td>
 					</tr>
 				</table>
-				<input type="submit" name="submit" id="submit" class="button" value="'.__("Avvia Procedura","albo-online").'"  />
+				<input type="submit" name="submit" id="submit" class="button" value="'.__("Avvia Procedura","albo-pretorio-considera").'"  />
 				</form>
 				';
 		break;
 	case 1:
 		$AData=ap_DateAdd($Data,$GG);
 		$TotAtti=ap_get_all_atti(10,0,0,0,'',$Data,$AData,'',0,0,true,false,'',-1,true);
-		echo'<p><span style="font-style: italic;color:green;"><strong>'.$TotAtti.'</strong> '.__("Atti in pubblicazione da data","albo-online").' '.ap_VisualizzaData($Data).' '.__("a data","albo-online").' '.ap_VisualizzaData($AData).'</span></p>';
+		echo'<p><span style="font-style: italic;color:green;"><strong>'.$TotAtti.'</strong> '.__("Atti in pubblicazione da data","albo-pretorio-considera").' '.ap_VisualizzaData($Data).' '.__("a data","albo-pretorio-considera").' '.ap_VisualizzaData($AData).'</span></p>';
 		$atti =ap_get_all_atti(10,0,0,0,'',$Data,$AData,"Numero Desc");
 		$ArrAggSca=array();
 		if ( ! empty( $atti ) ) {	
@@ -388,46 +388,46 @@ switch ($passo){
 				$ArrAggSca[$a->IdAtto]=(int)$NggInc;
 			}
 			echo "</ul>";
-			echo '<a href="'.wp_nonce_url('?page=utilityAlboP&action=rip&AttiDaAgg='.serialize($ArrAggSca),'ripubblica_atti').'" class="ripubblica" rel="'.$TotAtti.'">'.__("Ripubblica gli atti a causa dell'interruzione del servizio","albo-online").'</a>?';
+			echo '<a href="'.wp_nonce_url('?page=utilityAlboP&action=rip&AttiDaAgg='.serialize($ArrAggSca),'ripubblica_atti').'" class="ripubblica" rel="'.$TotAtti.'">'.__("Ripubblica gli atti a causa dell'interruzione del servizio","albo-pretorio-considera").'</a>?';
 		}
 }
 echo '		</div> 
 		<div id="utility-tab-2" style="margin-bottom:20px;">
 			<p style="font-style: italic;">
-'.__("Questa procedura esegue un test generale della procedura e riporta eventuali anomalie nei dati e nelle impostazioni.","albo-online").'
+'.__("Questa procedura esegue un test generale della procedura e riporta eventuali anomalie nei dati e nelle impostazioni.","albo-pretorio-considera").'
 			</p>
-			<p>'.__("Operazioni eseguite","albo-online").':
+			<p>'.__("Operazioni eseguite","albo-pretorio-considera").':
 				<ul style="font-style: italic;font-weight: bold;list-style-type: disc;margin-left:15px;">
-					<li>'.__("Verifica permessi cartella di Upload degli allegati","albo-online").'</li>
-					<li>'.__("Verifica dati del Data Base e viene riportata una breve statistica sui dati","albo-online").'</li>
+					<li>'.__("Verifica permessi cartella di Upload degli allegati","albo-pretorio-considera").'</li>
+					<li>'.__("Verifica dati del Data Base e viene riportata una breve statistica sui dati","albo-pretorio-considera").'</li>
 				</ul>
 			</p>
 				<p style="text-align:center;font-weight: bold;">
- 					<button type="button" onclick="location.href=\'?page=utilityAlboP&action=verificaproc&amp;verproc='.wp_create_nonce('verificaprocedura').'\'"> '.__("Verifica","albo-online").' </button>
+ 					<button type="button" onclick="location.href=\'?page=utilityAlboP&action=verificaproc&amp;verproc='.wp_create_nonce('verificaprocedura').'\'"> '.__("Verifica","albo-pretorio-considera").' </button>
 				</p>
 		</div>
 		<div id="utility-tab-3" style="margin-bottom:20px;">
 				<p style="text-align:left;font-style: italic;">
-'.__("Questa procedura esegue le operazioni necessarie per l'allineamento dei files e delle tabelle del DataBase per mantenere il diritto all'oblio degli atti pubblicati","albo-online").':
+'.__("Questa procedura esegue le operazioni necessarie per l'allineamento dei files e delle tabelle del DataBase per mantenere il diritto all'oblio degli atti pubblicati","albo-pretorio-considera").':
 					<ul style="list-style: circle inside;">
-						<li>'.sprintf(__("Aggiornamento del contenuto del files %s e %s nella cartella","albo-online"),'<span style="font-weight: bold;">.htaccess</span>','<span style="font-weight: bold;">index.php</span>').' <span style="font-style: italic;font-weight: bold;"> '.AP_BASE_DIR.'AllegatiAttiAlboPretorio</span></li>
-						<li>'.sprintf(__("Aggiornamento del contenuto del file %s nella cartella","albo-online"),'<span style="font-weight: bold;">robots.txt</span>').' <span style="font-style: italic;font-weight: bold;">'.$basedir.'</span></li>
-						<li>'.__("Aggiornamento del percorso nella tabella degli allegati nel Data Base","albo-online").'</li>
+						<li>'.sprintf(__("Aggiornamento del contenuto del files %s e %s nella cartella","albo-pretorio-considera"),'<span style="font-weight: bold;">.htaccess</span>','<span style="font-weight: bold;">index.php</span>').' <span style="font-style: italic;font-weight: bold;"> '.AP_BASE_DIR.'AllegatiAttiAlboPretorio</span></li>
+						<li>'.sprintf(__("Aggiornamento del contenuto del file %s nella cartella","albo-pretorio-considera"),'<span style="font-weight: bold;">robots.txt</span>').' <span style="font-style: italic;font-weight: bold;">'.$basedir.'</span></li>
+						<li>'.__("Aggiornamento del percorso nella tabella degli allegati nel Data Base","albo-pretorio-considera").'</li>
 					</ul>
 				<p style="text-align:center;font-weight: bold;">
- 					<button  type="button" onclick="location.href=\'?page=utilityAlboP&action=posttrasf&amp;posttrasf='.wp_create_nonce('posttrasferimento').'\'"> '.__("Avvia operazione","albo-online").' </button>
+ 					<button  type="button" onclick="location.href=\'?page=utilityAlboP&action=posttrasf&amp;posttrasf='.wp_create_nonce('posttrasferimento').'\'"> '.__("Avvia operazione","albo-pretorio-considera").' </button>
 				</p>
 		</div>
 		<div id="utility-tab-4" style="margin-bottom:20px;">
-			<p style="font-style: italic;font-weight: bold;">'.__("Questa procedura può cancellare una grossa quantità di dati, se non si vuole perderli si consiglia di fare un backup del DataBase o della tabella","albo-online").' <span style="font-style: normal;">'.$wpdb->table_name_Log.'</span>
+			<p style="font-style: italic;font-weight: bold;">'.__("Questa procedura può cancellare una grossa quantità di dati, se non si vuole perderli si consiglia di fare un backup del DataBase o della tabella","albo-pretorio-considera").' <span style="font-style: normal;">'.$wpdb->table_name_Log.'</span>
 				</p>
 					<ul style="list-style: none;">
-						<li>'.__("Questa procedura cancella tutte le registrazioni presenti nel file di log","albo-online").'&nbsp;&nbsp;
-							<button  type="button" onclick="location.href=\'?page=utilityAlboP&action=svuotalog&amp;svuotalog='.wp_create_nonce('svuotafilelog').'\'"> '.__("Svuota file di Log","albo-online").' 
+						<li>'.__("Questa procedura cancella tutte le registrazioni presenti nel file di log","albo-pretorio-considera").'&nbsp;&nbsp;
+							<button  type="button" onclick="location.href=\'?page=utilityAlboP&action=svuotalog&amp;svuotalog='.wp_create_nonce('svuotafilelog').'\'"> '.__("Svuota file di Log","albo-pretorio-considera").' 
 							</button>
 						</li>
-						<li>'.__("Questa procedura cancella tutte le registrazioni di gestione dal file di log mantenendo le statistiche di accesso","albo-online").'
-							<button type="button" onclick="location.href=\'?page=utilityAlboP&action=puliscilog&amp;puliscilog='.wp_create_nonce('puliscifilelog').'\'"> '.__("Pulisci file di Log","albo-online").' 
+						<li>'.__("Questa procedura cancella tutte le registrazioni di gestione dal file di log mantenendo le statistiche di accesso","albo-pretorio-considera").'
+							<button type="button" onclick="location.href=\'?page=utilityAlboP&action=puliscilog&amp;puliscilog='.wp_create_nonce('puliscifilelog').'\'"> '.__("Pulisci file di Log","albo-pretorio-considera").' 
 							</button>
 						</li>
 					</ul>
@@ -449,18 +449,18 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 				<form action="?page=utilityAlboP" id="backup" method="post"  class="validate">
 					<input type="hidden" name="action" value="BackupData" />
 					<input type="hidden" name="bckdata" value="'.wp_create_nonce('BackupDatiAlbo').'" />
-					'.__("Backup dei Dati","albo-online").':&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="submit" id="submit" class="button" value="'.__("Avvia Backup","albo-online").'"  />
+					'.__("Backup dei Dati","albo-pretorio-considera").':&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="submit" id="submit" class="button" value="'.__("Avvia Backup","albo-pretorio-considera").'"  />
 				</form>
 				</p>
 				<p>
 					<form action="?page=utilityAlboP" id="exportBackup" method="post"  class="validate">
-					'.__("Esporta file di Backup","albo-online").': 
+					'.__("Esporta file di Backup","albo-pretorio-considera").': 
 						<input type="hidden" name="action" value="ExportBackupData" />
 						<input type="hidden" name="exportbckdata" value="'.wp_create_nonce('EsportaBackupDatiAlbo').'" />
 						<select name="elenco_Backup_Expo" id="elenco_Backup_Expo" >\n'
 						.$elencoExpo.'
 						</select>
-						<input type="submit" name="submitExpo" id="submitExpo" class="button" value="'.__("Esporta Backup","albo-online").'"/>
+						<input type="submit" name="submitExpo" id="submitExpo" class="button" value="'.__("Esporta Backup","albo-pretorio-considera").'"/>
 					</form>
 				</p>
 	</div>
@@ -472,37 +472,37 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 		$AnnoRepertorio=date("Y");
 		if (($Anni=ap_AnniAtti())!=FALSE){
 			echo '<div style="display:inline">
-			'.__("Repertorio","albo-online").' <select id="Anno" onchange="document.location.href=this.options[this.selectedIndex].value;">
-				<option value="">'.__("Anno","albo-online").'</option>';
+			'.__("Repertorio","albo-pretorio-considera").' <select id="Anno" onchange="document.location.href=this.options[this.selectedIndex].value;">
+				<option value="">'.__("Anno","albo-pretorio-considera").'</option>';
 			foreach($Anni as $Anno){
 				echo '<option value="'.admin_url().'/admin.php?page=utilityAlboP&amp;Anno='.$Anno->Anno.'#utility-tab-6">'.$Anno->Anno.'</option>';
 			}
 			echo '
 			</select>
 					<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToXML&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
-					<img src="'.Albo_URL.'/img/XML.png" title="'.sprintf(__("Esporta il repertorio del %s in XML","albo-online"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
+					<img src="'.Albo_URL.'/img/XML.png" title="'.sprintf(__("Esporta il repertorio del %s in XML","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
 				<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToJson&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
-					<img src="'.Albo_URL.'/img/Json.png" title="'.sprintf(__("Esporta il repertorio del %s in Json","albo-online"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
+					<img src="'.Albo_URL.'/img/Json.png" title="'.sprintf(__("Esporta il repertorio del %s in Json","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
 				<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToCsv&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
-					<img src="'.Albo_URL.'/img/Csv.png" title="'.sprintf(__("Esporta il repertorio del %s in csv","albo-online"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
+					<img src="'.Albo_URL.'/img/Csv.png" title="'.sprintf(__("Esporta il repertorio del %s in csv","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
 	</div>
-			<h3 style="text-align:center">'.__("Repertorio Anno","albo-online").' '.$AnnoRepertorio.'</h3>
+			<h3 style="text-align:center">'.__("Repertorio Anno","albo-pretorio-considera").' '.$AnnoRepertorio.'</h3>
 			<div style="overflow: scroll;height:440px;">
 				<table class="widefat" id="Repertorio-anno" style="border: thin solid #f9f9f9;">
 					<thead>
-						<th>'.__("Ente titolare dell'Atto","albo-online").'</th>
-						<th>'.__("Numero progressivo","albo-online").'</th>
-						<th>'.__("Codice di Riferimento","albo-online").'</th>
-						<th>'.__("Oggetto","albo-online").'</th>
-						<th>'.__("Data inizio Pubblicazione","albo-online").'</th>
-						<th>'.__("Data fine Pubblicazione","albo-online").'</th>
-						<th>'.__("Data Annullamento","albo-online").'</th>
-						<th>'.__("Motivo Annullamento","albo-online").'</th>
-						<th>'.__("Richiedente","albo-online").'</th>
-						<th>'.__("Unità Organizzativa Responsabile","albo-online").'</th>
-						<th>'.__("Responsabile del procedimento amministrativo","albo-online").'</th>
-						<th>'.__("Categoria","albo-online").'</th>
-						<th>'.__("Note","albo-online").'</th>
+						<th>'.__("Ente titolare dell'Atto","albo-pretorio-considera").'</th>
+						<th>'.__("Numero progressivo","albo-pretorio-considera").'</th>
+						<th>'.__("Codice di Riferimento","albo-pretorio-considera").'</th>
+						<th>'.__("Oggetto","albo-pretorio-considera").'</th>
+						<th>'.__("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
+						<th>'.__("Data fine Pubblicazione","albo-pretorio-considera").'</th>
+						<th>'.__("Data Annullamento","albo-pretorio-considera").'</th>
+						<th>'.__("Motivo Annullamento","albo-pretorio-considera").'</th>
+						<th>'.__("Richiedente","albo-pretorio-considera").'</th>
+						<th>'.__("Unità Organizzativa Responsabile","albo-pretorio-considera").'</th>
+						<th>'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</th>
+						<th>'.__("Categoria","albo-pretorio-considera").'</th>
+						<th>'.__("Note","albo-pretorio-considera").'</th>
 					</thead>
 					<tbody>';
 					echo ap_Repertorio($AnnoRepertorio);
@@ -513,62 +513,62 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 echo'	
 	</div>	
 	<div id="utility-tab-7" style="margin-bottom:20px; height: 600px;">
-			<h3 style="text-align:center">'.__("Adeguamento DGPR","albo-online").'</h3>	
+			<h3 style="text-align:center">'.__("Adeguamento DGPR","albo-pretorio-considera").'</h3>	
 				<p>
 					<form action="?page=utilityAlboP" id="GDPR" method="post"  class="validate">
 					IP nel Log:
 					<input type="hidden" name="securdeliplog" value="'.wp_create_nonce( 'svuotavaloriipnelfiledilog' ).'" />
 					<input type="hidden" name="action" value="DelIPLog" />
-						<input type="submit" name="DelIPLog" id="DelIPLog" class="button" value="'.__("Cancella","albo-online").'"  />
+						<input type="submit" name="DelIPLog" id="DelIPLog" class="button" value="'.__("Cancella","albo-pretorio-considera").'"  />
 					</form>
 				</p>
 	</div>	
 	<div id="utility-tab-8" style="margin-bottom:20px; height: 600px;">
-			<h3 style="text-align:center">'.__("Utility Dati Atti","albo-online").'</h3>	
+			<h3 style="text-align:center">'.__("Utility Dati Atti","albo-pretorio-considera").'</h3>	
 				<p>
 					<form action="?page=utilityAlboP" id="Utility" method="post"  class="validate">
-					'.__("Imposta Ente","albo-online").':  
+					'.__("Imposta Ente","albo-pretorio-considera").':  
 					<input type="hidden" name="ImpostaEnteND" value="'.wp_create_nonce( 'securimpostaentend' ).'" />
 					<input type="hidden" name="action" value="ImpostaEnteND" />
 					'.ap_get_dropdown_enti('Ente','Ente','postform richiesto ValValue(>-1)','',0).'
 					<input type="submit" name="ImpEnte" id="ImpEnte" class="button" value="Imposta"  />
-					<p>'.sprintf(__("Questa procedura imposta %s in tutti gli atti in cui l'Ente risulta come %sEnte non definito","albo-online"),'<strong>'.ap_get_ente_me().'</strong>','<span style="color:red;">').'</span></p>
+					<p>'.sprintf(__("Questa procedura imposta %s in tutti gli atti in cui l'Ente risulta come %sEnte non definito","albo-pretorio-considera"),'<strong>'.ap_get_ente_me().'</strong>','<span style="color:red;">').'</span></p>
 					</form>
 				</p>				
 	</div>';
 	if ($dirUploadMA){
 		echo '	<div id="utility-tab-9" style="margin-bottom:20px; height: 600px;">
-		<h3 style="text-align:center">'.__("Utility Organizzazione cartella Upload Allegati","albo-online").'</h3>
-		<p><span style="color:red;"><strong>'.__("Attenzione","albo-online").'</strong><br />
-		'.__("Questa operazione richiede molto tempo, potrebbe essere interrotta prima del termine per Time Out.","albo-online").'<br />
-		'.__("Soluzioni","albo-online").':
+		<h3 style="text-align:center">'.__("Utility Organizzazione cartella Upload Allegati","albo-pretorio-considera").'</h3>
+		<p><span style="color:red;"><strong>'.__("Attenzione","albo-pretorio-considera").'</strong><br />
+		'.__("Questa operazione richiede molto tempo, potrebbe essere interrotta prima del termine per Time Out.","albo-pretorio-considera").'<br />
+		'.__("Soluzioni","albo-pretorio-considera").':
 		<ul>
-			<li>'.__("modificare il file php.ini parametro max_execution_time=XXX modificare inserendo il numero di secondi in genere di default sono 60","albo-online").'</li>
-			<li>'.sprintf(__("modificare il file %s: aggiungere il seguente comando set_time_limit(XXX)","albo-online"),"wp-config.php").'
-			<li>'.sprintf(__("modificare il file %s: fare preventivamente una copia del file. Aggiungere la segunte direttiva: php_value max_execution_time XXX","albo-online"),'.htaccess').'.</li>
+			<li>'.__("modificare il file php.ini parametro max_execution_time=XXX modificare inserendo il numero di secondi in genere di default sono 60","albo-pretorio-considera").'</li>
+			<li>'.sprintf(__("modificare il file %s: aggiungere il seguente comando set_time_limit(XXX)","albo-pretorio-considera"),"wp-config.php").'
+			<li>'.sprintf(__("modificare il file %s: fare preventivamente una copia del file. Aggiungere la segunte direttiva: php_value max_execution_time XXX","albo-pretorio-considera"),'.htaccess').'.</li>
 		</ul>
-		<em>'.__("un valore possibile di XXX è 360 (6 minuti)","albo-online").'</em>
+		<em>'.__("un valore possibile di XXX è 360 (6 minuti)","albo-pretorio-considera").'</em>
 		</span>
 		</p>
 		<hr />
 		<p>
 			<form action="?page=utilityAlboP" id="Utility" method="post"  class="validate">
-			'.__("Selezionare questa opzione per eseguire il Backup. (Se eseguite il Backup separatamente potete risparmiare tempo di esecuzione della procedura)","albo-online").' 
+			'.__("Selezionare questa opzione per eseguire il Backup. (Se eseguite il Backup separatamente potete risparmiare tempo di esecuzione della procedura)","albo-pretorio-considera").' 
 			<input type="checkbox" name="esBackup" value="Si" id="esBackup"/> <br />
-			'.__("Attiva Archiviazione per Mese Anno","albo-online").':
+			'.__("Attiva Archiviazione per Mese Anno","albo-pretorio-considera").':
 			<input type="hidden" name="securarchivioannomese" value="'.wp_create_nonce( 'archivioannomese' ).'" />
 			<input type="hidden" name="action" value="ArchivioAnnoMese" />
-			<input type="submit" name="ArchivioAnnoMese" id="ArchivioAnnoMese" class="button" value="'.__("Attiva","albo-online").'"  />
+			<input type="submit" name="ArchivioAnnoMese" id="ArchivioAnnoMese" class="button" value="'.__("Attiva","albo-pretorio-considera").'"  />
 			</form>
 		</p>
 		</div>';
 	}
 echo '	<div id="utility-tab-10" style="margin-bottom:20px; height: 600px;">
-<h3 style="text-align:center">'.__("Utility che aggiorna l'impronta HASH degli allegati","albo-online").'</h3>
-	<p><span style="color:red;"><strong>'.__("Attenzione","albo-online").'</strong><br />
-	'.__("Questa operazione potrebbe richiede molto tempo, potrebbe essere interrotta prima del termine per Time Out.","albo-online").'
+<h3 style="text-align:center">'.__("Utility che aggiorna l'impronta HASH degli allegati","albo-pretorio-considera").'</h3>
+	<p><span style="color:red;"><strong>'.__("Attenzione","albo-pretorio-considera").'</strong><br />
+	'.__("Questa operazione potrebbe richiede molto tempo, potrebbe essere interrotta prima del termine per Time Out.","albo-pretorio-considera").'
 	</p>
-	<button type="button" onclick="location.href=\'?page=utilityAlboP&action=agghash&amp;verproc='.wp_create_nonce('verificaprocedura').'\'"> '.__("Aggiorna","albo-online").' </button>
+	<button type="button" onclick="location.href=\'?page=utilityAlboP&action=agghash&amp;verproc='.wp_create_nonce('verificaprocedura').'\'"> '.__("Aggiorna","albo-pretorio-considera").' </button>
 	</div>
 </div>';
 }
@@ -909,23 +909,23 @@ switch ($Tabella){
 		foreach ( $result as $campo ) {
 //		echo "<pre>";var_dump($campo->Field);var_dump($campo->Type);var_dump($Par[$campo->Field]["Default"]);echo "</pre>";
 			if (is_string($Par[$campo->Field]["Tipo"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Tipo"])!=strtolower($campo->Type)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo DB","albo-online")." <strong>". $campo->Type . "</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo Originale","albo-online")." <strong>".$Par[$campo->Field]["Tipo"]."</strong><br />";
+				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo DB","albo-pretorio-considera")." <strong>". $campo->Type . "</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Tipo"]."</strong><br />";
 				$Verificato=false;
 			}
 			if (is_string($Par[$campo->Field]["Null"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Null"])!=strtolower($campo->Null)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Null DB <strong>". $campo->Null . "</strong><br />&nbsp;&nbsp;&nbsp;Null ".__("Originale","albo-online")." <strong>".$Par[$campo->Field]["Null"]."</strong><br />";
+				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Null DB <strong>". $campo->Null . "</strong><br />&nbsp;&nbsp;&nbsp;Null ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Null"]."</strong><br />";
 				$Verificato=false;
 			}
 			if (is_string($Par[$campo->Field]["Default"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Default"])!=strtolower($campo->Default)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Default DB <strong>". $campo->Default . "</strong><br />&nbsp;&nbsp;&nbsp;Default ".__("Originale","albo-online")." <strong>".$Par[$campo->Field]["Default"]."</strong><br />";
+				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Default DB <strong>". $campo->Default . "</strong><br />&nbsp;&nbsp;&nbsp;Default ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Default"]."</strong><br />";
 				$Verificato=false;
 			}
 			if (is_string($Par[$campo->Field]["Extra"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Extra"])!=strtolower($campo->Extra)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Extra DB <strong>". $campo->Extra . "</strong><br />&nbsp;&nbsp;&nbsp;Extra ".__("Originale","albo-online")." <strong>".$Par[$campo->Field]["Extra"]."</strong><br />";
+				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Extra DB <strong>". $campo->Extra . "</strong><br />&nbsp;&nbsp;&nbsp;Extra ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Extra"]."</strong><br />";
 				$Verificato=false;
 			}
 			if (is_string($Par[$campo->Field]["Key"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Key"])!=strtolower($campo->Key)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Key DB <strong>". $campo->Key . "</strong><br />&nbsp;&nbsp;&nbsp;Key ".__("Originale","albo-online")." <strong>".$Par[$campo->Field]["Key"]."</strong><br />";
+				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Key DB <strong>". $campo->Key . "</strong><br />&nbsp;&nbsp;&nbsp;Key ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Key"]."</strong><br />";
 				$Verificato=false;
 			}
 		}
@@ -938,30 +938,30 @@ function TestCongruitaDati($Tabella){
 	$Analisi="";	
 	switch ($Tabella){
 		case $wpdb->table_name_Atti:
-		  	$Analisi.='<em>'.__("Atti","albo-online").':</em><strong>'.ap_get_all_atti(0,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
-			$Analisi.='<em>'.__("Atti da Pubblicare","albo-online").':</em><strong>'.ap_get_all_atti(3,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
-			$Analisi.='<em>'.__("Atti In corso di Validità","albo-online").':</em><strong>'.ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true).'</strong> ';
-			$Analisi.='<em> '.__("di cui Annullati","albo-online").':</em><strong>'.ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true,true).'</strong><br />';
-			$Analisi.='<em>'.__("Atti Scaduti","albo-online").':</em><strong>'.ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true).'</strong> ';
-			$Analisi.='<em> '.__("di cui Annullati","albo-online").':</em><strong>'.ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true,true).'</strong><br />';
-			$Analisi.='<em>'.__("Atti Oblio (da Cancellare)","albo-online").':</em><strong>'.ap_get_all_atti(4,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
+		  	$Analisi.='<em>'.__("Atti","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(0,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
+			$Analisi.='<em>'.__("Atti da Pubblicare","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(3,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
+			$Analisi.='<em>'.__("Atti In corso di Validità","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true).'</strong> ';
+			$Analisi.='<em> '.__("di cui Annullati","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true,true).'</strong><br />';
+			$Analisi.='<em>'.__("Atti Scaduti","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true).'</strong> ';
+			$Analisi.='<em> '.__("di cui Annullati","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true,true).'</strong><br />';
+			$Analisi.='<em>'.__("Atti Oblio (da Cancellare)","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(4,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
 			// Verifica Atti con Categorie Orfane
 			$CategorieOrfane=ap_categorie_orfane();
 			if ($CategorieOrfane){
 				foreach ($CategorieOrfane as $CategoriaOrfana){
-					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta la Categoria con Codice %sNON TROVATA nella tabella Categorie %s","albo-online"),'<em>','</em><strong>'.$CategoriaOrfana->Numero,$CategoriaOrfana->Anno.'</strong> <em>','</em><strong>'.$CategoriaOrfana->IdCategoria.'</strong> <em>','<br />');
+					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta la Categoria con Codice %sNON TROVATA nella tabella Categorie %s","albo-pretorio-considera"),'<em>','</em><strong>'.$CategoriaOrfana->Numero,$CategoriaOrfana->Anno.'</strong> <em>','</em><strong>'.$CategoriaOrfana->IdCategoria.'</strong> <em>','<br />');
 				}
 			}
 			$EntiOrfani=ap_enti_orfani();
 			if ($EntiOrfani){
 				foreach ($EntiOrfani as $EnteOrfano){
-					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta l'ente con Codice %sNON TROVATA nella tabella Enti %s","albo-online"),'<em>','</em><strong>'.$EnteOrfano->Numero,$EnteOrfano->Anno.'</strong> <em>','</em><strong>'.$EnteOrfano->Ente.'</strong> <em>','<br />');
+					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta l'ente con Codice %sNON TROVATA nella tabella Enti %s","albo-pretorio-considera"),'<em>','</em><strong>'.$EnteOrfano->Numero,$EnteOrfano->Anno.'</strong> <em>','</em><strong>'.$EnteOrfano->Ente.'</strong> <em>','<br />');
 				}
 			}
 			$ResponsabiliOrfani=ap_responsabili_orfani();
 			if ($ResponsabiliOrfani){
 				foreach ($ResponsabiliOrfani as $ResponsabileOrfano) {
-					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta il responsabile con Codice %sNON TROVATA nella tabella Responsabili %s","albo-online"),'<em>','</em><strong>'.$ResponsabileOrfano->Numero,$ResponsabileOrfano->Anno.'</strong> <em>','</em><strong>'.$ResponsabileOrfano->RespProc.'</strong> <em>','<br />');
+					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta il responsabile con Codice %sNON TROVATA nella tabella Responsabili %s","albo-pretorio-considera"),'<em>','</em><strong>'.$ResponsabileOrfano->Numero,$ResponsabileOrfano->Anno.'</strong> <em>','</em><strong>'.$ResponsabileOrfano->RespProc.'</strong> <em>','<br />');
 				}
 			}
 			return $Analisi;
@@ -969,11 +969,11 @@ function TestCongruitaDati($Tabella){
 		case $wpdb->table_name_Allegati:
 			$NumAllegati=ap_num_allegati();
 			$AllegatiOrfani=ap_allegati_orfani();
-			$Analisi= sprintf(__("%sN. Allegati %s di cui orfani %s","albo-online"),'<em>','</em><strong>'.$NumAllegati.'</strong> <em>','</em><strong> '.count($AllegatiOrfani).'</strong> <br />');
+			$Analisi= sprintf(__("%sN. Allegati %s di cui orfani %s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumAllegati.'</strong> <em>','</em><strong> '.count($AllegatiOrfani).'</strong> <br />');
 			if (count($AllegatiOrfani)>0)
-				$Analisi.="<br /><strong>".__("Allegati Orfani","albo-online")."</strong><br />";
+				$Analisi.="<br /><strong>".__("Allegati Orfani","albo-pretorio-considera")."</strong><br />";
 			foreach ($AllegatiOrfani as $AllegatoOrfano){
-				$Analisi.=sprintf(__("%sAllegato %s Associato all'Atto con id n.%s","albo-online"),'<em>','</em><strong>'.$AllegatoOrfano->IdAtto.'</strong> <em>','</em><strong> '.$AllegatoOrfano->IdAtto.'</strong> <br />');
+				$Analisi.=sprintf(__("%sAllegato %s Associato all'Atto con id n.%s","albo-pretorio-considera"),'<em>','</em><strong>'.$AllegatoOrfano->IdAtto.'</strong> <em>','</em><strong> '.$AllegatoOrfano->IdAtto.'</strong> <br />');
 			}
 			return $Analisi;
 			break;
@@ -985,18 +985,18 @@ function TestCongruitaDati($Tabella){
 			foreach ($Categorie as $Categoria){
 				$NCategorie=ap_num_categoria_atto($Categoria->IdCategoria);
 				$NCategorie=$NCategorie ? $NCategorie : 0;
-				$UsoCategorie.=sprintf(__("%s Presente in %s Associato all'Atto con id n.%s Presente in Atti%s","albo-online"),'<em>','<em>'.$Categoria->Nome,'</em><strong>'.$NCategorie .'</strong> <em>', '</em><br />');
+				$UsoCategorie.=sprintf(__("%s Presente in %s Associato all'Atto con id n.%s Presente in Atti%s","albo-pretorio-considera"),'<em>','<em>'.$Categoria->Nome,'</em><strong>'.$NCategorie .'</strong> <em>', '</em><br />');
 			}
-			return sprintf(__("%sCategorie codificate %s di cui inutilizzate%s","albo-online"),'<em>','</em><strong>'.$NumCategorie.'</strong> <em>','</em><strong> '.$NumCategorieInutilizzate.'</strong> <br />'.$UsoCategorie);
+			return sprintf(__("%sCategorie codificate %s di cui inutilizzate%s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumCategorie.'</strong> <em>','</em><strong> '.$NumCategorieInutilizzate.'</strong> <br />'.$UsoCategorie);
 			break;
 		case $wpdb->table_name_Log:
 			$LogPerOggetti=ap_get_Stat_Log("Oggetto");
-			$Statistiche="<strong>".__("Numero record per Oggetto","albo-online")."</strong><br />";
+			$Statistiche="<strong>".__("Numero record per Oggetto","albo-pretorio-considera")."</strong><br />";
 			foreach ($LogPerOggetti as $LogPerOggetto){
 				$Statistiche.="<em>".$LogPerOggetto->NomeOggetto." => </em><strong>".$LogPerOggetto->Numero ."</strong><br />";	
 			}
 			$LogPerTipoOperazioni=ap_get_Stat_Log("TipoOperazione");
-			$Statistiche.="<strong>".__("Numero record per Tipo Operazione","albo-online")."</strong><br />";
+			$Statistiche.="<strong>".__("Numero record per Tipo Operazione","albo-pretorio-considera")."</strong><br />";
 			foreach ($LogPerTipoOperazioni as $LogPerTipoOperazione){
 				$Statistiche.="<em>".$LogPerTipoOperazione->NomeTipoOperazione." => </em><strong>".$LogPerTipoOperazione->Numero ."</strong><br />";	
 			}
@@ -1010,9 +1010,9 @@ function TestCongruitaDati($Tabella){
 			foreach ($Responsabili as $Responsabile){
 				$NResponsabile=ap_get_NumAttiSoggetto($Responsabile->IdResponsabile);
 				$NResponsabile=$NResponsabile ? $NResponsabile : 0;
-				$UsoResponsabili.="<em>".$Responsabile->Cognome." ".$Responsabile->Nome." ".__("Presente in","albo-online")." </em><strong>".$NResponsabile ."</strong> <em>".__("Atti","albo-online")."</em><br />";	
+				$UsoResponsabili.="<em>".$Responsabile->Cognome." ".$Responsabile->Nome." ".__("Presente in","albo-pretorio-considera")." </em><strong>".$NResponsabile ."</strong> <em>".__("Atti","albo-pretorio-considera")."</em><br />";	
 			}
-			return sprintf(__("%s Responsabili codificati %s di cui inutilizzati%s","albo-online"),'<em>','</em><strong>'.$NumResp.'</strong> <em>','</em><strong> '.$NumResponsabiliInutilizzate.'</strong><br />'.$UsoResponsabili);
+			return sprintf(__("%s Responsabili codificati %s di cui inutilizzati%s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumResp.'</strong> <em>','</em><strong> '.$NumResponsabiliInutilizzate.'</strong><br />'.$UsoResponsabili);
 			break;
 		case $wpdb->table_name_Enti:
 			$NumEnti=ap_num_enti();
@@ -1022,22 +1022,22 @@ function TestCongruitaDati($Tabella){
 			foreach ($Enti as $Ente){
 				$NAtti=ap_num_enti_atto($Ente->IdEnte);
 				$NAtti=$NAtti ? $NAtti : 0;
-				$UsoEnti.="<em>".$Ente->Nome." ".__("Presente in","albo-online")." </em><strong>".$NAtti ."</strong> <em>".__("Atti","albo-online")."</em><br />";	
+				$UsoEnti.="<em>".$Ente->Nome." ".__("Presente in","albo-pretorio-considera")." </em><strong>".$NAtti ."</strong> <em>".__("Atti","albo-pretorio-considera")."</em><br />";	
 			}
-			return sprintf(__("%s Enti codificati %s di cui inutilizzati%s","albo-online"),'<em>','</em><strong>'.$NumEnti,'</em><strong>'.$NumEntiInutilizzati.'</strong><br />'.$UsoEnti);
+			return sprintf(__("%s Enti codificati %s di cui inutilizzati%s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumEnti,'</em><strong>'.$NumEntiInutilizzati.'</strong><br />'.$UsoEnti);
 			break;
 		case $wpdb->table_name_Attimeta:
 			$MetaDati=ap_get_elenco_attimeta("Array","listaAttiMeta","ListaAttiMeta","Si",0,TRUE);
 			$MetaRighe="";
 			foreach ($MetaDati as $MetaDato){
-				$MetaRighe.="<strong>".$MetaDato->Meta."</strong> => <strong> ".$MetaDato->Value."</strong> ".__("Presente in","albo-online")." </em><br />";
+				$MetaRighe.="<strong>".$MetaDato->Meta."</strong> => <strong> ".$MetaDato->Value."</strong> ".__("Presente in","albo-pretorio-considera")." </em><br />";
 				$Atti="";
 				$AttiEstratti=ap_get_GruppiAtti($MetaDato->Meta,$MetaDato->Value);
 				foreach($AttiEstratti as $AttiEstratto){
 					$MetaRighe.="   (<a href='".get_admin_url()."admin.php?page=atti&action=view-atto&id=".$AttiEstratto->IdAtto."&stato_atti=Tutti'>".$AttiEstratto->IdAtto."</a>) ".$AttiEstratto->Oggetto."<br />";
 				}
 			}
-			return "<em>".__("Meta Dati codificati","albo-online")." </em>".$MetaRighe; 
+			return "<em>".__("Meta Dati codificati","albo-pretorio-considera")." </em>".$MetaRighe; 
 			break;	
 	}	
 }
@@ -1065,18 +1065,18 @@ else
 	$ob3=FALSE;
 echo '<div class="wrap">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-generic" style="font-size:1em;"></span> '.__("Analisi procedura","albo-online").'
-		<a href="?page=utilityAlboP" class="add-new-h2">'.__("Torna indietro","albo-online").'</a></h2>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-generic" style="font-size:1em;"></span> '.__("Analisi procedura","albo-pretorio-considera").'
+		<a href="?page=utilityAlboP" class="add-new-h2">'.__("Torna indietro","albo-pretorio-considera").'</a></h2>
 	</div>		
 	<div class="postbox-container" style=";margin-top:20px;">
-		<h3>'.__("Librerie","albo-online").'Librerie</h3>
+		<h3>'.__("Librerie","albo-pretorio-considera").'Librerie</h3>
 			<div class="widefat">
 				<table style="width:99%;">
 					<thead>
 						<tr>
-							<th style="text-align:left;width:200px;">'.__("Libreria","albo-online").'</th>
-							<th style="text-align:left;width:50px;">'.__("Stato","albo-online").'</th>
-							<th style="text-align:left;width:230px;">'.__("Note","albo-online").'</th>
+							<th style="text-align:left;width:200px;">'.__("Libreria","albo-pretorio-considera").'</th>
+							<th style="text-align:left;width:50px;">'.__("Stato","albo-pretorio-considera").'</th>
+							<th style="text-align:left;width:230px;">'.__("Note","albo-pretorio-considera").'</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -1087,22 +1087,22 @@ if (is_file(Albo_DIR.'/inc/pclzip.php'))
  		echo'<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td><td>--</td>';
 	else
 		echo'<span class="dashicons dashicons-no" style="color:red;font-size:2em;"></span></td>
-		<td>'.__("Senza questa libreria non puoi eseguire i Backup","albo-online").'</td>';							
+		<td>'.__("Senza questa libreria non puoi eseguire i Backup","albo-pretorio-considera").'</td>';							
 echo '							
 						</tr>
 					</tbody>
 				</table>
 		</div>						
-		<h3>'.__("Diritto all'OBLIO","albo-online").'</h3>
+		<h3>'.__("Diritto all'OBLIO","albo-pretorio-considera").'</h3>
 			<div class="widefat">
 				<table style="width:99%;">
 					<thead>
 						<tr>
-							<th style="text-align:left;width:440px;">'.__("Cartella","albo-online").'</th>
+							<th style="text-align:left;width:440px;">'.__("Cartella","albo-pretorio-considera").'</th>
 							<th style="text-align:left;width:80px;">.htaccess</th>
 							<th style="text-align:left;width:80px;">index.php</th>
 							<th style="text-align:left;width:80px;">robots.txt</th>
-							<th style="text-align:left;width:100px;">'.__("Operazione","albo-online").'</th>';
+							<th style="text-align:left;width:100px;">'.__("Operazione","albo-pretorio-considera").'</th>';
 echo'
 						</tr>
 					</thead>
@@ -1123,7 +1123,7 @@ if($ob2)
 echo '							</td>
 			<td></td>';
 //if (!$ob1 or !$ob2)
-echo '							<td><a href="?page=utilityAlboP&amp;action=creaninf&amp;rigenera='.wp_create_nonce('rigenerasic').'">'.__("Rigenera","albo-online").'</a></td>';
+echo '							<td><a href="?page=utilityAlboP&amp;action=creaninf&amp;rigenera='.wp_create_nonce('rigenerasic').'">'.__("Rigenera","albo-pretorio-considera").'</a></td>';
 echo '
 						</tr>
 						<tr>
@@ -1137,20 +1137,20 @@ if($ob3)
 		echo'<span class="dashicons dashicons-no" style="color:red;font-size:2em;"></span>';							
 echo '							</td>';
 //if (!$ob3)
-echo '							<td><a href="?page=utilityAlboP&amp;action=Crearobots&amp;creasic='.wp_create_nonce('creasicurezza').'">'.__("Crea","albo-online").'</a></td>';
+echo '							<td><a href="?page=utilityAlboP&amp;action=Crearobots&amp;creasic='.wp_create_nonce('creasicurezza').'">'.__("Crea","albo-pretorio-considera").'</a></td>';
 echo '
 						</tr>
 					</tbody>
 				</table>
 		</div>			
-		<h3>'.__("Permessi Cartella Upload","albo-online").'</h3>
+		<h3>'.__("Permessi Cartella Upload","albo-pretorio-considera").'</h3>
 			<div class="widefat">
 				<table style="width:99%;">
 					<thead>
 						<tr>
-							<th style="text-align:left;width:380px;">'.__("Cartella","albo-online").'Cartella</th>
-							<th style="text-align:left;width:100px;">'.__("Permessi","albo-online").'</th>
-							<th style="text-align:left;width:100px;">'.__("Stato","albo-online").'</th>
+							<th style="text-align:left;width:380px;">'.__("Cartella","albo-pretorio-considera").'Cartella</th>
+							<th style="text-align:left;width:100px;">'.__("Permessi","albo-pretorio-considera").'</th>
+							<th style="text-align:left;width:100px;">'.__("Stato","albo-pretorio-considera").'</th>
 						</tr>
 					</thead>
 					<tbody>';
@@ -1170,14 +1170,14 @@ echo '				<tr>
 					</tbody>
 				</table>
 		</div>
-		<h3>'.__("Permessi Cartella Servizio","albo-online").'</h3>
+		<h3>'.__("Permessi Cartella Servizio","albo-pretorio-considera").'</h3>
 			<div class="widefat">
 				<table style="width:99%;">
 					<thead>
 						<tr>
-							<th style="text-align:left;width:380px;">'.__("Cartella","albo-online").'</th>
-							<th style="text-align:left;width:100px;">'.__("Permessi","albo-online").'</th>
-							<th style="text-align:left;width:100px;">'.__("Stato","albo-online").'</th>
+							<th style="text-align:left;width:380px;">'.__("Cartella","albo-pretorio-considera").'</th>
+							<th style="text-align:left;width:100px;">'.__("Permessi","albo-pretorio-considera").'</th>
+							<th style="text-align:left;width:100px;">'.__("Stato","albo-pretorio-considera").'</th>
 						</tr>
 					</thead>
 					<tbody>';
@@ -1224,15 +1224,15 @@ echo '				<tr>
 				</table>
 		</div>
 		<div class="postbox-container" style="margin-top:20px;">
-		<h3>'.__("Analisi Data Base","albo-online").'</h2>
+		<h3>'.__("Analisi Data Base","albo-pretorio-considera").'</h2>
 	<div class="widefat">
 		<table style="width:99%;">
 			<thead>
 				<tr>
-					<th style="text-align:left;width:15%;">'.__("Tabella","albo-online").'</th>
-					<th style="text-align:left;width:10%;">'.__("Esistenza","albo-online").'</th>
-					<th style="text-align:left;width:25%;">'.__("Struttura","albo-online").'</th>
-					<th style="text-align:left;width:50%;">'.__("Analisi dati","albo-online").'</th>
+					<th style="text-align:left;width:15%;">'.__("Tabella","albo-pretorio-considera").'</th>
+					<th style="text-align:left;width:10%;">'.__("Esistenza","albo-pretorio-considera").'</th>
+					<th style="text-align:left;width:25%;">'.__("Struttura","albo-pretorio-considera").'</th>
+					<th style="text-align:left;width:50%;">'.__("Analisi dati","albo-pretorio-considera").'</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -1242,7 +1242,7 @@ foreach($Tabelle as $Tabella){
 	if (ap_existTable($Tabella)) 
  		$EsisteTabella='<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span>';
 	else
-		$EsisteTabella='<a href="admin.php?page=utilityAlboP&action=creaTabella&Tabella='.$Tabella.'">'.__("Crea Tabella","albo-online").'</a>';
+		$EsisteTabella='<a href="admin.php?page=utilityAlboP&action=creaTabella&Tabella='.$Tabella.'">'.__("Crea Tabella","albo-pretorio-considera").'</a>';
 
 $TestCampi=TestCampiTabella($Tabella);
 $DatiTabella=TestCongruitaDati($Tabella);
@@ -1273,12 +1273,12 @@ function AggiornaHashAllegati(){
 				array('IdAllegato' => $allegato['IdAllegato'] ),
 				array('%s'),
 				array('%d'))) {
-					echo'<spam style="color:green;">'.__('Aggiornamento Hash Allegato','albo-online').'</spam> '.$allegato['Allegato'].' <spam style="color:red;">'.$Impronta.'</spam><br />';
+					echo'<spam style="color:green;">'.__('Aggiornamento Hash Allegato','albo-pretorio-considera').'</spam> '.$allegato['Allegato'].' <spam style="color:red;">'.$Impronta.'</spam><br />';
 			}else{
-				echo $allegato['Allegato'].' <spam style="color:red;">'.__('Allegato già aggiornato','albo-online').'</spam><br />';
+				echo $allegato['Allegato'].' <spam style="color:red;">'.__('Allegato già aggiornato','albo-pretorio-considera').'</spam><br />';
 			}
 		}else{
-			echo $allegato['Allegato'].' <spam style="color:red;">'.__('File non trovato','albo-online').'</spam><br />';
+			echo $allegato['Allegato'].' <spam style="color:red;">'.__('File non trovato','albo-pretorio-considera').'</spam><br />';
 		}
 	}
 	echo '<meta http-equiv="refresh" content="4;url=admin.php?page=utilityAlboP"/>';

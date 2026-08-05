@@ -40,10 +40,10 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="memoPermessi"){
 				}
 			}
 		}else{
-			$Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+			$Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 		}
 	}else{
-		$Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+		$Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 	}
 }
 
@@ -63,14 +63,14 @@ echo '
 				<table class="widefat" style="width:100%;">
 					<thead>
 					<tr>
-						<th>'.__("Utente","albo-online").'</th>
-						<th>'.__("Azzera Capacità Utente","albo-online").'</th>
-						<th>'.__("Capacità di Amministrare l'Albo","albo-online").'</th>
-						<th>'.__("Capacità di Editore dell'Albo","albo-online").'</th>
-						<th>'.__("Capacità di Gestire l'Albo","albo-online").'</th>
-						<th>'.__("Ruolo Amministratore","albo-online").'</th>
-						<th>'.__("Ruolo Editore","albo-online").'</th>
-						<th>'.__("Ruolo Gestore","albo-online").'</th>
+						<th>'.__("Utente","albo-pretorio-considera").'</th>
+						<th>'.__("Azzera Capacità Utente","albo-pretorio-considera").'</th>
+						<th>'.__("Capacità di Amministrare l'Albo","albo-pretorio-considera").'</th>
+						<th>'.__("Capacità di Editore dell'Albo","albo-pretorio-considera").'</th>
+						<th>'.__("Capacità di Gestire l'Albo","albo-pretorio-considera").'</th>
+						<th>'.__("Ruolo Amministratore","albo-pretorio-considera").'</th>
+						<th>'.__("Ruolo Editore","albo-pretorio-considera").'</th>
+						<th>'.__("Ruolo Gestore","albo-pretorio-considera").'</th>
 					</tr>
 					</thead>
 					<tbody>';
@@ -131,7 +131,7 @@ echo '					</tbody>
 				
 				<div style="margin-left:auto;width:140px;margin-right:auto;">
 					<p>
-					<input type="submit" name="memo" id="memo" class="button" value="'.__("Memorizza Permessi","albo-online").'" />
+					<input type="submit" name="memo" id="memo" class="button" value="'.__("Memorizza Permessi","albo-pretorio-considera").'" />
 					</p>
 				</div>
 				</form>

@@ -11,8 +11,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 <div class="wrap">
 	<div class="HeadPage" style="margin-bottom: 30px;">
 		<h2 class="wp-heading-inline">Atti</h2>
-		<a href="<?php echo site_url().'/wp-admin/admin.php?page=atti';?>" class="add-new-h2 tornaindietro"><?php echo __("Torna indietro","albo-online");?></a>
-		<h3><?php echo __("Associa nuovo Allegato con file precedentemente caricato","albo-online");?></h3>	
+		<a href="<?php echo site_url().'/wp-admin/admin.php?page=atti';?>" class="add-new-h2 tornaindietro"><?php echo __("Torna indietro","albo-pretorio-considera");?></a>
+		<h3><?php echo __("Associa nuovo Allegato con file precedentemente caricato","albo-pretorio-considera");?></h3>	
 	</div>
 <div id="col-container">
 	<form id="allegato" method="post" action="?page=atti" class="validate">
@@ -27,23 +27,23 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th colspan="3" style="text-align:center;font-size:2em;"><?php echo __("Dati Allegato","albo-online");?></th>
+			<th colspan="3" style="text-align:center;font-size:2em;"><?php echo __("Dati Allegato","albo-pretorio-considera");?></th>
 		</tr>
 	    </thead>
 	    <tbody id="dati-allegato">
 		<tr>
-			<th><?php _e("Descrizione Allegato","albo-online");?></th>
+			<th><?php _e("Descrizione Allegato","albo-pretorio-considera");?></th>
 			<td><textarea  name="Descrizione" rows="2" cols="100" wrap="ON" maxlength="255" required></textarea></td>
 		</tr>
 		<tr>
-			<th><?php _e("Natura File","albo-online");?></th>
+			<th><?php _e("Natura File","albo-pretorio-considera");?></th>
 			<td><select name="Natura" id="Natura" wrap="ON" >
 				<option value="D">Documento firmato</option>
 				<option value="A">Allegato</option>
 			</select></td>
 		</tr>
 		<tr>
-			<th><?php _e("Documento Integrale?","albo-online");?></th>
+			<th><?php _e("Documento Integrale?","albo-pretorio-considera");?></th>
 			<td><input type="checkbox" name="Integrale" value="1" id="Integrale" checked> </td>
 		</tr>
 		<tr>
@@ -51,8 +51,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			<td><?php echo ap_get_allegati_file_scollegati("Select");?></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit" name="submit" id="submit" class="button" value="<?php _e("Collega Allegato","albo-online");?>"  />
-			<input type="submit" name="annulla" id="annulla" class="button" value="<?php _e("Annulla Operazione","albo-online");?>" />
+			<td colspan="2"><input type="submit" name="submit" id="submit" class="button" value="<?php _e("Collega Allegato","albo-pretorio-considera");?>"  />
+			<input type="submit" name="annulla" id="annulla" class="button" value="<?php _e("Annulla Operazione","albo-pretorio-considera");?>" />
 			</td>
 		</tr>
 	    </tbody>

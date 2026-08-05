@@ -9,25 +9,25 @@
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
-$messages[1] = __('Elemento aggiunto.','albo-online');
-$messages[2] = __('Elemento cancellato.','albo-online');
-$messages[3] = __('Elemento aggiornato.','albo-online');
-$messages[4] = __('Elemento non aggiunto.','albo-online');
-$messages[5] = __('Elemento non aggiornato.','albo-online');
-$messages[6] = __('Elemento non cancellato.','albo-online');
-$messages[7] = __('Impossibile cancellare i Tipi di files che sono collegati ad Atti','albo-online');
-$messages[8] = __('Impossibile creare il Tipo di file perchè mancano dati obbligatori','albo-online');
-$messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+$messages[1] = __('Elemento aggiunto.','albo-pretorio-considera');
+$messages[2] = __('Elemento cancellato.','albo-pretorio-considera');
+$messages[3] = __('Elemento aggiornato.','albo-pretorio-considera');
+$messages[4] = __('Elemento non aggiunto.','albo-pretorio-considera');
+$messages[5] = __('Elemento non aggiornato.','albo-pretorio-considera');
+$messages[6] = __('Elemento non cancellato.','albo-pretorio-considera');
+$messages[7] = __('Impossibile cancellare i Tipi di files che sono collegati ad Atti','albo-pretorio-considera');
+$messages[8] = __('Impossibile creare il Tipo di file perchè mancano dati obbligatori','albo-pretorio-considera');
+$messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 ?>
-<div id="errori" title="<?php _e("Validazione Dati","albo-online");?>" style="display:none">
-  <h3><?php _e("Lista Campi con Errori","albo-online");?>:</h3>
+<div id="errori" title="<?php _e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
+  <h3><?php _e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3>
   	<p id="ElencoCampiConErrori"></p>
-  	<p style='color:red;font-weight: bold;'><?php  _e("Correggere gli errori per continuare","albo-online");?></p>
+  	<p style='color:red;font-weight: bold;'><?php  _e("Correggere gli errori per continuare","albo-pretorio-considera");?></p>
 </div>
 <div class="wrap nosubsub">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-paperclip"></span> <?php _e("Tipi di Files","albo-online");?>
-		<a href="?page=tipifiles" class="add-new-h2"><?php _e("Aggiungi nuovo","albo-online");?></a></h2>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-paperclip"></span> <?php _e("Tipi di Files","albo-pretorio-considera");?>
+		<a href="?page=tipifiles" class="add-new-h2"><?php _e("Aggiungi nuovo","albo-pretorio-considera");?></a></h2>
 	</div>
 <?php
 $lista=ap_get_tipidifiles(); 
@@ -63,11 +63,11 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
 <div id="col-container">
 <div id="col-right">
 <div class="col-wrap">
-<h3><?php  _e("Elenco Tipi di Files","albo-online");?> <a href="?page=tipifiles&action=set-default&tipifiles=<?php echo wp_create_nonce('elabtipifiles')?>" class="add-new-h2"><?php  _e("Reimposta Estensioni di Default","albo-online");?></a></h3>
+<h3><?php  _e("Elenco Tipi di Files","albo-pretorio-considera");?> <a href="?page=tipifiles&action=set-default&tipifiles=<?php echo wp_create_nonce('elabtipifiles')?>" class="add-new-h2"><?php  _e("Reimposta Estensioni di Default","albo-pretorio-considera");?></a></h3>
 <table class="widefat" id="elenco-tipidifiles"> 
     <thead>
     	<tr>
-        	<th scope="col" style="text-align:center;"><?php  _e("Tipi di Files","albo-online");?></th>
+        	<th scope="col" style="text-align:center;"><?php  _e("Tipi di Files","albo-pretorio-considera");?></th>
 		</tr>
     </thead>
     <tbody id="the-list">
@@ -82,18 +82,18 @@ if ($lista){
 		$Tab=0;
 		if($Tipi[strtolower($TipoFile)]==0 and $TipoFile!="ndf")
 			echo '<span class="cancella"><a href="?page=tipifiles&amp;action=delete-tipofile&amp;id='.$TipoFile.'&amp;canctipfil='.wp_create_nonce('deletetipofile').'" rel="'.$riga['Descrizione'].'" class="confdel">
-			<span class="dashicons dashicons-trash" title="'.__('Cancella tipo file','albo-online').'"></span>
+			<span class="dashicons dashicons-trash" title="'.__('Cancella tipo file','albo-pretorio-considera').'"></span>
 			</a></span>';
 		else
 			$Tab=23;
 		echo '
 			<a href="?page=tipifiles&amp;action=edit-tipofile&amp;id='.$TipoFile.'&amp;modtipfil='.wp_create_nonce('edittipofilee').'" rel="'.$riga['Descrizione'].'">
-			<span class="dashicons dashicons-edit" title="'.__('Modifica tipo file','albo-online').'" style="margin-left:'.$Tab.'px;"></span>
+			<span class="dashicons dashicons-edit" title="'.__('Modifica tipo file','albo-pretorio-considera').'" style="margin-left:'.$Tab.'px;"></span>
 			</a>
 			('.$TipoFile.') '.$riga['Descrizione'] .($TipoFile!="ndf"?'(n&ordm; atti '.$Tipi[$TipoFile].')':"").'</li>'; 
 	}
 } else {
-		echo '<li>'.__('Nessun Tipo File Codificato','albo-online').'</li>';
+		echo '<li>'.__('Nessun Tipo File Codificato','albo-pretorio-considera').'</li>';
 }
 echo '</td>
 	</tr>
@@ -108,22 +108,22 @@ echo'
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th style="font-size:1.2em;">'.__("Data","albo-online").'</th>
-			<th style="font-size:1.2em;">'.__("Operazione","albo-online").'</th>
-			<th style="font-size:1.2em;">'.__("Informazioni","albo-online").'</th>
+			<th style="font-size:1.2em;">'.__("Data","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.__("Operazione","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.__("Informazioni","albo-pretorio-considera").'</th>
 		</tr>
 	    </thead>
 	    <tbody id="righe-log">';
 foreach ($righe as $riga) {
 	switch ($riga->TipoOperazione){
 	 	case 1:
-	 		$Operazione=__("Inserimento","albo-online");
+	 		$Operazione=__("Inserimento","albo-pretorio-considera");
 	 		break;
 	 	case 2:
-	 		$Operazione=__("Modifica","albo-online");
+	 		$Operazione=__("Modifica","albo-pretorio-considera");
 			break;
 	 	case 3:
-	 		$Operazione=__("Cancellazione","albo-online");
+	 		$Operazione=__("Cancellazione","albo-pretorio-considera");
 			break;
 	}
 	echo '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
@@ -141,7 +141,7 @@ $IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo($_REQUEST['id']):"";
 
 <div id="col-left">
 	<div class="Obbligatori">
-		<span style="color:red;font-weight: bold;">*</span> <?php printf(__("i campi contrassegnati dall'asterisco sono %s obbligatori %s","albo-online"),"<strong>","</strong>");?>
+		<span style="color:red;font-weight: bold;">*</span> <?php printf(__("i campi contrassegnati dall'asterisco sono %s obbligatori %s","albo-pretorio-considera"),"<strong>","</strong>");?>
 	</div>
 	<br />
 <div class="form-wrap">
@@ -150,18 +150,18 @@ $IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo($_REQUEST['id']):"";
 		<input type="hidden" name="id" value="<?php echo $IDTipo; ?>" />
 		<input type="hidden" name="tipifiles" value="<?php echo wp_create_nonce('elabtipifiles')?>" />
 		<div class="form-required">
-			<label for="estensione"><?php _e("Tipo File","albo-online");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="id" id="<?php _e("Tipo File","albo-online");?>" type="text" value="<?php if($edit) echo $IDTipo;?>" size="6" aria-required="true" <?php echo ($edit?'Disabled':"");?> required/>
+			<label for="estensione"><?php _e("Tipo File","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
+			<input name="id" id="<?php _e("Tipo File","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo $IDTipo;?>" size="6" aria-required="true" <?php echo ($edit?'Disabled':"");?> required/>
 		</div>
 		<div class="form-field form-required">
-			<label for="descrizione"><?php _e("Descrizione","albo-online");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="descrizione" id="<?php _e("Descrizione","albo-online");?>" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Descrizione"])?$lista[$IDTipo]["Descrizione"]:""); ?>" size="60" aria-required="true" required/>
+			<label for="descrizione"><?php _e("Descrizione","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
+			<input name="descrizione" id="<?php _e("Descrizione","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Descrizione"])?$lista[$IDTipo]["Descrizione"]:""); ?>" size="60" aria-required="true" required/>
 		</div>
 		<div class="form-field form-required">
-			<label for="icona"><?php _e("Icona","albo-online");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="icona" id="<?php _e("Icona","albo-online");?>" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Icona"])?$lista[$IDTipo]["Icona"]:"");?>" size="60" aria-required="true" required/>
+			<label for="icona"><?php _e("Icona","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
+			<input name="icona" id="<?php _e("Icona","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Icona"])?$lista[$IDTipo]["Icona"]:"");?>" size="60" aria-required="true" required/>
 				<div style="float:left;"><input id="icona_upload" class="button" type="button" value="Carica" />
-					<br /><?php _e("Dimensione max 30x30","albo-online");?>
+					<br /><?php _e("Dimensione max 30x30","albo-pretorio-considera");?>
 				</div>
 				<div style="float:left;margin-left:10%;margin-top:5px;">
 		<?php if(isset($lista[$IDTipo]["Icona"]) And $lista[$IDTipo]["Icona"]){?>
@@ -171,20 +171,20 @@ $IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo($_REQUEST['id']):"";
 </div>
 	<div class="clear"></div>
 	<div class="form-field form-required">
-		<label for="verifica"><?php _e("Verifica","albo-online");?></label>
+		<label for="verifica"><?php _e("Verifica","albo-pretorio-considera");?></label>
 		<input name="verifica" id="verifica" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Verifica"])?$lista[$IDTipo]["Verifica"]:"");?>" size="60" aria-required="true" />
 	</div>
 
 <?php
 if($edit) {
 	if(isset($lista[$IDTipo])){
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-online").' '.$IDTipo.'" rel="'.$IDTipo.'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-pretorio-considera").' '.$IDTipo.'" rel="'.$IDTipo.'" />';
 	}
 }else{
  	if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit_err")
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-online").' '.htmlentities($_GET['resp-cognome']).'" rel="'.htmlentities($_GET['resp-cognome']).'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-pretorio-considera").' '.htmlentities($_GET['resp-cognome']).'" rel="'.htmlentities($_GET['resp-cognome']).'" />';
 	else
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Aggiungi nuovo Tipo File","albo-online").'"  />';	
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Aggiungi nuovo Tipo File","albo-pretorio-considera").'"  />';	
 }
 ?>
 </form>

@@ -40,8 +40,8 @@ jobs:
 
       - name: Costruisci lo zip pulito
         run: |
-          OUT="albo-pretorio-on-line-${{ steps.ver.outputs.version }}.zip"
-          git archive --format=zip --prefix=albo-pretorio-on-line/ -o "$OUT" "${GITHUB_REF_NAME}"
+          OUT="albo-pretorio-considera-${{ steps.ver.outputs.version }}.zip"
+          git archive --format=zip --prefix=albo-pretorio-considera/ -o "$OUT" "${GITHUB_REF_NAME}"
           unzip -t "$OUT" > /dev/null
           echo "OUT=$OUT" >> "$GITHUB_ENV"
 

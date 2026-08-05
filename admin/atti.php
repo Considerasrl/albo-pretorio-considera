@@ -54,11 +54,11 @@ class AdminTableAtti extends WP_List_Table
 
 	function get_views() {
 	    $status_links = array(
-	        "Tutti"		  => "<a href='?page=atti&amp;stato_atti=Tutti'><strong>".__("Tutti","albo-online")." (".$this->Atti_Tutti.")</strong></a>",
-	        "nuovi"       => "<a href='?page=atti&amp;stato_atti=Nuovi'>".__("da Pubblicare","albo-online")."(".$this->Atti_DaPubblicare.")</a>",
-	        "correnti"    => "<a href='?page=atti&amp;stato_atti=Correnti'>".__("Correnti","albo-online")."(".$this->Atti_Correnti.")</a>",
-	        "storico"     => "<a href='?page=atti&amp;stato_atti=Scaduti'>".__("Scaduti","albo-online")."(".$this->Atti_Scaduti.")</a>",
-	        "oblio"       => "<a href='?page=atti&amp;stato_atti=Eliminare'>".__("da Eliminare","albo-online")."(".$this->Atti_Eliminare.")</a>",
+	        "Tutti"		  => "<a href='?page=atti&amp;stato_atti=Tutti'><strong>".__("Tutti","albo-pretorio-considera")." (".$this->Atti_Tutti.")</strong></a>",
+	        "nuovi"       => "<a href='?page=atti&amp;stato_atti=Nuovi'>".__("da Pubblicare","albo-pretorio-considera")."(".$this->Atti_DaPubblicare.")</a>",
+	        "correnti"    => "<a href='?page=atti&amp;stato_atti=Correnti'>".__("Correnti","albo-pretorio-considera")."(".$this->Atti_Correnti.")</a>",
+	        "storico"     => "<a href='?page=atti&amp;stato_atti=Scaduti'>".__("Scaduti","albo-pretorio-considera")."(".$this->Atti_Scaduti.")</a>",
+	        "oblio"       => "<a href='?page=atti&amp;stato_atti=Eliminare'>".__("da Eliminare","albo-pretorio-considera")."(".$this->Atti_Eliminare.")</a>",
 	    );
 	    return $status_links;
 	}
@@ -138,52 +138,52 @@ class AdminTableAtti extends WP_List_Table
 	  	case "Correnti": 
 	  	case "Scaduti":
 	  		$columns = array(
-		    'Stato'			 	 => __('Stato','albo-online'),
-		    'Numero'             => __('Numero','albo-online'),
-		    'Riferimento'        => __('Riferimento','albo-online'),
-		    'Oggetto'          	 => __('Oggetto','albo-online'),
-		    'Ente'               => __('Ente','albo-online'),
-			'MetaDati'           => __('Meta Dati','albo-online'),
-		    'Data'          	 => __('Del','albo-online'),
-		    'validita'           => __('Validità Dal/Al','albo-online'),
-		    'dataoblio'        	 => __('Oblio','albo-online'),
-		    'Idcategoria'     	 => __('Categoria','albo-online'));
+		    'Stato'			 	 => __('Stato','albo-pretorio-considera'),
+		    'Numero'             => __('Numero','albo-pretorio-considera'),
+		    'Riferimento'        => __('Riferimento','albo-pretorio-considera'),
+		    'Oggetto'          	 => __('Oggetto','albo-pretorio-considera'),
+		    'Ente'               => __('Ente','albo-pretorio-considera'),
+			'MetaDati'           => __('Meta Dati','albo-pretorio-considera'),
+		    'Data'          	 => __('Del','albo-pretorio-considera'),
+		    'validita'           => __('Validità Dal/Al','albo-pretorio-considera'),
+		    'dataoblio'        	 => __('Oblio','albo-pretorio-considera'),
+		    'Idcategoria'     	 => __('Categoria','albo-pretorio-considera'));
 		    break;
 	  	case "DaPubblicare": 
 	  		$columns = array(
-		    'Stato'			 	 => __('Stato','albo-online'),
-		    'Riferimento'        => __('Riferimento','albo-online'),
-		    'Oggetto'          	 => __('Oggetto','albo-online'),
-		    'Ente'               => __('Ente','albo-online'),
-			'MetaDati'           => __('Meta Dati','albo-online'),
-		    'Data'          	 => __('Del','albo-online'),
-		    'Idcategoria'     	 => __('Categoria','albo-online'));
+		    'Stato'			 	 => __('Stato','albo-pretorio-considera'),
+		    'Riferimento'        => __('Riferimento','albo-pretorio-considera'),
+		    'Oggetto'          	 => __('Oggetto','albo-pretorio-considera'),
+		    'Ente'               => __('Ente','albo-pretorio-considera'),
+			'MetaDati'           => __('Meta Dati','albo-pretorio-considera'),
+		    'Data'          	 => __('Del','albo-pretorio-considera'),
+		    'Idcategoria'     	 => __('Categoria','albo-pretorio-considera'));
 		    break;
 	  	case "Eliminare": 
 	  		$columns = array(
 	    	'cb'                 => '<input type="checkbox"/>',
-		    'Stato'			 	 => __('Stato','albo-online'),
-		    'Numero'             => __('Numero','albo-online'),
-		    'Riferimento'        => __('Riferimento','albo-online'),
-		    'Oggetto'          	 => __('Oggetto','albo-online'),
-		    'Ente'               => __('Ente','albo-online'),
-			'MetaDati'           => __('Meta Dati','albo-online'),	
-		    'Data'          	 => __('Del','albo-online'),
-		    'validita'           => __('Validità Dal/Al','albo-online'),
-		    'dataoblio'        	 => __('Oblio','albo-online'),
-		    'Idcategoria'     	 => __('Categoria','albo-online'));
+		    'Stato'			 	 => __('Stato','albo-pretorio-considera'),
+		    'Numero'             => __('Numero','albo-pretorio-considera'),
+		    'Riferimento'        => __('Riferimento','albo-pretorio-considera'),
+		    'Oggetto'          	 => __('Oggetto','albo-pretorio-considera'),
+		    'Ente'               => __('Ente','albo-pretorio-considera'),
+			'MetaDati'           => __('Meta Dati','albo-pretorio-considera'),	
+		    'Data'          	 => __('Del','albo-pretorio-considera'),
+		    'validita'           => __('Validità Dal/Al','albo-pretorio-considera'),
+		    'dataoblio'        	 => __('Oblio','albo-pretorio-considera'),
+		    'Idcategoria'     	 => __('Categoria','albo-pretorio-considera'));
 		    break;
         case "Cerca": 
         	$columns = array(
-		    'Stato'			 	 => __('Stato','albo-online'),
-		    'Numero'             => __('Numero','albo-online'),
-		    'Riferimento'        => __('Riferimento','albo-online'),
-		    'Oggetto'          	 => __('Oggetto','albo-online'),
-		    'Ente'               => __('Ente','albo-online'),
-		    'Data'          	 => __('Del','albo-online'),
-		    'validita'           => __('Validità Dal/Al','albo-online'),
-		    'dataoblio'        	 => __('Oblio','albo-online'),
-		    'Idcategoria'     	 => __('Categoria','albo-online'));
+		    'Stato'			 	 => __('Stato','albo-pretorio-considera'),
+		    'Numero'             => __('Numero','albo-pretorio-considera'),
+		    'Riferimento'        => __('Riferimento','albo-pretorio-considera'),
+		    'Oggetto'          	 => __('Oggetto','albo-pretorio-considera'),
+		    'Ente'               => __('Ente','albo-pretorio-considera'),
+		    'Data'          	 => __('Del','albo-pretorio-considera'),
+		    'validita'           => __('Validità Dal/Al','albo-pretorio-considera'),
+		    'dataoblio'        	 => __('Oblio','albo-pretorio-considera'),
+		    'Idcategoria'     	 => __('Categoria','albo-pretorio-considera'));
 		    break;
 	  }
 	  return $columns;
@@ -241,102 +241,102 @@ class AdminTableAtti extends WP_List_Table
 
    	  $actions = array(
 	    'visualizza'   => '<a href="?page=atti&amp;action=view-atto&amp;id='.$item->IdAtto.'&amp;stato_atti='.$this->stato_atti.'"  >
-						<span class="dashicons dashicons-search" title="'.__('Visualizza dati atto','albo-online').'"></span>
+						<span class="dashicons dashicons-search" title="'.__('Visualizza dati atto','albo-pretorio-considera').'"></span>
 					</a>');
 	$this->AzioneDefault='<a href="?page=atti&amp;action=view-atto&amp;id='.$item->IdAtto.'&amp;stato_atti='.$this->stato_atti.'" >';
 	switch($this->stato_atti){
 		case "Tutti":
 			$Msg="";
-			$Msg.=($Scaduto?'<span style="color: rgb(23, 5, 161);font-weight: bold;">'.__('Scaduto','albo-online').'</span>':'<span style="color: green;font-weight: bold;">'.__('Corrente','albo-online').'</span>');
-			$Msg.=($Annullato?' <span style="color: red;font-weight: bold;">'.__('Annullato','albo-online').'</span>':"");
+			$Msg.=($Scaduto?'<span style="color: rgb(23, 5, 161);font-weight: bold;">'.__('Scaduto','albo-pretorio-considera').'</span>':'<span style="color: green;font-weight: bold;">'.__('Corrente','albo-pretorio-considera').'</span>');
+			$Msg.=($Annullato?' <span style="color: red;font-weight: bold;">'.__('Annullato','albo-pretorio-considera').'</span>':"");
 			break;		
 		case "DaPubblicare":
 			$actions['cancella'] ='<span class="trash"><a href="?page=atti&amp;action=delete-atto&amp;id='.$item->IdAtto.'&amp;cancellaatto='.
 				wp_create_nonce('deleteatto').'" rel="'.strip_tags($item->Oggetto).'" tag="" class="ac">
-						<span class="dashicons dashicons-trash" title="'.__('Cancella Atto','albo-online').'"></span>
+						<span class="dashicons dashicons-trash" title="'.__('Cancella Atto','albo-pretorio-considera').'"></span>
 					</a></span>';
 			$this->AzioneDefault='<a href="?page=atti&amp;action=edit-atto&amp;id='.$item->IdAtto.'&amp;modificaatto='.
 			wp_create_nonce('editatto').'">';
 			$actions['modifica'] ='<a href="?page=atti&amp;action=edit-atto&amp;id='.$item->IdAtto.'&amp;modificaatto='.
 			wp_create_nonce('editatto').'">
-						<span class="dashicons dashicons-edit" title="'.__('Modifica atto','albo-online').'"></span>
+						<span class="dashicons dashicons-edit" title="'.__('Modifica atto','albo-pretorio-considera').'"></span>
 					</a>';
 			$actions['allegati'] ='<a href="?page=atti&amp;action=allegati-atto&amp;id='.$item->IdAtto.'&amp;allegatoatto='.
 			wp_create_nonce('gestallegatiatto').'">
-						<span class="dashicons dashicons-upload" title="'.__('Allegati','albo-online').'"></span>
+						<span class="dashicons dashicons-upload" title="'.__('Allegati','albo-pretorio-considera').'"></span>
 					</a>';
 			if (current_user_can('editore_atti_albo')){
 				$actions['pubblica'] ='<a href="?page=atti&amp;action=approva-atto&amp;id='.$item->IdAtto.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$item->IdAtto).'"  >
-	<span class="dashicons dashicons-share-alt" title="'.__('Pubblica atto','albo-online').'"></span>
+	<span class="dashicons dashicons-share-alt" title="'.__('Pubblica atto','albo-pretorio-considera').'"></span>
 					</a>';
 			}
-			$Msg='<span style="color: green;font-weight: bold;">'.__('Da Pubblicare','albo-online').'</span>';
+			$Msg='<span style="color: green;font-weight: bold;">'.__('Da Pubblicare','albo-pretorio-considera').'</span>';
 			break;
 		case "Correnti":
 			$Msg=($Annullato?'<span style="color: red;font-weight: bold;">Annullato</span>':'<span style="color: green;font-weight: bold;">Pubblicato</span>');
 			$actions['meta'] ='<a href="?page=atti&amp;action=metadati-atto&amp;id='.$item->IdAtto.'&amp;metaatto='.wp_create_nonce('operazionemetaatto').'&stato_atti=Correnti">
-				<span class="dashicons dashicons-screenoptions" title="'.__('Gestisci metadati Atto','albo-online').'"></span>
+				<span class="dashicons dashicons-screenoptions" title="'.__('Gestisci metadati Atto','albo-pretorio-considera').'"></span>
 			</a>';
 			if (current_user_can('editore_atti_albo')){
 				$actions['avviso'] ='<a href="?page=atti&amp;action=avviso_affissione-atto&amp;id='.$item->IdAtto.'&amp;avvisoatto='.wp_create_nonce('operazioneavviso_affissione').'&stato_atti=Correnti">
-				<span class="dashicons dashicons-media-text" title="'.__('Stampa Avviso di Affissione','albo-online').'"></span>
+				<span class="dashicons dashicons-media-text" title="'.__('Stampa Avviso di Affissione','albo-pretorio-considera').'"></span>
 			</a>';
 			}
 		break;
 		case "Scaduti":
-			$Msg=($Annullato?'<span style="color: red;font-weight: bold;">'.__('Annullato','albo-online').'</span>':'<span style="color: rgb(23, 5, 161);font-weight: bold;">Scaduto</span>');			
+			$Msg=($Annullato?'<span style="color: red;font-weight: bold;">'.__('Annullato','albo-pretorio-considera').'</span>':'<span style="color: rgb(23, 5, 161);font-weight: bold;">Scaduto</span>');			
 			$actions['meta'] ='<a href="?page=atti&amp;action=metadati-atto&amp;id='.$item->IdAtto.'&amp;metaatto='.wp_create_nonce('operazionemetaatto').'&stato_atti=Scaduti">
-				<span class="dashicons dashicons-screenoptions" title="'.__('Gestisci metadati Atto','albo-online').'"></span>
+				<span class="dashicons dashicons-screenoptions" title="'.__('Gestisci metadati Atto','albo-pretorio-considera').'"></span>
 			</a>';
 			$actions['certificato'] ='<a href="?page=atti&amp;action=certificato_pubblicazione-atto&amp;id='.$item->IdAtto.'&amp;certificatoatto='.wp_create_nonce('operazionecertificato_pubblicazione').'&stato_atti=Scaduti">
-				<span class="dashicons dashicons-media-spreadsheet" title="'.__('Stampa Certificato Pubblicazione','albo-online').'"></span>
+				<span class="dashicons dashicons-media-spreadsheet" title="'.__('Stampa Certificato Pubblicazione','albo-pretorio-considera').'"></span>
 			</a>';
 			$actions['oblioallegati'] ='<a href="?page=atti&amp;action=oblio-allegati-atto&amp;id='.$item->IdAtto.'&amp;oaatto='.wp_create_nonce('operazioneoblioallegati').'&stato_atti=Scaduti">
-				<span class="dashicons dashicons-editor-unlink" title="'.__('Cancella Allegati Atto','albo-online').'"></span>
+				<span class="dashicons dashicons-editor-unlink" title="'.__('Cancella Allegati Atto','albo-pretorio-considera').'"></span>
 			</a>';
 			$actions['oblioatto'] ='<a href="?page=atti&amp;action=oblia-atto&amp;id='.$item->IdAtto.'&amp;oatto='.wp_create_nonce('operazionebliaatto').'&stato_atti=Scaduti">
-				<span class="dashicons dashicons-hammer" title="'.__('Imposta la data di Oblio dell\'atto ad oggi','albo-online').'"></span>
+				<span class="dashicons dashicons-hammer" title="'.__('Imposta la data di Oblio dell\'atto ad oggi','albo-pretorio-considera').'"></span>
 			</a>';
 			break;
 		case "Eliminare":
 			if (current_user_can('editore_atti_albo')){
 				$actions['delete'] ='<span class="trash"><a href="?page=atti&amp;action=elimina-atto&amp;id='.$item->IdAtto.'&amp;cancellatto='.
 				wp_create_nonce('operazionecancelaatto').'">
-				<span class="dashicons dashicons-trash" title="'.__('Oblio Atto','albo-online').'"></span>
+				<span class="dashicons dashicons-trash" title="'.__('Oblio Atto','albo-pretorio-considera').'"></span>
 			</a></span>';
 			}
-			$Msg='<span style="color: red;font-weight: bold;">'.__('Oblio','albo-online').'</span>';			
+			$Msg='<span style="color: red;font-weight: bold;">'.__('Oblio','albo-pretorio-considera').'</span>';			
 			break;			
         case "Cerca": /* mr */
             if( $item->Numero == 0 ){    
-				$Msg=('<span style="color: green;font-weight: bold;">'.__('Da Pubblicare','albo-online').'</span>');
+				$Msg=('<span style="color: green;font-weight: bold;">'.__('Da Pubblicare','albo-pretorio-considera').'</span>');
                 $actions['cancella'] ='<span class="trash"><a href="?page=atti&amp;action=delete-atto&amp;id='.$item->IdAtto.'&amp;cancellaatto='.
 			wp_create_nonce('deleteatto').'" rel="'.strip_tags($item->Oggetto).'" tag="" class="ac">
-					<span class="delete dashicons dashicons-trash" title="'.__('Cancella Atto','albo-online').'"></span>
+					<span class="delete dashicons dashicons-trash" title="'.__('Cancella Atto','albo-pretorio-considera').'"></span>
 				</a></span>';
 				$this->AzioneDefault='<a href="?page=atti&amp;action=edit-atto&amp;id='.$item->IdAtto.'&amp;modificaatto='.
 				wp_create_nonce('editatto').'">';
 				$actions['modifica'] ='<a href="?page=atti&amp;action=edit-atto&amp;id='.$item->IdAtto.'&amp;modificaatto='.
 				wp_create_nonce('editatto').'">
-					<span class="dashicons dashicons-edit" title="'.__('Modifica atto','albo-online').'"></span>
+					<span class="dashicons dashicons-edit" title="'.__('Modifica atto','albo-pretorio-considera').'"></span>
 				</a>';
 				$actions['allegati'] ='<a href="?page=atti&amp;action=allegati-atto&amp;id='.$item->IdAtto.'&amp;allegatoatto='.
 				wp_create_nonce('gestallegatiatto').'">
-					<span class="dashicons dashicons-upload" title="'.__('Allegati','albo-online').'"></span>
+					<span class="dashicons dashicons-upload" title="'.__('Allegati','albo-pretorio-considera').'"></span>
 				</a>';
 				if (current_user_can('editore_atti_albo')){
 				$actions['pubblica'] ='<a href="?page=atti&amp;action=approva-atto&amp;id='.$item->IdAtto.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$item->IdAtto).'"  >
-	<span class="dashicons dashicons-share-alt" title="'.__('Pubblica atto','albo-online').'"></span>
+	<span class="dashicons dashicons-share-alt" title="'.__('Pubblica atto','albo-pretorio-considera').'"></span>
 					</a>';
 				}         
             }else{
-                $Msg=($Annullato?'<span style="color: red;font-weight: bold;">'.__('Annullato','albo-online').'</span>':'<span style="color: green;font-weight: bold;">'.__('Pubblicato','albo-online').'</span>');    
+                $Msg=($Annullato?'<span style="color: red;font-weight: bold;">'.__('Annullato','albo-pretorio-considera').'</span>':'<span style="color: green;font-weight: bold;">'.__('Pubblicato','albo-pretorio-considera').'</span>');    
                 }
                 break;
 	}
 	if( !$Scaduto and $Annullato=='' and ($this->stato_atti=="Correnti" || $this->stato_atti=="Cerca") and current_user_can('editore_atti_albo')){
 		$actions['annulla'] ='<span class="trash"><a class="annullaatto" href="?page=atti&amp;action=annullamento-atto&amp;id='.$item->IdAtto.'">
-				<span class="dashicons dashicons-dismiss" title="'.__('Annulla atto','albo-online').'"></span>
+				<span class="dashicons dashicons-dismiss" title="'.__('Annulla atto','albo-pretorio-considera').'"></span>
 			</a></span>';
 	}
 	return sprintf('%1$s %2$s',$Msg,$this->row_actions($actions));
@@ -344,7 +344,7 @@ class AdminTableAtti extends WP_List_Table
   function column_Ente($item) { 
   	$Ente=ap_get_ente($item->Ente);
   	if($Ente===FALSE){
-		return "<spam style=\"color:red;\">".__('Ente non definito','albo-online')."</spam>";
+		return "<spam style=\"color:red;\">".__('Ente non definito','albo-pretorio-considera')."</spam>";
 	}else{
     return stripslashes($Ente->Nome); 	
 	}
@@ -384,7 +384,7 @@ class AdminTableAtti extends WP_List_Table
 		$Cate=ap_get_categoria($item->IdCategoria);
 		return $Cate[0]->Nome;
 	}else{
-		return __('Non Definita','albo-online');
+		return __('Non Definita','albo-pretorio-considera');
 	}
   }   
   function column_dataoblio($item) { 
@@ -396,7 +396,7 @@ class AdminTableAtti extends WP_List_Table
 
 	function get_bulk_actions() {
 	  if (isset($_GET['stato_atti']) And $_GET['stato_atti']=="Eliminare" And current_user_can('editore_atti_albo'))	
-	  	return array('delete_bulk_atti' => __('Elimina','albo-online'));
+	  	return array('delete_bulk_atti' => __('Elimina','albo-pretorio-considera'));
 	}
 
 	// Funzione per la prima colonna che non sarà più il 
@@ -427,12 +427,12 @@ if(isset($_REQUEST['action'])){
 		            $nonce  = filter_input( INPUT_GET, 'oaatto' );
 		            $action = 'operazioneoblioallegati';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti&stato_atti=Correnti") );
+		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		if (is_numeric($_REQUEST['id'])) {
  	                    $MessaggiRitorno=CancellaAllegatiAtto((int)$_REQUEST['id']);
 					}
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti") );					
+					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;				
 		case "annullamento-atto" :
 			Annulla_Atto((int)$_REQUEST['id']);
@@ -453,37 +453,37 @@ if(isset($_REQUEST['action'])){
 			break;
 		case "pubblica-atto":
 			if ( ! isset( $_REQUEST['pubblicaatto'] ) || ! wp_verify_nonce( $_REQUEST['pubblicaatto'], 'pubblicaatto-'.(int)$_REQUEST['id'] ) ) {
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			Lista_Atti(ap_approva_atto((int)$_REQUEST['id']));
 			break;
 		case "setta-anno":
 			if ( ! isset( $_REQUEST['settaanno'] ) || ! wp_verify_nonce( $_REQUEST['settaanno'], 'settaanno-'.(int)$_REQUEST['id'] ) ) {
-				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			update_option('opt_AP_AnnoProgressivo',date("Y") );
 		  	update_option('opt_AP_NumeroProgressivo',1 );
-			PreApprovazione((int)$_REQUEST['id'],sprintf(__('Anno Albo settato a %s Numero progressivo settato a 0','albo-online'),date("Y")));
+			PreApprovazione((int)$_REQUEST['id'],sprintf(__('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),date("Y")));
 			break;
 		case "approva-atto" :
 			$ret="";
 			if ( ! isset( $_REQUEST['approvaatto'] ) || ! wp_verify_nonce( $_REQUEST['approvaatto'], 'approvaatto-'.(int)$_REQUEST['id'] ) ) {
-				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			if (isset($_REQUEST['apa'])){
-				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('Anno' => $_REQUEST['apa']),array('%s'),__('Modifica in Approvazione','albo-online')."\n");
+				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('Anno' => $_REQUEST['apa']),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");
 			}
 			if (isset($_REQUEST['pnp'])){
 				update_option( 'opt_AP_NumeroProgressivo', (int)$_REQUEST['pnp']);
 			}
 			if (isset($_REQUEST['udi'])){
-				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('DataInizio' => $_REQUEST['udi']),array('%s'),__('Modifica in Approvazione','albo-online')."\n");	
+				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('DataInizio' => $_REQUEST['udi']),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
 			}
 			if (isset($_REQUEST['udf'])){
-				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('DataFine' => $_REQUEST['udf']),array('%s'),__('Modifica in Approvazione','albo-online')."\n");	
+				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('DataFine' => $_REQUEST['udf']),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
 			}
 			if (isset($_REQUEST['udo'])){
 				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('DataOblio' => $_REQUEST['udo']),array('%s'),"Modifica in Approvazione\n");	
@@ -496,22 +496,22 @@ if(isset($_REQUEST['action'])){
 			break;
 		case "allegati-atto" :
 			if (!isset($_REQUEST['allegatoatto'])) {
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;	
 			}
 			if (!wp_verify_nonce($_REQUEST['allegatoatto'],'gestallegatiatto')){
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			} 		
 			Allegati_atto((int)$_REQUEST['id'],(isset($_REQUEST['messaggio'])?$_REQUEST['messaggio']:""));
 			break;
 		case "edit-allegato-atto" :
 			if (!isset($_REQUEST['modificaallegatoatto'])) {
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;	
 			}
 			if (!wp_verify_nonce($_REQUEST['modificaallegatoatto'],'editallegatoatto')){
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			} 				
 			Allegati_atto((int)$_REQUEST['id'],(isset($_REQUEST['messaggio'])?$_REQUEST['messaggio']:""),(int)$_REQUEST['idAlle']);
@@ -561,7 +561,7 @@ function Gestione_Metadati($IdAtto){
 <div class="wrap nosubsub">
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> Atti</h2>
-		<a href="<?php echo site_url();?>/wp-admin/admin.php?page=atti&stato_atti=<?php echo sanitize_text_field(filter_input(INPUT_GET,"stato_atti"));?>" class="add-new-h2 tornaindietro"><?php _e("Torna indietro","albo-online");?></a>
+		<a href="<?php echo site_url();?>/wp-admin/admin.php?page=atti&stato_atti=<?php echo sanitize_text_field(filter_input(INPUT_GET,"stato_atti"));?>" class="add-new-h2 tornaindietro"><?php _e("Torna indietro","albo-pretorio-considera");?></a>
 		<h3>Dati Atto</h3>	
 	</div>
 	<div class="clear"><br /></div>
@@ -574,17 +574,17 @@ function Gestione_Metadati($IdAtto){
 			<input type="hidden" name="mmda" value="<?php echo wp_create_nonce('editmetadatiattoatto')?>" />
 
 			<div class="col-wrap postbox" style="padding:0 10px 10px 10px;margin-left:10px;" id="MetaDati">
-			<h2 class="hndle"><span><?php _e("Meta Dati Personalizzati","albo-online");?></span> <button type="button" id="AddMeta" class="setta-def-data">Aggiungi Meta Valore</button></h2>
+			<h2 class="hndle"><span><?php _e("Meta Dati Personalizzati","albo-pretorio-considera");?></span> <button type="button" id="AddMeta" class="setta-def-data">Aggiungi Meta Valore</button></h2>
 				<div style="display:none;" id="newMeta">
-					<label for="listaAttiMeta"><?php _e("Meta già codificati","albo-online");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
-					<label for="newMetaName"><?php _e("Nome Meta","albo-online");?></label> <input name="newMetaName" id="newMetaName"/>
-					<label for="newValue"><?php _e("Valore Meta","albo-online");?></label> <input name="newValue" id="newValue">
+					<label for="listaAttiMeta"><?php _e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
+					<label for="newMetaName"><?php _e("Nome Meta","albo-pretorio-considera");?></label> <input name="newMetaName" id="newMetaName"/>
+					<label for="newValue"><?php _e("Valore Meta","albo-pretorio-considera");?></label> <input name="newValue" id="newValue">
 					<button type="button"class="setta-def-data" id="AddNewMeta">Aggiungi</button> <button type="button"class="setta-def-data" id="UndoNewMedia">Anulla</button>
 				</div>
 <?php				echo ap_get_elenco_attimeta("Div","","","",$IdAtto);			?>
 			</div>
 			<div class="col-wrap postbox" style="padding:10px;margin-left:10px;">
-				<input type="submit" name="AggiornaMetaDati" id="AggiornaMetaDati" style="margin:auto;" class="button button-primary button-large" value="<?php _e("Memorizza Modifiche Meta Dati Atto","albo-online");?>" />
+				<input type="submit" name="AggiornaMetaDati" id="AggiornaMetaDati" style="margin:auto;" class="button button-primary button-large" value="<?php _e("Memorizza Modifiche Meta Dati Atto","albo-pretorio-considera");?>" />
 			</form>
 			</div>
 		</div><!-- /post-body-content -->
@@ -596,57 +596,57 @@ function Gestione_Metadati($IdAtto){
 			<table class="widefat" style="border:0;">
 				<tbody id="dati-atto">
 				<tr>
-					<th style="width:20%;"><?php _e("Ente emittente","albo-online");?></th>
+					<th style="width:20%;"><?php _e("Ente emittente","albo-pretorio-considera");?></th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;"><?php echo $NomeEnte;?></td>
 				</tr>
 <?php
 		if($risultato->DataAnnullamento!='0000-00-00')		
 			echo '		<tr>
-				<th style="width:20%;">'.__("Data Annullamento","albo-online").'</th>
+				<th style="width:20%;">'.__("Data Annullamento","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataAnnullamento).'</td>
 			</tr>
 	    	<tr>
-				<th style="width:20%;">'.__("Motivo Annullamento","albo-online").'</th>
+				<th style="width:20%;">'.__("Motivo Annullamento","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:top;">'.stripslashes($risultato->MotivoAnnullamento).'</td>
 			</tr>';
 		echo '		<tr>
-				<th style="width:20%;">'.__("Numero Albo","albo-online").'</th>
+				<th style="width:20%;">'.__("Numero Albo","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.$risultato->Numero."/".$risultato->Anno.'</td>
 			</tr>
 			<tr>
-				<th>'.__("Data","albo-online").'</th>
+				<th>'.__("Data","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Codice di Riferimento","albo-online").'</th>
+				<th>'.__("Codice di Riferimento","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Riferimento).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Oggetto","albo-online").'</th>
+				<th>'.__("Oggetto","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Oggetto).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Data inizio Pubblicazione","albo-online").'</th>
+				<th>'.__("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Data fine Pubblicazione","albo-online").'</th>
+				<th>'.__("Data fine Pubblicazione","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Data Oblio","albo-online").'</th>
+				<th>'.__("Data Oblio","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Note","albo-online").'</th>
+				<th>'.__("Note","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Informazioni).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Categoria","albo-online").'</th>
+				<th>'.__("Categoria","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultatocategoria->Nome).'</td>
 			</tr>
 				<tr>
-					<th>'.__("Soggetti","albo-online").'</th>
+					<th>'.__("Soggetti","albo-pretorio-considera").'</th>
 						<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">	
 					<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
@@ -664,7 +664,7 @@ echo'
 		</table>
 	</div>';
 echo '<div class="postbox" style="padding:0 10px 10px 10px;margin-left:10px;">
-	<h3>'.__("Allegati","albo-online").'</h3>
+	<h3>'.__("Allegati","albo-pretorio-considera").'</h3>
 	<div class="Visalbo">';
 $allegati=ap_get_all_allegati_atto($IdAtto);
 $TipidiFiles=ap_get_tipidifiles();
@@ -679,7 +679,7 @@ foreach ($allegati as $allegato) {
 			if (is_file($allegato->Allegato))
 				echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
 			else
-				echo basename( $allegato->Allegato).__("File non trovato, il file è stato cancellato o spostato!","albo-online");
+				echo basename( $allegato->Allegato).__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
 echo'				</p>
 			</div>
 			<div style="clear:both;"></div>
@@ -694,7 +694,7 @@ echo '</div>
 function PreApprovazione($id,$ret=''){
 global $wpdb;
 if (!current_user_can('editore_atti_albo')){
-	echo '<div id="message" class="updated"><p>'.__("Questa Operazione non ti è consentita, operazione di pertinenza dell'amministratore dell'Albo o del redattore","albo-online").'</p></div>';
+	echo '<div id="message" class="updated"><p>'.__("Questa Operazione non ti è consentita, operazione di pertinenza dell'amministratore dell'Albo o del redattore","albo-pretorio-considera").'</p></div>';
 	return;
 }
 if ($ret!=""){
@@ -707,19 +707,19 @@ if ($ret!=""){
 	$NumeroOpzione=get_option('opt_AP_NumeroProgressivo');
 	$NumAttiPubblicati=ap_get_all_atti(9,0,0,0,"",0,0,"",0,0,TRUE);
 	if($NumAttiPubblicati==0) 
-		$AppPostMigrazione=" <span style='color:red;'>".__("Validato perchè primo atto dopo l'INSTALLAZIONE","albo-online")." </span>";
+		$AppPostMigrazione=" <span style='color:red;'>".__("Validato perchè primo atto dopo l'INSTALLAZIONE","albo-pretorio-considera")." </span>";
 	else
 		$AppPostMigrazione="";
 echo'
 <div class="wrap">
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> Atti</h2>
-		<a href="'.site_url().'/wp-admin/admin.php?page=atti" class="add-new-h2 tornaindietro">'.__("Torna indietro","albo-online").'</a>';
+		<a href="'.site_url().'/wp-admin/admin.php?page=atti" class="add-new-h2 tornaindietro">'.__("Torna indietro","albo-pretorio-considera").'</a>';
 	if ( $ret!="" ) {
 		echo '<div id="message" class="updated"><p>'.$ret.'</p></div>';
 	}
 	echo '
-		<h3>'.__("Approvazione Atto","albo-online").'</h3>	
+		<h3>'.__("Approvazione Atto","albo-pretorio-considera").'</h3>	
 	</div>
 	<br class="clear" />';
 if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
@@ -729,7 +729,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				<input type="hidden" name="action" value="setta-anno" />
 				<input type="hidden" name="id" value="'.$id.'" />
 				<input type="hidden" name="settaanno" value="'.wp_create_nonce('settaanno-'.$id).'" />
-				<input type="submit" name="submit" id="submit" class="button" value="'.__("Aggiorna Anno Albo ed Azzera numero Progressivo","albo-online").'"  />
+				<input type="submit" name="submit" id="submit" class="button" value="'.__("Aggiorna Anno Albo ed Azzera numero Progressivo","albo-pretorio-considera").'"  />
 				</form>
 			</div>
 		</div>';
@@ -739,50 +739,50 @@ echo'<br />
 <table class="widefat">
 	<thead>	
 	<tr>
-		<th style="text-align:center;font-size:1.5em;width:20%;">'.__("Campi Atto","albo-online").'</th>
-		<th style="text-align:center;font-size:1.5em;width:30%;">'.__("Dati atto","albo-online").'</th>
-		<th style="text-align:center;font-size:1.5em;width:30%;">'.__("Stato","albo-online").'</th>
-		<th style="text-align:center;font-size:1.5em;">'.__("Operazioni","albo-online").'</th>
+		<th style="text-align:center;font-size:1.5em;width:20%;">'.__("Campi Atto","albo-pretorio-considera").'</th>
+		<th style="text-align:center;font-size:1.5em;width:30%;">'.__("Dati atto","albo-pretorio-considera").'</th>
+		<th style="text-align:center;font-size:1.5em;width:30%;">'.__("Stato","albo-pretorio-considera").'</th>
+		<th style="text-align:center;font-size:1.5em;">'.__("Operazioni","albo-pretorio-considera").'</th>
 	</tr>
 	</thead>
     <tbody id="dati-atto">
 	<tr>
-		<td>'.__("Anno Atto","albo-online").'</td>
+		<td>'.__("Anno Atto","albo-pretorio-considera").'</td>
 		<td>'.$atto->Anno.'</td>';
 		if ($atto->Anno==date("Y")){
 		 	$Passato=true;
-			echo '<td>'.__("Ok","albo-online").'</td>';
+			echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 		}else{
 		 	$Passato=false;
-			echo '<td>'.__("Verificata incongruenza, bisogna rimediare prima di proseguire","albo-online").'</td>
+			echo '<td>'.__("Verificata incongruenza, bisogna rimediare prima di proseguire","albo-pretorio-considera").'</td>
 			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;apa='.date("Y").'" class="add-new-h2">Imposta Anno Pubblicazione a '.date("Y").'</td>';
 		}
 		echo '</tr>';
 		if($Passato){
 			echo '<tr>
-			<td>'.__("Numero Atto","albo-online").'</td>
-			<td>'.sprintf(__("da Parametri %s Progressivo da ultima pubblicazione","albo-online"),get_option('opt_AP_NumeroProgressivo')).' '.$NumeroDaDb.$AppPostMigrazione.'</td>';
+			<td>'.__("Numero Atto","albo-pretorio-considera").'</td>
+			<td>'.sprintf(__("da Parametri %s Progressivo da ultima pubblicazione","albo-pretorio-considera"),get_option('opt_AP_NumeroProgressivo')).' '.$NumeroDaDb.$AppPostMigrazione.'</td>';
 			if (($NumeroDaDb==$NumeroOpzione) Or $NumAttiPubblicati==0){
 			 	$Passato=true;
-				echo '<td>'.__("Ok","albo-online").'</td>';
+				echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 			}else{
 			 	$Passato=false;
-				echo '<td>'.__("Verificata incongruenza, bisogna rimediare prima di proseguire","albo-online").'</td>
-				      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;pnp='.$NumeroDaDb.'" class="add-new-h2">'.__("Imposta Parametro a","albo-online").' '.$NumeroDaDb.'</td>';
+				echo '<td>'.__("Verificata incongruenza, bisogna rimediare prima di proseguire","albo-pretorio-considera").'</td>
+				      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;pnp='.$NumeroDaDb.'" class="add-new-h2">'.__("Imposta Parametro a","albo-pretorio-considera").' '.$NumeroDaDb.'</td>';
 			}
 			echo '</tr>';
 		}
 		if($Passato){
 			echo '<tr>
-					<td>'.__("Data Inizio Pubblicazione","albo-online").'</td>
+					<td>'.__("Data Inizio Pubblicazione","albo-pretorio-considera").'</td>
 					<td>'.ap_VisualizzaData($atto->DataInizio).'</td>';
 			if($atto->DataInizio==ap_oggi()){
 				$Passato=true;
-				echo '<td>'.__("Ok","albo-online").'</td>';
+				echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 			}else{
 	 			$Passato=false;
-	   			echo '<td>'.__("Aggiornare la data di Inizio Pubblicazione","albo-online").'</td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udi='.ap_oggi().'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData(ap_oggi()).'</td>';
+	   			echo '<td>'.__("Aggiornare la data di Inizio Pubblicazione","albo-pretorio-considera").'</td>
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udi='.ap_oggi().'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.ap_VisualizzaData(ap_oggi()).'</td>';
 			}
 			echo "</tr>";
 		}
@@ -798,24 +798,24 @@ echo'<br />
 					$atto->DataFine=ap_DateAdd($atto->DataFine,1);
 				}
 			if($NggInc>0){
-				ap_update_selettivo_atto($id,array('DataFine' => $atto->DataFine),array('%s'),__('Modifica della data di fine pubblicazione perchè giorno festivo','albo-online')."\n");		
+				ap_update_selettivo_atto($id,array('DataFine' => $atto->DataFine),array('%s'),__('Modifica della data di fine pubblicazione perchè giorno festivo','albo-pretorio-considera')."\n");		
 			}
 			echo '<tr>
-					<td>'.__("Data Fine Pubblicazione","albo-online").'</td>';
+					<td>'.__("Data Fine Pubblicazione","albo-pretorio-considera").'</td>';
 			if(ap_SeDate(">=",$atto->DataFine,$atto->DataInizio)){
 				$Passato=true;
-				echo '<td>'.sprintf(__("%s GG Pubblicazione Atto %s GG Pubblicazione standard Categoria %s GG Incremento per scadenza in giorno Festivo %s","albo-online"),ap_VisualizzaData($atto->DataFine),$differenza,$categoria[0]->Giorni,$NggInc).'</td>';
+				echo '<td>'.sprintf(__("%s GG Pubblicazione Atto %s GG Pubblicazione standard Categoria %s GG Incremento per scadenza in giorno Festivo %s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataFine),$differenza,$categoria[0]->Giorni,$NggInc).'</td>';
 				if (ap_datediff("d", $atto->DataInizio, $atto->DataFine)== $categoria[0]->Giorni){
-					echo '<td>'.__("Ok","albo-online").'</td>';
+					echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 				}else{
-					echo '<td>'.__("Ok","albo-online").'</td>';
+					echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 					echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">Aggiorna a '.ap_VisualizzaData($newDataFine).'</a></td>';
 				}
 			}else{
 	 			$Passato=false;
-	   			echo '<td><span style="color:red;">'.sprintf(__("La data di fine Pubblicazione %s è antecedente della data di inizio pubblicazione %s","albo-online"),ap_VisualizzaData($atto->DataFine),ap_VisualizzaData($atto->DataInizio)).'</span></td>
-				   <td><span style="font-weight:bold;">'.__("Aggiornare la data di Fine Pubblicazione con i giorni della categoria o tornare indietro e modificare l'atto","albo-online").'</span></td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData($newDataFine).'</a></td>';
+	   			echo '<td><span style="color:red;">'.sprintf(__("La data di fine Pubblicazione %s è antecedente della data di inizio pubblicazione %s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataFine),ap_VisualizzaData($atto->DataInizio)).'</span></td>
+				   <td><span style="font-weight:bold;">'.__("Aggiornare la data di Fine Pubblicazione con i giorni della categoria o tornare indietro e modificare l'atto","albo-pretorio-considera").'</span></td>
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.ap_VisualizzaData($newDataFine).'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -824,30 +824,30 @@ echo'<br />
  			$DataOblioStandard=(date("Y")+6)."-01-01";
  			//echo $atto->DataInizio."   -  ".$incrementoStandard;
 			echo '<tr>
-					<td>'.__("Data Oblio","albo-online").'</td>
-					<td>'.sprintf(__("%s - Data Oblio da Decreto n. 33/2013 art. 8 %s","albo-online"),ap_VisualizzaData($atto->DataOblio),ap_VisualizzaData($DataOblioStandard)).'</td>';
+					<td>'.__("Data Oblio","albo-pretorio-considera").'</td>
+					<td>'.sprintf(__("%s - Data Oblio da Decreto n. 33/2013 art. 8 %s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataOblio),ap_VisualizzaData($DataOblioStandard)).'</td>';
 				//	echo $atto->DataFine.' '.$atto->DataInizio. ' '.SeDate("<=",$atto->DataFine,$atto->DataInizio);
 			if(ap_SeDate("=",$atto->DataOblio,$DataOblioStandard)){
 				$Passato=true;
-				echo '<td>'.__("Ok","albo-online").'</td>';
+				echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 			}else{
-				echo '<td>'.__("Ok","albo-online").'</td>';
-				echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udo='.$DataOblioStandard.'" class="add-new-h2">'.__("Aggiorna a","albo-online").' '.ap_VisualizzaData($DataOblioStandard).'</a></td>';
+				echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
+				echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udo='.$DataOblioStandard.'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.ap_VisualizzaData($DataOblioStandard).'</a></td>';
 			}
 		echo '</tr>';
 		}
 		if($Passato){
  			$numAllegati=ap_get_num_allegati($id);
 			echo '<tr>
-					<td>'.__("Allegati","albo-online").'</td>
-					<td>'.__("N.","albo-online").' '.$numAllegati.'</td>';
+					<td>'.__("Allegati","albo-pretorio-considera").'</td>
+					<td>'.__("N.","albo-pretorio-considera").' '.$numAllegati.'</td>';
 			if($numAllegati>0){
 				$Passato=true;
-					echo '<td>'.__("Ok","albo-online").'</td>';
+					echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 				}else{
 					$Passato=false;
-					echo '<td>'.__("Da revisionare","albo-online").'</td>
-					      <td><a href="?page=atti&amp;id='.$id.'&amp;action=UpAllegati&amp;ref=approva-atto" class="add-new-h2">'.__("Inserisci Allegato","albo-online").'</a></td>';
+					echo '<td>'.__("Da revisionare","albo-pretorio-considera").'</td>
+					      <td><a href="?page=atti&amp;id='.$id.'&amp;action=UpAllegati&amp;ref=approva-atto" class="add-new-h2">'.__("Inserisci Allegato","albo-pretorio-considera").'</a></td>';
 				}
 			echo '</tr>';
 		}
@@ -855,10 +855,10 @@ echo'<br />
 			if(strlen($atto->Richiedente)<1){
 				$Passato=false;
 				echo '<tr>
-					<td>'.__("Richiedente","albo-online").'</td>
-					<td>'.__("Richiesto","albo-online").'</td>
-					<td>'.__("Da revisionare","albo-online").'</td>
-				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-online").'</a></td>';
+					<td>'.__("Richiedente","albo-pretorio-considera").'</td>
+					<td>'.__("Richiesto","albo-pretorio-considera").'</td>
+					<td>'.__("Da revisionare","albo-pretorio-considera").'</td>
+				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-considera").'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -866,10 +866,10 @@ echo'<br />
 			if($atto->IdUnitaOrganizzativa==0){
 				$Passato=false;
 				echo '<tr>
-					<td>'.__("Unità Organizzativa Responsabile","albo-online").'</td>
-					<td>'.__("Richiesto","albo-online").'</td>
-					<td>'.__("Da revisionare","albo-online").'</td>
-				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-online").'</a></td>';
+					<td>'.__("Unità Organizzativa Responsabile","albo-pretorio-considera").'</td>
+					<td>'.__("Richiesto","albo-pretorio-considera").'</td>
+					<td>'.__("Da revisionare","albo-pretorio-considera").'</td>
+				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-considera").'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -877,10 +877,10 @@ echo'<br />
 			if($atto->RespProc==0){
 				$Passato=false;
 				echo '<tr>
-					<td>'.__("Responsabile del procedimento amministrativo","albo-online").'</td>
-					<td>'.__("Richiesto","albo-online").'</td>
-					<td>'.__("Da revisionare","albo-online").'</td>
-				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-online").'</a></td>';
+					<td>'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</td>
+					<td>'.__("Richiesto","albo-pretorio-considera").'</td>
+					<td>'.__("Da revisionare","albo-pretorio-considera").'</td>
+				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-considera").'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -901,7 +901,7 @@ echo'
 </div>
 <div id="col-right">
 <div class="col-wrap">
-<h3>'.__("Documenti/Allegati","albo-online").'</h3>';
+<h3>'.__("Documenti/Allegati","albo-pretorio-considera").'</h3>';
 $righe=ap_get_all_allegati_atto($id,array("Natura","IdAllegato"),array("DESC","ASC"));
 $Ente=ap_get_ente($atto->Ente);
 $Unitao=ap_get_unitaorganizzativa($atto->IdUnitaOrganizzativa);
@@ -911,11 +911,11 @@ echo'
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th style="font-size:1.5em;">'.__("Operazioni","albo-online").'</th>
-			<th style="font-size:1.5em;">'. __("Natura doc.","albo-online").'</th>
-			<th style="font-size:1.5em;">'.__("Allegato","albo-online").'</th>
-			<th style="font-size:1.5em;">'.__("File","albo-online").'</th>
-			<th style="font-size:1.5em;">'. __("Doc. Integrale","albo-online").'</th>
+			<th style="font-size:1.5em;">'.__("Operazioni","albo-pretorio-considera").'</th>
+			<th style="font-size:1.5em;">'. __("Natura doc.","albo-pretorio-considera").'</th>
+			<th style="font-size:1.5em;">'.__("Allegato","albo-pretorio-considera").'</th>
+			<th style="font-size:1.5em;">'.__("File","albo-pretorio-considera").'</th>
+			<th style="font-size:1.5em;">'. __("Doc. Integrale","albo-pretorio-considera").'</th>
 		</tr>
 	    </thead>
 	    <tbody id="righe-log">';
@@ -923,13 +923,13 @@ foreach ($righe as $riga) {
 	echo '<tr>
 			<td>	
 					<a href="'.ap_DaPath_a_URL($riga->Allegato).'" target="_parent">
-						<span class="dashicons dashicons-search" title="'.__("Visualizza dati atto","albo-online").'"></span>
+						<span class="dashicons dashicons-search" title="'.__("Visualizza dati atto","albo-pretorio-considera").'"></span>
 					</a>
 			</td>
-			<td >'. basename( $riga->Natura=="A"?__("Allegato","albo-online"):__("Doc. Firmato","albo-online")).'</td>
+			<td >'. basename( $riga->Natura=="A"?__("Allegato","albo-pretorio-considera"):__("Doc. Firmato","albo-pretorio-considera")).'</td>
 			<td >'.$riga->TitoloAllegato.'</td>
 			<td >'. basename( $riga->Allegato).'</td>
-			<td >'. basename( $riga->DocIntegrale==1?__("Si","albo-online"):__("No","albo-online")).'</td>
+			<td >'. basename( $riga->DocIntegrale==1?__("Si","albo-pretorio-considera"):__("No","albo-pretorio-considera")).'</td>
 		</tr>';
 }
 echo '    </tbody>
@@ -938,64 +938,64 @@ echo '    </tbody>
 </div>
 <div id="col-left">
 <div class="col-wrap">
-<h3>'.__("Atto","albo-online").'</h3>
+<h3>'.__("Atto","albo-pretorio-considera").'</h3>
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th colspan="2" style="text-align:center;font-size:1.5em;">'.__("Dati atto","albo-online").'</th>
+			<th colspan="2" style="text-align:center;font-size:1.5em;">'.__("Dati atto","albo-pretorio-considera").'</th>
 		</tr>
 	    </thead>
 	    <tbody id="dati-atto">
 		<tr>
-			<th>'.__("Ente emittente","albo-online").'</th>
+			<th>'.__("Ente emittente","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($Ente->Nome).'</td>
 		</tr>
 		<tr>
-			<th style="width:50%;">'.__("Numero Albo","albo-online").'</th>
+			<th style="width:50%;">'.__("Numero Albo","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.$atto->Numero."/".$atto->Anno.'</td>
 		</tr>
 		<tr>
-			<th>'.__("Codice di Riferimento","albo-online").'</th>
+			<th>'.__("Codice di Riferimento","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($atto->Riferimento).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Oggetto","albo-online").'</th>
+			<th>'.__("Oggetto","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($atto->Oggetto).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Data di registrazione","albo-online").'</th>
+			<th>'.__("Data di registrazione","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.$atto->Data.'</td>
 		</tr>
 		<tr>
-			<th>'.__("Data inizio Pubblicazione","albo-online").'</th>
+			<th>'.__("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.$atto->DataInizio.'</td>
 		</tr>
 		<tr>
-			<th>'.__("Data fine Pubblicazione","albo-online").'</th>
+			<th>'.__("Data fine Pubblicazione","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.$atto->DataFine.'</td>
 		</tr>
 		<tr>
-			<th>'.__("Data oblio","albo-online").'</th>
+			<th>'.__("Data oblio","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.$atto->DataOblio.'</td>
 		</tr>
 		<tr>
-			<th>'.__("Richiedente","albo-online").'</th>
+			<th>'.__("Richiedente","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($atto->Richiedente).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Unità Organizzativa Responsabile","albo-online").'</th>
+			<th>'.__("Unità Organizzativa Responsabile","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($Unitao->Nome).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Responsabile del procedimento amministrativo","albo-online").'</th>
+			<th>'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($NomeResp->Nome." ".$NomeResp->Cognome).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Categoria","albo-online").'</th>
+			<th>'.__("Categoria","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($categoria[0]->Nome).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Note","albo-online").'</th>
+			<th>'.__("Note","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($atto->Informazioni).'</td>
 		</tr>';
 	$MetaDati=ap_get_meta_atto($id);
@@ -1007,13 +1007,13 @@ echo '    </tbody>
 		$Meta=substr($Meta,0,-3);
 		echo'
 				<tr>
-					<th>'. __("Meta Dati","albo-online").'</th>
+					<th>'. __("Meta Dati","albo-pretorio-considera").'</th>
 					<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.$Meta.'</td>
 				</tr>';
 	}
 	echo'
 			<tr>
-				<th>'. __("Soggetti","albo-online").'</th>
+				<th>'. __("Soggetti","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
 	$Soggetti=unserialize($atto->Soggetti, array('allowed_classes'=>false));
@@ -1106,21 +1106,21 @@ function Nuovo_atto(){
 	}
 $DataOblioStandard=(date("Y")+6)."-01-01";		
 ?>
-<div id="errori" title="<?php _e("Validazione Dati","albo-online");?>" style="display:none">
-  <h3><?php _e("Lista Campi con Errori","albo-online");?>:</h3><p id="ElencoCampiConErrori"></p><p style='color:red;font-weight: bold;'><?php _e("Correggere gli errori per continuare","albo-online");?></p>
+<div id="errori" title="<?php _e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
+  <h3><?php _e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3><p id="ElencoCampiConErrori"></p><p style='color:red;font-weight: bold;'><?php _e("Correggere gli errori per continuare","albo-pretorio-considera");?></p>
 </div>
 
 <div class="wrap">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> <?php _e("Atti","albo-online");?></h2>
-		<a href="<?php echo site_url().'/wp-admin/admin.php?page=atti';?>" class="add-new-h2 tornaindietro"><?php _e("Torna indietro","albo-online");?></a>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> <?php _e("Atti","albo-pretorio-considera");?></h2>
+		<a href="<?php echo site_url().'/wp-admin/admin.php?page=atti';?>" class="add-new-h2 tornaindietro"><?php _e("Torna indietro","albo-pretorio-considera");?></a>
 		<div class="Obbligatori">
-		<span style="color:red;font-weight: bold;">*</span> <?php _e("i campi contrassegnati dall'asterisco sono <strong>obbligatori</strong>","albo-online");?>
+		<span style="color:red;font-weight: bold;">*</span> <?php _e("i campi contrassegnati dall'asterisco sono <strong>obbligatori</strong>","albo-pretorio-considera");?>
 		</div>
-		<h3><?php _e("Nuovo Atto","albo-online");?></h3>	
+		<h3><?php _e("Nuovo Atto","albo-pretorio-considera");?></h3>	
 	</div>
-	<input type="hidden" id="NonVal" value="<?php _e("Non Valorizzato","albo-online");?>" />
-	<input type="hidden" id="NonSOg" value="<?php _e("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-online");?>" />
+	<input type="hidden" id="NonVal" value="<?php _e("Non Valorizzato","albo-pretorio-considera");?>" />
+	<input type="hidden" id="NonSOg" value="<?php _e("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-pretorio-considera");?>" />
 
 		<form id="addatto" method="post" action="?page=atti" class="validate">
 		<input type="hidden" name="action" value="add-atto" />
@@ -1131,22 +1131,22 @@ $DataOblioStandard=(date("Y")+6)."-01-01";
 		<div id="post-body" class="metabox-holder columns-2">
 			<div id="post-body-content">
 				<div id="riferimentodiv">
-					<h2><?php _e("Riferimento","albo-online");?><span style="color:red;font-weight: bold;">*</span></h2>
-					<textarea name="Riferimento" id="<?php echo _e("Riferimento","albo-online");?>"" rows="2" cols="255"  class="richiesto" style="width: 100%"><?php echo stripslashes($Riferimento);?></textarea>
-				<label for="Riferimento" style="font-style: italic;"><?php _e("Codice di riferimento dell'atto, es. N. Protocollo","albo-online");?> </label>
+					<h2><?php _e("Riferimento","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></h2>
+					<textarea name="Riferimento" id="<?php echo _e("Riferimento","albo-pretorio-considera");?>"" rows="2" cols="255"  class="richiesto" style="width: 100%"><?php echo stripslashes($Riferimento);?></textarea>
+				<label for="Riferimento" style="font-style: italic;"><?php _e("Codice di riferimento dell'atto, es. N. Protocollo","albo-pretorio-considera");?> </label>
 				</div><!-- /riferimentodiv -->
 				<div id="riferimentowrap">
-					<h2><?php _e("Oggetto","albo-online");?><span style="color:red;font-weight: bold;">*</span></h2>
-					<textarea name="Oggetto" id="<?php echo _e("Oggetto","albo-online");?>"" rows="10" cols="255"  class="richiesto" style="width: 100%"><?php echo stripslashes($Oggetto);?></textarea>
-				<label for="Riferimento" style="font-style: italic;"><?php _e("Descrizione sintetica dell'atto","albo-online");?> </label>
+					<h2><?php _e("Oggetto","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></h2>
+					<textarea name="Oggetto" id="<?php echo _e("Oggetto","albo-pretorio-considera");?>"" rows="10" cols="255"  class="richiesto" style="width: 100%"><?php echo stripslashes($Oggetto);?></textarea>
+				<label for="Riferimento" style="font-style: italic;"><?php _e("Descrizione sintetica dell'atto","albo-pretorio-considera");?> </label>
 				</div><!-- /riferimentowrap -->
 				<div id="richiedente">
-					<h2><?php _e("Richiedente","albo-online");?><span style="color:red;font-weight: bold;">*</span></h2>
-					<input type="text" name="Richiedente" id="<?php echo _e("Richiedente","albo-online");?>" class="richiesto" style="width: 100%" value="<?php echo stripslashes($Richiedente);?>" />
-				<label for="Richiedente" style="font-style: italic;"><?php _e("Dati identificativi (Nome Cognome) della persona che richiede la pubblicazione","albo-online");?> </label>
+					<h2><?php _e("Richiedente","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></h2>
+					<input type="text" name="Richiedente" id="<?php echo _e("Richiedente","albo-pretorio-considera");?>" class="richiesto" style="width: 100%" value="<?php echo stripslashes($Richiedente);?>" />
+				<label for="Richiedente" style="font-style: italic;"><?php _e("Dati identificativi (Nome Cognome) della persona che richiede la pubblicazione","albo-pretorio-considera");?> </label>
 				</div><!-- /riferimentowrap -->
 				<div id="notewrap">
-					<h2><?php _e("Note","albo-online");?></h2>
+					<h2><?php _e("Note","albo-pretorio-considera");?></h2>
 					<div id="note-wrap">
 						<?php wp_editor( stripslashes($Note), 'note_txt',
 									array('wpautop'=>true,
@@ -1155,16 +1155,16 @@ $DataOblioStandard=(date("Y")+6)."-01-01";
 										  'teeny' => TRUE,
 										  'media_buttons' => false)
 										)?>
-						<span style="font-style: italic;font-size: 0.8em;"><?php _e("Eventuali note a corredo dell'atto","albo-online");?></span>
+						<span style="font-style: italic;font-size: 0.8em;"><?php _e("Eventuali note a corredo dell'atto","albo-pretorio-considera");?></span>
 					</div>
 					</div><!-- /notewrap -->
 				<div class="notewrap postbox" id="MetaDati">
-				<h2 class='hndle'><span><?php _e("Meta Dati Personalizzati","albo-online");?></span> <button type="button" id="AddMeta" class="setta-def-data"><?php _e("Aggiungi Meta Valore","albo-online");?></button></h2>
+				<h2 class='hndle'><span><?php _e("Meta Dati Personalizzati","albo-pretorio-considera");?></span> <button type="button" id="AddMeta" class="setta-def-data"><?php _e("Aggiungi Meta Valore","albo-pretorio-considera");?></button></h2>
 					<div style="display:none;" id="newMeta">
-						<label for="listaAttiMeta"><?php _e("Meta già codificati","albo-online");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
-						<label for="newMetaName"><?php _e("Nome Meta","albo-online");?></label> <input name="newMetaName" id="newMetaName"/>
-						<label for="newValue"><?php _e("Valore Meta","albo-online");?></label> <input name="newValue" id="newValue">
-						<button type="button"class="setta-def-data" id="AddNewMeta"><?php _e("Aggiungi","albo-online");?></button> <button type="button"class="setta-def-data" id="UndoNewMedia"><?php _e("Anulla","albo-online");?></button>
+						<label for="listaAttiMeta"><?php _e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
+						<label for="newMetaName"><?php _e("Nome Meta","albo-pretorio-considera");?></label> <input name="newMetaName" id="newMetaName"/>
+						<label for="newValue"><?php _e("Valore Meta","albo-pretorio-considera");?></label> <input name="newValue" id="newValue">
+						<button type="button"class="setta-def-data" id="AddNewMeta"><?php _e("Aggiungi","albo-pretorio-considera");?></button> <button type="button"class="setta-def-data" id="UndoNewMedia"><?php _e("Anulla","albo-pretorio-considera");?></button>
 					</div>
 <?php				//echo ap_get_elenco_attimeta("Div");			?>
 				</div>
@@ -1172,58 +1172,58 @@ $DataOblioStandard=(date("Y")+6)."-01-01";
 
 		<div id="postbox-container-1" class="postbox-container">
 			<div id="postimagediv" class="postbox " >
-				<h2 class='hndle'><span><?php _e("Memorizza","albo-online");?>Memorizza</span></h2>
+				<h2 class='hndle'><span><?php _e("Memorizza","albo-pretorio-considera");?>Memorizza</span></h2>
 				<div class="inside">
-					<p><?php _e("Numero Albo","albo-online");?>: 
+					<p><?php _e("Numero Albo","albo-pretorio-considera");?>: 
 						<span style="font-weight: bold;">0000000/<?php echo date("Y");?></span>
 					</p>
 					<p class="hide-if-no-js">
-					<input type="submit" name="MemorizzaDati" id="MemorizzaDati" class="button button-primary button-large" value="<?php _e("Memorizza Atto","albo-online");?>">
+					<input type="submit" name="MemorizzaDati" id="MemorizzaDati" class="button button-primary button-large" value="<?php _e("Memorizza Atto","albo-pretorio-considera");?>">
 					</p>
 				</div>
 			</div>
 			<div id="datediv" class="postbox " >
-				<h2 class='hndle'><span><?php _e("Date","albo-online");?></span></h2>
+				<h2 class='hndle'><span><?php _e("Date","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
-					<p><?php _e("Data di registrazione","albo-online");?>:
+					<p><?php _e("Data di registrazione","albo-pretorio-considera");?>:
 						<input name="Data" type="text" id="CalendarioMO" value="<?php echo ap_VisualizzaData($dataCorrente);?>" maxlength="10" size="10" />					
 					</p>
-					<p><abbr title="<?php _e("Data in cui inizia a validità legale dell'atto. Viene impostata automaticamente in fase di pubblicazione","albo-online");?>"><?php _e("Data inizio Pubblicazione","albo-online");?></abbr>:
+					<p><abbr title="<?php _e("Data in cui inizia a validità legale dell'atto. Viene impostata automaticamente in fase di pubblicazione","albo-pretorio-considera");?>"><?php _e("Data inizio Pubblicazione","albo-pretorio-considera");?></abbr>:
 						<input name="DataInizio" type="hidden" value="<?php echo $DataI;?>" />
 					</p>
-					<p><abbr title="<?php _e("Data fine validità legale dell'atto","albo-online");?>"><?php _e("Data fine Pubblicazione","albo-online");?></abbr>:
+					<p><abbr title="<?php _e("Data fine validità legale dell'atto","albo-pretorio-considera");?>"><?php _e("Data fine Pubblicazione","albo-pretorio-considera");?></abbr>:
 						<input name="DataFine" id="Calendario3" type="text" value="<?php echo $DataF;?>" maxlength="10" size="10" />	
 					</p>		
 					<p><abbr title="<?php _e("Data in cui l'atto viene eliminato dall'archivio, in base al Decreto n. 33/2013 art.8:<br />5 anni, decorrenti dal 1° gennaio dell'anno successivo a quello
 da cui decorre l'obbligo di pubblicazione, e comunque fino a che gli atti pubblicati producono i loro effetti,
 fatti salvi i diversi termini previsti dalla normativa in materia di trattamento dei dati personali e quanto
-previsto dagli articoli 14, comma 2, e 15, comma 4","albo-online");?>"><?php _e("Data Oblio","albo-online");?></abbr>:
+previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?>"><?php _e("Data Oblio","albo-pretorio-considera");?></abbr>:
 						<input name="DataOblio" id="Calendario4" type="text" value="<?php echo $DataO;?>" maxlength="10" size="10" />
-						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo ap_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php _e("Aggiorna a","albo-online");?> <?php echo ap_VisualizzaData($DataOblioStandard);?></button>	
+						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo ap_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php _e("Aggiorna a","albo-pretorio-considera");?> <?php echo ap_VisualizzaData($DataOblioStandard);?></button>	
 					</p>				
 				</div>
 			</div>
 			<div id="metadiv" class="postbox " >
-				<h2 class='hndle'><span><?php _e("Meta dati","albo-online");?></span></h2>
+				<h2 class='hndle'><span><?php _e("Meta dati","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
-					<p><abbr title="<?php _e("Ente che pubblica l'atto; potrebbe essere diverso dall'ente titolare del sito web se la pubblicazione avviene per conto di altro ente","albo-online");?>"><?php _e("Ente","albo-online");?><span style="color:red;font-weight: bold;">*</span></abbr>: 
-						<?php echo ap_get_dropdown_enti('Ente',__('Ente','albo-online'),'postform maxdime richiesto ValValue(>-1)','',$defEnte);?>
+					<p><abbr title="<?php _e("Ente che pubblica l'atto; potrebbe essere diverso dall'ente titolare del sito web se la pubblicazione avviene per conto di altro ente","albo-pretorio-considera");?>"><?php _e("Ente","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>: 
+						<?php echo ap_get_dropdown_enti('Ente',__('Ente','albo-pretorio-considera'),'postform maxdime richiesto ValValue(>-1)','',$defEnte);?>
 					</p>
-					<p><abbr title="<?php _e("Categoria in cui viene collocato l'atto, questo sistema permette di raggruppare gli oggetti in base alla lor natura","albo-online");?>"><?php _e("Categoria","albo-online");?><span style="color:red;font-weight: bold;">*</span></abbr>:
-						<?php echo ap_get_dropdown_categorie('Categoria',__('Categoria','albo-online'),'postform maxdime richiesto ValValue(>0)','',$Categoria);?>					
+					<p><abbr title="<?php _e("Categoria in cui viene collocato l'atto, questo sistema permette di raggruppare gli oggetti in base alla lor natura","albo-pretorio-considera");?>"><?php _e("Categoria","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>:
+						<?php echo ap_get_dropdown_categorie('Categoria',__('Categoria','albo-pretorio-considera'),'postform maxdime richiesto ValValue(>0)','',$Categoria);?>					
 					</p>
-					<p><abbr title="<?php _e("Unità Organizzativa responsabile del procedimento amministrativo","albo-online");?>"><?php _e("Unità Organizzativa Responsabile","albo-online");?><span style="color:red;font-weight: bold;">*</span></abbr>:
-						<?php echo ap_get_dropdown_unitao('Unitao',__("Unità Organizzativa Responsabile","albo-online"),'postform maxdime richiesto ValValue(>0)','',$Unitao);?>					
+					<p><abbr title="<?php _e("Unità Organizzativa responsabile del procedimento amministrativo","albo-pretorio-considera");?>"><?php _e("Unità Organizzativa Responsabile","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>:
+						<?php echo ap_get_dropdown_unitao('Unitao',__("Unità Organizzativa Responsabile","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$Unitao);?>					
 					</p>		
-					<p><?php _e("Responsabile del procedimento amministrativo","albo-online");?><span style="color:red;font-weight: bold;">*</span>:
-						<?php echo ap_get_dropdown_responsabili("Responsabile",__("Responsabile del procedimento amministrativo","albo-online"),"postform maxdime richiesto ValValue(>0)","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP");?>					
+					<p><?php _e("Responsabile del procedimento amministrativo","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span>:
+						<?php echo ap_get_dropdown_responsabili("Responsabile",__("Responsabile del procedimento amministrativo","albo-pretorio-considera"),"postform maxdime richiesto ValValue(>0)","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP");?>					
 					</p>							
 				</div>
 			</div>
 			<div id="metadiv" class="postbox " >
-				<h2 class='hndle'><span><?php _e("Soggetti","albo-online");?></span></h2>
+				<h2 class='hndle'><span><?php _e("Soggetti","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
-					<p><?php _e("In questo spazio bisogna codificare i soggetti che sono coinvolti in questo atto, possono essere specificati più soggetti","albo-online");?>
+					<p><?php _e("In questo spazio bisogna codificare i soggetti che sono coinvolti in questo atto, possono essere specificati più soggetti","albo-pretorio-considera");?>
 					</p>
 					<ul>
 <?php
@@ -1259,22 +1259,22 @@ $atto=ap_get_atto($id);
 $atto=$atto[0];
 $DataOblioStandard=(date("Y")+6)."-01-01";
 ?>
-<div id="errori" title="<?php _e("Validazione Dati","albo-online");?>" style="display:none">
-  <h3><?php _e("Lista Campi con Errori","albo-online");?>:</h3>
+<div id="errori" title="<?php _e("Validazione Dati","albo-pretorio-considera");?>" style="display:none">
+  <h3><?php _e("Lista Campi con Errori","albo-pretorio-considera");?>:</h3>
   	<p id="ElencoCampiConErrori"></p>
-  	<p style='color:red;font-weight: bold;'><?php _e("Correggere gli errori per continuare","albo-online");?></p>
+  	<p style='color:red;font-weight: bold;'><?php _e("Correggere gli errori per continuare","albo-pretorio-considera");?></p>
 </div>
 <div class="wrap">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> <?php _e("Atti","albo-online");?></h2>
-		<a href="<?php echo site_url().'/wp-admin/admin.php?page=atti';?>" class="add-new-h2 tornaindietro"><?php _e("Torna indietro","albo-online");?></a>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> <?php _e("Atti","albo-pretorio-considera");?></h2>
+		<a href="<?php echo site_url().'/wp-admin/admin.php?page=atti';?>" class="add-new-h2 tornaindietro"><?php _e("Torna indietro","albo-pretorio-considera");?></a>
 		<div class="Obbligatori">
-		<span style="color:red;font-weight: bold;">*</span> <?php _e("i campi contrassegnati dall'asterisco sono <strong>obbligatori</strong>","albo-online");?>
+		<span style="color:red;font-weight: bold;">*</span> <?php _e("i campi contrassegnati dall'asterisco sono <strong>obbligatori</strong>","albo-pretorio-considera");?>
 		</div>
-		<h3><?php _e("Modifica Atto","albo-online");?></h3>	
+		<h3><?php _e("Modifica Atto","albo-pretorio-considera");?></h3>	
 	</div>
-	<input type="hidden" id="NonVal" value="<?php _e("Non Valorizzato","albo-online");?>" />
-	<input type="hidden" id="NonSOg" value="<?php _e("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-online");?>" />
+	<input type="hidden" id="NonVal" value="<?php _e("Non Valorizzato","albo-pretorio-considera");?>" />
+	<input type="hidden" id="NonSOg" value="<?php _e("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-pretorio-considera");?>" />
 
 	<form id="addatto" method="post" action="?page=atti" class="validate">
 		<input type="hidden" name="action" value="memo-atto" />
@@ -1284,22 +1284,22 @@ $DataOblioStandard=(date("Y")+6)."-01-01";
 		<div id="post-body" class="metabox-holder columns-2">
 			<div id="post-body-content">
 				<div id="riferimentodiv">
-					<h2><?php _e("Riferimento","albo-online");?><span style="color:red;font-weight: bold;">*</span></h2>
-					<textarea name="Riferimento" id="<?php echo _e("Riferimento","albo-online");?>" rows="2" cols="255"  class="richiesto" style="width: 100%" alt="<?php echo _e("Riferimento","albo-online");?>"><?php echo stripslashes($atto->Riferimento);?></textarea>
-				<label for="Riferimento" style="font-style: italic;"><?php _e("Codice di riferimento dell'atto, es. N. Protocollo","albo-online");?> </label>
+					<h2><?php _e("Riferimento","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></h2>
+					<textarea name="Riferimento" id="<?php echo _e("Riferimento","albo-pretorio-considera");?>" rows="2" cols="255"  class="richiesto" style="width: 100%" alt="<?php echo _e("Riferimento","albo-pretorio-considera");?>"><?php echo stripslashes($atto->Riferimento);?></textarea>
+				<label for="Riferimento" style="font-style: italic;"><?php _e("Codice di riferimento dell'atto, es. N. Protocollo","albo-pretorio-considera");?> </label>
 				</div><!-- /riferimentodiv -->
 				<div id="riferimentowrap">
-					<h2><?php _e("Oggetto","albo-online");?><span style="color:red;font-weight: bold;">*</span></h2>
-					<textarea name="Oggetto" id="<?php echo _e("Oggetto","albo-online");?>" rows="10" cols="255"  class="richiesto" style="width: 100%"><?php echo stripslashes($atto->Oggetto);?></textarea>
-				<label for="Riferimento" style="font-style: italic;"><?php _e("Descrizione sintetica dell'atto","albo-online");?> </label>
+					<h2><?php _e("Oggetto","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></h2>
+					<textarea name="Oggetto" id="<?php echo _e("Oggetto","albo-pretorio-considera");?>" rows="10" cols="255"  class="richiesto" style="width: 100%"><?php echo stripslashes($atto->Oggetto);?></textarea>
+				<label for="Riferimento" style="font-style: italic;"><?php _e("Descrizione sintetica dell'atto","albo-pretorio-considera");?> </label>
 				</div><!-- /riferimentowrap -->
 				<div id="richiedente">
-					<h2><?php _e("Richiedente","albo-online");?><span style="color:red;font-weight: bold;">*</span></h2>
-					<input type="text" name="Richiedente" id="<?php echo _e("Richiedente","albo-online");?>" class="richiesto" style="width: 100%" value="<?php echo stripslashes($atto->Richiedente);?>" />
-				<label for="Richiedente" style="font-style: italic;"><?php _e("Dati identificativi (Nome Cognome) della persona che richiede la pubblicazione","albo-online");?> </label>
+					<h2><?php _e("Richiedente","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></h2>
+					<input type="text" name="Richiedente" id="<?php echo _e("Richiedente","albo-pretorio-considera");?>" class="richiesto" style="width: 100%" value="<?php echo stripslashes($atto->Richiedente);?>" />
+				<label for="Richiedente" style="font-style: italic;"><?php _e("Dati identificativi (Nome Cognome) della persona che richiede la pubblicazione","albo-pretorio-considera");?> </label>
 				</div><!-- /riferimentowrap -->
 				<div id="notewrap">
-					<h2><?php _e("Note","albo-online");?></h2>
+					<h2><?php _e("Note","albo-pretorio-considera");?></h2>
 					<div id="note-wrap">
 						<?php wp_editor( stripslashes($atto->Informazioni), 'note_txt',
 									array('wpautop'=>true,
@@ -1308,16 +1308,16 @@ $DataOblioStandard=(date("Y")+6)."-01-01";
 										  'teeny' => TRUE,
 										  'media_buttons' => false)
 										)?>
-						<span style="font-style: italic;font-size: 0.8em;"><?php _e("Note","albo-online");?>Eventuali note a corredo dell'atto</span>
+						<span style="font-style: italic;font-size: 0.8em;"><?php _e("Note","albo-pretorio-considera");?>Eventuali note a corredo dell'atto</span>
 					</div>
 					</div><!-- /notewrap -->
 				<div class="notewrap postbox" id="MetaDati">
-				<h2 class='hndle'><span><?php _e("Meta Dati Personalizzati","albo-online");?></span> <button type="button" id="AddMeta" class="setta-def-data"><?php _e("Aggiungi Meta Valore","albo-online");?></button></h2>
+				<h2 class='hndle'><span><?php _e("Meta Dati Personalizzati","albo-pretorio-considera");?></span> <button type="button" id="AddMeta" class="setta-def-data"><?php _e("Aggiungi Meta Valore","albo-pretorio-considera");?></button></h2>
 					<div style="display:none;" id="newMeta">
-						<label for="listaAttiMeta"><?php _e("Meta già codificati","albo-online");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
-						<label for="newMetaName"><?php _e("Nome Meta","albo-online");?></label> <input name="newMetaName" id="newMetaName"/>
-						<label for="newValue"><?php _e("Valore Meta","albo-online");?></label> <input name="newValue" id="newValue">
-						<button type="button"class="setta-def-data" id="AddNewMeta"><?php _e("Aggiungi","albo-online");?></button> <button type="button"class="setta-def-data" id="UndoNewMedia"><?php _e("Anulla","albo-online");?></button>
+						<label for="listaAttiMeta"><?php _e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
+						<label for="newMetaName"><?php _e("Nome Meta","albo-pretorio-considera");?></label> <input name="newMetaName" id="newMetaName"/>
+						<label for="newValue"><?php _e("Valore Meta","albo-pretorio-considera");?></label> <input name="newValue" id="newValue">
+						<button type="button"class="setta-def-data" id="AddNewMeta"><?php _e("Aggiungi","albo-pretorio-considera");?></button> <button type="button"class="setta-def-data" id="UndoNewMedia"><?php _e("Anulla","albo-pretorio-considera");?></button>
 					</div>
 <?php				echo ap_get_elenco_attimeta("Div","","","",$id);			?>
 				</div>
@@ -1325,59 +1325,59 @@ $DataOblioStandard=(date("Y")+6)."-01-01";
 
 		<div id="postbox-container-1" class="postbox-container">
 			<div id="postimagediv" class="postbox " >
-				<h2 class='hndle'><span><?php _e("Memorizza","albo-online");?></span></h2>
+				<h2 class='hndle'><span><?php _e("Memorizza","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
-					<p><?php _e("Numero Albo","albo-online");?>: 
+					<p><?php _e("Numero Albo","albo-pretorio-considera");?>: 
 						<span style="font-weight: bold;">0000000/<?php echo $atto->Anno;?></span>
 					</p>
 					<p class="hide-if-no-js">
-						<input type="submit" name="MemorizzaDati" id="MemorizzaDati" class="button button-primary button-large" value="<?php _e("Memorizza Modifiche Atto","albo-online");?>" />
+						<input type="submit" name="MemorizzaDati" id="MemorizzaDati" class="button button-primary button-large" value="<?php _e("Memorizza Modifiche Atto","albo-pretorio-considera");?>" />
 					</p>
 				</div>
 			</div>
 			<div id="datediv" class="postbox " >
-				<h2 class='hndle'><span><?php _e("Date","albo-online");?></span></h2>
+				<h2 class='hndle'><span><?php _e("Date","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
-					<p><abbr title="<?php _e("viene inserita automaticamente nel momento in cui viene creato","albo-online");?>."><?php _e("Data di registrazione","albo-online");?></abbr>: 
+					<p><abbr title="<?php _e("viene inserita automaticamente nel momento in cui viene creato","albo-pretorio-considera");?>."><?php _e("Data di registrazione","albo-pretorio-considera");?></abbr>: 
 						<input name="Data" type="text" id="CalendarioMO" value="<?php echo ap_VisualizzaData($atto->Data);?>" maxlength="10" size="10" />
 					</p>
-					<p><abbr title="<?php _e("Data in cui inizia a validità legale dell'atto. Viene impostata automaticamente in fase di pubblicazione","albo-online");?>"><?php _e("Data inizio Pubblicazione","albo-online");?></abbr>:
+					<p><abbr title="<?php _e("Data in cui inizia a validità legale dell'atto. Viene impostata automaticamente in fase di pubblicazione","albo-pretorio-considera");?>"><?php _e("Data inizio Pubblicazione","albo-pretorio-considera");?></abbr>:
 						<input name="DataInizio" type="hidden" value="<?php echo ap_VisualizzaData($atto->DataInizio);?>" />
 						<em><strong><?php echo ap_VisualizzaData($atto->DataInizio);?></strong></em>					
 					</p>
-					<p><abbr title="<?php _e("Data fine validità legale dell'atto","albo-online");?>"><?php _e("Data fine Pubblicazione","albo-online");?></abbr>:
+					<p><abbr title="<?php _e("Data fine validità legale dell'atto","albo-pretorio-considera");?>"><?php _e("Data fine Pubblicazione","albo-pretorio-considera");?></abbr>:
 						<input name="DataFine" id="Calendario3" type="text" value="<?php echo ap_VisualizzaData($atto->DataFine);?>" maxlength="10" size="10" />		
 					</p>		
 					<p><abbr title="<?php _e("Data in cui l'atto viene eliminato dall'archivio, in base al Decreto n. 33/2013 art.8:<br />5 anni, decorrenti dal 1° gennaio dell'anno successivo a quello
 da cui decorre l'obbligo di pubblicazione, e comunque fino a che gli atti pubblicati producono i loro effetti,
 fatti salvi i diversi termini previsti dalla normativa in materia di trattamento dei dati personali e quanto
-previsto dagli articoli 14, comma 2, e 15, comma 4","albo-online");?>"><?php _e("Data Oblio","albo-online");?></abbr>:
+previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?>"><?php _e("Data Oblio","albo-pretorio-considera");?></abbr>:
 						<input name="DataOblio" id="Calendario4" type="text" value="<?php echo ap_VisualizzaData($atto->DataOblio);?>" maxlength="10" size="10" />
-						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo ap_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php _e("Aggiorna a","albo-online");?> <?php echo ap_VisualizzaData($DataOblioStandard);?></button>	
+						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo ap_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php _e("Aggiorna a","albo-pretorio-considera");?> <?php echo ap_VisualizzaData($DataOblioStandard);?></button>	
 					</p>				
 				</div>
 			</div>
 			<div id="metadiv" class="postbox " >
-				<h2 class='hndle'><span><?php _e("Meta dati","albo-online");?></span></h2>
+				<h2 class='hndle'><span><?php _e("Meta dati","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
-					<p><abbr title="<?php _e("Ente che pubblica l'atto; potrebbe essere diverso dall'ente titolare del sito web se la pubblicazione avviene per conto di altro ente","albo-online");?>"><?php _e("Ente","albo-online");?><span style="color:red;font-weight: bold;">*</span></abbr>: 
-						<?php echo ap_get_dropdown_enti('Ente',__("Ente","albo-online"),'postform maxdime richiesto ValValue(>-1)','',$atto->Ente);?>
+					<p><abbr title="<?php _e("Ente che pubblica l'atto; potrebbe essere diverso dall'ente titolare del sito web se la pubblicazione avviene per conto di altro ente","albo-pretorio-considera");?>"><?php _e("Ente","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>: 
+						<?php echo ap_get_dropdown_enti('Ente',__("Ente","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>-1)','',$atto->Ente);?>
 					</p>
-					<p><abbr title="<?php _e("Categoria in cui viene collocato l'atto, questo sistema permette di raggruppare gli oggetti in base alla lor natura","albo-online");?>"><?php _e("Categoria","albo-online");?><span style="color:red;font-weight: bold;">*</span></abbr>:
-						<?php echo ap_get_dropdown_categorie('Categoria',__("Categoria","albo-online"),'postform maxdime richiesto ValValue(>0)','',$atto->IdCategoria);?>					
+					<p><abbr title="<?php _e("Categoria in cui viene collocato l'atto, questo sistema permette di raggruppare gli oggetti in base alla lor natura","albo-pretorio-considera");?>"><?php _e("Categoria","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>:
+						<?php echo ap_get_dropdown_categorie('Categoria',__("Categoria","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$atto->IdCategoria);?>					
 					</p>
-					<p><abbr title="<?php _e("Unità Organizzativa responsabile del procedimento amministrativo","albo-online");?>"><?php _e("Unità Organizzativa Responsabile","albo-online");?><span style="color:red;font-weight: bold;">*</span></abbr>:
-						<?php echo ap_get_dropdown_unitao('Unitao',__("Unità Organizzativa Responsabile","albo-online"),'postform maxdime richiesto ValValue(>0)','',$atto->IdUnitaOrganizzativa);?>					
+					<p><abbr title="<?php _e("Unità Organizzativa responsabile del procedimento amministrativo","albo-pretorio-considera");?>"><?php _e("Unità Organizzativa Responsabile","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>:
+						<?php echo ap_get_dropdown_unitao('Unitao',__("Unità Organizzativa Responsabile","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$atto->IdUnitaOrganizzativa);?>					
 					</p>
-					<p><?php _e("Responsabile del procedimento amministrativo","albo-online");?><span style="color:red;font-weight: bold;">*</span>:
-						<?php echo ap_get_dropdown_responsabili("Responsabile",__("Responsabile del procedimento amministrativo","albo-online"),"postform maxdime richiesto ValValue(>0)","",$atto->RespProc,"RP");?>					
+					<p><?php _e("Responsabile del procedimento amministrativo","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span>:
+						<?php echo ap_get_dropdown_responsabili("Responsabile",__("Responsabile del procedimento amministrativo","albo-pretorio-considera"),"postform maxdime richiesto ValValue(>0)","",$atto->RespProc,"RP");?>					
 					</p>	
 				</div>
 			</div>
 			<div id="metadiv" class="postbox " >
-				<h2 class='hndle'><span><?php _e("Soggetti","albo-online");?></span></h2>
+				<h2 class='hndle'><span><?php _e("Soggetti","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
-					<p><?php _e("In questo spazio bisogna codificare i soggetti che sono coinvolti in questo atto possono essere specificati più soggetti.","albo-online");?>
+					<p><?php _e("In questo spazio bisogna codificare i soggetti che sono coinvolti in questo atto possono essere specificati più soggetti.","albo-pretorio-considera");?>
 					</p>
 					<ul>
 <?php
@@ -1417,9 +1417,9 @@ function Allegati_atto($IdAtto,$messaggio="",$IdAllegato=0){
 <div class="wrap">
 
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> '. __("Atti","albo-online").'</h2>
-		<a href="'. site_url().'/wp-admin/admin.php?page=atti&stato_atti=Nuovi" class="add-new-h2 tornaindietro">'. __("Torna indietro","albo-online").'</a>
-		<h3>'. __("Allegati Atto","albo-online").'</h3>	
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> '. __("Atti","albo-pretorio-considera").'</h2>
+		<a href="'. site_url().'/wp-admin/admin.php?page=atti&stato_atti=Nuovi" class="add-new-h2 tornaindietro">'. __("Torna indietro","albo-pretorio-considera").'</a>
+		<h3>'. __("Allegati Atto","albo-pretorio-considera").'</h3>	
 	</div>';
 if ( $messaggio!="" ) {
 	 	$messaggio=str_replace("%%br%%", "<br />", $messaggio);
@@ -1433,7 +1433,7 @@ echo'
 if ($IdAllegato!=0){
  	$allegato=ap_get_allegato_atto($IdAllegato);
  	$allegato=$allegato[0];
-	echo '<h3>'. __("Modifica Allegato","albo-online").'</h3>
+	echo '<h3>'. __("Modifica Allegato","albo-pretorio-considera").'</h3>
 	<form id="allegato"  method="post" action="?page=atti" class="validate">
 	<input type="hidden" name="action" value="update-allegato-atto" />
 	<input type="hidden" name="id" value="'.$IdAtto.'" />
@@ -1442,33 +1442,33 @@ if ($IdAllegato!=0){
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th colspan="3" style="text-align:center;font-size:1.2em;">'. __("Dati Allegato","albo-online").'</th>
+			<th colspan="3" style="text-align:center;font-size:1.2em;">'. __("Dati Allegato","albo-pretorio-considera").'</th>
 		</tr>
 	    </thead>
 	    <tbody id="dati-allegato">
 		<tr>
-			<th>'. __("Descrizione Allegato","albo-online").'</th>
+			<th>'. __("Descrizione Allegato","albo-pretorio-considera").'</th>
 			<td><textarea  name="titolo" rows="4" cols="50" wrap="ON" maxlength="255">'.$allegato->TitoloAllegato.'</textarea></td>
 		</tr>
 		<tr>
-			<th>'. __("Natura File","albo-online").'</th>
+			<th>'. __("Natura File","albo-pretorio-considera").'</th>
 			<td><select name="Natura" id="Natura" wrap="ON" >
 				<option value="D" '.($allegato->Natura=="D"?"selected":"").'>Documento firmato</option>
 				<option value="A" '.($allegato->Natura=="A"?"selected":"").'>Allegato</option>
 			</select></td>
 		</tr>
 		<tr>
-			<th>'. __("Documento Integrale?","albo-online").'</th>
+			<th>'. __("Documento Integrale?","albo-pretorio-considera").'</th>
 			<td><input type="checkbox" name="Integrale" value="1" id="Integrale" '.($allegato->DocIntegrale=="1"?"checked":"").'></td>
 		</tr>
 		<tr>
-			<th>'. __("File","albo-online").':</th>
+			<th>'. __("File","albo-pretorio-considera").':</th>
 			<td>'.$allegato->Allegato.'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
-			<td><input type="submit" name="submit" id="submit" class="button" value="'. __("Aggiorna Allegato","albo-online").'"  />&nbsp;&nbsp;
-			    <input type="submit" name="annulla" id="annulla" class="button" value="'. __("Annulla Operazione","albo-online").'"  />
+			<td><input type="submit" name="submit" id="submit" class="button" value="'. __("Aggiorna Allegato","albo-pretorio-considera").'"  />&nbsp;&nbsp;
+			    <input type="submit" name="annulla" id="annulla" class="button" value="'. __("Annulla Operazione","albo-pretorio-considera").'"  />
 		    </td>
 		</tr>
 	    </tbody>
@@ -1476,40 +1476,40 @@ if ($IdAllegato!=0){
 	</form>';	
 }else{
 	echo'
-	<h3 style="margin-top:50px;">Allegati <a href="'.site_url().'/wp-admin/admin.php?page=atti&amp;id='.$IdAtto.'&amp;action=UpAllegati" class="add-new-h2">'. __("Aggiungi nuovo","albo-online").'</a> <a href="'.site_url().'/wp-admin/admin.php?page=atti&amp;id='.$IdAtto.'&amp;action=AssAllegati" class="add-new-h2">'. __("Associa file","albo-online").'</a></h3>';
+	<h3 style="margin-top:50px;">Allegati <a href="'.site_url().'/wp-admin/admin.php?page=atti&amp;id='.$IdAtto.'&amp;action=UpAllegati" class="add-new-h2">'. __("Aggiungi nuovo","albo-pretorio-considera").'</a> <a href="'.site_url().'/wp-admin/admin.php?page=atti&amp;id='.$IdAtto.'&amp;action=AssAllegati" class="add-new-h2">'. __("Associa file","albo-pretorio-considera").'</a></h3>';
 	$righe=ap_get_all_allegati_atto($IdAtto);
 	echo'
 	<div  style="overflow: scroll;">
 		<table class="widefat">
 		    <thead>
 			<tr>
-				<th style="font-size:1.2em;">'. __("Operazioni","albo-online").'</th>
-				<th style="font-size:1.2em;">'. __("Allegato","albo-online").'</th>
-				<th style="font-size:1.2em;">'. __("File","albo-online").'</th>
-				<th style="font-size:1.2em;">'. __("Natura doc.","albo-online").'</th>
-				<th style="font-size:1.2em;">'. __("Doc. Integrale","albo-online").'</th>
-				<th style="font-size:1.2em;">'. __("Impronta","albo-online").'</th>
+				<th style="font-size:1.2em;">'. __("Operazioni","albo-pretorio-considera").'</th>
+				<th style="font-size:1.2em;">'. __("Allegato","albo-pretorio-considera").'</th>
+				<th style="font-size:1.2em;">'. __("File","albo-pretorio-considera").'</th>
+				<th style="font-size:1.2em;">'. __("Natura doc.","albo-pretorio-considera").'</th>
+				<th style="font-size:1.2em;">'. __("Doc. Integrale","albo-pretorio-considera").'</th>
+				<th style="font-size:1.2em;">'. __("Impronta","albo-pretorio-considera").'</th>
 			</tr>
 		    </thead>
 		    <tbody id="righe-log">';
 	foreach ($righe as $riga) {
-		$Testo_da=__("Confermi la cancellazione del'Allegato","albo-online")." ".strip_tags($riga->TitoloAllegato). "?\n\n".__("ATTENZIONE questa operazione cancellera' anche il file sul server!","albo-online")."\n\n".__("Sei sicuro di voler proseguire con la CANCELLAZIONE?","albo-online");
+		$Testo_da=__("Confermi la cancellazione del'Allegato","albo-pretorio-considera")." ".strip_tags($riga->TitoloAllegato). "?\n\n".__("ATTENZIONE questa operazione cancellera' anche il file sul server!","albo-pretorio-considera")."\n\n".__("Sei sicuro di voler proseguire con la CANCELLAZIONE?","albo-pretorio-considera");
 		echo '<tr>
 				<td>	
 					<a href="?page=atti&amp;action=delete-allegato-atto&amp;idAllegato='.$riga->IdAllegato.'&amp;idAtto='.$IdAtto.'&amp;Allegato='.$riga->TitoloAllegato.'&amp;cancellaallegatoatto='.wp_create_nonce('deleteallegatoatto').'" rel="'.$Testo_da.'" class="confdel">
-						<span class="dashicons dashicons-trash" title="'. __("Cancella allegato","albo-online").'"></span>
+						<span class="dashicons dashicons-trash" title="'. __("Cancella allegato","albo-pretorio-considera").'"></span>
 					</a>
 					<a href="?page=atti&amp;action=edit-allegato-atto&amp;id='.$IdAtto.'&amp;idAlle='.$riga->IdAllegato.'&amp;modificaallegatoatto='.wp_create_nonce('editallegatoatto').'" >
-						 <span class="dashicons dashicons-edit" title="'. __("Modifica allegato","albo-online").'"></span>
+						 <span class="dashicons dashicons-edit" title="'. __("Modifica allegato","albo-pretorio-considera").'"></span>
 					</a>
 					<a href="'.ap_DaPath_a_URL($riga->Allegato).'" target="_blank">
-							<span class="dashicons dashicons-search" title="'. __("Visualizza dati allegato","albo-online").'"></span>
+							<span class="dashicons dashicons-search" title="'. __("Visualizza dati allegato","albo-pretorio-considera").'"></span>
 					</a>
 				</td>
 				<td >'.$riga->TitoloAllegato.'</td>
 				<td >'. basename( $riga->Allegato).'</td>
-				<td >'. basename( $riga->Natura=="A"?__("Allegato","albo-online"):__("Doc. Firmato","albo-online")).'</td>
-				<td >'. basename( $riga->DocIntegrale==1?__("Si","albo-online"):__("No","albo-online")).'</td>
+				<td >'. basename( $riga->Natura=="A"?__("Allegato","albo-pretorio-considera"):__("Doc. Firmato","albo-pretorio-considera")).'</td>
+				<td >'. basename( $riga->DocIntegrale==1?__("Si","albo-pretorio-considera"):__("No","albo-pretorio-considera")).'</td>
 				<td style="font-family: courier;">'. basename( $riga->Impronta).'</td>
 			</tr>';
 	}
@@ -1525,64 +1525,64 @@ echo'</div>
 </div>
 <div id="col-left">
 <div class="col-wrap">
-<h3>'. __("Dati Atto","albo-online").'</h3>
+<h3>'. __("Dati Atto","albo-pretorio-considera").'</h3>
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th colspan="2" style="text-align:center;font-size:1.2em;">'. __("Dati atto","albo-online").'</th>
+			<th colspan="2" style="text-align:center;font-size:1.2em;">'. __("Dati atto","albo-pretorio-considera").'</th>
 		</tr>
 	    </thead>
 	    <tbody id="dati-atto">
 		<tr>
-			<th>'.__("Ente emittente","albo-online").'</th>
+			<th>'.__("Ente emittente","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($Ente->Nome).'</td>
 		</tr>
 		<tr>
-			<th style="width:50%;">'. __("Numero Albo","albo-online").'</th>
+			<th style="width:50%;">'. __("Numero Albo","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.$risultato->Numero."/".$risultato->Anno.'</td>
 		</tr>
 		<tr>
-			<th>'. __("Codice di Riferimento","albo-online").'</th>
+			<th>'. __("Codice di Riferimento","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Riferimento).'</td>
 		</tr>
 		<tr>
-			<th>'. __("Oggetto","albo-online").'</th>
+			<th>'. __("Oggetto","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Oggetto).'</td>
 		</tr>
 		<tr>
-			<th>'. __("Data di registrazione","albo-online").'</th>
+			<th>'. __("Data di registrazione","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
 		</tr>
 		<tr>
-			<th>'. __("Data inizio Pubblicazione","albo-online").'</th>
+			<th>'. __("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
 		</tr>
 		<tr>
-			<th>'. __("Data fine Pubblicazione","albo-online").'</th>
+			<th>'. __("Data fine Pubblicazione","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
 		</tr>
 		<tr>
-			<th>'. __("Data oblio","albo-online").'</th>
+			<th>'. __("Data oblio","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Richiedente","albo-online").'</th>
+			<th>'.__("Richiedente","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Richiedente).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Unità Organizzativa Responsabile","albo-online").'</th>
+			<th>'.__("Unità Organizzativa Responsabile","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($Unitao->Nome).'</td>
 		</tr>
 		<tr>
-			<th>'.__("Responsabile del procedimento amministrativo","albo-online").'</th>
+			<th>'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($NomeResp->Nome." ".$NomeResp->Cognome).'</td>
 		</tr>
 		<tr>
-			<th>'. __("Categoria","albo-online").'</th>
+			<th>'. __("Categoria","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultatocategoria->Nome).'</td>
 		</tr>
 		<tr>
-			<th>'. __("Note","albo-online").'</th>
+			<th>'. __("Note","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Informazioni).'</td>
 		</tr>';
 $MetaDati=ap_get_meta_atto($IdAtto);
@@ -1594,12 +1594,12 @@ if($MetaDati!==FALSE){
 	$Meta=substr($Meta,0,-3);
 	echo'
 			<tr>
-				<th>'. __("Meta Dati","albo-online").'</th>
+				<th>'. __("Meta Dati","albo-pretorio-considera").'</th>
 				<td style="vertical-align: middle;color: Red;">'.$Meta.'</td>
 			</tr>';
 }	
 	echo'	<tr>
-				<th>'. __("Soggetti","albo-online").'</th>
+				<th>'. __("Soggetti","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
@@ -1642,8 +1642,8 @@ echo '
 <div class="wrap nosubsub">
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> Atti</h2>
-		<a href="'.site_url().'/wp-admin/admin.php?page=atti&stato_atti='.$Prov.'" class="add-new-h2 tornaindietro">'. __("Torna indietro","albo-online").'</a>
-		<h3>'. __("Visualizza dati Atto","albo-online").'</h3>	
+		<a href="'.site_url().'/wp-admin/admin.php?page=atti&stato_atti='.$Prov.'" class="add-new-h2 tornaindietro">'. __("Torna indietro","albo-pretorio-considera").'</a>
+		<h3>'. __("Visualizza dati Atto","albo-pretorio-considera").'</h3>	
 	</div>
 		<div class="clear"><br /></div>
 		<div id="col-container">
@@ -1653,10 +1653,10 @@ echo '
 					<hr />
 					<div id="utility-tabs-container">
 						<ul>
-							<li><a href="#log-tab-1">'. __("Atto","albo-online").'</a></li>
-							<li><a href="#log-tab-2">'. __("Allegati","albo-online").'</a></li>
-							<li><a href="#log-tab-3">'. __("Statistiche Visite","albo-online").'</a></li>
-							<li><a href="#log-tab-4">'. __("Statistiche Download","albo-online").'</a></li>
+							<li><a href="#log-tab-1">'. __("Atto","albo-pretorio-considera").'</a></li>
+							<li><a href="#log-tab-2">'. __("Allegati","albo-pretorio-considera").'</a></li>
+							<li><a href="#log-tab-3">'. __("Statistiche Visite","albo-pretorio-considera").'</a></li>
+							<li><a href="#log-tab-4">'. __("Statistiche Download","albo-pretorio-considera").'</a></li>
 						</ul>
 						<div id="log-tab-1">
 							<div id="DatiLog">'.$AP_OnLine->CreaLog(1,$IdAtto,0).'</div>
@@ -1675,71 +1675,71 @@ echo '
 			</div>
 <div id="col-left">
 	<div class="col-wrap postbox" style="padding:0 10px 10px 10px;">
-		<h3>'. __("Dati atto","albo-online").'</h3>
+		<h3>'. __("Dati atto","albo-pretorio-considera").'</h3>
 		<hr />
 		<table class="widefat fixed striped" style="border:0;">
 		    <tbody id="dati-atto">
 			<tr>
-				<th style="width:50%;">'. __("Ente emittente","albo-online").'</th>
+				<th style="width:50%;">'. __("Ente emittente","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_removeCaratteriSpeciali($NomeEnte).'</td>
 			</tr>
 			<tr>
-				<th style="width:20%;">'. __("Numero Albo","albo-online").'</th>
+				<th style="width:20%;">'. __("Numero Albo","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.$risultato->Numero."/".$risultato->Anno.'</td>
 			</tr>
 			<tr>
-				<th>'. __("Codice di Riferimento","albo-online").'</th>
+				<th>'. __("Codice di Riferimento","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->Riferimento)).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Oggetto","albo-online").'</th>
+				<th>'. __("Oggetto","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->Oggetto)).'</td>
 			</tr>';
 		if($risultato->DataAnnullamento!='0000-00-00')		
 			echo '		<tr>
-				<th style="width:20%;">'. __("Data Annullamento","albo-online").'</th>
+				<th style="width:20%;">'. __("Data Annullamento","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataAnnullamento).'</td>
 			</tr>
 	    	<tr>
-				<th style="width:20%;">'. __("Motivo Annullamento","albo-online").'</th>
+				<th style="width:20%;">'. __("Motivo Annullamento","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:top;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->MotivoAnnullamento)).'</td>
 			</tr>';
 		echo '		
 			<tr>
-				<th>'. __("Data di registrazione","albo-online").'</th>
+				<th>'. __("Data di registrazione","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
 			</tr>
 
 			<tr>
-				<th>'. __("Data inizio Pubblicazione","albo-online").'</th>
+				<th>'. __("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Data fine Pubblicazione","albo-online").'</th>
+				<th>'. __("Data fine Pubblicazione","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Data Oblio","albo-online").'</th>
+				<th>'. __("Data Oblio","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Richiedente","albo-online").'</th>
+				<th>'.__("Richiedente","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->Richiedente)).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Unità Organizzativa Responsabile","albo-online").'</th>
+				<th>'.__("Unità Organizzativa Responsabile","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(isset($Unitao->Nome)?stripslashes(ap_removeCaratteriSpeciali($Unitao->Nome)):"").'</td>
 			</tr>
 			<tr>
-				<th>'.__("Responsabile del procedimento amministrativo","albo-online").'</th>
+				<th>'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(is_object($NomeResp))?stripslashes(ap_removeCaratteriSpeciali($NomeResp->Nome))." ".stripslashes(ap_removeCaratteriSpeciali($NomeResp->Cognome)):stripslashes(ap_removeCaratteriSpeciali($NomeResp)).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Categoria","albo-online").'</th>
+				<th>'. __("Categoria","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultatocategoria->Nome)).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Note","albo-online").'</th>
+				<th>'. __("Note","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->Informazioni)).'</td>
 			</tr>';
 $MetaDati=ap_get_meta_atto($IdAtto);
@@ -1751,13 +1751,13 @@ if($MetaDati!==FALSE){
 	$Meta=substr($Meta,0,-3);
 		echo'
 				<tr>
-					<th>'. __("Meta Dati","albo-online").'</th>
+					<th>'. __("Meta Dati","albo-pretorio-considera").'</th>
 					<td style="vertical-align: middle;color: Red;">'.$Meta.'</td>
 				</tr>';
 }
 echo'
 			<tr>
-				<th>'. __("Soggetti","albo-online").'</th>
+				<th>'. __("Soggetti","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
@@ -1779,7 +1779,7 @@ echo'
 		$documenti=ap_get_documenti_atto($IdAtto);
 		if(count($documenti)>0){
 			echo '<div class="postbox" style="padding:0 10px 10px 10px;">
-				<h3>'. __("Documenti firmati","albo-online").'</h3>
+				<h3>'. __("Documenti firmati","albo-pretorio-considera").'</h3>
 				<div class="Visalbo">';
 			$TipidiFiles=ap_get_tipidifiles();
 			foreach ($documenti as $allegato) {
@@ -1790,16 +1790,16 @@ echo'
 						</div>
 						<div style="margin-top:0;">
 							<p style="margin-top:0;">
-							'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-online")."</span><br />":"").'
+							'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'
 							'.strip_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
 							echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
 						else{
 							echo basename( $allegato->Allegato)."<br />";
 							if( $allegato->Note=="")
-								echo __("File non trovato, il file è stato cancellato o spostato!","albo-online");
+								echo __("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
 							else
-								echo __("Note:","albo-online")." ".$allegato->Note;
+								echo __("Note:","albo-pretorio-considera")." ".$allegato->Note;
 						}
 			echo'				</p>
 						</div>
@@ -1811,7 +1811,7 @@ echo'
 		$allegati=ap_get_allegati_atto($IdAtto);
 		if(count($allegati)>0){
 			echo '<div class="postbox" style="padding:0 10px 10px 10px;">
-				<h3>'. __("Allegati","albo-online").'</h3>
+				<h3>'. __("Allegati","albo-pretorio-considera").'</h3>
 				<div class="Visalbo">';
 			$TipidiFiles=ap_get_tipidifiles();
 			foreach ($allegati as $allegato) {
@@ -1822,16 +1822,16 @@ echo'
 						</div>
 						<div style="margin-top:0;">
 							<p style="margin-top:0;">
-								'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-online")."</span><br />":"").'
+								'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'
 								'.strip_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
 							echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
 						else{
 							echo basename( $allegato->Allegato)."<br />";
 							if( $allegato->Note=="")
-								echo __("File non trovato, il file è stato cancellato o spostato!","albo-online");
+								echo __("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
 							else
-								echo __("Note:","albo-online")." ".$allegato->Note;
+								echo __("Note:","albo-pretorio-considera")." ".$allegato->Note;
 						}
 			echo'				</p>
 						</div>
@@ -1866,8 +1866,8 @@ function CancellaAllegatiAtto($IdAtto){
 	<input type="hidden" id="IdAtto" value="'.$IdAtto.'" />
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> Atti</h2>
-		<a href="'.site_url().'/wp-admin/admin.php?page=atti&stato_atti='.sanitize_text_field(filter_input(INPUT_GET,"stato_atti")).'" class="add-new-h2 tornaindietro">'. __("Torna indietro","albo-online").'</a>
-		<h3>'. __("Dati Atto","albo-online").'</h3>	
+		<a href="'.site_url().'/wp-admin/admin.php?page=atti&stato_atti='.sanitize_text_field(filter_input(INPUT_GET,"stato_atti")).'" class="add-new-h2 tornaindietro">'. __("Torna indietro","albo-pretorio-considera").'</a>
+		<h3>'. __("Dati Atto","albo-pretorio-considera").'</h3>	
 	</div>
 		<div class="clear"><br /></div>
 		<div id="col-container">
@@ -1878,7 +1878,7 @@ function CancellaAllegatiAtto($IdAtto){
 		$documenti=ap_get_documenti_atto($IdAtto);
 		if(count($documenti)>0){
 			echo '<div class="postbox" style="padding:0 10px 10px 10px;">
-				<h3>'. __("Documenti firmati","albo-online").'</h3>
+				<h3>'. __("Documenti firmati","albo-pretorio-considera").'</h3>
 				<div class="Visalbo">';
 			$TipidiFiles=ap_get_tipidifiles();
 			foreach ($documenti as $allegato) {
@@ -1889,7 +1889,7 @@ function CancellaAllegatiAtto($IdAtto){
 						</div>
 						<div style="margin-top:0;">
 							<p style="margin-top:0;">
-							'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-online")."</span><br />":"").'
+							'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'
 							'.strip_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
 							echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).'</p>
@@ -1899,7 +1899,7 @@ function CancellaAllegatiAtto($IdAtto){
 							<input type="hidden" id="IDA'.$allegato->IdAllegato.'" name="IDA'.$allegato->IdAllegato.'" value="'.$allegato->IdAllegato.'"/>
 							<span class="dashicons dashicons-trash CancellaAllegato" title="Elimina Allegato" style="color:red;cursor: -webkit-grab; cursor: grab;" id="'.$allegato->IdAllegato.'" rel="'.strip_tags($allegato->TitoloAllegato).'"></span><br id="SR'.$allegato->IdAllegato.'" />';
 						else
-							echo __("Documento Cancellato","albo-online")."<br />";
+							echo __("Documento Cancellato","albo-pretorio-considera")."<br />";
 			echo ' Note: <span id="Note'.$allegato->IdAllegato.'">'.$allegato->Note.'</span>
 						</p>		
 						</div>
@@ -1911,7 +1911,7 @@ function CancellaAllegatiAtto($IdAtto){
 		$allegati=ap_get_allegati_atto($IdAtto);
 		if(count($allegati)>0){
 			echo '<div class="postbox" style="padding:0 10px 10px 10px;">
-				<h3>'. __("Allegati","albo-online").'</h3>
+				<h3>'. __("Allegati","albo-pretorio-considera").'</h3>
 				<div class="Visalbo">';
 			$TipidiFiles=ap_get_tipidifiles();
 			foreach ($allegati as $allegato) {
@@ -1922,7 +1922,7 @@ function CancellaAllegatiAtto($IdAtto){
 						</div>
 						<div style="margin-top:0;">
 							<p style="margin-top:0;">
-								'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-online")."</span><br />":"").'
+								'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'
 								'.strip_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
 							echo '        <a id="file'.$allegato->IdAllegato.'" href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')</p>
@@ -1932,7 +1932,7 @@ function CancellaAllegatiAtto($IdAtto){
 							<input type="hidden" id="IDA'.$allegato->IdAllegato.'" name="IDA'.$allegato->IdAllegato.'" value="'.$allegato->IdAllegato.'"/>
 							<span class="dashicons dashicons-trash CancellaAllegato" title="Elimina Allegato" style="color:red;cursor: -webkit-grab; cursor: grab;" id="'.$allegato->IdAllegato.'" rel="'.strip_tags($allegato->TitoloAllegato).'"></span><br id="SR'.$allegato->IdAllegato.'" />';
 						else
-							echo __("Allegato Cancellato","albo-online")."<br />";
+							echo __("Allegato Cancellato","albo-pretorio-considera")."<br />";
 						echo ' Note: <span id="Note'.$allegato->IdAllegato.'">'.$allegato->Note.'</span>
 						</p>		
 						</div>
@@ -1945,71 +1945,71 @@ function CancellaAllegatiAtto($IdAtto){
 	</div>
 <div id="col-left">
 	<div class="col-wrap postbox" style="padding:0 10px 10px 10px;">
-		<h3>'. __("Dati atto","albo-online").'</h3>
+		<h3>'. __("Dati atto","albo-pretorio-considera").'</h3>
 		<hr />
 		<table class="widefat fixed striped" style="border:0;">
 		    <tbody id="dati-atto">
 			<tr>
-				<th style="width:50%;">'. __("Ente emittente","albo-online").'</th>
+				<th style="width:50%;">'. __("Ente emittente","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.$NomeEnte.'</td>
 			</tr>
 			<tr>
-				<th style="width:20%;">'. __("Numero Albo","albo-online").'</th>
+				<th style="width:20%;">'. __("Numero Albo","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.$risultato->Numero."/".$risultato->Anno.'</td>
 			</tr>
 			<tr>
-				<th>'. __("Codice di Riferimento","albo-online").'</th>
+				<th>'. __("Codice di Riferimento","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Riferimento).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Oggetto","albo-online").'</th>
+				<th>'. __("Oggetto","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Oggetto).'</td>
 			</tr>';
 		if($risultato->DataAnnullamento!='0000-00-00')		
 			echo '		<tr>
-				<th style="width:20%;">'. __("Data Annullamento","albo-online").'</th>
+				<th style="width:20%;">'. __("Data Annullamento","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataAnnullamento).'</td>
 			</tr>
 	    	<tr>
-				<th style="width:20%;">'. __("Motivo Annullamento","albo-online").'</th>
+				<th style="width:20%;">'. __("Motivo Annullamento","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:top;">'.stripslashes($risultato->MotivoAnnullamento).'</td>
 			</tr>';
 		echo '		
 			<tr>
-				<th>'. __("Data di registrazione","albo-online").'</th>
+				<th>'. __("Data di registrazione","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
 			</tr>
 
 			<tr>
-				<th>'. __("Data inizio Pubblicazione","albo-online").'</th>
+				<th>'. __("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Data fine Pubblicazione","albo-online").'</th>
+				<th>'. __("Data fine Pubblicazione","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Data Oblio","albo-online").'</th>
+				<th>'. __("Data Oblio","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Richiedente","albo-online").'</th>
+				<th>'.__("Richiedente","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Richiedente).'</td>
 			</tr>
 			<tr>
-				<th>'.__("Unità Organizzativa Responsabile","albo-online").'</th>
+				<th>'.__("Unità Organizzativa Responsabile","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(isset($Unitao->Nome)?stripslashes($Unitao->Nome):"").'</td>
 			</tr>
 			<tr>
-				<th>'.__("Responsabile del procedimento amministrativo","albo-online").'</th>
+				<th>'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</th>
 				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(is_object($NomeResp)?$NomeResp->Nome." ".$NomeResp->Cognome:$NomeResp).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Categoria","albo-online").'</th>
+				<th>'. __("Categoria","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultatocategoria->Nome).'</td>
 			</tr>
 			<tr>
-				<th>'. __("Note","albo-online").'</th>
+				<th>'. __("Note","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Informazioni).'</td>
 			</tr>';
 $MetaDati=ap_get_meta_atto($IdAtto);
@@ -2021,13 +2021,13 @@ if($MetaDati!==FALSE){
 	$Meta=substr($Meta,0,-3);
 		echo'
 				<tr>
-					<th>'. __("Meta Dati","albo-online").'</th>
+					<th>'. __("Meta Dati","albo-pretorio-considera").'</th>
 					<td style="vertical-align: middle;color: Red;">'.$Meta.'</td>
 				</tr>';
 }
 echo'
 			<tr>
-				<th>'. __("Soggetti","albo-online").'</th>
+				<th>'. __("Soggetti","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
@@ -2062,9 +2062,9 @@ function Annulla_Atto($IdAtto){
 	echo '
 <div class="wrap">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> '. __("Atti","albo-online").'</h2>
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> '. __("Atti","albo-pretorio-considera").'</h2>
 		<a href="'.site_url().'/wp-admin/admin.php?page=atti&amp;stato_atti=Correnti" class="add-new-h2 tornaindietro">Torna indietro</a>
-		<h3>'. __("Annulla Atto","albo-online").'</h3>	
+		<h3>'. __("Annulla Atto","albo-pretorio-considera").'</h3>	
 	</div>
 	<div id="col-container">
 		<div class="clear"><br /></div>
@@ -2075,8 +2075,8 @@ function Annulla_Atto($IdAtto){
 		<table class="widefat">
 		    <thead>
 		    <tr>
-				<th style="text-align:center;font-size:1.2em;width:50%;">'. __("Dati atto","albo-online").'</th>
-				<th style="font-size:1.2em;">'. __("Allegati atto","albo-online").'</th>
+				<th style="text-align:center;font-size:1.2em;width:50%;">'. __("Dati atto","albo-pretorio-considera").'</th>
+				<th style="font-size:1.2em;">'. __("Allegati atto","albo-pretorio-considera").'</th>
 			</tr>
 		    </thead>
 		    <tbody>
@@ -2084,47 +2084,47 @@ function Annulla_Atto($IdAtto){
 		    <td style="border-right-style: groove;border-right-width: thin;">
 		    	<table>
 				<tr>
-					<th style="width:20%;">'. __("Ente emittente","albo-online").'</th>
+					<th style="width:20%;">'. __("Ente emittente","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.$NomeEnte.'</td>
 				</tr>
 				<tr>
-					<th style="width:20%;">'. __("Numero Albo","albo-online").'</th>
+					<th style="width:20%;">'. __("Numero Albo","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.$risultato->Numero."/".$risultato->Anno.'</td>
 				</tr>
 				<tr>
-					<th>'. __("Data","albo-online").'</th>
+					<th>'. __("Data","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
 				</tr>
 				<tr>
-					<th>'. __("Codice di Riferimento","albo-online").'</th>
+					<th>'. __("Codice di Riferimento","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Riferimento).'</td>
 				</tr>
 				<tr>
-					<th>'. __("Oggetto","albo-online").'</th>
+					<th>'. __("Oggetto","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Oggetto).'</td>
 				</tr>
 				<tr>
-					<th>'. __("Data inizio Pubblicazione","albo-online").'</th>
+					<th>'. __("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
 				</tr>
 				<tr>
-					<th>'. __("Data fine Pubblicazione","albo-online").'</th>
+					<th>'. __("Data fine Pubblicazione","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
 				</tr>
 				<tr>
-					<th>'. __("Data Oblio","albo-online").'</th>
+					<th>'. __("Data Oblio","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
 				</tr>
 				<tr>
-					<th>'. __("Note","albo-online").'</th>
+					<th>'. __("Note","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Informazioni).'</td>
 				</tr>
 				<tr>
-					<th>'. __("Categoria","albo-online").'</th>
+					<th>'. __("Categoria","albo-pretorio-considera").'</th>
 					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultatocategoria->Nome).'</td>
 				</tr>
 				<tr>
-					<th>'. __("Soggetti","albo-online").'</th>
+					<th>'. __("Soggetti","albo-pretorio-considera").'</th>
 						<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">	
 					<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
@@ -2141,7 +2141,7 @@ echo'
 				</table>	    
 			</td>
 			<td>
-			<p style="color:red;font-weight: bold;">'. __("Selezionare gli allegati che devono essere cancellati per violazione di legge<br />NB: verrà cancellato solo il file, mentre sarà mantenuto il nome del file nell'elenco degli allegati","albo-online").'</p>';
+			<p style="color:red;font-weight: bold;">'. __("Selezionare gli allegati che devono essere cancellati per violazione di legge<br />NB: verrà cancellato solo il file, mentre sarà mantenuto il nome del file nell'elenco degli allegati","albo-pretorio-considera").'</p>';
 $allegati=ap_get_all_allegati_atto($IdAtto);
 $TipidiFiles=ap_get_tipidifiles();
 foreach ($allegati as $allegato) {
@@ -2157,7 +2157,7 @@ foreach ($allegati as $allegato) {
 			if (is_file($allegato->Allegato))
 				echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
 			else
-				echo basename( $allegato->Allegato)." ".__("File non trovato, il file è stato cancellato o spostato!","albo-online");
+				echo basename( $allegato->Allegato)." ".__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
 echo'				</p>
 			</div>';
 	}			
@@ -2165,14 +2165,14 @@ echo'			</td>
 			</tr>
 			<tr>
 				<td colspan="2" style="text-align:center;border-top-style: groove;border-top-width: thin;">
-				<span style="color:red;font-size:2em;font-weight: bold;">'. __("Motivo Annullamento","albo-online").'</span><br />
+				<span style="color:red;font-size:2em;font-weight: bold;">'. __("Motivo Annullamento","albo-pretorio-considera").'</span><br />
 					<textarea rows="4" cols="100"  maxlength="255" placeholder="Inserisci il motivo, massimo 255 caratteri" id="Motivo" name="Motivo" ></textarea>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" style="text-align:center;">
-					<input type="submit" name="submit" id="submit" class="button" value="'. __("Annulla Pubblicazione Atto","albo-online").'"  />
-					<input type="submit" name="submit" id="submit" class="button" value="'. __("Annulla Operazione","albo-online").'"  />
+					<input type="submit" name="submit" id="submit" class="button" value="'. __("Annulla Pubblicazione Atto","albo-pretorio-considera").'"  />
+					<input type="submit" name="submit" id="submit" class="button" value="'. __("Annulla Operazione","albo-pretorio-considera").'"  />
 				<td>
 			</tr>
 			</tbody>
@@ -2183,10 +2183,10 @@ echo'			</td>
 			<h3>Log</h3>
 					<div id="utility-tabs-container">
 						<ul>
-							<li><a href="#log-tab-1">'. __("Atto","albo-online").'</a></li>
-							<li><a href="#log-tab-2">'. __("Allegati","albo-online").'</a></li>
-							<li><a href="#log-tab-3">'. __("Statistiche Visite","albo-online").'</a></li>
-							<li><a href="#log-tab-4">'. __("Statistiche Download","albo-online").'</a></li>
+							<li><a href="#log-tab-1">'. __("Atto","albo-pretorio-considera").'</a></li>
+							<li><a href="#log-tab-2">'. __("Allegati","albo-pretorio-considera").'</a></li>
+							<li><a href="#log-tab-3">'. __("Statistiche Visite","albo-pretorio-considera").'</a></li>
+							<li><a href="#log-tab-4">'. __("Statistiche Download","albo-pretorio-considera").'</a></li>
 						</ul>
 						<div id="log-tab-1">
 							<div id="DatiLog1">'.$AP_OnLine->CreaLog(1,$IdAtto,0).'</div>
@@ -2210,22 +2210,22 @@ if (isset($_REQUEST['p']))
 	$Pag=intval($_REQUEST['p']);
 else
 	$Pag=0;
-$Message[0] = __("Messaggio non definito","albo-online");
-$messages[1] = __("Atto Aggiunto","albo-online");
-$messages[2] = __("Atto Cancellato","albo-online");
-$messages[3] = __("Atto Aggiornato","albo-online");
-$messages[4] = __("Atto non Aggiunto","albo-online");
-$messages[5] = __("Atto non Aggiornato","albo-online");
-$messages[6] = __("Atto non Cancellato","albo-online");
-$messages[7] = __("Impossibile cancellare un Atto che contiene Allegati<br />Cancellare prima gli Allegati e poi riprovare","albo-online");
-$messages[8] = __("Impossibile ANULLARE l'Atto","albo-online");
-$messages[9] = __("Atto ANNULLATO","albo-online");
-$messages[10] = __("Allegati all'Atto Cancellati","albo-online");
-$messages[11] = __("Allegati all'Atto NON Cancellati","albo-online");
-$messages[12] = __("Metadati dell'Atto Memorizzati","albo-online");
-$messages[13] = __("Metadati dell'Atto NON Memorizzati","albo-online");
-$messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
-$messages[99] = __("OPERAZIONE NON AMMESSA!<br />l'atto non è ancora da eliminare","albo-online");
+$Message[0] = __("Messaggio non definito","albo-pretorio-considera");
+$messages[1] = __("Atto Aggiunto","albo-pretorio-considera");
+$messages[2] = __("Atto Cancellato","albo-pretorio-considera");
+$messages[3] = __("Atto Aggiornato","albo-pretorio-considera");
+$messages[4] = __("Atto non Aggiunto","albo-pretorio-considera");
+$messages[5] = __("Atto non Aggiornato","albo-pretorio-considera");
+$messages[6] = __("Atto non Cancellato","albo-pretorio-considera");
+$messages[7] = __("Impossibile cancellare un Atto che contiene Allegati<br />Cancellare prima gli Allegati e poi riprovare","albo-pretorio-considera");
+$messages[8] = __("Impossibile ANULLARE l'Atto","albo-pretorio-considera");
+$messages[9] = __("Atto ANNULLATO","albo-pretorio-considera");
+$messages[10] = __("Allegati all'Atto Cancellati","albo-pretorio-considera");
+$messages[11] = __("Allegati all'Atto NON Cancellati","albo-pretorio-considera");
+$messages[12] = __("Metadati dell'Atto Memorizzati","albo-pretorio-considera");
+$messages[13] = __("Metadati dell'Atto NON Memorizzati","albo-pretorio-considera");
+$messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+$messages[99] = __("OPERAZIONE NON AMMESSA!<br />l'atto non è ancora da eliminare","albo-pretorio-considera");
 //Gestione Messaggi di stato
 if (isset($_REQUEST['message'])) 
 	$msg = intval($_REQUEST['message']);
@@ -2244,18 +2244,18 @@ if ($Msg_op!=""){
 ?>
 <div id="ConfermaCancellazione" title="Conferma Cancellazione" style="display:none;">
 	<input type="hidden" value="" id="UrlDest" />
-  <h3><?php _e("Atto","albo-online");?> <span id="oggetto"></span></span></h3><p style='color:red;font-weight: bold;'><?php _e("Confermi la cancellazione dell'atto?","albo-online");?></p>
+  <h3><?php _e("Atto","albo-pretorio-considera");?> <span id="oggetto"></span></span></h3><p style='color:red;font-weight: bold;'><?php _e("Confermi la cancellazione dell'atto?","albo-pretorio-considera");?></p>
 </div>
 <?php
 echo' <div class="wrap">
 	<div class="HeadPage">
-		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> '. __("Atti","albo-online");
+		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> '. __("Atti","albo-pretorio-considera");
 $HtmlNP="";
 if (ap_get_num_categorie()==0){
 	$HtmlNP.='<p> </p>
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-				'. __("Non risultano categorie codificate, se vuoi posso impostare le categorie di default","albo-online").' &ensp;&ensp;<a href="?page=utilityAlboP&amp;action=creacategorie">'. __("Crea Categorie di Default","albo-online").'</a>
+				'. __("Non risultano categorie codificate, se vuoi posso impostare le categorie di default","albo-pretorio-considera").' &ensp;&ensp;<a href="?page=utilityAlboP&amp;action=creacategorie">'. __("Crea Categorie di Default","albo-pretorio-considera").'</a>
 				</p>
 			</div>';
 }
@@ -2263,7 +2263,7 @@ if (ap_num_responsabili()==0){
 	$HtmlNP.='<p> </p>
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-				'. sprintf(__("Non risultano %sResponsabili%s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti","albo-online"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'. __("Crea Soggetti","albo-online").'</a>
+				'. sprintf(__("Non risultano %sResponsabili%s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'. __("Crea Soggetti","albo-pretorio-considera").'</a>
 				</p>
 			</div>';
 }
@@ -2271,7 +2271,7 @@ if (ap_num_unitao()==0){
 	$HtmlNP.='<p> </p>
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-				'. sprintf(__("Non risulta nessuna %sUnità Organizzativa%s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-online"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-online").'</a>
+				'. sprintf(__("Non risulta nessuna %sUnità Organizzativa%s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-pretorio-considera").'</a>
 				</p>
 			</div>';
 }
@@ -2286,7 +2286,7 @@ if ($HtmlNP!=""){
 }
 
 echo'
-	<a href="?page=atti&amp;action=new-atto" class="add-new-h2">'. __("Aggiungi nuovo","albo-online").'</a></h2>';
+	<a href="?page=atti&amp;action=new-atto" class="add-new-h2">'. __("Aggiungi nuovo","albo-pretorio-considera").'</a></h2>';
 	if ( isset($msg) or isset($msg2) or isset($Errore) ){
 		$stato="";
 		if (isset($_GET['stato_atti'])){
@@ -2303,7 +2303,7 @@ echo'
 		if($Msg_op=="Atto PUBBLICATO"){
 			$stato="&stato_atti=Correnti";
 		}
-		if(substr($Msg_op,0,19)== __("Atto non PUBBLICATO","albo-online")){
+		if(substr($Msg_op,0,19)== __("Atto non PUBBLICATO","albo-pretorio-considera")){
 			$stato="&stato_atti=Nuovi";
 		}
 		echo '<div id="message" class="updated"><p>'.(isset($msg)?$messages[$msg]:"").(isset($msg2)?"<br />".$messages[$msg2]:"").'<br /><br />'.(isset($Errore)?$Errore:"").'</p></div>
@@ -2312,16 +2312,16 @@ echo'
 	} 
 	if (isset($_REQUEST['stato_atti']))
 		switch(sanitize_text_field($_REQUEST['stato_atti'])){
-			case "Tutti": $Titolo=__("Tutti gli atti","albo-online");$Azione="Tutti";break;
-			case "Nuovi": $Titolo=__("Atti da pubblicare","albo-online");$Azione="DaPubblicare";break;
-			case "Correnti": $Titolo=__("Atti in corso di Validità","albo-online");$Azione="Correnti";break;
-			case "Scaduti":  $Titolo=__("Atti Scaduti","albo-online");$Azione="Scaduti";break;
-			case "Eliminare":  $Titolo=__("Atti da Eliminare (Oblio)","albo-online");$Azione="Eliminare";break;
-            case "Cerca":  $Titolo=__("Cerca Atti","albo-online");$Azione="Cerca";break; /* mr */
-			default: $Titolo=__("Atti da Pubblicare","albo-online");$Azione="DaPubblicare";break;
+			case "Tutti": $Titolo=__("Tutti gli atti","albo-pretorio-considera");$Azione="Tutti";break;
+			case "Nuovi": $Titolo=__("Atti da pubblicare","albo-pretorio-considera");$Azione="DaPubblicare";break;
+			case "Correnti": $Titolo=__("Atti in corso di Validità","albo-pretorio-considera");$Azione="Correnti";break;
+			case "Scaduti":  $Titolo=__("Atti Scaduti","albo-pretorio-considera");$Azione="Scaduti";break;
+			case "Eliminare":  $Titolo=__("Atti da Eliminare (Oblio)","albo-pretorio-considera");$Azione="Eliminare";break;
+            case "Cerca":  $Titolo=__("Cerca Atti","albo-pretorio-considera");$Azione="Cerca";break; /* mr */
+			default: $Titolo=__("Atti da Pubblicare","albo-pretorio-considera");$Azione="DaPubblicare";break;
 		}
 	else{
-			$Titolo=__("Tutti gli atti","albo-online");
+			$Titolo=__("Tutti gli atti","albo-pretorio-considera");
 			$Azione="Tutti";
 	}
 	$tablenew = new AdminTableAtti(); // Il codice della classe a seguire
@@ -2340,11 +2340,11 @@ echo'
 	  		<input type="hidden" name="page" value="'.$page. '"/>
 	  		<input type="hidden" name="stato_atti" value="Cerca"/>
 	  		<div class="ap-filtri-cerca" style="margin:8px 0;display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
-	  			<label>'.__("Riferimento","albo-online").' <input type="search" name="f_riferimento" value="'.esc_attr($f_rif).'"/></label>
-	  			<label>'.__("Numero","albo-online").' <input type="search" name="f_numero" size="10" value="'.esc_attr($f_num).'" placeholder="'.esc_attr__("anche parziale","albo-online").'"/></label>
-	  			<label>'.__("Categoria","albo-online").' '.ap_get_dropdown_ricerca_categorie("f_categoria","f_categoria","","",$f_cat).'</label>
+	  			<label>'.__("Riferimento","albo-pretorio-considera").' <input type="search" name="f_riferimento" value="'.esc_attr($f_rif).'"/></label>
+	  			<label>'.__("Numero","albo-pretorio-considera").' <input type="search" name="f_numero" size="10" value="'.esc_attr($f_num).'" placeholder="'.esc_attr__("anche parziale","albo-pretorio-considera").'"/></label>
+	  			<label>'.__("Categoria","albo-pretorio-considera").' '.ap_get_dropdown_ricerca_categorie("f_categoria","f_categoria","","",$f_cat).'</label>
 	  		</div>'; /* mr */
-	    	$tablenew->search_box(__("Cerca in Oggetto","albo-online"),'search_id'); /* mr  */
+	    	$tablenew->search_box(__("Cerca in Oggetto","albo-pretorio-considera"),'search_id'); /* mr  */
 	    	$tablenew->views();
 	echo '</form>
         <form id="persons-table" method="GET">

@@ -28,14 +28,14 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<input type="hidden" name="uploallegato" value="<?php echo wp_create_nonce('uploadallegati')?>" />
 	<input type="hidden" name="id" value="<?php echo (int)$_REQUEST['id']; ?>" />
 <div>
-  <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo __("Seleziona gli allegati da caricare","albo-online");?></label>
+  <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo __("Seleziona gli allegati da caricare","albo-pretorio-considera");?></label>
   <input type="file" id="files" name="files[]" accept="<?php echo $TEE;?>" multiple>
 </div>
 <div class="preview">
-  <p><?php echo __("Nessun file selezionato per il caricamento","albo-online");?></p>
+  <p><?php echo __("Nessun file selezionato per il caricamento","albo-pretorio-considera");?></p>
 </div>
 <div>
-  <button id="pulCar"><span class="dashicons dashicons-upload" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo __("Carica","albo-online");?></button>
+  <button id="pulCar"><span class="dashicons dashicons-upload" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo __("Carica","albo-pretorio-considera");?></button>
 </div>
 </form>
      <script>
@@ -63,12 +63,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	          des.className="des";
 	          
 	          var LBLnatura=document.createElement('span');
-	          LBLnatura.textContent = '<?php _e("Documento firmato","albo-online");?>  ';
+	          LBLnatura.textContent = '<?php _e("Documento firmato","albo-pretorio-considera");?>  ';
 	          var natura= document.createElement('input');
 	          natura.setAttribute("type", "checkbox");
 	          natura.setAttribute("name", "Natura["+ i.toString() +"]");
 	          var LBLintegrale=document.createElement('span');
-	          LBLintegrale.textContent = '<?php _e("Documento Integrale","albo-online");?>  ';
+	          LBLintegrale.textContent = '<?php _e("Documento Integrale","albo-pretorio-considera");?>  ';
 	          var integrale= document.createElement('input');
 	          integrale.setAttribute("type", "checkbox");
 	          integrale.setAttribute("name", "Integrale["+ i.toString() +"]");
@@ -88,7 +88,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		        listItem.appendChild(LBLintegrale);
 				listItem.appendChild(integrale);
 	          } else {
-	            para.textContent = 'File name ' + curFiles[i].name + ':<?php echo __("Tipo di file non permesso. Riprova selezionando un file con estensione diversa.","albo-online");?>';
+	            para.textContent = 'File name ' + curFiles[i].name + ':<?php echo __("Tipo di file non permesso. Riprova selezionando un file con estensione diversa.","albo-pretorio-considera");?>';
 	            listItem.appendChild(para);
 	          }
 	          list.appendChild(listItem);

@@ -23,7 +23,7 @@ function DownloadFile($filename){
     }
     else
     {
-      wp_die(basename($filename)." ".__("File non trovato","albo-online"));
+      wp_die(basename($filename)." ".__("File non trovato","albo-pretorio-considera"));
     }
  }
 }
@@ -35,22 +35,22 @@ function albo_post() {
 		switch ( $_REQUEST['action'] ) {
 			case "ToCsv":
 				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'repertorio_export' ) )
-					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 				$Anno=intval($_REQUEST['Anno']);
-				$Testata=preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Nome Ente","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Numero Atto","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Riferimento","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Oggetto","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Registrazione","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Inizio","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Fine","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Annullamento","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Motivo Annullamento","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Richiedente","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Unità Organizzativa Responsabile","albo-online")).";".
-				         preg_replace ('/[^a-zA-Z0-9 -]/', "",__("Responsabile del procedimento amministrativo","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Categoria","albo-online")).";".
-				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Informazioni","albo-online")).";";
+				$Testata=preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Nome Ente","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Numero Atto","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Riferimento","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Oggetto","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Registrazione","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Inizio","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Fine","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Data Annullamento","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Motivo Annullamento","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Richiedente","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Unità Organizzativa Responsabile","albo-pretorio-considera")).";".
+				         preg_replace ('/[^a-zA-Z0-9 -]/', "",__("Responsabile del procedimento amministrativo","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Categoria","albo-pretorio-considera")).";".
+				         preg_replace ("/[^a-zA-Z0-9 -]/", "",__("Informazioni","albo-pretorio-considera")).";";
 				$Atti="";
 				$Righe=ap_Repertorio($Anno,FALSE);
 				foreach($Righe as $Riga){
@@ -82,29 +82,29 @@ function albo_post() {
 				break;
 			case "ToXML":
 				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'repertorio_export' ) )
-					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 				$Anno=intval($_REQUEST['Anno']);
-				$xml=new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes" ?><'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-online")).'></'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-online")).'>');
-				$MetaData=$xml->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Meta dati","albo-online")));
-				$MetaData->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Anno","albo-online")),$Anno);
+				$xml=new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes" ?><'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-pretorio-considera")).'></'.preg_replace ('/[^a-zA-Z0-9]/', "_",__("Repertorio","albo-pretorio-considera")).'>');
+				$MetaData=$xml->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Meta dati","albo-pretorio-considera")));
+				$MetaData->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Anno","albo-pretorio-considera")),$Anno);
 				$Righe=ap_Repertorio($Anno,FALSE);
-				$Atti=$xml->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Atti","albo-online")));
+				$Atti=$xml->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Atti","albo-pretorio-considera")));
 				foreach($Righe as $Riga){
-					$Atto=$Atti->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Atto","albo-online")));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Nome Ente","albo-online")), ap_sanifica_testo($Riga->NomeEnte));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Numero Atto","albo-online")), ap_sanifica_testo($Riga->Numero));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Riferimento","albo-online")), ap_sanifica_testo($Riga->Riferimento));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Oggetto","albo-online")), ap_sanifica_testo($Riga->Oggetto));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data di registrazione","albo-online")), ap_sanifica_testo($Riga->DataRegistrazione));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Inizio","albo-online")), ap_sanifica_testo($Riga->DataInizio));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Fine","albo-online")), ap_sanifica_testo($Riga->DataFine));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Annullamento","albo-online")),ap_sanifica_testo($Riga->DataAnnullamento));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Motivo Annullamento","albo-online")),ap_sanifica_testo($Riga->MotivoAnnullamento));					
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Richiedente","albo-online")),ap_sanifica_testo($Riga->Richiedente));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Unita Organizzativa Responsabile","albo-online")),ap_sanifica_testo($Riga->UnitaOrganizzativa));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Responsabile del procedimento amministrativo","albo-online")),ap_sanifica_testo($Riga->ResponsabileProcedimento));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Categoria","albo-online")),ap_sanifica_testo($Riga->Categoria));
-					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Informazioni","albo-online")),ap_sanifica_testo($Riga->Informazioni));
+					$Atto=$Atti->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Atto","albo-pretorio-considera")));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Nome Ente","albo-pretorio-considera")), ap_sanifica_testo($Riga->NomeEnte));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Numero Atto","albo-pretorio-considera")), ap_sanifica_testo($Riga->Numero));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Riferimento","albo-pretorio-considera")), ap_sanifica_testo($Riga->Riferimento));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Oggetto","albo-pretorio-considera")), ap_sanifica_testo($Riga->Oggetto));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data di registrazione","albo-pretorio-considera")), ap_sanifica_testo($Riga->DataRegistrazione));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Inizio","albo-pretorio-considera")), ap_sanifica_testo($Riga->DataInizio));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Fine","albo-pretorio-considera")), ap_sanifica_testo($Riga->DataFine));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Data Annullamento","albo-pretorio-considera")),ap_sanifica_testo($Riga->DataAnnullamento));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Motivo Annullamento","albo-pretorio-considera")),ap_sanifica_testo($Riga->MotivoAnnullamento));					
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Richiedente","albo-pretorio-considera")),ap_sanifica_testo($Riga->Richiedente));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Unita Organizzativa Responsabile","albo-pretorio-considera")),ap_sanifica_testo($Riga->UnitaOrganizzativa));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Responsabile del procedimento amministrativo","albo-pretorio-considera")),ap_sanifica_testo($Riga->ResponsabileProcedimento));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Categoria","albo-pretorio-considera")),ap_sanifica_testo($Riga->Categoria));
+					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Informazioni","albo-pretorio-considera")),ap_sanifica_testo($Riga->Informazioni));
 				}	
 				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');
 				if (!is_dir ( $Dir))
@@ -118,7 +118,7 @@ function albo_post() {
 				break;
 			case "ToJson":
 				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'repertorio_export' ) )
-					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 				$Anno=intval($_REQUEST['Anno']);
 				$Repertorio=ap_Repertorio($Anno,FALSE);
 				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');
@@ -145,9 +145,9 @@ function albo_post() {
 	            	$nonce  = filter_input( INPUT_GET, '_wpnonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 	            	$action = 'bulk-atti' ;
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
+		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 		        }else{
-		        	wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
+		        	wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 		        }
 			 	$Msg=ap_oblio_atti(intval($_GET['IdAtto']));
 			 	$location = "?page=atti&stato_atti=Eliminare&message=".urlencode($Msg);
@@ -158,7 +158,7 @@ function albo_post() {
 		            $nonce  = filter_input( INPUT_GET, 'avvisoatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazioneavviso_affissione';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti&stato_atti=Correnti") );
+		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		$location = "?page=atti&stato_atti=Correnti" ;
 			 		include ('stampe.php');
 			 		if (is_numeric($_REQUEST['id'])) {
@@ -166,14 +166,14 @@ function albo_post() {
 					}
 					wp_die();
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti") );					
+					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;
  			case "certificato_pubblicazione-atto":
 				if ( isset( $_GET['certificatoatto'] ) && ! empty( $_GET['certificatoatto'] ) ) {
 		            $nonce  = filter_input( INPUT_GET, 'certificatoatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionecertificato_pubblicazione';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti&stato_atti=Correnti") );
+		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		$location = "?page=atti&stato_atti=Correnti" ;
 			 		include ('stampe.php');
 			 		if (is_numeric($_REQUEST['id'])) {
@@ -181,14 +181,14 @@ function albo_post() {
 					}
 					wp_die();
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti") );					
+					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;
  			case "oblia-atto":
 				if ( isset( $_GET['oatto'] ) && ! empty( $_GET['oatto'] ) ) {
 		            $nonce  = filter_input( INPUT_GET, 'oatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionebliaatto';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti&stato_atti=Correnti") );
+		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		$location = "?page=atti&stato_atti=Scaduti" ;
 			 		if (is_numeric($_REQUEST['id'])) {
  	                    $MessaggiRitorno=ap_setOblioOggi(intval($_REQUEST['id']));
@@ -196,7 +196,7 @@ function albo_post() {
 					$location = add_query_arg( 'message',$MessaggiRitorno, $location );
 					wp_redirect( $location );
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti") );					
+					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;	
  
  			case "elimina-atto":
@@ -204,14 +204,14 @@ function albo_post() {
 		            $nonce  = filter_input( INPUT_GET, 'cancellatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionecancelaatto';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		               wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti") );
+		               wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );
 			 		$location = "?page=atti&stato_atti=Eliminare" ;
 			 		$MessaggiRitorno=ap_oblio_atti(intval($_GET['id']));
 					$location = add_query_arg( 'message',$MessaggiRitorno["Message"], $location );
 					$location = add_query_arg( 'message2',$MessaggiRitorno["Message2"], $location );
 					wp_redirect( $location );
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") ,__("Problemi di sicurezza","albo-online"),array("back_link" => "?page=atti") );					
+					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;
 		case "annulla-atto":
 			if (!isset($_REQUEST['annatto'])) {
@@ -234,7 +234,7 @@ function albo_post() {
 					$Risultato=ap_annulla_atto(intval($_REQUEST['id']),sanitize_textarea_field($_REQUEST['Motivo']),$Allegati);
 				}				
 			}else{
-				$Risultato=wp_die( __("Operazione Annullata","albo-online"));
+				$Risultato=wp_die( __("Operazione Annullata","albo-pretorio-considera"));
 			}
 	 		$location = "?page=atti&stato_atti=Correnti" ;
 			$location = add_query_arg( 'message', $Risultato, $location );
@@ -253,7 +253,7 @@ function albo_post() {
 			break;
 		case "delete-allegato-atto" :
 			if ( ! isset( $_REQUEST['cancellaallegatoatto'] ) || ! wp_verify_nonce( $_REQUEST['cancellaallegatoatto'], 'deleteallegatoatto' ) )
-				wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
+				wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 			$location = "?page=atti" ;
 			ap_del_allegato_atto(intval($_REQUEST['idAllegato']),intval($_REQUEST['idAtto']),intval(htmlentities($_REQUEST['Allegato'])));
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
@@ -342,9 +342,9 @@ function albo_post() {
 			} 		
 			$location = "?page=tipifiles" ;
 			$TipidiFiles=array();
-			$TipidiFiles["ndf"]= array("Descrizione"=>__('Tipo file non definito','albo-online'),"Icona"=>Albo_URL."img/notipofile.png","Verifica"=>"");
-			$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-online'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
-			$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-online'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-online')."</a>"));
+			$TipidiFiles["ndf"]= array("Descrizione"=>__('Tipo file non definito','albo-pretorio-considera'),"Icona"=>Albo_URL."img/notipofile.png","Verifica"=>"");
+			$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-pretorio-considera'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
+			$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-considera'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-considera')."</a>"));
 			update_option('opt_AP_TipidiFiles', $TipidiFiles);
 			wp_redirect( $location );
 			break;			
@@ -405,7 +405,7 @@ function albo_post() {
 //			var_dump($_REQUEST);die();
 			$location = "?page=tipifiles" ;
 			if (!isset( $_REQUEST['id'] )){
-				$location = add_query_arg( 'errore', __('Tipo file non definito','albo-online'), $location );
+				$location = add_query_arg( 'errore', __('Tipo file non definito','albo-pretorio-considera'), $location );
 				$location = add_query_arg( 'message', 5, $location );
 				$location = add_query_arg( 'Descrizione', $_REQUEST['descrizione'], $location );
 				$location = add_query_arg( 'Icona', $_REQUEST['icona'], $location );
@@ -430,7 +430,7 @@ function albo_post() {
 			} 		
 			$location = "?page=soggetti" ;
 			if (!is_email( $_REQUEST['resp-email'] )){
-				$location = add_query_arg( 'errore', __('Email non valida','albo-online'), $location );
+				$location = add_query_arg( 'errore', __('Email non valida','albo-pretorio-considera'), $location );
 				$location = add_query_arg( 'message', 5, $location );
 				$location = add_query_arg( 'resp-cognome', $_REQUEST['resp-cognome'], $location );
 				$location = add_query_arg( 'resp-nome', $_REQUEST['resp-nome'], $location );
@@ -490,8 +490,8 @@ function albo_post() {
 			} 		
 			$location = "?page=enti" ;
 			$errore="";
-			if ($_REQUEST['ente-nome']=='') $errore.=__("Bisogna valorizzare il Nome dell'Ente",'albo-online')." <br />";
-			if (!is_email( $_REQUEST['ente-email'])) $errore.=__('Email non valida','albo-online')." <br />"; 
+			if ($_REQUEST['ente-nome']=='') $errore.=__("Bisogna valorizzare il Nome dell'Ente",'albo-pretorio-considera')." <br />";
+			if (!is_email( $_REQUEST['ente-email'])) $errore.=__('Email non valida','albo-pretorio-considera')." <br />"; 
 			if (!is_email( $_REQUEST['ente-pec'])) $errore.="Pec non valida <br />"; 
 			if (strlen($errore)>0){
 				$location = add_query_arg( 'errore', $errore, $location );
@@ -547,9 +547,9 @@ function albo_post() {
 			} 			
 			$location = "?page=enti" ;
 			$errore="";
-			if ($_REQUEST['ente-nome']=='') $errore.=__("Bisogna valorizzare il Nome dell'Ente",'albo-online')." ";
-			if (!is_email( $_REQUEST['ente-email'])) $errore.=__('Email non valida','albo-online')." "; 
-			if (!is_email( $_REQUEST['ente-pec'])) $errore.=__('PEC non valida','albo-online')." "; 
+			if ($_REQUEST['ente-nome']=='') $errore.=__("Bisogna valorizzare il Nome dell'Ente",'albo-pretorio-considera')." ";
+			if (!is_email( $_REQUEST['ente-email'])) $errore.=__('Email non valida','albo-pretorio-considera')." "; 
+			if (!is_email( $_REQUEST['ente-pec'])) $errore.=__('PEC non valida','albo-pretorio-considera')." "; 
 			if (strlen($errore)>0){
 				$location = add_query_arg( 'errore', $errore, $location );
 				$location = add_query_arg( 'message', 4, $location );
@@ -613,8 +613,8 @@ function albo_post() {
 			} 		
 			$location = "?page=unitao" ;
 			$errore="";
-			if ($_REQUEST['unitao-nome']=='') $errore.=__("Bisogna valorizzare il Nome dell'Unità Organizzativa",'albo-online')." <br />";
-			if (!is_email( $_REQUEST['unitao-email'])) $errore.=__('Email non valida','albo-online')." <br />"; 
+			if ($_REQUEST['unitao-nome']=='') $errore.=__("Bisogna valorizzare il Nome dell'Unità Organizzativa",'albo-pretorio-considera')." <br />";
+			if (!is_email( $_REQUEST['unitao-email'])) $errore.=__('Email non valida','albo-pretorio-considera')." <br />"; 
 			if (strlen($errore)>0){
 				$location = add_query_arg( 'errore', $errore, $location );
 				$location = add_query_arg( 'message', 4, $location );
@@ -669,8 +669,8 @@ function albo_post() {
 			} 			
 			$location = "?page=unitao" ;
 			$errore="";
-			if ($_REQUEST['unitao-nome']=='') $errore.=__("Bisogna valorizzare il Nome dell'Unità Organizzativa",'albo-online')." ";
-			if (!is_email( $_REQUEST['unitao-email'])) $errore.=__('Email non valida','albo-online')." "; 
+			if ($_REQUEST['unitao-nome']=='') $errore.=__("Bisogna valorizzare il Nome dell'Unità Organizzativa",'albo-pretorio-considera')." ";
+			if (!is_email( $_REQUEST['unitao-email'])) $errore.=__('Email non valida','albo-pretorio-considera')." "; 
 			if (strlen($errore)>0){
 				$location = add_query_arg( 'errore', $errore, $location );
 				$location = add_query_arg( 'message', 4, $location );
@@ -1040,10 +1040,10 @@ function albo_post() {
 function Memo_allegato_atto_collegato(){
 	if ($_REQUEST["operazione"]=="associa_allegato"){
 		if (!isset($_REQUEST['secure'])) {
-			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 		}
 		if (!wp_verify_nonce($_REQUEST['secure'],'uploallegatoassociato')){
-			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 		} 		
 		$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/';
 		$targetfile = $_REQUEST['AllegatiSpuri'];
@@ -1052,7 +1052,7 @@ function Memo_allegato_atto_collegato(){
 		$real_target = realpath(str_replace("//","/",str_replace("\\","/",$targetfile)));
 		$real_upload = realpath($destination_path);
 		if ($real_target===FALSE || $real_upload===FALSE || strpos($real_target, $real_upload.DIRECTORY_SEPARATOR)!==0){
-			return __("ATTENZIONE. Il file indicato non si trova nella cartella di upload dell'Albo, l'operazione è stata annullata","albo-online");
+			return __("ATTENZIONE. Il file indicato non si trova nella cartella di upload dell'Albo, l'operazione è stata annullata","albo-pretorio-considera");
 		}
 		$targetfile = $real_target;
 		$Impronta=ap_insert_allegato(sanitize_textarea_field($_POST['Descrizione']),
@@ -1061,20 +1061,20 @@ function Memo_allegato_atto_collegato(){
 									 intval($_REQUEST['Integrale']),
 									 ap_sanifica_testo($_REQUEST['Natura']));
 	}
-	return __("File associato","albo-online")."%25%25br%25%25Nome: " . basename( $targetfile)." %25%25br%25%25".__("Percorso completo","albo-online")." : ".str_replace("//","/",str_replace("\\","/",$targetfile))." %25%25br%25%25".__("Impronta","albo-online")." : ".$Impronta."%25%25br%25%25".__("Documento Integrale","albo-online").": " .(isset($_REQUEST['Integrale'])?"Si":"No")."%25%25br%25%25".__("Natura documento","albo-online").": " .($_REQUEST['Natura']=="D"?"Documento firmato":"Allegato");
+	return __("File associato","albo-pretorio-considera")."%25%25br%25%25Nome: " . basename( $targetfile)." %25%25br%25%25".__("Percorso completo","albo-pretorio-considera")." : ".str_replace("//","/",str_replace("\\","/",$targetfile))." %25%25br%25%25".__("Impronta","albo-pretorio-considera")." : ".$Impronta."%25%25br%25%25".__("Documento Integrale","albo-pretorio-considera").": " .(isset($_REQUEST['Integrale'])?"Si":"No")."%25%25br%25%25".__("Natura documento","albo-pretorio-considera").": " .($_REQUEST['Natura']=="D"?"Documento firmato":"Allegato");
 }
 
 function Memo_allegato_atto(){
 	if ($_REQUEST["operazione"]=="upload"){
 		if (!isset($_REQUEST['uploallegato'])) {
-			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 		}
 		if (!wp_verify_nonce($_REQUEST['uploallegato'],'uploadallegati')){
-			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 		} 		
 //		var_dump($_FILES);var_dump($_FILES["files"]['name']);wp_die();
 		$numAllegati=count($_FILES["files"]['name']);
-		$retMessages=__("Allegati caricati n.","albo-online").$numAllegati."%25%25br%25%25";
+		$retMessages=__("Allegati caricati n.","albo-pretorio-considera").$numAllegati."%25%25br%25%25";
 		for ($i=0;$i<$numAllegati;$i++) {
 			if ((($_FILES["files"]["size"][$i] / 1024)/1024)<1) {
 				$DimFile=number_format($_FILES["files"]["size"][$i] / 1024,2);
@@ -1083,12 +1083,12 @@ function Memo_allegato_atto(){
 				$DimFile=number_format(($_FILES["files"]["size"][$i] / 1024)/1024,2);	
 				$UnitM=" MB";
 			}
-		    $dime= __("Dimensione","albo-online").": " . $DimFile . " ".$UnitM;
+		    $dime= __("Dimensione","albo-pretorio-considera").": " . $DimFile . " ".$UnitM;
 			if ($_FILES['files']['tmp_name'][$i]==''){
-				$messages[4]= __("File non selezionato Oppure operazione annullata","albo-online");
+				$messages[4]= __("File non selezionato Oppure operazione annullata","albo-pretorio-considera");
 			}else{
 				if (!ap_isAllowedExtension(strtolower($_FILES["files"]["name"][$i]))){
-					$messages= __("Tipo file non valido","albo-online");
+					$messages= __("Tipo file non valido","albo-pretorio-considera");
 				}else{
 					/* upload_max_filesize puo' essere espresso in K, M o G: senza
 					   convertirlo, un limite di "2G" verrebbe letto come 2 Mb. */
@@ -1098,10 +1098,10 @@ function Memo_allegato_atto(){
 					if ($UnitaIni=="G")		$LimiteMb = $LimiteMb*1024;
 					elseif ($UnitaIni=="K")	$LimiteMb = $LimiteMb/1024;
 					if (($DimFile>$LimiteMb) and ($UnitM==" MB")){
-						$messages= sprintf(__("Il file caricato è di %s Mb, il limite massimo è di %s Mb","albo-online"),$DimFile,ini_get('upload_max_filesize'));
+						$messages= sprintf(__("Il file caricato è di %s Mb, il limite massimo è di %s Mb","albo-pretorio-considera"),$DimFile,ini_get('upload_max_filesize'));
 					}else{
 					  	if ($_FILES["files"]["error"][$i] > 0){
-							$messages= __("Errore","albo-online").": " . $_FILES["file"]["error"][$i];
+							$messages= __("Errore","albo-pretorio-considera").": " . $_FILES["file"]["error"][$i];
 			    		}else{
 							if (get_option( 'opt_AP_FolderUploadMeseAnno' )=="") {
 								$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/';
@@ -1111,18 +1111,18 @@ function Memo_allegato_atto(){
 					   		$result = 0;
 						   	$target_path = ap_UniqueFileName($destination_path . basename(sanitize_file_name(remove_accents ( $_FILES['files']['name'][$i]))));
 							if(@move_uploaded_file($_FILES['files']['tmp_name'][$i],$target_path)){
-			    				$messages= __("File caricato","albo-online")."%25%25br%25%25".__("Nome","albo-online").": " . basename( $target_path)." %25%25br%25%25".__("Percorso completo","albo-online")." : ".str_replace("\\","/",$target_path);
+			    				$messages= __("File caricato","albo-pretorio-considera")."%25%25br%25%25".__("Nome","albo-pretorio-considera").": " . basename( $target_path)." %25%25br%25%25".__("Percorso completo","albo-pretorio-considera")." : ".str_replace("\\","/",$target_path);
 			    				$Natura=(isset($_POST['Natura'][$i])?"D":"A");
 			    				$Integrale=(isset($_POST['Integrale'][$i])?1:0);
 			    				$Impronta=ap_insert_allegato(ap_sanifica_testo($_POST['Descrizione'][$i]),
 															str_replace("\\","/",$target_path),$_POST['id'],
 															intval($Integrale),
 															ap_sanifica_testo($Natura));
-			    				$messages.= "%25%25br%25%25".__("Impronta","albo-online").": " .$Impronta;
-			    				$messages.= "%25%25br%25%25".__("Documento Integrale","albo-online").": " .(isset($_POST['Integrale'][$i])?"Si":"No");
-			    				$messages.= "%25%25br%25%25".__("Natura documento","albo-online").": " .(isset($_POST['Natura'][$i])?"Documento firmato":"Allegato");
+			    				$messages.= "%25%25br%25%25".__("Impronta","albo-pretorio-considera").": " .$Impronta;
+			    				$messages.= "%25%25br%25%25".__("Documento Integrale","albo-pretorio-considera").": " .(isset($_POST['Integrale'][$i])?"Si":"No");
+			    				$messages.= "%25%25br%25%25".__("Natura documento","albo-pretorio-considera").": " .(isset($_POST['Natura'][$i])?"Documento firmato":"Allegato");
 					   		}else{
-								$messages= __("Il File non caricato","albo-online").": " .str_replace("\\","/",$target_path)."%25%25br%25%25 ".__("Errore","albo-online").":".$_FILES['file']['error'];
+								$messages= __("Il File non caricato","albo-pretorio-considera").": " .str_replace("\\","/",$target_path)."%25%25br%25%25 ".__("Errore","albo-pretorio-considera").":".$_FILES['file']['error'];
 							}
 						}
 			  		}

@@ -13,15 +13,15 @@ class AlboPretorioWidget extends WP_Widget
 {
 	public function __construct()
 	{
-	   parent::__construct( 'AlboPretorio', 'Albo On Line', array('description' => __('Grazie a questo widget è possibile visualizzare sulla sidebar le ultime pubblicazioni dell Albo Pretorio','albo-online'),array( 'width' => 300, 'height' => 350)));
+	   parent::__construct( 'AlboPretorio', 'Albo On Line', array('description' => __('Grazie a questo widget è possibile visualizzare sulla sidebar le ultime pubblicazioni dell Albo Pretorio','albo-pretorio-considera'),array( 'width' => 300, 'height' => 350)));
 	 }
     
 	public function form($instance)
     {
     
 	 $defaults = array(
- 		'titolo_statistiche' => __('Dati Atti','albo-online'),
-        'titolo_elenco' => __('Atti Correnti','albo-online'),
+ 		'titolo_statistiche' => __('Dati Atti','albo-pretorio-considera'),
+        'titolo_elenco' => __('Atti Correnti','albo-pretorio-considera'),
         'numero_atti' => 5,
         'pagina_albo' => NULL,
         'ordine_campo' => NULL,
@@ -30,35 +30,35 @@ class AlboPretorioWidget extends WP_Widget
         $instance = wp_parse_args( (array) $instance, $defaults );?>
         <p>
             <label for="<?php echo $this->get_field_id( 'titolo' ); ?>">
-                <?php echo __('Titolo widget','albo-online');?>:
+                <?php echo __('Titolo widget','albo-pretorio-considera');?>:
             </label>
             <input type="text" id="<?php echo $this->get_field_id( 'titolo' ); ?>" name="<?php echo $this->get_field_name( 'titolo' ); ?>" value="<?php echo $instance['titolo']; ?>" size="30" />
         </p>
         <p>
             <label for="<?php echo $this->get_field_id( 'titolo_statistiche' ); ?>">
-                <?php echo __('Titolo cartella dati atti correnti','albo-online');?>:
+                <?php echo __('Titolo cartella dati atti correnti','albo-pretorio-considera');?>:
             </label>
             <input type="text" id="<?php echo $this->get_field_id( 'titolo_statistiche' ); ?>" name="<?php echo $this->get_field_name( 'titolo_statistiche' ); ?>" value="<?php echo $instance['titolo_statistiche']; ?>" size="30" />
         </p>
         <p>
             <label for="<?php echo $this->get_field_id( 'titolo_elenco' ); ?>">
-                <?php echo __('Titolo lista atti correnti','albo-online');?>:
+                <?php echo __('Titolo lista atti correnti','albo-pretorio-considera');?>:
             </label>
              <input type="text" id="<?php echo $this->get_field_id( 'titolo_elenco' ); ?>" name="<?php echo $this->get_field_name( 'titolo_elenco' ); ?>" value="<?php echo $instance['titolo_elenco']; ?>" size="30" />
         </p>        
 		<p>
             <label for="<?php echo $this->get_field_id( 'numero_atti' ); ?>">
-                <?php echo __('Numero Atti da visualizzare','albo-online');?>:
+                <?php echo __('Numero Atti da visualizzare','albo-pretorio-considera');?>:
             </label>
             <input type="text" id="<?php echo $this->get_field_id( 'numero_atti' ); ?>" name="<?php echo $this->get_field_name( 'numero_atti' ); ?>" value="<?php echo $instance['numero_atti']; ?>" size="2"/>
 
         </p>
         <p>
             <label for="<?php echo $this->get_field_id( 'pagina_albo' ); ?>">
-               <?php echo __('Pagina Albo','albo-online');?>:
+               <?php echo __('Pagina Albo','albo-pretorio-considera');?>:
             </label>
 		<select id="<?php echo $this->get_field_id( 'pagina_albo' ); ?>" name="<?php echo $this->get_field_name( 'pagina_albo' ); ?>"> 
-		 <option value=""><?php echo esc_attr( __( 'Seleziona la pagina', 'albo-online' ) ); ?></option> 
+		 <option value=""><?php echo esc_attr( __( 'Seleziona la pagina', 'albo-pretorio-considera' ) ); ?></option> 
 		 <?php 
 		  $pages = get_pages(); 
 		  foreach ( $pages as $pagg ) {
@@ -74,24 +74,24 @@ class AlboPretorioWidget extends WP_Widget
 		 ?>
 		</select>
         </p>
-		<h3><?php echo __('Ordine Elenco','albo-online');?></h3>
+		<h3><?php echo __('Ordine Elenco','albo-pretorio-considera');?></h3>
         <p>
             <label for="<?php echo $this->get_field_id( 'ordine_campo' ); ?>">
-               <?php echo __('In base a','albo-online');?>:
+               <?php echo __('In base a','albo-pretorio-considera');?>:
             </label>
 		<select id="<?php echo $this->get_field_id( 'ordine_campo' ); ?>" name="<?php echo $this->get_field_name( 'ordine_campo' ); ?>"> 
-		 <option value="Pubblicazione" <?php if ($instance['ordine_campo']=="Pubblicazione") echo 'selected="selected"'?> ><?php echo __('Data Pubblicazione','albo-online');?> </option>
-		 <option value="Scadenza" <?php if ($instance['ordine_campo']=="Scadenza") echo 'selected="selected"'?> ><?php echo __('Data Scadenza','albo-online');?> </option>
+		 <option value="Pubblicazione" <?php if ($instance['ordine_campo']=="Pubblicazione") echo 'selected="selected"'?> ><?php echo __('Data Pubblicazione','albo-pretorio-considera');?> </option>
+		 <option value="Scadenza" <?php if ($instance['ordine_campo']=="Scadenza") echo 'selected="selected"'?> ><?php echo __('Data Scadenza','albo-pretorio-considera');?> </option>
 		</select>
         </p>
 
         <p>
             <label for="<?php echo $this->get_field_id( 'ordinamento' ); ?>">
-               <?php echo __('Ordine','albo-online');?>:
+               <?php echo __('Ordine','albo-pretorio-considera');?>:
             </label>
 		<select id="<?php echo $this->get_field_id( 'ordinamento' ); ?>" name="<?php echo $this->get_field_name( 'ordinamento' ); ?>"> 
-		 <option value="C" <?php if ($instance['ordinamento']=="C") echo 'selected="selected"'?> ><?php echo __('Crescente','albo-online');?> </option>
-		 <option value="D" <?php if ($instance['ordinamento']=="D") echo 'selected="selected"'?> ><?php echo __('Decrescente','albo-online');?> </option>
+		 <option value="C" <?php if ($instance['ordinamento']=="C") echo 'selected="selected"'?> ><?php echo __('Crescente','albo-pretorio-considera');?> </option>
+		 <option value="D" <?php if ($instance['ordinamento']=="D") echo 'selected="selected"'?> ><?php echo __('Decrescente','albo-pretorio-considera');?> </option>
 		</select>
         </p>
 
@@ -145,12 +145,12 @@ public function widget( $args, $instance )
 		}
 	} else {
 			$HtmlW.= '<li>
-					'. __('Nessun Atto Codificato','albo-online').'
+					'. __('Nessun Atto Codificato','albo-pretorio-considera').'
 				  </li>';
 	}
 	$HtmlW.= '</ul>';
 	if ($CeAnnullato) 
-		$HtmlW.= '<p>'. __('Le righe evidenziate con questo sfondo','albo-online').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '. __('indicano Atti Annullati','albo-online').'</p>';
+		$HtmlW.= '<p>'. __('Le righe evidenziate con questo sfondo','albo-pretorio-considera').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '. __('indicano Atti Annullati','albo-pretorio-considera').'</p>';
 $HtmlW.= '</div>';
 ?>
 			<div id="pp-tabs-container">
@@ -160,8 +160,8 @@ $HtmlW.= '</div>';
 				</ul>
 				<div id="pp-tab-1">
                     <p>
-				        <?php echo __('Atti Correnti','albo-online');?> <?php echo $n_atti_attivi; ?><br />
-				        <?php echo __('di cui Annullati','albo-online');?> <?php echo $n_atti_attivi_annullati; ?>
+				        <?php echo __('Atti Correnti','albo-pretorio-considera');?> <?php echo $n_atti_attivi; ?><br />
+				        <?php echo __('di cui Annullati','albo-pretorio-considera');?> <?php echo $n_atti_attivi_annullati; ?>
 				    </p>
                 </div>
 				<div id="pp-tab-2">
@@ -193,13 +193,13 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
 {
 	public function __construct()
 	{
-	   parent::__construct( 'AlboOnLineAC', 'Albo On Line Atti Correnti', array('description' => __("Grazie a questo widget è possibile visualizzare gli atti correnti dell'Albo Pretorio","albo-online"),array( 'width' => 300, 'height' => 350)));
+	   parent::__construct( 'AlboOnLineAC', 'Albo On Line Atti Correnti', array('description' => __("Grazie a questo widget è possibile visualizzare gli atti correnti dell'Albo Pretorio","albo-pretorio-considera"),array( 'width' => 300, 'height' => 350)));
 	 }
     
         public function form($instance)
         {
          $defaults = array(
-             'titolo' => __("Albo On Line Ultimi Atti","albo-online"),
+             'titolo' => __("Albo On Line Ultimi Atti","albo-pretorio-considera"),
             'numero_atti' => 5,
             'pagina_albo' => NULL,
             'ordine_campo' => NULL,
@@ -208,23 +208,23 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
             $instance = wp_parse_args( (array) $instance, $defaults );?>
             <p>
                 <label for="<?php echo $this->get_field_id( 'titolo' ); ?>">
-                    <?php echo  __("Titolo widget","albo-online"); ?>:
+                    <?php echo  __("Titolo widget","albo-pretorio-considera"); ?>:
                 </label>
                 <input type="text" id="<?php echo $this->get_field_id( 'titolo' ); ?>" name="<?php echo $this->get_field_name( 'titolo' ); ?>" value="<?php echo $instance['titolo']; ?>" size="30" />
             </p>
             <p>
                 <label for="<?php echo $this->get_field_id( 'numero_atti' ); ?>">
-                    <?php echo  __("Numero Atti da visualizzare","albo-online"); ?>:
+                    <?php echo  __("Numero Atti da visualizzare","albo-pretorio-considera"); ?>:
                 </label>
                 <input type="text" id="<?php echo $this->get_field_id( 'numero_atti' ); ?>" name="<?php echo $this->get_field_name( 'numero_atti' ); ?>" value="<?php echo $instance['numero_atti']; ?>" size="2"/>
 
             </p>
             <p>
                 <label for="<?php echo $this->get_field_id( 'pagina_albo' ); ?>">
-                   <?php echo  __("Pagina Albo","albo-online"); ?>:
+                   <?php echo  __("Pagina Albo","albo-pretorio-considera"); ?>:
                 </label>
             <select id="<?php echo $this->get_field_id( 'pagina_albo' ); ?>" name="<?php echo $this->get_field_name( 'pagina_albo' ); ?>">
-             <option value=""><?php echo esc_attr( __( 'Seleziona la pagina', 'albo-online' )  ); ?></option>
+             <option value=""><?php echo esc_attr( __( 'Seleziona la pagina', 'albo-pretorio-considera' )  ); ?></option>
              <?php
               $pages = get_pages();
               foreach ( $pages as $pagg ) {
@@ -240,24 +240,24 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
              ?>
             </select>
             </p>
-            <h3><?php echo  __("Ordine Elenco","albo-online"); ?></h3>
+            <h3><?php echo  __("Ordine Elenco","albo-pretorio-considera"); ?></h3>
             <p>
                 <label for="<?php echo $this->get_field_id( 'ordine_campo' ); ?>">
-                   <?php echo  __("In base a","albo-online"); ?>:
+                   <?php echo  __("In base a","albo-pretorio-considera"); ?>:
                 </label>
             <select id="<?php echo $this->get_field_id( 'ordine_campo' ); ?>" name="<?php echo $this->get_field_name( 'ordine_campo' ); ?>">
-             <option value="Pubblicazione" <?php if ($instance['ordine_campo']=="Pubblicazione") echo 'selected="selected"'?> ><?php echo  __("Data Pubblicazione","albo-online"); ?> </option>
-             <option value="Scadenza" <?php if ($instance['ordine_campo']=="Scadenza") echo 'selected="selected"'?> ><?php echo  __("Data Scadenza","albo-online"); ?> </option>
+             <option value="Pubblicazione" <?php if ($instance['ordine_campo']=="Pubblicazione") echo 'selected="selected"'?> ><?php echo  __("Data Pubblicazione","albo-pretorio-considera"); ?> </option>
+             <option value="Scadenza" <?php if ($instance['ordine_campo']=="Scadenza") echo 'selected="selected"'?> ><?php echo  __("Data Scadenza","albo-pretorio-considera"); ?> </option>
             </select>
             </p>
 
             <p>
                 <label for="<?php echo $this->get_field_id( 'ordinamento' ); ?>">
-                   <?php echo  __("Ordine","albo-online"); ?>:
+                   <?php echo  __("Ordine","albo-pretorio-considera"); ?>:
                 </label>
             <select id="<?php echo $this->get_field_id( 'ordinamento' ); ?>" name="<?php echo $this->get_field_name( 'ordinamento' ); ?>">
-             <option value="C" <?php if ($instance['ordinamento']=="C") echo 'selected="selected"'?> ><?php echo  __("Crescente","albo-online"); ?> </option>
-             <option value="D" <?php if ($instance['ordinamento']=="D") echo 'selected="selected"'?> ><?php echo  __("Decrescente","albo-online"); ?> </option>
+             <option value="C" <?php if ($instance['ordinamento']=="C") echo 'selected="selected"'?> ><?php echo  __("Crescente","albo-pretorio-considera"); ?> </option>
+             <option value="D" <?php if ($instance['ordinamento']=="D") echo 'selected="selected"'?> ><?php echo  __("Decrescente","albo-pretorio-considera"); ?> </option>
             </select>
             </p>
            <?php
@@ -272,7 +272,7 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
 
             $titolo = apply_filters('widget_title', $instance['titolo'] );
              if ($titolo=='')
-                $titolo=__("Albo OnLine","albo-online");
+                $titolo=__("Albo OnLine","albo-pretorio-considera");
             echo $before_widget;
             echo $before_title .$titolo. $after_title;
             echo "<div>";
@@ -306,12 +306,12 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
             }
         } else {
                 $HtmlW.= '<li>
-                        '. __("Nessun Atto Codificato","albo-online").'
+                        '. __("Nessun Atto Codificato","albo-pretorio-considera").'
                       </li>';
         }
         $HtmlW.= '</ul>';
         if ($CeAnnullato)
-            $HtmlW.= '<p>'. __("Le righe evidenziate con questo sfondo","albo-online").' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '. __("indicano Atti Annullati","albo-online").'</p>';
+            $HtmlW.= '<p>'. __("Le righe evidenziate con questo sfondo","albo-pretorio-considera").' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '. __("indicano Atti Annullati","albo-pretorio-considera").'</p>';
     $HtmlW.= '</div>';
     ?>
                 <div>

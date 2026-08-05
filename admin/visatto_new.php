@@ -24,7 +24,7 @@ function Visualizza_Atto($Parametri){
 		if(isset($_GET["numero"]) And is_numeric($_GET["numero"])){
 			$Numero=$_GET["numero"];
 		}else{
-			echo __("Parametro Numero Atto non impostato","albo-online");
+			echo __("Parametro Numero Atto non impostato","albo-pretorio-considera");
 			return ob_get_clean();		
 		}
 	}
@@ -34,13 +34,13 @@ function Visualizza_Atto($Parametri){
 		if(isset($_GET["anno"]) And is_numeric($_GET["anno"])){
 			$Anno=$_GET["anno"];
 		}else{
-			echo __("Parametro Anno Atto non impostato","albo-online");
+			echo __("Parametro Anno Atto non impostato","albo-pretorio-considera");
 			return ob_get_clean();
 		}
 	}
 	$risultato=ap_get_all_atti(0,$Numero,$Anno);
 	if(count($risultato)==0){
-		echo __("Nessun atto trovato con questi parametri","albo-online");
+		echo __("Nessun atto trovato con questi parametri","albo-pretorio-considera");
 		return ob_get_clean();
 	}
 	$risultato=$risultato[0];
@@ -56,12 +56,12 @@ function Visualizza_Atto($Parametri){
 	$NomeResp=ap_get_responsabile($risultato->RespProc);
 	$NomeResp=$NomeResp[0];	
 	if($risultato->DataAnnullamento!='0000-00-00')
-		$Annullato=sprintf(__('%sAtto Annullato dal Responsabile del Procedimento %s Motivo: %s','albo-online'),'<p style="background-color: '.$coloreAnnullati.';text-align:center;font-size:1.5em;">','<br /><br />','<span style="font-size:1;font-style: italic;">'.stripslashes($risultato->MotivoAnnullamento).'</span></p>');
+		$Annullato=sprintf(__('%sAtto Annullato dal Responsabile del Procedimento %s Motivo: %s','albo-pretorio-considera'),'<p style="background-color: '.$coloreAnnullati.';text-align:center;font-size:1.5em;">','<br /><br />','<span style="font-size:1;font-style: italic;">'.stripslashes($risultato->MotivoAnnullamento).'</span></p>');
 	else
 		$Annullato='';
 	$Stato="Scaduto";
 	if ($risultato->DataFine>date("Y-m-d"))
-		$Stato=__("In corso di Validità","albo-online");
+		$Stato=__("In corso di Validità","albo-pretorio-considera");
 echo '
 <div>
 	<p style="margin-bottom:1.5em;">
@@ -70,79 +70,79 @@ echo '
 	<h3>'.esc_html($Titolo).'</h3>
 	<div class="Grid Grid--withGutter u-padding-all-l">
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Stato Atto","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Stato Atto","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.$Stato.'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Ente titolare dell'Atto","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Ente titolare dell'Atto","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.stripslashes(ap_get_ente($risultato->Ente)->Nome).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Numero Albo","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Numero Albo","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.$risultato->Numero."/".$risultato->Anno.'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Codice di Riferimento","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Codice di Riferimento","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(stripslashes($risultato->Riferimento)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Oggetto","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Oggetto","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-margin-top-xs u-padding-left-m u-padding-right-m u-padding-top-xxs u-padding-bottom-s u-border-bottom-xxs">'.esc_html(stripslashes($risultato->Oggetto)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data di registrazione","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data di registrazione","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.ap_VisualizzaData($risultato->Data).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data inizio Pubblicazione","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data inizio Pubblicazione","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.ap_VisualizzaData($risultato->DataInizio).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data fine Pubblicazione","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data fine Pubblicazione","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.ap_VisualizzaData($risultato->DataFine).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data oblio","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Data oblio","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.ap_VisualizzaData($risultato->DataOblio).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Richiedente","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Richiedente","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(stripslashes($risultato->Richiedente)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Unità Organizzativa Responsabile","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Unità Organizzativa Responsabile","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.stripslashes($Unitao->Nome).'</div>
 		</div>		
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Responsabile del procedimento amministrativo","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.stripslashes($NomeResp->Nome." ".$NomeResp->Cognome).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Categoria","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Categoria","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.stripslashes($risultatocategoria->Nome).'</div>
@@ -156,14 +156,14 @@ if($MetaDati!==FALSE){
 	$Meta=substr($Meta,0,-3);
 		echo'	
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Meta Dati","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Meta Dati","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.$Meta.'</div>
 		</div>';
 }
 echo'		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xxs u-borderRadius-m u-padding-all-m">'.__("Note","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xxs u-borderRadius-m u-padding-all-m">'.__("Note","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-margin-top-xs u-padding-left-m u-padding-right-m u-padding-top-xxs u-padding-bottom-s u-border-bottom-xxs">'.(strlen(stripslashes($risultato->Informazioni))>0?wp_kses_post(stripslashes($risultato->Informazioni)):"&nbsp;&nbsp;").'</div>
@@ -174,7 +174,7 @@ $Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 $Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 $Ruolo="";
 if($Soggetti){
-	echo "		<h3 style=\"text-align:center;\">".__("Soggetti","albo-online")."</h3>";
+	echo "		<h3 style=\"text-align:center;\">".__("Soggetti","albo-pretorio-considera")."</h3>";
 }
 foreach($Soggetti as $Soggetto){
 	if(ap_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
@@ -190,21 +190,21 @@ foreach($Soggetti as $Soggetto){
 	}
 	$Ruolo=$Soggetto->Funzione;
 	echo'		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Persona","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Persona","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.$Soggetto->Cognome." ".$Soggetto->Nome.'</div>
 		</div>';		
 	if ($Soggetto->Email)
 	echo'				<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Email","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Email","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs"><a href="mailto:'.$Soggetto->Email.'">'.$Soggetto->Email.'</a></div>
 		</div>';
 	if ($Soggetto->Telefono)
 	echo'					<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Telefono","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Telefono","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.$Soggetto->Telefono.'</div>
@@ -212,7 +212,7 @@ foreach($Soggetti as $Soggetto){
 		<tr>';
 	if ($Soggetto->Orario)
 	echo'				<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Orario ricevimento","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Orario ricevimento","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.$Soggetto->Orario.'</div>
@@ -220,7 +220,7 @@ foreach($Soggetti as $Soggetto){
 		<tr>';
 	if ($Soggetto->Note)
 	echo'		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
-			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Note","albo-online").'</div>
+			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.__("Note","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.$Soggetto->Note.'</div>
@@ -240,7 +240,7 @@ $StatoAllegati= get_option('opt_AP_Allegati');
 if(count($documenti)>0){
 	echo '
 	<div class="Grid Grid--withGutter u-padding-all-l">
-		<h3>'. __("Documenti firmati","albo-online").'</h3>
+		<h3>'. __("Documenti firmati","albo-pretorio-considera").'</h3>
 			<div class="Grid Grid--withGutter u-padding-all-l">';
 	//print_r($_SERVER);
 	foreach ($documenti as $allegato) {
@@ -248,14 +248,14 @@ if(count($documenti)>0){
 		echo'
 			<div class="Grid-cell HeadAllegati">
 				<div class="u-margin-bottom-xs u-borderRadius-m u-padding-all-m u-border-all-xxs">
-					<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30"allegato/> '.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-online")."</span><br />":"").'<strong>'.__("Descrizione","albo-online").'</strong>: '.strip_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br /><strong>'.__("Impronta","albo-online").'</strong>: '.$allegato->Impronta.'<br /><strong>'.__("Dimensione file","albo-online").'</strong>: '.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)."<br />";
+					<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30"allegato/> '.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-considera").'</strong>: '.strip_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br /><strong>'.__("Impronta","albo-pretorio-considera").'</strong>: '.$allegato->Impronta.'<br /><strong>'.__("Dimensione file","albo-pretorio-considera").'</strong>: '.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)."<br />";
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.ap_DaPath_a_URL($allegato->Allegato).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" title="'.__("Visualizza Allegato","albo-online").'" target="_blank">
+						echo '<a href="'.ap_DaPath_a_URL($allegato->Allegato).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" title="'.__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> </a> ';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" class="noUnderLine" title="'.__("Scarica allegato","albo-online").'">
+						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" class="noUnderLine" title="'.__("Scarica allegato","albo-pretorio-considera").'">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>';
 						if($StatoAllegati=="dwn"){
 							echo " <strong>".basename( $allegato->Allegato).'</strong></a>';
@@ -264,7 +264,7 @@ if(count($documenti)>0){
 						}
 					}
 				}else
-					echo basename( $allegato->Allegato).' '.__("File non trovato, il file è stato cancellato o spostato!","albo-online");
+					echo basename( $allegato->Allegato).' '.__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
 		echo '</div>
 			</div>
 		';
@@ -276,7 +276,7 @@ $allegati=ap_get_allegati_atto($id);
 if(count($allegati)>0){
 	echo '
 	<div class="Grid Grid--withGutter u-padding-all-l">
-		<h3>'. __("Allegati","albo-online").'</h3>
+		<h3>'. __("Allegati","albo-pretorio-considera").'</h3>
 			<div class="Grid Grid--withGutter u-padding-all-l">';
 	//print_r($_SERVER);
 	foreach ($allegati as $allegato) {
@@ -284,14 +284,14 @@ if(count($allegati)>0){
 		echo'
 			<div class="Grid-cell HeadAllegati">
 				<div class="u-margin-bottom-xs u-borderRadius-m u-padding-all-m u-border-all-xxs">
-					<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30"allegato/> '.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-online")."</span><br />":"").'<strong>'.__("Descrizione","albo-online").'</strong>: '.strip_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br /><strong>'.__("Impronta","albo-online").'</strong>: '.$allegato->Impronta.'<br /><strong>'.__("Dimensione file","albo-online").'</strong>: '.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)."<br />";
+					<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30"allegato/> '.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-considera").'</strong>: '.strip_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br /><strong>'.__("Impronta","albo-pretorio-considera").'</strong>: '.$allegato->Impronta.'<br /><strong>'.__("Dimensione file","albo-pretorio-considera").'</strong>: '.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)."<br />";
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.ap_DaPath_a_URL($allegato->Allegato).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" title="'.__("Visualizza Allegato","albo-online").'" target="_blank">
+						echo '<a href="'.ap_DaPath_a_URL($allegato->Allegato).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" title="'.__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg></a> ';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" class="noUnderLine" title="'.__("Scarica allegato","albo-online").'">
+						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" class="noUnderLine" title="'.__("Scarica allegato","albo-pretorio-considera").'">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>';
 						if($StatoAllegati=="dwn"){
 							echo " <strong>".basename( $allegato->Allegato).'</strong></a>';
@@ -300,7 +300,7 @@ if(count($allegati)>0){
 						}	
 					}
 				}else
-					echo basename( $allegato->Allegato).' '.__("File non trovato, il file è stato cancellato o spostato!","albo-online");
+					echo basename( $allegato->Allegato).' '.__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
 		echo '</div>
 			</div>
 		';
@@ -308,8 +308,8 @@ if(count($allegati)>0){
 	echo '</div>
 </div>
 <div class="Prose Alert Alert--info Alert--withIcon" role="alert">
-    <h2 class="u-text-h3">'.__("Informazioni","albo-online").'</h2>
-    <p class="u-text-p">'.__("L'impronta dei files è calcolata con algoritmo SHA256 al momento dell'upload","albo-online").'</p>
+    <h2 class="u-text-h3">'.__("Informazioni","albo-pretorio-considera").'</h2>
+    <p class="u-text-p">'.__("L'impronta dei files è calcolata con algoritmo SHA256 al momento dell'upload","albo-pretorio-considera").'</p>
 </div>';
 }
 

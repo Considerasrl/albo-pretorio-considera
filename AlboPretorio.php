@@ -1,15 +1,16 @@
 <?php
 /**
  * @wordpress-plugin
- * Plugin Name:       Albo Pretorio On line (Considera)
+ * Plugin Name:       Albo Pretorio Considera
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.10.1
+ * Version:           4.11.0
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       albo-online
+ * Text Domain:       albo-pretorio-considera
+ * Domain Path:       /languages
 */
 /*
  * Opera derivata da "Albo Pretorio On line" di Ignazio Scimone (eduva.org),
@@ -35,11 +36,11 @@ if (isset($_REQUEST['action'])){
 	switch($_REQUEST['action']){
 		case "creafoblio":
 			if (!isset($_REQUEST['rigenera'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				break;
 			}
 			if (!wp_verify_nonce($_REQUEST['rigenera'],'rigeneraoblio')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online");
+				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				break;
 			} 			
 			ap_crearobots();
@@ -59,7 +60,7 @@ if (!class_exists('AlboPretorio')) {
 	var $plugin_name = '';
 
 	function __construct() {
-		load_plugin_textdomain( 'albo-online', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+		load_plugin_textdomain( 'albo-pretorio-considera', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
 		if ( ! function_exists( 'get_plugins' ) )
 	 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	    $plugins = get_plugins( "/".plugin_basename( dirname( __FILE__ ) ) );
@@ -120,8 +121,8 @@ function admin_notice(){
 ?>
     <div class="updated notice albo-notice-dismis is-dismissible" >
         <h3>Albo Online</h3>
-        <p><?php echo sprintf(__('Aggiornato alla versione %s', 'albo-online' ),$this->version); ?></p>
-        <p><?php echo sprintf(__('Per visualizzare le modifiche apportate consultare il %sregistro delle modifiche su GitHub%s', 'albo-online' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>'); ?></p>
+        <p><?php echo sprintf(__('Aggiornato alla versione %s', 'albo-pretorio-considera' ),$this->version); ?></p>
+        <p><?php echo sprintf(__('Per visualizzare le modifiche apportate consultare il %sregistro delle modifiche su GitHub%s', 'albo-pretorio-considera' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>'); ?></p>
     </div>
 
 
@@ -247,7 +248,7 @@ function admin_notice(){
 		$IDAtto=$request->get_param("id");
 		$risultato=ap_get_atto($IDAtto);
 		if(count($risultato)==0){
-			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-online'), array( 'status' => 404 ) );
+			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-considera'), array( 'status' => 404 ) );
   		}
 		return new WP_REST_Response($this->REST_API_get_atto($risultato), 200 );
 	}
@@ -257,7 +258,7 @@ function admin_notice(){
 		$AnnoAtto=$request->get_param("anno");
 		$risultato=ap_get_all_atti(0,$NumeroAtto,$AnnoAtto);
 		if(count($risultato)==0){
-			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-online'), array( 'status' => 404 ) );
+			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-considera'), array( 'status' => 404 ) );
   		}
 
 		return new WP_REST_Response($this->REST_API_get_atto($risultato), 200 );
@@ -306,7 +307,7 @@ function admin_notice(){
 						"Orario" 	=>$Soggetto->Orario,
 						"Note" 		=>$Soggetto->Note,
 						"CodFun" 	=>$Soggetto->Funzione,
-						"Funzione"	=>ap_get_Funzione_Responsabile($Soggetto->Funzione,__('Descrizione','albo-online')));
+						"Funzione"	=>ap_get_Funzione_Responsabile($Soggetto->Funzione,__('Descrizione','albo-pretorio-considera')));
 				}				
 			}
 
@@ -423,7 +424,7 @@ function admin_notice(){
 	function rest_api_atti_get($request ) {
 		$PagAlbo=get_option('opt_AP_PAtto');
 		if(!isset($PagAlbo) || $PagAlbo=="")
-			return new WP_REST_Response(__('Errore:Pagina visualizzazione atto non impostata','albo-online'),200);
+			return new WP_REST_Response(__('Errore:Pagina visualizzazione atto non impostata','albo-pretorio-considera'),200);
 	$Stato=$request->get_param("stato");
 	$N_A_pp=$request->get_param("per_page");
 	$Pag=$request->get_param("page");
@@ -500,7 +501,7 @@ function admin_notice(){
 		if (get_post_type( $PostID) !="avcp" Or get_option('opt_AP_AutoShortcode')!="Si")
 			return $content;
 		$Cig=get_post_meta($PostID,'avcp_cig',TRUE);
-		$Parametri=array('meta'=>"CIG",'valore'=>$Cig,'titolo' => __('Atti Albo on line di riferimento','albo-online'));
+		$Parametri=array('meta'=>"CIG",'valore'=>$Cig,'titolo' => __('Atti Albo on line di riferimento','albo-pretorio-considera'));
 		$OldInterfaccia=get_option('opt_AP_OldInterfaccia');
 		if($OldInterfaccia=="Si"){
 			require_once ( dirname (__FILE__) . '/admin/gruppiatti.php' );		
@@ -516,15 +517,15 @@ function admin_notice(){
 				if(!isset($_SERVER["HTTP_REFERER"])){
 					wp_die(__('Oooooo!<br />
 					        Stai tentando di fare il furbo!<br />
-					        Non puoi accedere a questo file direttamente.','albo-online'));
+					        Non puoi accedere a questo file direttamente.','albo-pretorio-considera'));
 					break;
 				}
 				$Allegato	= ap_get_allegato_atto($_REQUEST['id']);
 				if (empty($Allegato))
-					wp_die(__("Allegato non trovato","albo-online"));
+					wp_die(__("Allegato non trovato","albo-pretorio-considera"));
 				$file_path	=$Allegato[0]->Allegato;
 				if (!is_file($file_path) or !is_readable($file_path))
-					wp_die(__("File non trovato, il file è stato cancellato o spostato!","albo-online"));
+					wp_die(__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera"));
 				/* Il controllo sul Referer non basta a limitare l'accesso: chiunque
 				   scorra gli id puo' scaricare gli allegati di atti non ancora
 				   pubblicati o oltre la data di oblio, che il front-end non mostra.
@@ -540,7 +541,7 @@ function admin_notice(){
 					$NonPubblicato = ($Atto->DataInizio!="0000-00-00" And $Atto->DataInizio>$Oggi);
 					$OltreOblio    = ($Atto->DataOblio !="0000-00-00" And $Atto->DataOblio <=$Oggi);
 					if ($NonPubblicato Or $OltreOblio)
-						wp_die(__("Documento non disponibile","albo-online"),"",array('response'=>404));
+						wp_die(__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
 				}
 				$chunksize	= 2*(1024*1024);
 				$stat 		= stat($file_path);
@@ -599,32 +600,32 @@ function admin_notice(){
 			return;?>
 <script type='text/javascript'>
 	var myajaxsec = "<?php echo wp_create_nonce('adminsecretAlboOnLine');?>",
-	    title_button_albo="<?php echo str_replace('"',"''",__('Albo OnLine','albo-online'));?>",
-	    title_button_gruppi="<?php echo str_replace('"',"''",__('Albo OnLine raggruppamento atti','albo-online'));?>",
-	    title_button_atto="<?php echo str_replace('"',"''",__('Albo OnLine visualizza atto','albo-online'));?>",
-	    NonVal="<?php echo str_replace('"',"''",__("Non Valorizzato","albo-online"));?>",
-	    NonValAmm="<?php echo str_replace('"',"''",__("Valore Non Valido","albo-online"));?>",
-	    NonSOg="<?php echo str_replace('"',"''",__("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-online"));?>",
-	    TabFunSog="<?php echo str_replace('"',"''",__("Tabella Funzioni Soggetti","albo-online"));?>",
-	    Codice="<?php echo str_replace('"',"''",__("Codice","albo-online"));?>",
-	    ValidateCodice="<?php echo str_replace('"',"''",__("Il campo Codice deve essere di 2 o 3 caratteri","albo-online"));?>",
-	    Funzione="<?php echo str_replace('"',"''",__("Funzione","albo-online"));?>",
-	    ValidateFunzione="<?php echo str_replace('"',"''",__("Il campo Funzione deve essere di almeno 5 caratteri","albo-online"));?>",
-	    Visualizza="<?php echo str_replace('"',"''",__("Visualizza","albo-online"));?>",
-	    ValidateVisualizza="<?php echo str_replace('"',"''",__("Visualizza in elenco Soggetti nei dettagli dell'atto","albo-online"));?>",
-	    Stampa="<?php echo str_replace('"',"''",__("Stampa","albo-online"));?>",
-	    ValidateStampa="<?php echo str_replace('"',"''",__("Stampa nella colonna Sinitra del Certificato di Pubblicazione<br />Da impostarne uno solo, comunque verrà preso in considerazione solo il primo","albo-online"));?>",
-	    append= "<?php echo str_replace('"',"''",__("Aggiungi Riga","albo-online"));?>",
-        removeLast= "<?php echo str_replace('"',"''",__("Rimuovi ultima Riga","albo-online"));?>",
-        insert= "<?php echo str_replace('"',"''",__("Inserisci Riga prima","albo-online"));?>",
-        remove= "<?php echo str_replace('"',"''",__("Rimuovi la Riga corrente","albo-online"));?>",
-        moveUp= "<?php echo str_replace('"',"''",__("Sposta Su","albo-online"));?>",
-        moveDown= "<?php echo str_replace('"',"''",__("Sposta Giù","albo-online"));?>",
-        rowDrag= "<?php echo str_replace('"',"''",__("Ordina Riga","albo-online"));?>",
-        rowEmpty= "<?php echo str_replace('"',"''",__("Questa Griglia è vuota","albo-online"));?>";  
+	    title_button_albo="<?php echo str_replace('"',"''",__('Albo OnLine','albo-pretorio-considera'));?>",
+	    title_button_gruppi="<?php echo str_replace('"',"''",__('Albo OnLine raggruppamento atti','albo-pretorio-considera'));?>",
+	    title_button_atto="<?php echo str_replace('"',"''",__('Albo OnLine visualizza atto','albo-pretorio-considera'));?>",
+	    NonVal="<?php echo str_replace('"',"''",__("Non Valorizzato","albo-pretorio-considera"));?>",
+	    NonValAmm="<?php echo str_replace('"',"''",__("Valore Non Valido","albo-pretorio-considera"));?>",
+	    NonSOg="<?php echo str_replace('"',"''",__("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-pretorio-considera"));?>",
+	    TabFunSog="<?php echo str_replace('"',"''",__("Tabella Funzioni Soggetti","albo-pretorio-considera"));?>",
+	    Codice="<?php echo str_replace('"',"''",__("Codice","albo-pretorio-considera"));?>",
+	    ValidateCodice="<?php echo str_replace('"',"''",__("Il campo Codice deve essere di 2 o 3 caratteri","albo-pretorio-considera"));?>",
+	    Funzione="<?php echo str_replace('"',"''",__("Funzione","albo-pretorio-considera"));?>",
+	    ValidateFunzione="<?php echo str_replace('"',"''",__("Il campo Funzione deve essere di almeno 5 caratteri","albo-pretorio-considera"));?>",
+	    Visualizza="<?php echo str_replace('"',"''",__("Visualizza","albo-pretorio-considera"));?>",
+	    ValidateVisualizza="<?php echo str_replace('"',"''",__("Visualizza in elenco Soggetti nei dettagli dell'atto","albo-pretorio-considera"));?>",
+	    Stampa="<?php echo str_replace('"',"''",__("Stampa","albo-pretorio-considera"));?>",
+	    ValidateStampa="<?php echo str_replace('"',"''",__("Stampa nella colonna Sinitra del Certificato di Pubblicazione<br />Da impostarne uno solo, comunque verrà preso in considerazione solo il primo","albo-pretorio-considera"));?>",
+	    append= "<?php echo str_replace('"',"''",__("Aggiungi Riga","albo-pretorio-considera"));?>",
+        removeLast= "<?php echo str_replace('"',"''",__("Rimuovi ultima Riga","albo-pretorio-considera"));?>",
+        insert= "<?php echo str_replace('"',"''",__("Inserisci Riga prima","albo-pretorio-considera"));?>",
+        remove= "<?php echo str_replace('"',"''",__("Rimuovi la Riga corrente","albo-pretorio-considera"));?>",
+        moveUp= "<?php echo str_replace('"',"''",__("Sposta Su","albo-pretorio-considera"));?>",
+        moveDown= "<?php echo str_replace('"',"''",__("Sposta Giù","albo-pretorio-considera"));?>",
+        rowDrag= "<?php echo str_replace('"',"''",__("Ordina Riga","albo-pretorio-considera"));?>",
+        rowEmpty= "<?php echo str_replace('"',"''",__("Questa Griglia è vuota","albo-pretorio-considera"));?>";  
 </script>
 	<?php		
-		$TitoloAlbo=sanitize_title(__('Albo OnLine','albo-online'));
+		$TitoloAlbo=sanitize_title(__('Albo OnLine','albo-pretorio-considera'));
 		$path=plugins_url('', __FILE__ );
 	    wp_enqueue_script('jquery');
 	    wp_enqueue_script('jquery-ui-core');
@@ -675,10 +676,10 @@ function admin_notice(){
 				<table class="widefat striped">
 				    <thead>
 					<tr>
-						<th style="font-size:1.2em;">'.__('Data','albo-online').'</th>
-						<th style="font-size:1.2em;">'.__('Nome Allegato','albo-online').'</th>
-						<th style="font-size:1.2em;">'.__('File','albo-online').'</th>
-						<th style="font-size:1.2em;">'.($Oggetto==5?__('N° Visualizzazioni','albo-online'):__('N° Download','albo-online')).'</th>
+						<th style="font-size:1.2em;">'.__('Data','albo-pretorio-considera').'</th>
+						<th style="font-size:1.2em;">'.__('Nome Allegato','albo-pretorio-considera').'</th>
+						<th style="font-size:1.2em;">'.__('File','albo-pretorio-considera').'</th>
+						<th style="font-size:1.2em;">'.($Oggetto==5?__('N° Visualizzazioni','albo-pretorio-considera'):__('N° Download','albo-pretorio-considera')).'</th>
 					</tr>
 				    </thead>
 				    <tbody>';
@@ -805,9 +806,9 @@ static function add_albo_plugin_visatto($plugin_array) {
 			<table class="widefat striped">
 			    <thead>
 				<tr>
-					<th style="font-size:1.2em;">'.__('Data','albo-online').'</th>
-					<th style="font-size:1.2em;">'.__('Operazione','albo-online').'</th>
-					<th style="font-size:1.2em;">'.__('Informazioni','albo-online').'</th>
+					<th style="font-size:1.2em;">'.__('Data','albo-pretorio-considera').'</th>
+					<th style="font-size:1.2em;">'.__('Operazione','albo-pretorio-considera').'</th>
+					<th style="font-size:1.2em;">'.__('Informazioni','albo-pretorio-considera').'</th>
 				</tr>
 			    </thead>
 			    <tbody>';
@@ -815,16 +816,16 @@ static function add_albo_plugin_visatto($plugin_array) {
 		foreach ($righe as $riga) {
 			switch ($riga->TipoOperazione){
 			 	case 1:
-			 		$Operazione=__('Inserimento','albo-online');
+			 		$Operazione=__('Inserimento','albo-pretorio-considera');
 			 		break;
 			 	case 2:
-			 		$Operazione=__('Modifica','albo-online');
+			 		$Operazione=__('Modifica','albo-pretorio-considera');
 					break;
 			 	case 3:
-			 		$Operazione=__('Cancellazione','albo-online');
+			 		$Operazione=__('Cancellazione','albo-pretorio-considera');
 					break;
 			 	case 4:
-			 		$Operazione=__('Approvazione','albo-online');
+			 		$Operazione=__('Approvazione','albo-pretorio-considera');
 					break;
 			}
 			$HtmlTesto.= '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
@@ -839,24 +840,24 @@ static function add_albo_plugin_visatto($plugin_array) {
 	}
 
 	function add_menu(){
-  		add_menu_page('Panoramica', __('Albo OnLine','albo-online'), 'gest_atti_albo', 'Albo_Pretorio',array( 'AlboPretorio','show_menu'),Albo_URL."img/logo.png");
-		$atti_page=add_submenu_page( 'Albo_Pretorio', 'Atti', __('Atti','albo-online'), 'gest_atti_albo', 'atti', array( 'AlboPretorio','show_menu'));
-		$categorie_page=add_submenu_page( 'Albo_Pretorio', 'Categorie', __('Categorie','albo-online'), 'gest_atti_albo', 'categorie', array( 'AlboPretorio', 'show_menu'));
-		$enti=add_submenu_page( 'Albo_Pretorio', 'Enti', __('Enti','albo-online'), 'editore_atti_albo', 'enti', array('AlboPretorio', 'show_menu'));
-		$uo_page=add_submenu_page( 'Albo_Pretorio', 'Unità Organizzative', __('Unità Organizzative','albo-online'), 'editore_atti_albo', 'unitao', array( 'AlboPretorio','show_menu'));
-		$responsabili_page=add_submenu_page( 'Albo_Pretorio', 'Soggetti', __('Soggetti','albo-online'), 'editore_atti_albo', 'soggetti', array( 'AlboPretorio','show_menu'));
-		$tipifiles=add_submenu_page( 'Albo_Pretorio', 'Tipi di files', __('Tipi di Files','albo-online'), 'admin_albo', 'tipifiles', array( 'AlboPretorio','show_menu'));
-		$tipifiles=add_submenu_page( 'Albo_Pretorio', 'Tabelle', __('Tabelle','albo-online'), 'admin_albo', 'tabelle', array( 'AlboPretorio','show_menu'));
-		$parametri_page=add_submenu_page( 'Albo_Pretorio', 'Generale', __('Parametri','albo-online'), 'admin_albo', 'configAlboP', array( 'AlboPretorio','show_menu'));
-		$permessi=add_submenu_page( 'Albo_Pretorio', 'Permessi', __('Permessi','albo-online'), 'admin_albo', 'permessiAlboP', array('AlboPretorio', 'show_menu'));
-		$utility=add_submenu_page( 'Albo_Pretorio', 'Utility', __('Utility','albo-online'), 'admin_albo', 'utilityAlboP', array('AlboPretorio', 'show_menu'));
+  		add_menu_page('Panoramica', __('Albo OnLine','albo-pretorio-considera'), 'gest_atti_albo', 'Albo_Pretorio',array( 'AlboPretorio','show_menu'),Albo_URL."img/logo.png");
+		$atti_page=add_submenu_page( 'Albo_Pretorio', 'Atti', __('Atti','albo-pretorio-considera'), 'gest_atti_albo', 'atti', array( 'AlboPretorio','show_menu'));
+		$categorie_page=add_submenu_page( 'Albo_Pretorio', 'Categorie', __('Categorie','albo-pretorio-considera'), 'gest_atti_albo', 'categorie', array( 'AlboPretorio', 'show_menu'));
+		$enti=add_submenu_page( 'Albo_Pretorio', 'Enti', __('Enti','albo-pretorio-considera'), 'editore_atti_albo', 'enti', array('AlboPretorio', 'show_menu'));
+		$uo_page=add_submenu_page( 'Albo_Pretorio', 'Unità Organizzative', __('Unità Organizzative','albo-pretorio-considera'), 'editore_atti_albo', 'unitao', array( 'AlboPretorio','show_menu'));
+		$responsabili_page=add_submenu_page( 'Albo_Pretorio', 'Soggetti', __('Soggetti','albo-pretorio-considera'), 'editore_atti_albo', 'soggetti', array( 'AlboPretorio','show_menu'));
+		$tipifiles=add_submenu_page( 'Albo_Pretorio', 'Tipi di files', __('Tipi di Files','albo-pretorio-considera'), 'admin_albo', 'tipifiles', array( 'AlboPretorio','show_menu'));
+		$tipifiles=add_submenu_page( 'Albo_Pretorio', 'Tabelle', __('Tabelle','albo-pretorio-considera'), 'admin_albo', 'tabelle', array( 'AlboPretorio','show_menu'));
+		$parametri_page=add_submenu_page( 'Albo_Pretorio', 'Generale', __('Parametri','albo-pretorio-considera'), 'admin_albo', 'configAlboP', array( 'AlboPretorio','show_menu'));
+		$permessi=add_submenu_page( 'Albo_Pretorio', 'Permessi', __('Permessi','albo-pretorio-considera'), 'admin_albo', 'permessiAlboP', array('AlboPretorio', 'show_menu'));
+		$utility=add_submenu_page( 'Albo_Pretorio', 'Utility', __('Utility','albo-pretorio-considera'), 'admin_albo', 'utilityAlboP', array('AlboPretorio', 'show_menu'));
 		add_action( 'admin_head-'. $atti_page, array( 'AlboPretorio','ap_head' ));
 		add_action( "load-$atti_page", array('AlboPretorio', 'screen_option'));
 
 }
 	static function screen_option() {
 		if(!isset($_GET['action'])){
-			$args=array('label'   => __('Atti per pagina','albo-online'),
+			$args=array('label'   => __('Atti per pagina','albo-pretorio-considera'),
 				   'default' => 25,
 				   'option'  => 'atti_per_page');
 			add_screen_option( 'per_page', $args );			
@@ -1045,7 +1046,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 			return;
 		$ret="";
 		$Parametri=shortcode_atts(array(
-			'titolo' => __('Atti Albo on line di riferimento','albo-online'),
+			'titolo' => __('Atti Albo on line di riferimento','albo-pretorio-considera'),
 			'meta' => '',
 			'valore' => '',
 		), $Parametri,"AlboGruppiAtti");
@@ -1067,7 +1068,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 	function VisualizzaAtto($Parametri){
 		$ret="";
 		$Parametri=shortcode_atts(array(
-			'titolo' => __('Atto Albo on line','albo-online'),
+			'titolo' => __('Atto Albo on line','albo-pretorio-considera'),
 			'numero' => '',
 			'anno' => '',
 		), $Parametri,"AlboAtto");
@@ -1132,32 +1133,28 @@ static function add_albo_plugin_visatto($plugin_array) {
 		echo ' <div class="my-welcome-panel">
 	         	<div class="my-welcome-panel-content" style="display:inline;float:left;width:35%;">
 					<p style="float:left;">
-						<img src="'.Albo_URL.'/img/LogoAlbo.png" alt="'.__('Logo Albo on line pubblicità legale','albo-online').'" style="width:100%;" />
-					<br />'.__('Versione','albo-online').' <strong>'.$this->version.'</strong></p>
-					<p style="font-size:1.2em;text-align: center;">'.__('Plugin sviluppato da','albo-online').' <strong>Scimone Ignazio</strong><br />
-					<span style="font-size:0.85em;">'.__('Fork mantenuto da','albo-online').' <strong><a href="https://www.considera.it/" target="_blank" rel="noopener">Considera</a></strong> &middot; <a href="mailto:info@considera.it" title="'.__('Invia email a chi mantiene il fork','albo-online').'">info@considera.it</a></span>
+					'.__('Versione','albo-pretorio-considera').' <strong>'.$this->version.'</strong></p>
+					<p style="font-size:1.2em;text-align: center;">'.__('Plugin sviluppato da','albo-pretorio-considera').' <strong>Scimone Ignazio</strong><br />
+					<span style="font-size:0.85em;">'.__('Fork mantenuto da','albo-pretorio-considera').' <strong><a href="https://www.considera.it/" target="_blank" rel="noopener">Considera</a></strong> &middot; <a href="mailto:info@considera.it" title="'.__('Invia email a chi mantiene il fork','albo-pretorio-considera').'">info@considera.it</a></span>
 					</p>
-					<p style="float:left;">
-		 				<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FAlbo-Pretorio%2F1487571581520684%3Fref%3Dhl&amp;width&amp;height=230&amp;colorscheme=light&amp;show_faces=true&amp;header=true&amp;stream=false&amp;show_border=true" scrolling="no" frameborder="0" style="border:none; overflow:hidden;height:230px; width: 300px; margin-top:20px;margin-left: 50px;" allowTransparency="true"></iframe>
-					</p>	
 				</div>
 				<div class="my-welcome-panel-content"  style="display:inline;float:right;width:60%;">
 					<div class="widefat" style="display:inline;">
 						<table style="margin-bottom:20px;border: 1px solid #e5e5e5;">
-							<caption style="font-size:1.2em;font-weight:bold;">'.__('Sommario','albo-online').'</caption>
+							<caption style="font-size:1.2em;font-weight:bold;">'.__('Sommario','albo-pretorio-considera').'</caption>
 							<thead>
 								<tr>
-									<th>'.__('Oggetto','albo-online').'</th>
-									<th>'.__('N.','albo-online').'</th>
-									<th>'.__('In Attesa di Pubblicazione','albo-online').'</th>
-									<th>'.__('Attivi','albo-online').'</th>
-									<th>'.__('Scaduti','albo-online').'</th>
-									<th>'.__('Da eliminare','albo-online').'</th>
+									<th>'.__('Oggetto','albo-pretorio-considera').'</th>
+									<th>'.__('N.','albo-pretorio-considera').'</th>
+									<th>'.__('In Attesa di Pubblicazione','albo-pretorio-considera').'</th>
+									<th>'.__('Attivi','albo-pretorio-considera').'</th>
+									<th>'.__('Scaduti','albo-pretorio-considera').'</th>
+									<th>'.__('Da eliminare','albo-pretorio-considera').'</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr class="first">
-									<td style="text-align:left;width:200px;" >'.__('Atti','albo-online').'</td>
+									<td style="text-align:left;width:200px;" >'.__('Atti','albo-pretorio-considera').'</td>
 									<td style="text-align:left;width:200px;">'.$n_atti.'</td>
 									<td style="text-align:left;width:200px;">'.$n_atti_dapub.'</td>
 									<td style="text-align:left;width:200px;">'.$n_atti_attivi.'</td>
@@ -1165,60 +1162,44 @@ static function add_albo_plugin_visatto($plugin_array) {
 									<td style="text-align:left;width:200px;">'.$n_atti_oblio.'</td>
 								</tr>
 								<tr>
-									<td>'.__('Categorie','albo-online').'</td>
+									<td>'.__('Categorie','albo-pretorio-considera').'</td>
 									<td colspan="4">'.$n_categorie.'</td>
 								</tr>
 								<tr>
-									<td>'.__('Allegati','albo-online').'</td>
+									<td>'.__('Allegati','albo-pretorio-considera').'</td>
 									<td colspan="4">'.$n_allegati.'</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
-					<div>
-						<a href="http://eduva.org" target="_blank">
-							<input type="submit" name="submit" id="submit" class="button button-primary" value="'.__('Sito di supporto','albo-online').'">
-						</a>
-						<a href="http://www.eduva.org/wp-content/uploads/2014/02/Albo-Pretorio-On-line.pdf" target="_blank">
-							<input type="submit" name="submit" id="submit" class="button button-primary" value="'.__('Manuale Albo Pretorio','albo-online').'">
-						</a>
-						<a href="http://www.eduva.org/io-utilizzo-il-plugin"target="_blank">
-							<input type="submit" name="submit" id="submit" class="button button-primary" value="'.__('Io utilizzo il plugin','albo-online').'">
-						</a>
-					</div>
-		 			<div class="widefat" style="width: 320px;margin:auto;padding:20px;">	
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/uEiSlrAPjas" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>				
-					<div>
-				</div>
-			</div>
 		</div>
 	<div style="clear:both;"></div>
 	<div class="widefat" >
-		<h3 style="text-align:center;font-size:1.5em;font-weight: bold;">'.__('Cruscotto','albo-online').'</p>
+		<h3 style="text-align:center;font-size:1.5em;font-weight: bold;">'.__('Cruscotto','albo-pretorio-considera').'</p>
 		<table style="width:100%;">
 			<thead>
 				<tr>
-					<th>'.__('Ambito','albo-online').'</th>
-					<th>'.__('Stato','albo-online').'</th>
-					<th>'.__('Note','albo-online').'</th>
-					<th>'.__('Azioni','albo-online').'</th>
+					<th>'.__('Ambito','albo-pretorio-considera').'</th>
+					<th>'.__('Stato','albo-pretorio-considera').'</th>
+					<th>'.__('Note','albo-pretorio-considera').'</th>
+					<th>'.__('Azioni','albo-pretorio-considera').'</th>
 				</tr>
 			</thead>
 			<tbody>
 			<tr>
-				<th scope="row">'.__('Librerie','albo-online').'</th>';
+				<th scope="row">'.__('Librerie','albo-pretorio-considera').'</th>';
 	if (is_file(Albo_DIR.'/inc/pclzip.php')){
  		echo'<td><span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td>
 		     <td></td>
 			 <td></td>';
 	}else{
 		echo'<td><span class="dashicons dashicons-no" style="color:red;font-size:2em;"></span></td>
-			<td>'.__('Senza questa libreria non puoi eseguire i Backup','albo-online').'</td>
+			<td>'.__('Senza questa libreria non puoi eseguire i Backup','albo-pretorio-considera').'</td>
 			</td>';
 	}
 	echo '</tr>
 			<tr>
-				<th scope="row">'.__("Diritto all'oblio",'albo-online').'</th>';
+				<th scope="row">'.__("Diritto all'oblio",'albo-pretorio-considera').'</th>';
 	if ($oblio And ap_VerificaRobots() And ap_VerificaOblio()){
  		echo'<td><span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td>
 		     <td></td>
@@ -1226,12 +1207,12 @@ static function add_albo_plugin_visatto($plugin_array) {
 	}else{		
  		echo '<td><span class="dashicons dashicons-no" style="color:red;font-size:2em;"></td>
 		     <td></td>
-			 <td><a href="?page=Albo_Pretorio&amp;action=creafoblio&amp;rigenera='.wp_create_nonce('rigeneraoblio').'">'.__('Rigenera files','albo-online').'</a>
+			 <td><a href="?page=Albo_Pretorio&amp;action=creafoblio&amp;rigenera='.wp_create_nonce('rigeneraoblio').'">'.__('Rigenera files','albo-pretorio-considera').'</a>
 			</td>';		
 	}
 	echo'	</tr>
 			<tr>
-				<th scope="row">'.__('Cartelle esistenza e permessi','albo-online').'</th>';
+				<th scope="row">'.__('Cartelle esistenza e permessi','albo-pretorio-considera').'</th>';
 	if(strlen($StatoCartella)>0){
  		echo'<td><span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td>
 		     <td></td>
@@ -1240,19 +1221,19 @@ static function add_albo_plugin_visatto($plugin_array) {
  		echo '<td><span class="dashicons dashicons-no" style="color:red;font-size:2em;"></td>
 		     <td>'.$StatoCartella.'</td>
 			 <td>';
-		echo (!$oblio?'<a href="?page=Albo_Pretorio&amp;action=creafoblio&amp;rigenera='.wp_create_nonce('rigeneraoblio').'">'.__('Rigenera files','albo-online').'</a>':'');
+		echo (!$oblio?'<a href="?page=Albo_Pretorio&amp;action=creafoblio&amp;rigenera='.wp_create_nonce('rigeneraoblio').'">'.__('Rigenera files','albo-pretorio-considera').'</a>':'');
 		echo	 '</td>';		
 	}		
 	echo		'</tr>
 		</tbody>
 		</table>
-		<p><em>'.__('per maggiori dettagli eseguire la verifica della procedura presente nel menu Utility','albo-online').'</em></p>
+		<p><em>'.__('per maggiori dettagli eseguire la verifica della procedura presente nel menu Utility','albo-pretorio-considera').'</em></p>
 	</div>';
 if (ap_get_num_categorie()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-					'.__('Non risultano categorie codificate, se vuoi posso impostare le categorie di default','albo-online').' &ensp;&ensp;<a href="?page=utilityAlboP&amp;action=creacategorie">'.__('Crea Categorie di Default','albo-online').'</a></p>
+					'.__('Non risultano categorie codificate, se vuoi posso impostare le categorie di default','albo-pretorio-considera').' &ensp;&ensp;<a href="?page=utilityAlboP&amp;action=creacategorie">'.__('Crea Categorie di Default','albo-pretorio-considera').'</a></p>
 				</div>
 			</div>';
 }
@@ -1260,7 +1241,7 @@ if (ap_num_responsabili()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-					'.sprintf(__('Non risultano %sResponsabili%s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti','albo-online'),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'.__('Crea Soggetti','albo-online').'</a></p>
+					'.sprintf(__('Non risultano %sResponsabili%s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti','albo-pretorio-considera'),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'.__('Crea Soggetti','albo-pretorio-considera').'</a></p>
 				</div>
 			</div>';
 }
@@ -1268,7 +1249,7 @@ if (ap_num_unitao()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-				'. sprintf(__("Non risulta nessuna %sUnità Organizzativa%s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-online"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-online").'</a>
+				'. sprintf(__("Non risulta nessuna %sUnità Organizzativa%s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-pretorio-considera").'</a>
 				</p>
 			</div>';
 }
@@ -1277,7 +1258,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 				<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
 					<input type="hidden" name="action" value="setta-anno" />
-				<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-online').'"  />
+				<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-pretorio-considera').'"  />
 				</form>
 			</div>
 		 </div>';
@@ -1298,7 +1279,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				<p><strong>Impostazioni salvate.</strong></p></div>";
 		  else
 			$stato="<div id='setting-error-settings_updated' class='updated settings-error'> 
-				<p><strong>".__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online")."</strong></p></div>";
+				<p><strong>".__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera")."</strong></p></div>";
 	  $current_user 		= wp_get_current_user();
 	  $ente   				= stripslashes(ap_get_ente_me());
 	  $entedefault			= get_option('opt_AP_DefaultEnte');
@@ -1335,7 +1316,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	  $RestApiUrlEst		= get_option('opt_AP_RestApi_UrlEst');
 	  if(!is_array($Testi)){
 	  	$Testi=array("NoResp"=>"",
-	  	             "CertPub"=>__("Si attesta l'avvenuta pubblicazione del documento all'albo pretorio sopra indicato per il quale non sono pervenute osservazioni",'albo-online'));
+	  	             "CertPub"=>__("Si attesta l'avvenuta pubblicazione del documento all'albo pretorio sopra indicato per il quale non sono pervenute osservazioni",'albo-pretorio-considera'));
 	  }
 	  $RuoliPl=array();
 	  if($RuoliPuls){
@@ -1417,38 +1398,38 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	  echo '
 		<div class="wrap">
 			<div class="HeadPage">
-				<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-settings" style="font-size:1em;"></span> '.__('Parametri','albo-online').'</h2>
+				<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-settings" style="font-size:1em;"></span> '.__('Parametri','albo-pretorio-considera').'</h2>
 			</div>'.$stato.'
 	 <form name="AlboPretorio_cnf" action="'.get_bloginfo('wpurl').'/wp-admin/index.php" method="post">
 	  <input type="hidden" name="c_AnnoProgressivo" value="'.$nanno.'"/>
 	  <input type="hidden" name="confAP" value="'.wp_create_nonce('configurazionealbo').'" />
 	  <div id="config-tabs-container" style="margin-top:20px;">
 		<ul>
-			<li><a href="#Conf-tab-1">'.__('Impostazioni Generali','albo-online').'</a></li>
-			<li><a href="#Conf-tab-2">'.__('Interfaccia','albo-online').'</a></li>
-			<li><a href="#Conf-tab-3">'.__('Log','albo-online').'</a></li>
-			<li><a href="#Conf-tab-4">'.__('Shortcode','albo-online').'</a></li>
-			<li><a href="#Conf-tab-5">'.__('Testi','albo-online').'</a></li>
-			<li><a href="#Conf-tab-6">'.__('Soggetti predefiniti','albo-online').'</a></li>
-			<li><a href="#Conf-tab-7">'.__('Rest Api','albo-online').'</a></li>
-			<li><a href="#Conf-tab-8">'.__('Allegati','albo-online').'</a></li>
+			<li><a href="#Conf-tab-1">'.__('Impostazioni Generali','albo-pretorio-considera').'</a></li>
+			<li><a href="#Conf-tab-2">'.__('Interfaccia','albo-pretorio-considera').'</a></li>
+			<li><a href="#Conf-tab-3">'.__('Log','albo-pretorio-considera').'</a></li>
+			<li><a href="#Conf-tab-4">'.__('Shortcode','albo-pretorio-considera').'</a></li>
+			<li><a href="#Conf-tab-5">'.__('Testi','albo-pretorio-considera').'</a></li>
+			<li><a href="#Conf-tab-6">'.__('Soggetti predefiniti','albo-pretorio-considera').'</a></li>
+			<li><a href="#Conf-tab-7">'.__('Rest Api','albo-pretorio-considera').'</a></li>
+			<li><a href="#Conf-tab-8">'.__('Allegati','albo-pretorio-considera').'</a></li>
 		</ul>	 
 		<div id="Conf-tab-1">
 		  <table class="albo_cell">
 			<tr>
-				<th scope="row"><label for="nomeente">'.__('Nome Ente','albo-online').'</label></th>
+				<th scope="row"><label for="nomeente">'.__('Nome Ente','albo-pretorio-considera').'</label></th>
 				<td><input type="text" name="c_Ente" value="'.$ente.'" style="width:80%;" id="nomeente"/></td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="defEnte">'.__('Ente di default','albo-online').'</label></th>
-				<td>'.ap_get_dropdown_enti('defEnte',__('Ente','albo-online'),'postform','',$entedefault).'</td>
+				<th scope="row"><label for="defEnte">'.__('Ente di default','albo-pretorio-considera').'</label></th>
+				<td>'.ap_get_dropdown_enti('defEnte',__('Ente','albo-pretorio-considera'),'postform','',$entedefault).'</td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="visente">'.__('Visualizza Nome Ente','albo-online').'</label></th>
+				<th scope="row"><label for="visente">'.__('Visualizza Nome Ente','albo-pretorio-considera').'</label></th>
 				<td><input type="checkbox" name="c_VEnte" value="Si" '.$ve_selezionato.' id="visente"/></td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="LivelloTitoloEnte">'.__('Titolo Nome Ente','albo-online').'</label></th>
+				<th scope="row"><label for="LivelloTitoloEnte">'.__('Titolo Nome Ente','albo-pretorio-considera').'</label></th>
 				<td>
 					<select name="c_LTE" id="LivelloTitoloEnte" >';
 				for ($i=2;$i<5;$i++){
@@ -1460,7 +1441,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			echo '</select></td>
 			</tr>		
 			<tr>
-				<th scope="row"><label for="LivelloTitoloPagina">'.__('Titolo Pagina Albo','albo-online').'</label></th>
+				<th scope="row"><label for="LivelloTitoloPagina">'.__('Titolo Pagina Albo','albo-pretorio-considera').'</label></th>
 				<td>
 					<select name="c_LTP" id="LivelloTitoloPagina" >';
 				for ($i=2;$i<5;$i++){
@@ -1472,7 +1453,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			echo '</select></td>
 			</tr>		
 			<tr>
-				<th scope="row"><label for="LivelloTitoloFiltri">'.__('Titolo Filtri','albo-online').'</label></th>
+				<th scope="row"><label for="LivelloTitoloFiltri">'.__('Titolo Filtri','albo-pretorio-considera').'</label></th>
 				<td>
 					<select name="c_LTF" id="LivelloTitoloFiltri" >';
 				for ($i=2;$i<5;$i++){
@@ -1484,7 +1465,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			echo '</select></td>
 			</tr>		
 			<tr>
-				<th scope="row"><label>'.__('Numero Progressivo','albo-online').'</label></th>
+				<th scope="row"><label>'.__('Numero Progressivo','albo-pretorio-considera').'</label></th>
 				<td><strong> ';
 				if(ap_get_all_atti(0,0,0,0,'',0,0,"",0,0,TRUE,FALSE)==0)
 					echo '<input type="text" id="progressivo" name="progressivo" value="'.$nprog.'" size="5"/>';
@@ -1494,27 +1475,27 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><label>'.__('Cartella Upload<br />organizzazione in Anno/Mese','albo-online').'</label></th>
+				<th scope="row"><label>'.__('Cartella Upload<br />organizzazione in Anno/Mese','albo-pretorio-considera').'</label></th>
 				<td><strong> '.AP_BASE_DIR.get_option('opt_AP_FolderUpload').'<br />'.$dirUploadMA.'</strong></td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="visoldstyle">'.__('Stile visualizzazione FrontEnd','albo-online').'</label></th>
+				<th scope="row"><label for="visoldstyle">'.__('Stile visualizzazione FrontEnd','albo-pretorio-considera').'</label></th>
 				<td><input type="checkbox" name="visoldstyle" value="Si" '.$OldInterfacciaS.' id="visoldstyle"/>
 					'.__('Selezionare questa opzione per mantenere la visualizzazione classica del FrontEnd.<br />
-					Se si deseleziona l\'opzione verrà visualizzato il FrontEnd con layout in linea con le linee guida di','albo-online').' <a href="https://italia.github.io/design-web-toolkit/">design.italia.it</a> 
+					Se si deseleziona l\'opzione verrà visualizzato il FrontEnd con layout in linea con le linee guida di','albo-pretorio-considera').' <a href="https://italia.github.io/design-web-toolkit/">design.italia.it</a> 
 					
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="uploadCSSNI">'.__('Tema compatibile con il Design KIT di Designers Italia','albo-online').'</label></th>
+				<th scope="row"><label for="uploadCSSNI">'.__('Tema compatibile con il Design KIT di Designers Italia','albo-pretorio-considera').'</label></th>
 				<td><input type="checkbox" name="uploadCSSNI" value="Si" '.$UploadCSSNIS.' id="uploadCSSNI"/>
-					'.__('Selezionare questa opzione nel caso in cui si utilizza un tema sviluppato partendo dal Design KIT di <a href="https://designers.italia.it/">design.italia.it</a> verranno caricati i CSS ed i JS del Kit','albo-online').'
+					'.__('Selezionare questa opzione nel caso in cui si utilizza un tema sviluppato partendo dal Design KIT di <a href="https://designers.italia.it/">design.italia.it</a> verranno caricati i CSS ed i JS del Kit','albo-pretorio-considera').'
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="BootstrapItalia">'.__('Tema compatibile con Bootstrap Italia di Designers Italia','albo-online').'</label></th>
+				<th scope="row"><label for="BootstrapItalia">'.__('Tema compatibile con Bootstrap Italia di Designers Italia','albo-pretorio-considera').'</label></th>
 				<td><input type="checkbox" name="BootstrapItalia" value="Si" '.$BootstrapItalia.' id="BootstrapItalia"/>
-					'.__('Selezionare questa opzione nel caso in cui si utilizza un tema sviluppato partendo da Bootstrap Italia','albo-online').'
+					'.__('Selezionare questa opzione nel caso in cui si utilizza un tema sviluppato partendo da Bootstrap Italia','albo-pretorio-considera').'
 				</td>
 			</tr>
 		</table>
@@ -1524,19 +1505,19 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			<h3>Colori</h3>	  
 			<table class="albo_cell">
 				<tr>
-					<th scope="row"><label for="color">'.__('Righe Atti Annullati','albo-online').'</label></th>
+					<th scope="row"><label for="color">'.__('Righe Atti Annullati','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="text" id="color" name="color" value="'.$colAnnullati.'" size="5"/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="colorp">'.__('Righe Pari','albo-online').'</label></th>
+					<th scope="row"><label for="colorp">'.__('Righe Pari','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="text" id="colorp" name="colorp" value="'.$colPari.'" size="5"/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="colord">'.__('Righe Dispari','albo-online').'</label></th>
+					<th scope="row"><label for="colord">'.__('Righe Dispari','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="text" id="colord" name="colord" value="'.$colDispari.'" size="5"/>
 					</td>
@@ -1547,49 +1528,49 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				<h3>Colonne Tabella</h3>
 				<table class="albo_cell">
 				<tr>
-					<th scope="row"><label for="data">'.__('Data','albo-online').'</label></th>
+					<th scope="row"><label for="data">'.__('Data','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="checkbox" id="data" name="Data" value="1" '.($FEColsOption['Data']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="ente">'.__('Ente','albo-online').'</label></th>
+					<th scope="row"><label for="ente">'.__('Ente','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="checkbox" id="ente" name="Ente" value="1" '.($FEColsOption['Ente']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="riferimento">'.__('Riferimento','albo-online').'</label></th>
+					<th scope="row"><label for="riferimento">'.__('Riferimento','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="checkbox" id="riferimento" name="Riferimento" value="1" '.($FEColsOption['Riferimento']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="oggetto">'.__('Oggetto','albo-online').'</label></th>
+					<th scope="row"><label for="oggetto">'.__('Oggetto','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="checkbox" id="oggetto" name="Oggetto" value="1" '.($FEColsOption['Oggetto']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="validita">'.__('Validità','albo-online').'</label></th>
+					<th scope="row"><label for="validita">'.__('Validità','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="checkbox" id="validita" name="Validita" value="1" '.($FEColsOption['Validita']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="categoria">'.__('Categoria','albo-online').'</label></th>
+					<th scope="row"><label for="categoria">'.__('Categoria','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="checkbox" id="categoria" name="Categoria" value="1" '.($FEColsOption['Categoria']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="note">'.__('Note','albo-online').'</label></th>
+					<th scope="row"><label for="note">'.__('Note','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="checkbox" id="note" name="Note" value="1" '.($FEColsOption['Note']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="oblio">'.__('Data Oblio','albo-online').'</label></th>
+					<th scope="row"><label for="oblio">'.__('Data Oblio','albo-pretorio-considera').'</label></th>
 					<td> 
 						<input type="checkbox" id="oblio" name="DataOblio" value="1" '.($FEColsOption['DataOblio']==1?"checked":"").'/>
 					</td>
@@ -1598,7 +1579,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</div>
 				<table class="albo_cell">
 				<tr>
-					<th scope="row"><label for="PaginaAttiCorrenti">'.__('Pagina Atti Correnti','albo-online').'</label>
+					<th scope="row"><label for="PaginaAttiCorrenti">'.__('Pagina Atti Correnti','albo-pretorio-considera').'</label>
 					</th>
 					<td>
 						<select name="P_AttiCor" id="PaginaAttiCorrenti" >';
@@ -1616,7 +1597,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				echo '</select></td>
 				</tr>		
 				<tr>
-					<th scope="row"><label for="PaginaAttiStorico">'.__('Pagina Albo Storico','albo-online').'</label>
+					<th scope="row"><label for="PaginaAttiStorico">'.__('Pagina Albo Storico','albo-pretorio-considera').'</label>
 					</th>
 					<td>
 						<select name="P_AttiSto" id="PaginaAttiStorico" >';
@@ -1635,7 +1616,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="PaginaAtto">'.__('Pagina Visualizzazione singolo atto','albo-online').'</label>
+					<th scope="row"><label for="PaginaAtto">'.__('Pagina Visualizzazione singolo atto','albo-pretorio-considera').'</label>
 					</th>
 					<td>
 						<select name="P_Atto" id="PaginaAtt0" >';
@@ -1655,11 +1636,11 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				</tr>
 				<tr>
 					<th>
-						<label for="icona">'.__('Immagine documenti','albo-online').'</label>
+						<label for="icona">'.__('Immagine documenti','albo-pretorio-considera').'</label>
 					</th>
 					<td>
 						<input name="imgDocumenti" id="icona" type="text" value="'.$IconaDocumenti.'" style="width:80%;" aria-required="true" />
-						<input id="icona_upload" class="button" type="button" value="Carica" /><br />'.__('Dimensione max 256x256','albo-online').'
+						<input id="icona_upload" class="button" type="button" value="Carica" /><br />'.__('Dimensione max 256x256','albo-pretorio-considera').'
 						<div style="margin-top:5px;">
 							<img src="'.$IconaDocumenti.'" width="30" height="30" id="IconaTipoFile"/>
 						</div>
@@ -1670,17 +1651,17 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		<div id="Conf-tab-3">		  
 			<table class="albo_cell">
 			<tr>
-				<th scope="row"><label for="LogOperazioni">'.__("Abilita il Log sulle Operazioni di gestione degli Oggetti dell'Albo",'albo-online').'</label></th>
+				<th scope="row"><label for="LogOperazioni">'.__("Abilita il Log sulle Operazioni di gestione degli Oggetti dell'Albo",'albo-pretorio-considera').'</label></th>
 				<td> 
-					<input type="radio" id="LogOperazioniSi" name="LogOperazioni" value="Si" '.$LOStatoS.'>'.__('Si','albo-online').'<br>
-					<input type="radio" id="LogOperazioniNo" name="LogOperazioni" value="No" '.$LOStatoN.'>'.__('No','albo-online').'
+					<input type="radio" id="LogOperazioniSi" name="LogOperazioni" value="Si" '.$LOStatoS.'>'.__('Si','albo-pretorio-considera').'<br>
+					<input type="radio" id="LogOperazioniNo" name="LogOperazioni" value="No" '.$LOStatoN.'>'.__('No','albo-pretorio-considera').'
 				</td>		
 			</tr>
 			<tr>
-				<th scope="row"><label for="LogOperazioni">'.__('Abilita il Log sulle Visualizzazioni/Download degli atti pubblicati','albo-online').'</label></th>
+				<th scope="row"><label for="LogOperazioni">'.__('Abilita il Log sulle Visualizzazioni/Download degli atti pubblicati','albo-pretorio-considera').'</label></th>
 				<td> 
-					<input type="radio" id="LogAccessiSi" name="LogAccessi" value="Si" '.$LOAccessiS.'>'.__('Si','albo-online').'<br>
-					<input type="radio" id="LogAccessiNo" name="LogAccessi" value="No" '.$LOAccessiN.'>'.__('No','albo-online').'
+					<input type="radio" id="LogAccessiSi" name="LogAccessi" value="Si" '.$LOAccessiS.'>'.__('Si','albo-pretorio-considera').'<br>
+					<input type="radio" id="LogAccessiNo" name="LogAccessi" value="No" '.$LOAccessiN.'>'.__('No','albo-pretorio-considera').'
 				</td>		
 			</tr>
 		</table>
@@ -1688,7 +1669,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	   	<div id="Conf-tab-4">
 			  <table class="albo_cell">
 				<tr>
-					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-online').' [Albo ....]</label></th>
+					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-considera').' [Albo ....]</label></th>
 					<td>';
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -1705,7 +1686,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 					</td>
 				</tr>		
 				<tr>
-					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-online').' [AlboGruppiAtti ....]</label></th>
+					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-considera').' [AlboGruppiAtti ....]</label></th>
 					<td>';
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -1722,7 +1703,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 					</td>
 				</tr>		
 				<tr>
-					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-online').' [AlboVisAtto ....]</label></th>
+					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-considera').' [AlboVisAtto ....]</label></th>
 					<td>';
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -1739,7 +1720,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 					</td>
 				</tr>	
 			<tr>
-				<th scope="row"><label for="AutoShortCode">'.__("Abilita l'inserimento automatico della visualizzazione degli atti nei Bandi di gara e contratti attraverso il MetaDato CIG",'albo-online').'</label></th>
+				<th scope="row"><label for="AutoShortCode">'.__("Abilita l'inserimento automatico della visualizzazione degli atti nei Bandi di gara e contratti attraverso il MetaDato CIG",'albo-pretorio-considera').'</label></th>
 				<td><input type="checkbox" id="AutoShortCode" name="AutoShortCode" value="Si" '.($AutoShortcode=="Si"?"checked":"").'/></td>
 			</tr>
 				</table>
@@ -1747,13 +1728,13 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	   	<div id="Conf-tab-5">
 			  <table class="albo_cell">
 				<tr>
-					<th scope="row"><label>'.__('Nome Responsabile','albo-online').'</label></th>
+					<th scope="row"><label>'.__('Nome Responsabile','albo-pretorio-considera').'</label></th>
 					<td>
 						<input type="text" id="NoResp" name="NoResp" maxlength="255" value="'.$Testi["NoResp"].'" style="width:100%;"/>
 					</td>
 				</tr>	
 				<tr>
-					<th scope="row"><label>'.__('Certificato Pubblicazione','albo-online').'</label></th>
+					<th scope="row"><label>'.__('Certificato Pubblicazione','albo-pretorio-considera').'</label></th>
 					<td>
 						<input type="text" id="CertPub" name="CertPub" maxlength="255" value="'.$Testi["CertPub"].'" style="width:100%;"/>
 					</td>
@@ -1763,20 +1744,20 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	   	<div id="Conf-tab-6">
 			  <table style="text-align:right;line-height:3em;">
 				<tr>
-					<th scope="row"><label>'.__('Responsabile Giudirico Amministrativo','albo-online').'</label></th>
+					<th scope="row"><label>'.__('Responsabile Giudirico Amministrativo','albo-pretorio-considera').'</label></th>
 					<td>'.
 					ap_get_dropdown_responsabili("resp_giu_am","resp_giu_am","ElencoSoggetti","",(isset($DefaultSoggetti["AM"])?$DefaultSoggetti["AM"]:0),array("SC","DR"))
 					.'</td>
 				</tr>	
 				<tr>
-					<th scope="row"><label>'.__('Responsabile Procedimento','albo-online').'</label></th>
+					<th scope="row"><label>'.__('Responsabile Procedimento','albo-pretorio-considera').'</label></th>
 					<td>'.
 					ap_get_dropdown_responsabili("resp_giu_rp","resp_giu_rp","ElencoSoggetti","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP")
 					.'	
 					</td>
 				</tr>	
 				<tr>
-					<th scope="row"><label>'.__('Responsabile Pubblicazione','albo-online').'</label></th>
+					<th scope="row"><label>'.__('Responsabile Pubblicazione','albo-pretorio-considera').'</label></th>
 					<td>'.
 					ap_get_dropdown_responsabili("resp_giu_rb","resp_giu_rb","ElencoSoggetti","",(isset($DefaultSoggetti["RB"])?$DefaultSoggetti["RB"]:0),"RB")
 					.'	
@@ -1789,23 +1770,23 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		  <table class="albo_cell" border=1>
 			<tr>
 				<th scope="row">
-					<label for="rest_api">'.__('Abilitazione Rest Api','albo-online').'</label>
+					<label for="rest_api">'.__('Abilitazione Rest Api','albo-pretorio-considera').'</label>
 				</th>
 				<td>
-					<input type="checkbox" name="rest_api" value="Si" '.$ChkRestApi.' id="rest_api"/> '.__("Selezionare questa opzione per abilitare le Rest Api per l'Albo",'albo-online').'
+					<input type="checkbox" name="rest_api" value="Si" '.$ChkRestApi.' id="rest_api"/> '.__("Selezionare questa opzione per abilitare le Rest Api per l'Albo",'albo-pretorio-considera').'
 				</td>
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="rest_api_urlest">'.__('Url da abilitare','albo-online').'</label>
+					<label for="rest_api_urlest">'.__('Url da abilitare','albo-pretorio-considera').'</label>
 				</th>
 				<td>
-					<input type="text" name="rest_api_urlest" value="'.$RestApiUrlEst.'" id="rest_api_urlest" size="50"/>  <br />'.__("Inserire l'Url del sito client che in cui viene interrogato l'Albo, per abilitare la visualizzazione degli allegati",'albo-online').'
+					<input type="text" name="rest_api_urlest" value="'.$RestApiUrlEst.'" id="rest_api_urlest" size="50"/>  <br />'.__("Inserire l'Url del sito client che in cui viene interrogato l'Albo, per abilitare la visualizzazione degli allegati",'albo-pretorio-considera').'
 				</td>
 			</tr>
 			<tr>
 				<th scope="row">
-					<label>'.__('Endpoint per le Categorie','albo-online').'</label>
+					<label>'.__('Endpoint per le Categorie','albo-pretorio-considera').'</label>
 				</th>
 				<td>
 				'.$BaseUrlRestApi.'categorie
@@ -1813,7 +1794,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</tr>
 			<tr>
 				<th scope="row">
-					<label>'.__('Endpoint per gli Enti','albo-online').'</label>
+					<label>'.__('Endpoint per gli Enti','albo-pretorio-considera').'</label>
 				</th>
 				<td>
 				'.$BaseUrlRestApi.'enti
@@ -1821,19 +1802,19 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</tr>
 			<tr>
 				<th scope="row">
-					<label>'.__('Endpoint per il singolo Atto','albo-online').'</label>
+					<label>'.__('Endpoint per il singolo Atto','albo-pretorio-considera').'</label>
 				</th>
 				<td>
 					<table class="noalbo_cell">
 						<tr>
 							<td>
-				'.$BaseUrlRestApi.'atto/'.__('Numero_atto/Anno_Atto oppure','albo-online').'<br />'.$BaseUrlRestApi.'atto/ID_Atto
+				'.$BaseUrlRestApi.'atto/'.__('Numero_atto/Anno_Atto oppure','albo-pretorio-considera').'<br />'.$BaseUrlRestApi.'atto/ID_Atto
 							</td>
 						</tr>
 						<tr>
 							<td>
-				<em>es. '.$BaseUrlRestApi.'atto/1/2018  '.__("verranno restituiti i dati dell'atto n. 1 del 2018",'albo-online').'<br />
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$BaseUrlRestApi.'atto/305  '.__("verranno restituiti i dati dell'atto con ",'albo-online').'ID n° 305</em>
+				<em>es. '.$BaseUrlRestApi.'atto/1/2018  '.__("verranno restituiti i dati dell'atto n. 1 del 2018",'albo-pretorio-considera').'<br />
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$BaseUrlRestApi.'atto/305  '.__("verranno restituiti i dati dell'atto con ",'albo-pretorio-considera').'ID n° 305</em>
 							</td>
 						</tr>
 					</table>
@@ -1841,116 +1822,116 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</tr>
 			<tr>
 				<th scope="row">
-					<label>'.__('Endpoint per gli Atti','albo-online').'</label>
+					<label>'.__('Endpoint per gli Atti','albo-pretorio-considera').'</label>
 				</th>
 				<td>
 					<table class="noalbo_cell" border=1>
 						<tr>
 							<td colspan=3>
-				'.$BaseUrlRestApi.'atti?'.__('parametro1=valore1&amp;parametro2=valore2 ...','albo-online').'
+				'.$BaseUrlRestApi.'atti?'.__('parametro1=valore1&amp;parametro2=valore2 ...','albo-pretorio-considera').'
 							</td>
 						</tr>
 						<tr>
 							<td colspan=3>
-				<em>es. '.$BaseUrlRestApi.'atti?stato=1  '.__('verranno restituiti i dati di tutti gli atti correnti','albo-online').'</em>
+				<em>es. '.$BaseUrlRestApi.'atti?stato=1  '.__('verranno restituiti i dati di tutti gli atti correnti','albo-pretorio-considera').'</em>
 							</td>
 						</tr>
 						<tr>
-							<th>'.__('Parametro','albo-online').'</th>
-							<th>'.__('Valore di Default','albo-online').'</th>
-							<th>'.__('Valori ammissibili','albo-online').'</th>
+							<th>'.__('Parametro','albo-pretorio-considera').'</th>
+							<th>'.__('Valore di Default','albo-pretorio-considera').'</th>
+							<th>'.__('Valori ammissibili','albo-pretorio-considera').'</th>
 						</tr>
 						<tr>
-							<td>'.__('stato','albo-online').'</td>
+							<td>'.__('stato','albo-pretorio-considera').'</td>
 							<td>1</td>
-							<td>'.__('Numero 1 (atti correnti) o 2 (atti storico)','albo-online').'</td>
+							<td>'.__('Numero 1 (atti correnti) o 2 (atti storico)','albo-pretorio-considera').'</td>
 						</tr>
 						<tr>
 							<td>per_page</td>
 							<td>10</td>
-							<td> -1 '.__('per tutti gli atti dello stato','albo-online').'Numero atti per pagina > 0<br /></td>
+							<td> -1 '.__('per tutti gli atti dello stato','albo-pretorio-considera').'Numero atti per pagina > 0<br /></td>
 						</tr>						
 						<tr>
 							<td>page</td>
 							<td>1</td>
-							<td>'.__('Numero pagina','albo-online').' > 0</td>
+							<td>'.__('Numero pagina','albo-pretorio-considera').' > 0</td>
 						</tr>						
 						<tr>
 							<td>categorie</td>
-							<td>0 '.__('(Nessun filtro sulle categorie)','albo-online').'</td>
-							<td>'.__('Elenco ID delle Categorie codificate separate da','albo-online').' , es. 1,5,9</td>
+							<td>0 '.__('(Nessun filtro sulle categorie)','albo-pretorio-considera').'</td>
+							<td>'.__('Elenco ID delle Categorie codificate separate da','albo-pretorio-considera').' , es. 1,5,9</td>
 						</tr>						
 						<tr>
 							<td>ente</td>
-							<td>-1 '.__('ente principale','albo-online').'</td>
-							<td>'.__('Ente degli atti','albo-online').'</td>
+							<td>-1 '.__('ente principale','albo-pretorio-considera').'</td>
+							<td>'.__('Ente degli atti','albo-pretorio-considera').'</td>
 						</tr>						
 						<tr>
 							<td>numero</td>
-							<td>0 '.__('(Nessun filtro sul numero)','albo-online').'</td>
-							<td>'.__('Numero atto','albo-online').'</td>
+							<td>0 '.__('(Nessun filtro sul numero)','albo-pretorio-considera').'</td>
+							<td>'.__('Numero atto','albo-pretorio-considera').'</td>
 						</tr>						
 						<tr>
 							<td>anno</td>
-							<td>0 '.__("(Nessun filtro sull'anno)",'albo-online').'</td>
-							<td>'.__('Anno atto','albo-online').'</td>
+							<td>0 '.__("(Nessun filtro sull'anno)",'albo-pretorio-considera').'</td>
+							<td>'.__('Anno atto','albo-pretorio-considera').'</td>
 						</tr>						
 						<tr>
 							<td>oggetto</td>
-							<td>\'\' '.__("(Nessun filtro sull'oggetto)",'albo-online').'</td>
-							<td>'.__('Oggetto atto','albo-online').'</td>
+							<td>\'\' '.__("(Nessun filtro sull'oggetto)",'albo-pretorio-considera').'</td>
+							<td>'.__('Oggetto atto','albo-pretorio-considera').'</td>
 						</tr>						
 						<tr>
 							<td>riferimento</td>
-							<td>\'\' '.__('(Nessun filtro sul riferimento)','albo-online').'</td>
-							<td>'.__('Riferimento atti','albo-online').'</td>
+							<td>\'\' '.__('(Nessun filtro sul riferimento)','albo-pretorio-considera').'</td>
+							<td>'.__('Riferimento atti','albo-pretorio-considera').'</td>
 						</tr>						
 						<tr>
 							<td>dadata</td>
-							<td>0 '.__('(Nessun filtro sulla data di inizio)','albo-online').'</td>
-							<td>'.__('Data inizio intervallo di filtro in formato gg/mm/aaaa','albo-online').'</td>
+							<td>0 '.__('(Nessun filtro sulla data di inizio)','albo-pretorio-considera').'</td>
+							<td>'.__('Data inizio intervallo di filtro in formato gg/mm/aaaa','albo-pretorio-considera').'</td>
 						</tr>						
 						<tr>
 							<td>adata</td>
-							<td>0 '.__('(Nessun filtro sulla data di fine)','albo-online').'</td>
-							<td>'.__('Data fine intervallo di filtro in formato gg/mm/aaaa','albo-online').'</td>
+							<td>0 '.__('(Nessun filtro sulla data di fine)','albo-pretorio-considera').'</td>
+							<td>'.__('Data fine intervallo di filtro in formato gg/mm/aaaa','albo-pretorio-considera').'</td>
 						</tr>	
 					</table>
 			</tr>
 		  </table>		
 		</div>
 	<div id="Conf-tab-8">
-		<p>'.__('Impostazione dello stato dei link degli Allegati nel Back-End','albo-online').'</p>
+		<p>'.__('Impostazione dello stato dei link degli Allegati nel Back-End','albo-pretorio-considera').'</p>
 		<table class="albo_cell">
 		  <tr>
 			  <th scope="row">
-				  <label for="all">'.__('Link visualizza e scarica Allegati','albo-online').'</label>
+				  <label for="all">'.__('Link visualizza e scarica Allegati','albo-pretorio-considera').'</label>
 			  </th>
 			  <td>
-				  <input type="radio" name="allegati" id="all" value="all" '.($StatoAllegati=="all"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto il link per la Visualizzazione ed il link di Scaricamento degli Allegati",'albo-online').'
+				  <input type="radio" name="allegati" id="all" value="all" '.($StatoAllegati=="all"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto il link per la Visualizzazione ed il link di Scaricamento degli Allegati",'albo-pretorio-considera').'
 			  </td>
 		  </tr>
 		  <tr>
 			  <th scope="row">
-				  <label for="vis">'.__('SOLO Link visualizza Allegati','albo-online').'</label>
+				  <label for="vis">'.__('SOLO Link visualizza Allegati','albo-pretorio-considera').'</label>
 			  </th>
 			  <td>
-				  <input type="radio" name="allegati" id="vis" value="vis" '.($StatoAllegati=="vis"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per la Visualizzazione degli Allegati",'albo-online').'
+				  <input type="radio" name="allegati" id="vis" value="vis" '.($StatoAllegati=="vis"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per la Visualizzazione degli Allegati",'albo-pretorio-considera').'
 			  </td>
 		  </tr>
 		  <tr>
 			  <th scope="row">
-				  <label for="dwn">'.__('SOLO Link scarica Allegati','albo-online').'</label>
+				  <label for="dwn">'.__('SOLO Link scarica Allegati','albo-pretorio-considera').'</label>
 			  </th>
 			  <td>
-				  <input type="radio" name="allegati" id="dwn" value="dwn" '.($StatoAllegati=="dwn"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per il Download degli Allegati",'albo-online').'
+				  <input type="radio" name="allegati" id="dwn" value="dwn" '.($StatoAllegati=="dwn"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per il Download degli Allegati",'albo-pretorio-considera').'
 			  </td>
 		  </tr>
 		</table>
 	</div>
   </div>
 	    <p class="submit">
-	        <input type="submit" name="AlboPretorio_submit_button" value="'.__('Salva Modifiche','albo-online').'" />
+	        <input type="submit" name="AlboPretorio_submit_button" value="'.__('Salva Modifiche','albo-pretorio-considera').'" />
 	    </p> 
 	    </form>
 	    </div>';
@@ -1960,7 +1941,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 						<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
 						<input type="hidden" name="action" value="setta-anno" />
 	  					<input type="hidden" name="confAP" value="'.wp_create_nonce('configurazionealbo').'" />
-						<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-online').'"  />
+						<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-pretorio-considera').'"  />
 						</form>
 					</div>
 				  </div>';
@@ -2106,10 +2087,26 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		}
 	if(get_option('opt_AP_TipidiFiles')  == '' || !get_option('opt_AP_TipidiFiles')){
 		$TipidiFiles=array();
-		$TipidiFiles["ndf"]= array("Descrizione"=>__('Tipo file non definito','albo-online'),"Icona"=>Albo_URL."img/notipofile.png","Verifica"=>"");
-		$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-online'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
-		$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-online'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-online')."</a>"));
+		$TipidiFiles["ndf"]= array("Descrizione"=>__('Tipo file non definito','albo-pretorio-considera'),"Icona"=>Albo_URL."img/notipofile.png","Verifica"=>"");
+		$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-pretorio-considera'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
+		$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-considera'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-considera')."</a>"));
 		add_option('opt_AP_TipidiFiles', $TipidiFiles);
+	}
+	// Migrazione: riallinea le URL delle icone dei Tipi di Files alla cartella
+	// corrente del plugin (utile se lo slug/cartella e' cambiato dopo un update).
+	$TdF = get_option('opt_AP_TipidiFiles');
+	if (is_array($TdF)) {
+		$TdF_mod = false;
+		foreach ($TdF as $TdF_k => $TdF_v) {
+			if (!empty($TdF_v['Icona'])) {
+				$TdF_new = preg_replace('#^.*/plugins/[^/]+/#', Albo_URL, $TdF_v['Icona']);
+				if ($TdF_new !== null && $TdF_new !== $TdF_v['Icona']) {
+					$TdF[$TdF_k]['Icona'] = $TdF_new;
+					$TdF_mod = true;
+				}
+			}
+		}
+		if ($TdF_mod) { update_option('opt_AP_TipidiFiles', $TdF); }
 	}
 	if(get_option('opt_AP_AnnoProgressivo')  == '' || !get_option('opt_AP_AnnoProgressivo')){
 		add_option('opt_AP_AnnoProgressivo', ''.date("Y").'');
@@ -2294,15 +2291,15 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	}
 
 	function update_AlboPretorio_settings(){
-	    if(isset($_POST['AlboPretorio_submit_button']) And $_POST['AlboPretorio_submit_button'] == __('Salva Modifiche','albo-online')){
+	    if(isset($_POST['AlboPretorio_submit_button']) And $_POST['AlboPretorio_submit_button'] == __('Salva Modifiche','albo-pretorio-considera')){
 	    	if (!current_user_can('admin_albo')) {
-	    		wp_die(esc_html__("Non hai i permessi per modificare la configurazione dell'Albo","albo-online"));
+	    		wp_die(esc_html__("Non hai i permessi per modificare la configurazione dell'Albo","albo-pretorio-considera"));
 	    	}
 	    	if (!isset($_POST['confAP'])) {
-	    		wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+	    		wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 	    	}
 			if (!wp_verify_nonce($_POST['confAP'],'configurazionealbo')){
-				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online"));
+				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 			}
 		    ap_set_ente_me(strip_tags($_POST['c_Ente']));
 			if (isset($_POST['c_VEnte']) And $_POST['c_VEnte']=='Si')
