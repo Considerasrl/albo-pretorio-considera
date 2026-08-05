@@ -11,6 +11,40 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+## [4.10.1] - 2026-08-05
+
+### Sicurezza
+- **Critico**: il salvataggio della configurazione richiede ora un nonce valido
+  e la capability `admin_albo`; in precedenza una POST anonima poteva modificare
+  tutte le opzioni del plugin (mancava `exit` dopo il redirect di errore).
+- **Critico**: SQL injection nel parametro `dadata`/`adata` della REST API
+  pubblica (`/wp-json/alboonline/v1/atti`): le date sono ora validate nel
+  formato prima di entrare nella query.
+- **Alto**: path traversal nel download dei backup (`ExportBackupData`): il nome
+  file passa ora per `basename()`.
+- **Alto**: SQL injection nel parametro `Anno` del repertorio (`ap_Repertorio`):
+  cast a intero.
+- **Alto**: le azioni `delete-allegato-atto` e `delete_bulk_atti` richiedono
+  ora un nonce valido (prima la cancellazione era possibile via CSRF).
+- **Medio**: XSS riflesso nel parametro `titolo` dello shortcode `[AlboAtto]`
+  (sanitizzazione + escaping) e nel pulsante "Torna alla Lista" via header
+  Referer (uso di `esc_url(wp_get_referer())`).
+- **Medio**: le esportazioni del repertorio (CSV/XML/JSON) richiedono login e
+  nonce; tutte le azioni di `albo_post()` richiedono ora un utente autenticato.
+- **Medio**: nonce sulle azioni `pubblica-atto`, `approva-atto`, `setta-anno`
+  e sulla ripubblicazione massiva (`rip`).
+- **Medio**: l'associazione di allegati "spuri" verifica che il file sia dentro
+  la cartella di upload dell'Albo.
+- **Medio**: SQL injection secondarie in `ap_remove_metasatto()` e
+  `ap_get_alcuni_soggetti_ruolo()` (prepare/cast interi).
+- **Basso**: le directory `AlboOnLine/BackupDatiAlbo` e `OblioDatiAlbo`
+  vengono protette con `.htaccess` e `index.php`.
+
+### Corretto
+- L'azione pubblica `printatto` andava in fatal error perché `stampe.php` non
+  era caricata sul frontend; ora il file viene incluso e la stampa è consentita
+  solo per atti pubblicati e non in oblio.
+
 ## [4.10.0] - 2026-08-04
 
 ### Aggiunto
