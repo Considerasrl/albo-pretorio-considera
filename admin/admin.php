@@ -1101,7 +1101,7 @@ function Memo_allegato_atto(){
 					if ($UnitaIni=="G")		$LimiteMb = $LimiteMb*1024;
 					elseif ($UnitaIni=="K")	$LimiteMb = $LimiteMb/1024;
 					if (($DimFile>$LimiteMb) and ($UnitM==" MB")){
-						$messages= sprintf(__("Il file caricato è di %s Mb, il limite massimo è di %s Mb","albo-pretorio-considera"),$DimFile,ini_get('upload_max_filesize'));
+						$messages= sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Il file caricato è di %1\$s Mb, il limite massimo è di %2\$s Mb","albo-pretorio-considera"),$DimFile,ini_get('upload_max_filesize'));
 					}else{
 					  	if ($_FILES["files"]["error"][$i] > 0){
 							$messages= __("Errore","albo-pretorio-considera").": " . $_FILES["file"]["error"][$i];

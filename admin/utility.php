@@ -38,7 +38,7 @@ if (isset($_REQUEST['action'])){
 			}
 			ap_set_ente_orfani(sanitize_text_field($_REQUEST["Ente"]));
 			$NewEnte=ap_get_ente(sanitize_text_field($_REQUEST["Ente"]));
-			$Stato=sprintf(__("Tutti gli atti con %s Ente non definito sono stati assegnati all'ente %s %s %s ","albo-pretorio-considera"),'<span style="color:red;">',"</span>","<strong>",$NewEnte->Nome,"</strong>");
+			$Stato=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Tutti gli atti con %1\$s Ente non definito sono stati assegnati all'ente %2\$s %3\$s %4\$s ","albo-pretorio-considera"),'<span style="color:red;">',"</span>","<strong>",$NewEnte->Nome,"</strong>");
 			menu($Stato);
 			break;	
 		case "Crearobots":
@@ -190,7 +190,7 @@ if (isset($_REQUEST['action'])){
 			}
 			$Ris=ap_del_ip_log();
 			if(is_numeric($Ris)){
-				menu(sprintf(__("N° %s IP nel file di log CANCELLATI","albo-pretorio-considera"),$Ris));		
+				menu(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("N° %s IP nel file di log CANCELLATI","albo-pretorio-considera"),$Ris));		
 			}else{
 				menu(__("Non è sono stati cancellati gli indirizzi IP nel file di log per il seguente errore: ","albo-pretorio-considera").$Ris);
 			}
@@ -336,7 +336,7 @@ echo '					<li><a href="#utility-tab-10">'.__("Aggiornamento Impronta","albo-pre
 		<div id="utility-tab-1" style="margin-bottom:20px;">
 				<h3 style="text-align:center;">'.__("Attenzione","albo-pretorio-considera").'!!!!!<br />
 				'.__("Operazione di proroga della scadenza degli atti in corso di validità a causa di interruzione del servizio di pubblicazione","albo-pretorio-considera").'</h3>
-				<p>'.sprintf(__("Questa operazione PROROGA gli atti in corso di validità con motivazione %s Proroga validità Atti per interruzione del sevizio di pubblicazione %sLa nuova scadenza degli atti viene proroga di un numero di giorni uguale a quello dell'interruzione. %sEstratto dalle Linee Guida di Agid punto 7:%sLa pubblicazione si intende soddisfatta se un documento è rimasto disponibile sul sito complessivamente per almeno dodici ore per ciascun giorno di pubblicazione.%sIl periodo di pubblicazione è prorogato di un giorno per ciascun giorno di pubblicazione inferiore complessivamente a dodici ore, in base a un’attestazione del responsabile della pubblicazione o di un suo delegato.%s","albo-pretorio-considera"),'<span style="font-weight: bold;font-style: italic;color:red;">','</span><br />','<br /><br /><strong><em>','</em><br />','<br />','<strong>').'</p>
+				<p>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Questa operazione PROROGA gli atti in corso di validità con motivazione %1\$s Proroga validità Atti per interruzione del sevizio di pubblicazione %2\$sLa nuova scadenza degli atti viene proroga di un numero di giorni uguale a quello dell'interruzione. %3\$sEstratto dalle Linee Guida di Agid punto 7:%4\$sLa pubblicazione si intende soddisfatta se un documento è rimasto disponibile sul sito complessivamente per almeno dodici ore per ciascun giorno di pubblicazione.%5\$sIl periodo di pubblicazione è prorogato di un giorno per ciascun giorno di pubblicazione inferiore complessivamente a dodici ore, in base a un’attestazione del responsabile della pubblicazione o di un suo delegato.%6\$s","albo-pretorio-considera"),'<span style="font-weight: bold;font-style: italic;color:red;">','</span><br />','<br /><br /><strong><em>','</em><br />','<br />','<strong>').'</p>
 				<p style="font-weight: bold;font-style: italic;color:red;">'.__("Questa è un'operazione irreversibile e modifica dati sostanziali degli Atti, si consiglia di eseguire un backup prima di procedere, per poter recuperare i dati originali in caso di errori.","albo-pretorio-considera").'</p>';
 switch ($passo){
 	case 0:
@@ -413,8 +413,8 @@ echo '		</div>
 				<p style="text-align:left;font-style: italic;">
 '.__("Questa procedura esegue le operazioni necessarie per l'allineamento dei files e delle tabelle del DataBase per mantenere il diritto all'oblio degli atti pubblicati","albo-pretorio-considera").':
 					<ul style="list-style: circle inside;">
-						<li>'.sprintf(__("Aggiornamento del contenuto del files %s e %s nella cartella","albo-pretorio-considera"),'<span style="font-weight: bold;">.htaccess</span>','<span style="font-weight: bold;">index.php</span>').' <span style="font-style: italic;font-weight: bold;"> '.AP_BASE_DIR.'AllegatiAttiAlboPretorio</span></li>
-						<li>'.sprintf(__("Aggiornamento del contenuto del file %s nella cartella","albo-pretorio-considera"),'<span style="font-weight: bold;">robots.txt</span>').' <span style="font-style: italic;font-weight: bold;">'.$basedir.'</span></li>
+						<li>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Aggiornamento del contenuto del files %1\$s e %2\$s nella cartella","albo-pretorio-considera"),'<span style="font-weight: bold;">.htaccess</span>','<span style="font-weight: bold;">index.php</span>').' <span style="font-style: italic;font-weight: bold;"> '.AP_BASE_DIR.'AllegatiAttiAlboPretorio</span></li>
+						<li>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Aggiornamento del contenuto del file %s nella cartella","albo-pretorio-considera"),'<span style="font-weight: bold;">robots.txt</span>').' <span style="font-style: italic;font-weight: bold;">'.$basedir.'</span></li>
 						<li>'.__("Aggiornamento del percorso nella tabella degli allegati nel Data Base","albo-pretorio-considera").'</li>
 					</ul>
 				<p style="text-align:center;font-weight: bold;">
@@ -483,11 +483,11 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 			echo '
 			</select>
 					<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToXML&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
-					<img src="'.Albo_URL.'/img/XML.png" title="'.sprintf(__("Esporta il repertorio del %s in XML","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
+					<img src="'.Albo_URL.'/img/XML.png" title="'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Esporta il repertorio del %s in XML","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
 				<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToJson&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
-					<img src="'.Albo_URL.'/img/Json.png" title="'.sprintf(__("Esporta il repertorio del %s in Json","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
+					<img src="'.Albo_URL.'/img/Json.png" title="'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Esporta il repertorio del %s in Json","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
 				<a href="'.wp_nonce_url('?page=utilityAlboP&amp;p=5&amp;Anno='.$AnnoRepertorio.'&amp;action=ToCsv&amp;Anno='.$AnnoRepertorio,'repertorio_export').'">
-					<img src="'.Albo_URL.'/img/Csv.png" title="'.sprintf(__("Esporta il repertorio del %s in csv","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
+					<img src="'.Albo_URL.'/img/Csv.png" title="'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Esporta il repertorio del %s in csv","albo-pretorio-considera"),$AnnoRepertorio).'" style="vertical-align: middle;"/></a>
 	</div>
 			<h3 style="text-align:center">'.__("Repertorio Anno","albo-pretorio-considera").' '.$AnnoRepertorio.'</h3>
 			<div style="overflow: scroll;height:440px;">
@@ -535,7 +535,7 @@ echo'
 					<input type="hidden" name="action" value="ImpostaEnteND" />
 					'.ap_get_dropdown_enti('Ente','Ente','postform richiesto ValValue(>-1)','',0).'
 					<input type="submit" name="ImpEnte" id="ImpEnte" class="button" value="Imposta"  />
-					<p>'.sprintf(__("Questa procedura imposta %s in tutti gli atti in cui l'Ente risulta come %sEnte non definito","albo-pretorio-considera"),'<strong>'.ap_get_ente_me().'</strong>','<span style="color:red;">').'</span></p>
+					<p>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Questa procedura imposta %1\$s in tutti gli atti in cui l'Ente risulta come %2\$sEnte non definito","albo-pretorio-considera"),'<strong>'.ap_get_ente_me().'</strong>','<span style="color:red;">').'</span></p>
 					</form>
 				</p>				
 	</div>';
@@ -547,8 +547,8 @@ echo'
 		'.__("Soluzioni","albo-pretorio-considera").':
 		<ul>
 			<li>'.__("modificare il file php.ini parametro max_execution_time=XXX modificare inserendo il numero di secondi in genere di default sono 60","albo-pretorio-considera").'</li>
-			<li>'.sprintf(__("modificare il file %s: aggiungere il seguente comando set_time_limit(XXX)","albo-pretorio-considera"),"wp-config.php").'
-			<li>'.sprintf(__("modificare il file %s: fare preventivamente una copia del file. Aggiungere la segunte direttiva: php_value max_execution_time XXX","albo-pretorio-considera"),'.htaccess').'.</li>
+			<li>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("modificare il file %s: aggiungere il seguente comando set_time_limit(XXX)","albo-pretorio-considera"),"wp-config.php").'
+			<li>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("modificare il file %s: fare preventivamente una copia del file. Aggiungere la segunte direttiva: php_value max_execution_time XXX","albo-pretorio-considera"),'.htaccess').'.</li>
 		</ul>
 		<em>'.__("un valore possibile di XXX è 360 (6 minuti)","albo-pretorio-considera").'</em>
 		</span>
@@ -952,19 +952,19 @@ function TestCongruitaDati($Tabella){
 			$CategorieOrfane=ap_categorie_orfane();
 			if ($CategorieOrfane){
 				foreach ($CategorieOrfane as $CategoriaOrfana){
-					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta la Categoria con Codice %sNON TROVATA nella tabella Categorie %s","albo-pretorio-considera"),'<em>','</em><strong>'.$CategoriaOrfana->Numero,$CategoriaOrfana->Anno.'</strong> <em>','</em><strong>'.$CategoriaOrfana->IdCategoria.'</strong> <em>','<br />');
+					$Analisi.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sAtto N. %2\$s/%3\$sriporta la Categoria con Codice %4\$sNON TROVATA nella tabella Categorie %5\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$CategoriaOrfana->Numero,$CategoriaOrfana->Anno.'</strong> <em>','</em><strong>'.$CategoriaOrfana->IdCategoria.'</strong> <em>','<br />');
 				}
 			}
 			$EntiOrfani=ap_enti_orfani();
 			if ($EntiOrfani){
 				foreach ($EntiOrfani as $EnteOrfano){
-					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta l'ente con Codice %sNON TROVATA nella tabella Enti %s","albo-pretorio-considera"),'<em>','</em><strong>'.$EnteOrfano->Numero,$EnteOrfano->Anno.'</strong> <em>','</em><strong>'.$EnteOrfano->Ente.'</strong> <em>','<br />');
+					$Analisi.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sAtto N. %2\$s/%3\$sriporta l'ente con Codice %4\$sNON TROVATA nella tabella Enti %5\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$EnteOrfano->Numero,$EnteOrfano->Anno.'</strong> <em>','</em><strong>'.$EnteOrfano->Ente.'</strong> <em>','<br />');
 				}
 			}
 			$ResponsabiliOrfani=ap_responsabili_orfani();
 			if ($ResponsabiliOrfani){
 				foreach ($ResponsabiliOrfani as $ResponsabileOrfano) {
-					$Analisi.=sprintf(__("%sAtto N. %s/%sriporta il responsabile con Codice %sNON TROVATA nella tabella Responsabili %s","albo-pretorio-considera"),'<em>','</em><strong>'.$ResponsabileOrfano->Numero,$ResponsabileOrfano->Anno.'</strong> <em>','</em><strong>'.$ResponsabileOrfano->RespProc.'</strong> <em>','<br />');
+					$Analisi.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sAtto N. %2\$s/%3\$sriporta il responsabile con Codice %4\$sNON TROVATA nella tabella Responsabili %5\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$ResponsabileOrfano->Numero,$ResponsabileOrfano->Anno.'</strong> <em>','</em><strong>'.$ResponsabileOrfano->RespProc.'</strong> <em>','<br />');
 				}
 			}
 			return $Analisi;
@@ -972,11 +972,11 @@ function TestCongruitaDati($Tabella){
 		case $wpdb->table_name_Allegati:
 			$NumAllegati=ap_num_allegati();
 			$AllegatiOrfani=ap_allegati_orfani();
-			$Analisi= sprintf(__("%sN. Allegati %s di cui orfani %s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumAllegati.'</strong> <em>','</em><strong> '.count($AllegatiOrfani).'</strong> <br />');
+			$Analisi= sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sN. Allegati %2\$s di cui orfani %3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumAllegati.'</strong> <em>','</em><strong> '.count($AllegatiOrfani).'</strong> <br />');
 			if (count($AllegatiOrfani)>0)
 				$Analisi.="<br /><strong>".__("Allegati Orfani","albo-pretorio-considera")."</strong><br />";
 			foreach ($AllegatiOrfani as $AllegatoOrfano){
-				$Analisi.=sprintf(__("%sAllegato %s Associato all'Atto con id n.%s","albo-pretorio-considera"),'<em>','</em><strong>'.$AllegatoOrfano->IdAtto.'</strong> <em>','</em><strong> '.$AllegatoOrfano->IdAtto.'</strong> <br />');
+				$Analisi.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sAllegato %2\$s Associato all'Atto con id n.%3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$AllegatoOrfano->IdAtto.'</strong> <em>','</em><strong> '.$AllegatoOrfano->IdAtto.'</strong> <br />');
 			}
 			return $Analisi;
 			break;
@@ -988,9 +988,9 @@ function TestCongruitaDati($Tabella){
 			foreach ($Categorie as $Categoria){
 				$NCategorie=ap_num_categoria_atto($Categoria->IdCategoria);
 				$NCategorie=$NCategorie ? $NCategorie : 0;
-				$UsoCategorie.=sprintf(__("%s Presente in %s Associato all'Atto con id n.%s Presente in Atti%s","albo-pretorio-considera"),'<em>','<em>'.$Categoria->Nome,'</em><strong>'.$NCategorie .'</strong> <em>', '</em><br />');
+				$UsoCategorie.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s Presente in %2\$s Associato all'Atto con id n.%3\$s Presente in Atti%4\$s","albo-pretorio-considera"),'<em>','<em>'.$Categoria->Nome,'</em><strong>'.$NCategorie .'</strong> <em>', '</em><br />');
 			}
-			return sprintf(__("%sCategorie codificate %s di cui inutilizzate%s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumCategorie.'</strong> <em>','</em><strong> '.$NumCategorieInutilizzate.'</strong> <br />'.$UsoCategorie);
+			return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sCategorie codificate %2\$s di cui inutilizzate%3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumCategorie.'</strong> <em>','</em><strong> '.$NumCategorieInutilizzate.'</strong> <br />'.$UsoCategorie);
 			break;
 		case $wpdb->table_name_Log:
 			$LogPerOggetti=ap_get_Stat_Log("Oggetto");
@@ -1015,7 +1015,7 @@ function TestCongruitaDati($Tabella){
 				$NResponsabile=$NResponsabile ? $NResponsabile : 0;
 				$UsoResponsabili.="<em>".$Responsabile->Cognome." ".$Responsabile->Nome." ".__("Presente in","albo-pretorio-considera")." </em><strong>".$NResponsabile ."</strong> <em>".__("Atti","albo-pretorio-considera")."</em><br />";	
 			}
-			return sprintf(__("%s Responsabili codificati %s di cui inutilizzati%s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumResp.'</strong> <em>','</em><strong> '.$NumResponsabiliInutilizzate.'</strong><br />'.$UsoResponsabili);
+			return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s Responsabili codificati %2\$s di cui inutilizzati%3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumResp.'</strong> <em>','</em><strong> '.$NumResponsabiliInutilizzate.'</strong><br />'.$UsoResponsabili);
 			break;
 		case $wpdb->table_name_Enti:
 			$NumEnti=ap_num_enti();
@@ -1027,7 +1027,7 @@ function TestCongruitaDati($Tabella){
 				$NAtti=$NAtti ? $NAtti : 0;
 				$UsoEnti.="<em>".$Ente->Nome." ".__("Presente in","albo-pretorio-considera")." </em><strong>".$NAtti ."</strong> <em>".__("Atti","albo-pretorio-considera")."</em><br />";	
 			}
-			return sprintf(__("%s Enti codificati %s di cui inutilizzati%s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumEnti,'</em><strong>'.$NumEntiInutilizzati.'</strong><br />'.$UsoEnti);
+			return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s Enti codificati %2\$s di cui inutilizzati%3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumEnti,'</em><strong>'.$NumEntiInutilizzati.'</strong><br />'.$UsoEnti);
 			break;
 		case $wpdb->table_name_Attimeta:
 			$MetaDati=ap_get_elenco_attimeta("Array","listaAttiMeta","ListaAttiMeta","Si",0,TRUE);

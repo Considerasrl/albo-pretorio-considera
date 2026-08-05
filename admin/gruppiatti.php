@@ -42,7 +42,7 @@ function Lista_AttiGruppo($Parametri){
 		if($Opzione=="Validita") $Opzione="Validità";
 		if($Opzione=="DataOblio") $Opzione="Data Oblio";
 		if($Valore==1){
-			echo '			<th scope="col">'.__($Opzione,"albo-pretorio-considera").'</th>';
+			echo '			<th scope="col">'.esc_html($Opzione).'</th>';
 		}
 	}
 	echo '	</tr></thead><tbody>';
@@ -132,7 +132,7 @@ function Lista_AttiGruppo($Parametri){
     </table>';
 echo '</div>';
 	if ($CeAnnullato) 
-		echo '<p>'. sprintf(__('Le righe evidenziate con questo sfondo %s indicano Atti Annullati','albo-pretorio-considera'),' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span>').'</p>';
+		echo '<p>'. sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Le righe evidenziate con questo sfondo %s indicano Atti Annullati','albo-pretorio-considera'),' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span>').'</p>';
 return ob_get_clean();
 }
 ?>

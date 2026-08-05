@@ -55,7 +55,7 @@ function Visualizza_Atto($Parametri){
 	$NomeResp=ap_get_responsabile($risultato->RespProc);
 	$NomeResp=$NomeResp[0];
 	if($risultato->DataAnnullamento!='0000-00-00')
-		$Annullato=sprintf(__('%sAtto Annullato dal Responsabile del Procedimento %s Motivo: %s','albo-pretorio-considera'),'<p style="background-color: '.$coloreAnnullati.';text-align:center;font-size:1.5em;">','<br /><br />','<span style="font-size:1;font-style: italic;">'.stripslashes($risultato->MotivoAnnullamento).'</span></p>');
+		$Annullato=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('%1$sAtto Annullato dal Responsabile del Procedimento %2$s Motivo: %3$s','albo-pretorio-considera'),'<p style="background-color: '.$coloreAnnullati.';text-align:center;font-size:1.5em;">','<br /><br />','<span style="font-size:1;font-style: italic;">'.stripslashes($risultato->MotivoAnnullamento).'</span></p>');
 	else
 		$Annullato='';
 	$Stato="Scaduto";

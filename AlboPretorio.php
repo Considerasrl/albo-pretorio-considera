@@ -130,8 +130,8 @@ function admin_notice(){
 ?>
     <div class="updated notice albo-notice-dismis is-dismissible" >
         <h3>Albo Online</h3>
-        <p><?php echo sprintf(__('Aggiornato alla versione %s', 'albo-pretorio-considera' ),$this->version); ?></p>
-        <p><?php echo sprintf(__('Per visualizzare le modifiche apportate consultare il %sregistro delle modifiche su GitHub%s', 'albo-pretorio-considera' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>'); ?></p>
+        <p><?php echo sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Aggiornato alla versione %s', 'albo-pretorio-considera' ),$this->version); ?></p>
+        <p><?php echo sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Per visualizzare le modifiche apportate consultare il %1$sregistro delle modifiche su GitHub%2$s', 'albo-pretorio-considera' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>'); ?></p>
     </div>
 
 
@@ -1256,7 +1256,7 @@ if (ap_num_responsabili()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-					'.sprintf(__('Non risultano %sResponsabili%s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti','albo-pretorio-considera'),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'.__('Crea Soggetti','albo-pretorio-considera').'</a></p>
+					'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non risultano %1$sResponsabili%2$s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti','albo-pretorio-considera'),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'.__('Crea Soggetti','albo-pretorio-considera').'</a></p>
 				</div>
 			</div>';
 }
@@ -1264,7 +1264,7 @@ if (ap_num_unitao()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-				'. sprintf(__("Non risulta nessuna %sUnità Organizzativa%s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-pretorio-considera").'</a>
+				'. sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Non risulta nessuna %1\$sUnità Organizzativa%2\$s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-pretorio-considera").'</a>
 				</p>
 			</div>';
 }

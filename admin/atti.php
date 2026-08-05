@@ -466,7 +466,7 @@ if(isset($_REQUEST['action'])){
 			}
 			update_option('opt_AP_AnnoProgressivo',date("Y") );
 		  	update_option('opt_AP_NumeroProgressivo',1 );
-			PreApprovazione((int)$_REQUEST['id'],sprintf(__('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),date("Y")));
+			PreApprovazione((int)$_REQUEST['id'],sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),date("Y")));
 			break;
 		case "approva-atto" :
 			$ret="";
@@ -762,7 +762,7 @@ echo'<br />
 		if($Passato){
 			echo '<tr>
 			<td>'.__("Numero Atto","albo-pretorio-considera").'</td>
-			<td>'.sprintf(__("da Parametri %s Progressivo da ultima pubblicazione","albo-pretorio-considera"),get_option('opt_AP_NumeroProgressivo')).' '.$NumeroDaDb.$AppPostMigrazione.'</td>';
+			<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("da Parametri %s Progressivo da ultima pubblicazione","albo-pretorio-considera"),get_option('opt_AP_NumeroProgressivo')).' '.$NumeroDaDb.$AppPostMigrazione.'</td>';
 			if (($NumeroDaDb==$NumeroOpzione) Or $NumAttiPubblicati==0){
 			 	$Passato=true;
 				echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
@@ -805,7 +805,7 @@ echo'<br />
 					<td>'.__("Data Fine Pubblicazione","albo-pretorio-considera").'</td>';
 			if(ap_SeDate(">=",$atto->DataFine,$atto->DataInizio)){
 				$Passato=true;
-				echo '<td>'.sprintf(__("%s GG Pubblicazione Atto %s GG Pubblicazione standard Categoria %s GG Incremento per scadenza in giorno Festivo %s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataFine),$differenza,$categoria[0]->Giorni,$NggInc).'</td>';
+				echo '<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s GG Pubblicazione Atto %2\$s GG Pubblicazione standard Categoria %3\$s GG Incremento per scadenza in giorno Festivo %4\$s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataFine),$differenza,$categoria[0]->Giorni,$NggInc).'</td>';
 				if (ap_datediff("d", $atto->DataInizio, $atto->DataFine)== $categoria[0]->Giorni){
 					echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 				}else{
@@ -814,7 +814,7 @@ echo'<br />
 				}
 			}else{
 	 			$Passato=false;
-	   			echo '<td><span style="color:red;">'.sprintf(__("La data di fine Pubblicazione %s è antecedente della data di inizio pubblicazione %s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataFine),ap_VisualizzaData($atto->DataInizio)).'</span></td>
+	   			echo '<td><span style="color:red;">'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("La data di fine Pubblicazione %1\$s è antecedente della data di inizio pubblicazione %2\$s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataFine),ap_VisualizzaData($atto->DataInizio)).'</span></td>
 				   <td><span style="font-weight:bold;">'.__("Aggiornare la data di Fine Pubblicazione con i giorni della categoria o tornare indietro e modificare l'atto","albo-pretorio-considera").'</span></td>
 			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.ap_VisualizzaData($newDataFine).'</a></td>';
 			}
@@ -826,7 +826,7 @@ echo'<br />
  			//echo $atto->DataInizio."   -  ".$incrementoStandard;
 			echo '<tr>
 					<td>'.__("Data Oblio","albo-pretorio-considera").'</td>
-					<td>'.sprintf(__("%s - Data Oblio da Decreto n. 33/2013 art. 8 %s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataOblio),ap_VisualizzaData($DataOblioStandard)).'</td>';
+					<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s - Data Oblio da Decreto n. 33/2013 art. 8 %2\$s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataOblio),ap_VisualizzaData($DataOblioStandard)).'</td>';
 				//	echo $atto->DataFine.' '.$atto->DataInizio. ' '.SeDate("<=",$atto->DataFine,$atto->DataInizio);
 			if(ap_SeDate("=",$atto->DataOblio,$DataOblioStandard)){
 				$Passato=true;
@@ -2264,7 +2264,7 @@ if (ap_num_responsabili()==0){
 	$HtmlNP.='<p> </p>
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-				'. sprintf(__("Non risultano %sResponsabili%s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'. __("Crea Soggetti","albo-pretorio-considera").'</a>
+				'. sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Non risultano %1\$sResponsabili%2\$s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'. __("Crea Soggetti","albo-pretorio-considera").'</a>
 				</p>
 			</div>';
 }
@@ -2272,7 +2272,7 @@ if (ap_num_unitao()==0){
 	$HtmlNP.='<p> </p>
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-				'. sprintf(__("Non risulta nessuna %sUnità Organizzativa%s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-pretorio-considera").'</a>
+				'. sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Non risulta nessuna %1\$sUnità Organizzativa%2\$s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-pretorio-considera").'</a>
 				</p>
 			</div>';
 }

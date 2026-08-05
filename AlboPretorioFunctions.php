@@ -49,13 +49,13 @@ function ap_Move_Allegati_CartellaMeseAnno(){
 	$nomefileLog=$DirLog."/Backup_Sposta_Allegati_Cartella_Anno_Mese.log";
 	if (!is_dir ( $DirLog)){
 		if (!wp_mkdir_p($DirLog)){
-			sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog);
+			sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog);
 			return;
 		}
 	}
 	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 	if(($fplog = @fopen($nomefileLog, "ab"))===FALSE){
-		sprintf(__('Non sono riuscito a creare il file %s Fine Operazione','albo-pretorio-considera'),$nomefileLog);
+		sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare il file %s Fine Operazione','albo-pretorio-considera'),$nomefileLog);
 		return;
 	}
 	fwrite($fplog,"____________________________________________________________________________\n");
@@ -449,7 +449,7 @@ function ap_existTable($Tabella){
 function ap_AggiungiCampoTabella($Tabella, $Campo, $Parametri){
 	global $wpdb;
 	if ( false === $wpdb->query("ALTER TABLE $Tabella ADD $Campo $Parametri")){
-		return new WP_Error('db_insert_error', sprintf(__('Non sono riuscito a creare il campo %s Nella Tabella %s Errore %s ','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
+		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare il campo %1$s Nella Tabella %2$s Errore %3$s ','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
 	} else{
 		return true;
 	}
@@ -490,7 +490,7 @@ function ap_ModificaTipoCampo($Tabella, $Campo, $NuovoTipo){
 	global $wpdb;
 //	echo "ALTER TABLE $Tabella MODIFY $Campo $NuovoTipo <br />";
 	if ( false === $wpdb->query("ALTER TABLE $Tabella MODIFY $Campo $NuovoTipo")){
-		return new WP_Error('db_insert_error', sprintf(__('Non sono riuscito a modificare il campo %s Nella Tabella %s Errore %s ','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
+		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a modificare il campo %1$s Nella Tabella %2$s Errore %3$s ','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
 	} else{
 		return true;
 	}
@@ -500,7 +500,7 @@ function ap_ModificaParametriCampo($Tabella, $Campo, $Tipo, $Parametro){
 	global $wpdb;
 //	echo "ALTER TABLE $Tabella CHANGE $Campo $Campo $Tipo $Parametro";exit;
 	if ( false === $wpdb->query("ALTER TABLE $Tabella CHANGE $Campo $Campo $Tipo $Parametro")){
-		return new WP_Error('db_insert_error', sprintf(__('Non sono riuscito a modificare il campo %s Nella Tabella %s Errore %s','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
+		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a modificare il campo %1$s Nella Tabella %2$s Errore %3$s','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
 	} else{
 		return true;
 	}
@@ -1447,7 +1447,7 @@ function ap_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,
 				'%d',
 				'%s')))	{
 // echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
-          return sprintf(__("Non sono riuscito ad inserire il nuovo Atto Sql==%s Ultimo errore==%s","albo-pretorio-considera"),$wpdb->last_query,$wpdb->last_error);
+          return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Non sono riuscito ad inserire il nuovo Atto Sql==%1\$s Ultimo errore==%2\$s","albo-pretorio-considera"),$wpdb->last_query,$wpdb->last_error);
     }else{
 		$newIDAtto=$wpdb->insert_id;
 //    	echo "Sql==".$wpdb->last_query;exit;
@@ -1937,10 +1937,11 @@ function ap_ripubblica_atti_correnti($ArrayAtti){
 		$Atto=$Atto[0];
 		$DataFine=ap_DateAdd($Atto->DataFine,$Ngg);
 		if(strlen($Atto->Informazioni)>0)
+			/* translators: 1: numero di giorni, 2: data originale, 3: data aggiornata */
 			$Informazioni=$Atto->Informazioni.sprintf(__('
-			Data Scadenza Atto prolungata di %d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%s - Data Aggiornata:%s','albo-pretorio-considera'),$Ngg,ap_VisualizzaData($Atto->DataFine),ap_VisualizzaData($DataFine));
+			Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-considera'),$Ngg,ap_VisualizzaData($Atto->DataFine),ap_VisualizzaData($DataFine));
 		else
-			$Informazioni=sprintf(__('Data Scadenza Atto prolungata di %d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%s - Data Aggiornata:%s','albo-pretorio-considera'),$Ngg,ap_VisualizzaData($Atto->DataFine),ap_VisualizzaData($DataFine));
+			$Informazioni=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-considera'),$Ngg,ap_VisualizzaData($Atto->DataFine),ap_VisualizzaData($DataFine));
 //		$SqlAttoDaProlungare='UPDATE '.$wpdb->table_name_Atti.' SET DataFine='.$DataFine.', Informazioni="'.$Informazioni.'" WHERE IdAtto='.$IDAtto.';';
 		
 		if ($num=$wpdb->update($wpdb->table_name_Atti,
@@ -2196,13 +2197,13 @@ function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 			if (!copy($allegato['Allegato'], $NewAllegato)) {
 				ap_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nello spostamento Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." => $NewAllegato",0);	
 				$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-considera").'</spam> '.__("nello spostamento dell'Allegato","albo-pretorio-considera").' '.$allegato['Allegato'].' in '. $NewAllegato."%%br%%";
-				fwrite($fplog,_("Non sono riuscito a copiare il file","albo-pretorio-considera")." ".$allegato['Allegato']." ".__("in","albo-pretorio-considera")." ". $NewAllegato."\n");
+				fwrite($fplog,__("Non sono riuscito a copiare il file","albo-pretorio-considera")." ".$allegato['Allegato']." ".__("in","albo-pretorio-considera")." ". $NewAllegato."\n");
 			}
 			else{
 				if (!unlink($allegato['Allegato'])){
 					ap_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nella cancellazione Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato'],0);
 					$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-considera").'</spam> '.__("errata cancellazione dell'Allegato","albo-pretorio-considera").' </spam>'.$allegato['Allegato']."%%br%%";
-					fwrite($fplog,_("Non sono riuscito a cancellare il file","albo-pretorio-considera")." ".$allegato['Allegato']."\n");
+					fwrite($fplog,__("Non sono riuscito a cancellare il file","albo-pretorio-considera")." ".$allegato['Allegato']."\n");
 			}
 			$msg.='<spam style="color:green;">File</spam> '.$allegato['Allegato'].' <spam style="color:green;">'.__("spostato in","albo-pretorio-considera").'</spam> '.$NewAllegato.'%%br%%';
 			fwrite($fplog,"File ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-considera")." ".$NewAllegato."\n");
@@ -2478,7 +2479,7 @@ function ap_del_responsabile($id) {
 		return __("Cancellazione Soggetto Fallita, il soggetto non è presente in archivio ","albo-pretorio-considera");
 	}
 	$responsabile= __("Cancellazione Responsabile","albo-pretorio-considera")." {IdResponsabile}==> $id {".__("Cognome","albo-pretorio-considera")."}==> ".$resp[0]->Cognome." {".__("Nome","albo-pretorio-considera")."}==> ".$resp[0]->Nome; 
-	$respdel=sprintf(__("Cancellazione Responsabile (%d) %s %s Avvenuta con successo","albo-pretorio-considera"),$id, $resp[0]->Cognome,$resp[0]->Nome); 
+	$respdel=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Cancellazione Responsabile (%1\$d) %2\$s %3\$s Avvenuta con successo","albo-pretorio-considera"),$id, $resp[0]->Cognome,$resp[0]->Nome); 
 	$N_atti=ap_get_NumAttiSoggetto($id);
 	if ($N_atti>0){
 		return array("atti" => $N_atti);
@@ -2981,43 +2982,43 @@ global $wpdb;
 		if (!is_dir ( $Destinazione)){
 			if (!wp_mkdir_p($Destinazione)){
 				if ($Echo){
-					echo "<li>".sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Destinazione)."</li>";
+					echo "<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Destinazione)."</li>";
 				}else{
-					 echo"<li>".sprintf(__('Directory %s Verificata','albo-pretorio-considera'),$Destinazione)."</li>";
+					 echo"<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$Destinazione)."</li>";
 				}
-				$ControlloDir.=sprintf(__('Non sono riuscito a creare la directory  %s \n Fine Operazione','albo-pretorio-considera'),$Destinazione);
+				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory  %s \n Fine Operazione','albo-pretorio-considera'),$Destinazione);
 			}
 		}
 		if (is_dir($Destinazione)){
 			if (!is_dir ( $Dir)){
 				if (!wp_mkdir_p($Dir)) {
 					if ($Echo){
-						echo "<li>".sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Dir)."</li>";
+						echo "<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Dir)."</li>";
 					}else{
-						echo"<li>".sprintf(__('Directory %s Verificata','albo-pretorio-considera'),$Dir)."</li>";
+						echo"<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$Dir)."</li>";
 					}
-					$ControlloDir.=sprintf(__('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$Dir);
+					$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$Dir);
 				}
 			}
 		}
 		if (!is_dir ( $DirTmp)){	
 			if (!wp_mkdir_p($DirTmp)){
 				if ($Echo){
-					echo "<li>".sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirTmp)."</li>";
+					echo "<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirTmp)."</li>";
 				}else{
-					echo"<li>".sprintf(__('Directory %s Verificata','albo-pretorio-considera'),$DirTmp)."</li>";
+					echo"<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$DirTmp)."</li>";
 				}
-				$ControlloDir.=sprintf(__('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$DirTmp);
+				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$DirTmp);
 			}
 		}
 		if (!is_dir ( $DirLog)){							
 			if (!wp_mkdir_p($DirLog)){
 				if ($Echo){
-					 echo "<li>".sprintf(__('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog)."</li>";
+					 echo "<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog)."</li>";
 				}else{
-					echo"<li>".sprintf(__('Directory %s Verificata','albo-pretorio-considera'),$DirLog)."</li>";
+					echo"<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$DirLog)."</li>";
 				}
-				$ControlloDir.=sprintf(__('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$DirLog);
+				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$DirLog);
 			} 
 		}
 	if ($Echo) echo "</ul>";

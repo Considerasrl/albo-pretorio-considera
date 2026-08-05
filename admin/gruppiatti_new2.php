@@ -41,7 +41,7 @@ function Lista_AttiGruppo($Parametri){
 		if($Opzione=="Validita") $Opzione="Validità";
 		if($Opzione=="DataOblio") $Opzione="Data Oblio";
 		if($Valore==1){
-			echo '			<th scope="col">'.__($Opzione,"albo-pretorio-considera").'</th>';
+			echo '			<th scope="col">'.esc_html($Opzione).'</th>';
 		}
 	}
 	echo '	</tr>

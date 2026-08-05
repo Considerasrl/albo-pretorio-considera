@@ -129,7 +129,7 @@ echo '    </tbody>
 
 <div id="col-left">
 	<div class="Obbligatori">
-		<span style="color:red;font-weight: bold;">*</span> <?php printf(__("i campi contrassegnati dall'asterisco sono %s obbligatori %s","albo-pretorio-considera"),"<strong>","</strong>");?>
+		<span style="color:red;font-weight: bold;">*</span> <?php printf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("i campi contrassegnati dall'asterisco sono %1\$s obbligatori %2\$s","albo-pretorio-considera"),"<strong>","</strong>");?>
 	</div>
 <div class="form-wrap">
 	<form id="addtag" method="post" action="?page=categorie" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >

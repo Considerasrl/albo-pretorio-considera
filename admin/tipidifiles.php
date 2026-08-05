@@ -42,7 +42,8 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-tipidifiles"){
 		}else{
 			$risultato=ap_del_tipidifiles(intval($_REQUEST['id']));
 			if(is_array($risultato)){
-				$NC=sprintf(__("Il Tipo di File non può essere cancellato perchè ci sono %s atti che lo utilizzano",$risultato["atti"]));
+				/* translators: %s: numero di atti che utilizzano il tipo di file */
+				$NC=sprintf(__("Il Tipo di File non può essere cancellato perchè ci sono %s atti che lo utilizzano","albo-pretorio-considera"),$risultato["atti"]);
 			}
 		}
 	}	
@@ -142,7 +143,7 @@ $IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo($_REQUEST['id']):"";
 
 <div id="col-left">
 	<div class="Obbligatori">
-		<span style="color:red;font-weight: bold;">*</span> <?php printf(__("i campi contrassegnati dall'asterisco sono %s obbligatori %s","albo-pretorio-considera"),"<strong>","</strong>");?>
+		<span style="color:red;font-weight: bold;">*</span> <?php printf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("i campi contrassegnati dall'asterisco sono %1\$s obbligatori %2\$s","albo-pretorio-considera"),"<strong>","</strong>");?>
 	</div>
 	<br />
 <div class="form-wrap">
