@@ -250,6 +250,8 @@ function albo_post() {
 			DownloadFile(WP_CONTENT_DIR ."/AlboOnLine/BackupDatiAlbo/".basename($_REQUEST['elenco_Backup_Expo']));
 			break;
 		case "delete-allegato-atto" :
+			if ( ! isset( $_REQUEST['cancellaallegatoatto'] ) || ! wp_verify_nonce( $_REQUEST['cancellaallegatoatto'], 'deleteallegatoatto' ) )
+				wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-online") );
 			$location = "?page=atti" ;
 			ap_del_allegato_atto(intval($_REQUEST['idAllegato']),intval($_REQUEST['idAtto']),intval(htmlentities($_REQUEST['Allegato'])));
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
