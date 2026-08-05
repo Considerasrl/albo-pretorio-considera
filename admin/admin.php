@@ -71,7 +71,7 @@ function albo_post() {
 					$Atti.=!is_null($Riga->Informazioni)?str_replace("  "," ",preg_replace ("/[^a-zA-Z0-9 -\/ :]/", "",stripslashes(wp_strip_all_tags(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $Riga->Informazioni),TRUE)))).";\n":";";
 				}	
 //				echo $Atti;die();
-				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');
+				$Dir=str_replace("\\","/",AP_BASE_DIR.'AlboOnLine/Repertori');
 				if (!is_dir ( $Dir))
 					if (!mkdir($Dir, 0744)) 
 						break;
@@ -107,7 +107,7 @@ function albo_post() {
 					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Categoria","albo-pretorio-considera")),ap_sanifica_testo($Riga->Categoria));
 					$riga=$Atto->addChild(preg_replace ('/[^a-zA-Z0-9]/', "_",__("Informazioni","albo-pretorio-considera")),ap_sanifica_testo($Riga->Informazioni));
 				}	
-				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');
+				$Dir=str_replace("\\","/",AP_BASE_DIR.'AlboOnLine/Repertori');
 				if (!is_dir ( $Dir))
 					if (!mkdir($Dir, 0755)) 
 						break;
@@ -122,7 +122,7 @@ function albo_post() {
 					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 				$Anno=intval($_REQUEST['Anno']);
 				$Repertorio=ap_Repertorio($Anno,FALSE);
-				$Dir=str_replace("\\","/",Albo_DIR.'/Repertori');
+				$Dir=str_replace("\\","/",AP_BASE_DIR.'AlboOnLine/Repertori');
 				if (!is_dir ( $Dir))
 					if (!mkdir($Dir, 0755)) 
 						break;

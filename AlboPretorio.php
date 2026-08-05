@@ -19,6 +19,7 @@
  * distribuite con la stessa licenza.
 */
 
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
 include_once(dirname (__FILE__) .'/AlboPretorioFunctions.php');			/* libreria delle funzioni */
@@ -1188,7 +1189,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 			<tbody>
 			<tr>
 				<th scope="row">'.__('Librerie','albo-pretorio-considera').'</th>';
-	if (is_file(Albo_DIR.'/inc/pclzip.php')){
+	if (class_exists('ZipArchive')){
  		echo'<td><span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td>
 		     <td></td>
 			 <td></td>';

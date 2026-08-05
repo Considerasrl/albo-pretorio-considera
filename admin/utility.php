@@ -1082,9 +1082,9 @@ echo '<div class="wrap">
 					</thead>
 					<tbody>
 						<tr>
-							<td>PclZip</td>
+							<td>ZipArchive</td>
 							<td>';
-if (is_file(Albo_DIR.'/inc/pclzip.php')) 
+if (class_exists('ZipArchive')) 
  		echo'<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td><td>--</td>';
 	else
 		echo'<span class="dashicons dashicons-no" style="color:red;font-size:2em;"></span></td>

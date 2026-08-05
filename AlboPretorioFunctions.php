@@ -2955,7 +2955,6 @@ global $wpdb;
 	$DirTmp=$Dir."/tmp";
 	$DirLog=$Dir."/log";
 	$ControlloDir="";
-	require_once('inc/pclzip.php');
 	if ($Tipo==""){
 			$nomefileZip=$Dir."/".$NomeFile.".zip";
 			$nomefileLog=$DirLog."/Backup_AlboPretorio_".$NomeFile.".log";
@@ -2969,7 +2968,7 @@ global $wpdb;
 		echo "<h3>".__('Verifica struttura Directory destinazione','albo-pretorio-considera'). "</h3>"
 		. "<ul>";
 	}
-	if (class_exists('PclZip')) {
+	if (class_exists('ZipArchive')) {
 //		echo $Dir." <br />".$DirTmp." <br />".$DirAllegati." <br />".$DirLog."";wp_die();
 		if (!is_dir ( $Destinazione)){
 			if (!mkdir($Destinazione, 0744)){
@@ -3062,14 +3061,15 @@ global $wpdb;
 				. '</ul>';*/
 		if (is_dir($Dir) And is_dir($DirTmp)){
 			// Crea l'archivio
-		 	$zip = new PclZip($nomefileZip);
+		 	$zip = new ZipArchive();
+			$zip->open($nomefileZip, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 			// Inizializzazione dell'iterator a cui viene passato 
 			// l'iteratore ricorsivo delle directory a cui viene passata la directory da zippare
 			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($DirTmp));
 			// Ciclo tutti gli elementi dell'iteratore, i files estratti dall'iteratore
 			foreach ($iterator as $key=>$value) {
 				if (substr($key,-1)!="."){
-					$zip->add(realpath($key),PCLZIP_OPT_REMOVE_PATH,dirname($key));
+					ap_zip_add($zip, $key, dirname($key));
 					$Risultato.='<span style="color:green;">'.__("Aggiunto all'archivio","albo-pretorio-considera").':</span> '.$key.'<br />';
 					fwrite($fplog,"File ".$key." ".__("Aggiunto all'archivio","albo-pretorio-considera")."\n");
 				}
@@ -3082,7 +3082,7 @@ global $wpdb;
 			//echo $allegato->Allegato;
 				if(is_file($allegato->Allegato)){
 					if (ap_isAllowedExtension( $allegato->Allegato)) {
-						$zip->add(realpath($allegato->Allegato),PCLZIP_OPT_REMOVE_PATH,$BaseUploadAllegati);//dirname($allegato->Allegato));
+						ap_zip_add($zip, $allegato->Allegato, $BaseUploadAllegati);//dirname($allegato->Allegato));
 						$tmp_risultato='<span style="color:green;">'.__("Aggiunto all'allegato","albo-pretorio-considera").':</span> '.$allegato->Allegato;
 						fwrite($fplog,"File ".$allegato->Allegato." ".__("Aggiunto","albo-pretorio-considera")."\n");
 					}else{
@@ -3099,6 +3099,7 @@ global $wpdb;
 									
 			}
 			// Chiusura e momorizzazione del del file
+			$zip->close();
 			$Risultato.= __("Archivio creato con successo","albo-pretorio-considera").": ";
 			fwrite($fplog,__("Archivio creato con successo","albo-pretorio-considera").": \n");
 			if ($Echo) echo "</ul>"
@@ -3120,6 +3121,25 @@ global $wpdb;
 	fwrite($fpmsg,$Risultato);
 	fclose($fpmsg);
 	return $nomefileZip;
+}
+
+/**
+ * Aggiunge un file a un archivio ZipArchive replicando la semantica di
+ * PclZip PCLZIP_OPT_REMOVE_PATH: il prefisso $removePath viene tolto dal
+ * percorso con cui il file è memorizzato nell'archivio.
+ */
+function ap_zip_add( $zip, $file, $removePath ) {
+	$real = realpath( $file );
+	if ( $real === false ) {
+		return false;
+	}
+	$norm   = str_replace( '\\', '/', $real );
+	$prefix = str_replace( '\\', '/', $removePath );
+	$local  = ltrim( str_replace( $prefix, '', $norm ), '/' );
+	if ( $local === '' ) {
+		$local = basename( $real );
+	}
+	return $zip->addFile( $real, $local );
 }
 
 function ap_backquote($a_name) {
@@ -3146,15 +3166,17 @@ function ap_MakeZipOblio(){
 		if (!mkdir($DirTmp, 0744))
 			return FALSE;
 	$nomefileZip=$Dir."/oblio".date("Ymdgis").".zip";
-	if (class_exists('PclZip')) {	
-	 	$zip = new PclZip($nomefileZip);
+	if (class_exists('ZipArchive')) {	
+	 	$zip = new ZipArchive();
+			$zip->open($nomefileZip, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($DirTmpBox));
 		// Ciclo tutti gli elementi dell'iteratore, i files estratti dall'iteratore
 		foreach ($iterator as $key=>$value) {
 			if (substr($key,-1)!="."){
-				$zip->add(realpath($key),PCLZIP_OPT_REMOVE_PATH,dirname($key));
+				ap_zip_add($zip, $key, dirname($key));
 			}
 		}
+		$zip->close();
 	}else
 		return FALSE;
 	ap_SvuotaDirectory($DirTmpBox,NULL);
@@ -3170,9 +3192,8 @@ function ap_BackupFilesAllegatiOblio($idAtto){
 	$DirAllegati=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
 	$FileSql=$DirTmpBox."/Atto_".$idAtto."_Oblio.sql";
 	$ControlloDir=TRUE;
-	require_once('inc/pclzip.php');
 	$nomefileZip=$DirTmpBox."/oblio_atto_".$idAtto.".zip";
-	if (class_exists('PclZip')) {
+	if (class_exists('ZipArchive')) {
 //		echo $Dir." <br />".$DirTmp." <br />".$DirAllegati." <br />".$DirLog."";exit;
 		if (!is_dir ( $Dir)){
 			if (!mkdir($Dir, 0744)) 
@@ -3201,15 +3222,17 @@ function ap_BackupFilesAllegatiOblio($idAtto){
 		fclose($fp);
 		if (is_dir($Dir) And is_dir($DirTmp) And is_dir($DirTmpBox)){
 			// Crea l'archivio
-		 	$zip = new PclZip($nomefileZip);
-			$zip->add(realpath($FileSql),PCLZIP_OPT_REMOVE_PATH,dirname($FileSql));
+		 	$zip = new ZipArchive();
+			$zip->open($nomefileZip, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+			ap_zip_add($zip, $FileSql, dirname($FileSql));
 			$allegati=ap_get_all_allegati_atto($idAtto);
 			foreach ($allegati as $allegato) {
 			//echo $allegato->Allegato;
 				if (substr(basename( $allegato->Allegato ),-4)==".pdf" or 
 					substr(basename( $allegato->Allegato ),-4)==".p7m") 
-					$zip->add(realpath($allegato->Allegato),PCLZIP_OPT_REMOVE_PATH,dirname($allegato->Allegato));
+					ap_zip_add($zip, $allegato->Allegato, dirname($allegato->Allegato));
 			}
+			$zip->close();
 		}
 		if (file_exists($FileSql))
 			@unlink($FileSql);
