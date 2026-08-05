@@ -323,8 +323,15 @@ function admin_notice(){
 					$sep="&amp;";
 			foreach ($allegatiatto as $allegato) {
 				$Estensione=ap_ExtensionType($allegato->Allegato);
-				$Icona=$TipidiFiles[strtolower($Estensione)]['Icona'];
-				$TipoFile=$TipidiFiles[strtolower($Estensione)]['Descrizione'];
+				if($Estensione!="ndf" && isset($TipidiFiles[$Estensione])){
+					$Icona=$TipidiFiles[$Estensione]['Icona'];
+					$TipoFile=$TipidiFiles[$Estensione]['Descrizione'];
+				}else{
+					// tipo non registrato: icona di ripiego per estensione nota
+					$Fallback=ap_icona_fallback_tipo(pathinfo($allegato->Allegato, PATHINFO_EXTENSION));
+					$Icona=$Fallback['Icona'];
+					$TipoFile=$Fallback['Descrizione'];
+				}
 				if (is_file($allegato->Allegato)){
 					$Link=ap_DaPath_a_URL($allegato->Allegato);
 					$Rel=(ap_is_atto_corrente($IdAtto)?$PagAlboCor:$PagAlboSto).$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$IdAtto;

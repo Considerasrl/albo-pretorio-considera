@@ -3313,6 +3313,37 @@ function ap_oblio_atti($Atti){
 			return get_option('opt_AP_TipidiFiles');
 		}
 	}
+	function ap_icona_fallback_tipo($ext){
+		// Icona di ripiego per i tipi di file noti non esplicitamente registrati
+		// in opt_AP_TipidiFiles. Il percorso e' risolto a runtime da Albo_URL,
+		// quindi resta valido anche se cambia il nome della cartella del plugin.
+		$famiglia=array(
+			'doc'=>'document','docx'=>'document','odt'=>'document','rtf'=>'document',
+			'xls'=>'spreadsheet','xlsx'=>'spreadsheet','ods'=>'spreadsheet',
+			'ppt'=>'presentation','pptx'=>'presentation','odp'=>'presentation',
+			'jpg'=>'image','jpeg'=>'image','png'=>'image','gif'=>'image','bmp'=>'image','tif'=>'image','tiff'=>'image','webp'=>'image','svg'=>'image',
+			'zip'=>'archive','rar'=>'archive','7z'=>'archive','tar'=>'archive','gz'=>'archive',
+			'txt'=>'text','log'=>'text','md'=>'text',
+			'mp3'=>'audio','wav'=>'audio','ogg'=>'audio','flac'=>'audio',
+			'mp4'=>'video','avi'=>'video','mov'=>'video','mkv'=>'video','wmv'=>'video',
+		);
+		$descrizione=array(
+			'document'=>__('Documento','albo-online'),
+			'spreadsheet'=>__('Foglio di calcolo','albo-online'),
+			'presentation'=>__('Presentazione','albo-online'),
+			'image'=>__('Immagine','albo-online'),
+			'archive'=>__('Archivio compresso','albo-online'),
+			'text'=>__('Documento di testo','albo-online'),
+			'audio'=>__('File audio','albo-online'),
+			'video'=>__('File video','albo-online'),
+		);
+		$ext=strtolower($ext);
+		if(isset($famiglia[$ext])){
+			$f=$famiglia[$ext];
+			return array('Icona'=>Albo_URL.'img/tipifiles/'.$f.'.svg','Descrizione'=>$descrizione[$f]);
+		}
+		return array('Icona'=>Albo_URL.'img/notipofile.png','Descrizione'=>__('Tipo file non definito','albo-online'));
+	}
 	function ap_isAllowedExtension($fileName) {
 		$TipidiFiles=ap_get_tipidifiles();
 		$Estensione=explode(".", $fileName);

@@ -11,6 +11,14 @@ con il pacchetto `.zip` installabile allegato.
 
 ## [Non rilasciato]
 
+### Aggiunto
+- Icone di ripiego per i tipi di file noti (documenti, fogli di calcolo,
+  presentazioni, immagini, archivi, testo, audio, video) mostrate accanto agli
+  allegati quando il tipo non è esplicitamente configurato tra i Tipi di Files.
+  Le icone (set Tango, pubblico dominio) sono incluse nel plugin in
+  `img/tipifiles/` e risolte a runtime da `Albo_URL`, quindi restano valide
+  anche se cambia il nome della cartella del plugin.
+
 ## [4.10.1] - 2026-08-05
 
 ### Sicurezza

@@ -1,0 +1,22 @@
+Icone dei tipi di file — provenienza e licenza
+==============================================
+
+Le icone in questa cartella provengono dal Tango Desktop Project
+(tema mimetype di GNOME), ottenute da Wikimedia Commons.
+
+Licenza: Pubblico Dominio (Public Domain).
+Nessun obbligo di attribuzione; questa nota è a solo scopo di tracciabilità.
+
+File e sorgenti su Wikimedia Commons:
+
+  text.svg          <- File:Text-x-generic.svg
+  document.svg      <- File:X-office-document.svg
+  spreadsheet.svg   <- File:X-office-spreadsheet.svg
+  presentation.svg  <- File:X-office-presentation.svg
+  image.svg         <- File:Image-x-generic.svg
+  archive.svg       <- File:Package-x-generic.svg
+  audio.svg         <- File:Audio-x-generic.svg
+  video.svg         <- File:Video-x-generic.svg
+
+Base: https://commons.wikimedia.org/wiki/File:<nome-file>
+Scaricate il 2026-08-05.
