@@ -1717,6 +1717,15 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 	global $wpdb;
 	$Selezione="";
 	$OrderBySql="";
+// Le date devono essere nel formato europeo gg/mm/aaaa: qualunque altro
+// valore viene azzerato per impedire SQL injection tramite ap_convertiData()
+	foreach(array('Dadata','Adata') as $ParData){
+		if ($$ParData!=0){
+			$DataConv=ap_convertiData($$ParData);
+			if (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$DataConv))
+				$$ParData=0;
+		}
+	}
 	if ($OrderBy!=""){
 		$allowed_order_columns=array('Numero','Anno','Data','DataInizio','DataFine','DataOblio','Oggetto','Riferimento');
 		$order_parts=array();
