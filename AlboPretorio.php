@@ -27,6 +27,8 @@ if ( ! defined( 'AP_VERSION' ) ) {
 	define( 'AP_VERSION', $ap_plugin_data['Version'] );
 }
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- il plugin opera su tabelle custom proprie: nessuna API core equivalente, il caching non si applica alle query amministrative e di scrittura.
+
 include_once(dirname (__FILE__) .'/AlboPretorioFunctions.php');			/* libreria delle funzioni */
 include_once(dirname (__FILE__) .'/AlboPretorioWidget.php');
 include_once(dirname (__FILE__) .'/inc/editor-dialogs.php');			/* dialog AJAX dei pulsanti editor */

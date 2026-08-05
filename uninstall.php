@@ -9,6 +9,8 @@
 		
 if( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) exit();
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- disinstallazione: rimozione delle tabelle custom del plugin, nessuna API core equivalente.
+
 include_once(dirname (__FILE__) .'/AlboPretorioFunctions.php');			/* libreria delle funzioni */
 
 global $wpdb,$table_prefix;

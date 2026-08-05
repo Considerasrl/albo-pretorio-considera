@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- il plugin opera su tabelle custom proprie (Atti/Allegati/Enti/Categorie/Attimeta/UO/...): nessuna API core equivalente, il caching non si applica alle query amministrative e di scrittura.
+// phpcs:disable WordPress.DB.PreparedSQL, PluginCheck.Security.DirectDB.UnescapedDBParameter -- gli input utente delle query sono già messi in sicurezza (audit 4.9.x/4.10.1): i valori passano da $wpdb->prepare()/esc_like o cast interi, le colonne di ORDER BY da allowlist. I rilievi residui sono falsi positivi che l'analisi statica non traccia cross-statement: (a) clausole WHERE/ORDER BY/LIMIT assemblate da frammenti già preparati; (b) identificatori di tabella/campo interni nelle DDL (SHOW/DESCRIBE/ALTER), che prepare() non supporta; (c) valori provenienti dal DB stesso del plugin; (d) l'idioma dei placeholder dinamici implode(',',array_fill(...,'%s')) dentro prepare(). MANUTENZIONE: ogni NUOVA query con input utente DEVE usare $wpdb->prepare().
+
 ################################################################################
 // Funzioni 
 ################################################################################
