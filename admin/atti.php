@@ -439,7 +439,7 @@ if(isset($_REQUEST['action'])){
 					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;				
 		case "annullamento-atto" :
-			albopc_Annulla_Atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+			albopc_annulla_atto_page((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "new-atto" :
 			albopc_Nuovo_atto();
@@ -2055,7 +2055,7 @@ echo '</div>
 	</div>
 </div>';	
 }
-function albopc_Annulla_Atto($IdAtto){
+function albopc_annulla_atto_page($IdAtto){
 	global $AP_OnLine;
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
