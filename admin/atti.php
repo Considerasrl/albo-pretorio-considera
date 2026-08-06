@@ -728,8 +728,8 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 				<form id="agg_anno_progressivo" method="post" action="?page=atti">
 				<input type="hidden" name="action" value="setta-anno" />
-				<input type="hidden" name="id" value="'.$id.'" />
-				<input type="hidden" name="settaanno" value="'.wp_create_nonce('settaanno-'.$id).'" />
+				<input type="hidden" name="id" value="'.esc_attr($id).'" />
+				<input type="hidden" name="settaanno" value="'.esc_attr(wp_create_nonce('settaanno-'.$id)).'" />
 				<input type="submit" name="submit" id="submit" class="button" value="'.__("Aggiorna Anno Albo ed Azzera numero Progressivo","albo-pretorio-considera").'"  />
 				</form>
 			</div>
@@ -893,8 +893,8 @@ echo'
 	<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 		<form id="approva-atto" method="post" action="?page=atti">
 		<input type="hidden" name="action" value="pubblica-atto" />
-		<input type="hidden" name="id" value="'.$id.'" />
-		<input type="hidden" name="pubblicaatto" value="'.wp_create_nonce('pubblicaatto-'.$id).'" />
+		<input type="hidden" name="id" value="'.esc_attr($id).'" />
+		<input type="hidden" name="pubblicaatto" value="'.esc_attr(wp_create_nonce('pubblicaatto-'.$id)).'" />
 		<input type="hidden" name="stato_atti" value="Correnti" />
 		<input type="submit" name="submit" id="submit" class="button" value="Pubblica Atto"  />
 		</form>
@@ -1437,9 +1437,9 @@ if ($IdAllegato!=0){
 	echo '<h3>'. __("Modifica Allegato","albo-pretorio-considera").'</h3>
 	<form id="allegato"  method="post" action="?page=atti" class="validate">
 	<input type="hidden" name="action" value="update-allegato-atto" />
-	<input type="hidden" name="id" value="'.$IdAtto.'" />
-	<input type="hidden" name="idAlle" value="'.$IdAllegato.'" />
-	<input type="hidden" name="modificaallegatoatto" value="'.wp_create_nonce("editallegatoatto").'" />
+	<input type="hidden" name="id" value="'.esc_attr($IdAtto).'" />
+	<input type="hidden" name="idAlle" value="'.esc_attr($IdAllegato).'" />
+	<input type="hidden" name="modificaallegatoatto" value="'.esc_attr(wp_create_nonce("editallegatoatto")).'" />
 	<table class="widefat">
 	    <thead>
 		<tr>
@@ -1864,7 +1864,7 @@ function CancellaAllegatiAtto($IdAtto){
 		$NomeResp="";
 	echo '
 <div class="wrap nosubsub">
-	<input type="hidden" id="IdAtto" value="'.$IdAtto.'" />
+	<input type="hidden" id="IdAtto" value="'.esc_attr($IdAtto).'" />
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> Atti</h2>
 		<a href="'.site_url().'/wp-admin/admin.php?page=atti&stato_atti='.sanitize_text_field(filter_input(INPUT_GET,"stato_atti")).'" class="add-new-h2 tornaindietro">'. __("Torna indietro","albo-pretorio-considera").'</a>
@@ -1897,7 +1897,7 @@ function CancellaAllegatiAtto($IdAtto){
 						<p>
 							<label for="motivo'.$allegato->IdAllegato.'" style="vertical-align: text-top;" id="LblIDA'.$allegato->IdAllegato.'">Indicare il motivo della rimozione del Documento Firmato</label>
 							<input type="text" id="motivo'.$allegato->IdAllegato.'" name="motivo'.$allegato->IdAllegato.'" size="50" style="border: 1px solid #d63638;"/>
-							<input type="hidden" id="IDA'.$allegato->IdAllegato.'" name="IDA'.$allegato->IdAllegato.'" value="'.$allegato->IdAllegato.'"/>
+							<input type="hidden" id="IDA'.$allegato->IdAllegato.'" name="IDA'.$allegato->IdAllegato.'" value="'.esc_attr($allegato->IdAllegato).'"/>
 							<span class="dashicons dashicons-trash CancellaAllegato" title="Elimina Allegato" style="color:red;cursor: -webkit-grab; cursor: grab;" id="'.$allegato->IdAllegato.'" rel="'.wp_strip_all_tags($allegato->TitoloAllegato).'"></span><br id="SR'.$allegato->IdAllegato.'" />';
 						else
 							echo __("Documento Cancellato","albo-pretorio-considera")."<br />";
@@ -1930,7 +1930,7 @@ function CancellaAllegatiAtto($IdAtto){
 						<p>
 							<label for="motivo'.$allegato->IdAllegato.'" style="vertical-align: text-top;" id="LblIDA'.$allegato->IdAllegato.'">Indicare il motivo della rimozione dell\'allegato</label>
 							<input type="text" id="motivo'.$allegato->IdAllegato.'" name="motivo'.$allegato->IdAllegato.'" size="50" style="border: 1px solid #d63638;"/>
-							<input type="hidden" id="IDA'.$allegato->IdAllegato.'" name="IDA'.$allegato->IdAllegato.'" value="'.$allegato->IdAllegato.'"/>
+							<input type="hidden" id="IDA'.$allegato->IdAllegato.'" name="IDA'.$allegato->IdAllegato.'" value="'.esc_attr($allegato->IdAllegato).'"/>
 							<span class="dashicons dashicons-trash CancellaAllegato" title="Elimina Allegato" style="color:red;cursor: -webkit-grab; cursor: grab;" id="'.$allegato->IdAllegato.'" rel="'.wp_strip_all_tags($allegato->TitoloAllegato).'"></span><br id="SR'.$allegato->IdAllegato.'" />';
 						else
 							echo __("Allegato Cancellato","albo-pretorio-considera")."<br />";
@@ -2072,7 +2072,7 @@ function Annulla_Atto($IdAtto){
 		<form id="annullaatto" method="post" action="?page=atti" class="validate">
 		<input type="hidden" name="action" value="annulla-atto" />
 		<input type="hidden" name="id" value="'.(int)$_REQUEST['id'].'" />
-		<input type="hidden" name="annatto" value="'.wp_create_nonce('annatto').'" />
+		<input type="hidden" name="annatto" value="'.esc_attr(wp_create_nonce('annatto')).'" />
 		<table class="widefat">
 		    <thead>
 		    <tr>
@@ -2148,7 +2148,7 @@ $TipidiFiles=ap_get_tipidifiles();
 foreach ($allegati as $allegato) {
 	$Estensione=ap_ExtensionType($allegato->Allegato);	
 	echo '<div style="float: left;display: inline;width: 40px;height: 40px;padding-top:5px;padding-left:5px;">
-			<input type="checkbox" name="Alle:'.$allegato->IdAllegato.'" value="'.$allegato->IdAllegato.'">
+			<input type="checkbox" name="Alle:'.$allegato->IdAllegato.'" value="'.esc_attr($allegato->IdAllegato).'">
 		  </div>
 			<div style="float: left;display: inline;width: 40px;height: 40px;padding-top:5px;padding-left:5px;">
 				<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30"/>
@@ -2349,8 +2349,8 @@ echo'
 	    	$tablenew->views();
 	echo '</form>
         <form id="persons-table" method="GET">
-            <input type="hidden" name="page" value="'.$_REQUEST['page'].'" />
-		  	<input type="hidden" name="paged" value="'.$paged.'"/>';
+            <input type="hidden" name="page" value="'.esc_attr($_REQUEST['page']).'" />
+		  	<input type="hidden" name="paged" value="'.esc_attr($paged).'"/>';
 	$tablenew->display(); // Metodo per visualizzare elenco records
 	echo '</form>
 	</div>
