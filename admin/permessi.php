@@ -8,10 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package    Albo On Line
  */
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
-if (isset($_REQUEST['action']) And $_REQUEST['action']=="memoPermessi"){
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
+if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['action'] ?? '')) == "memoPermessi"){
 	if (isset($_REQUEST['permessi'])){
-		if (wp_verify_nonce($_REQUEST['permessi'],'gestpermessi')){
+		if (wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['permessi'] ?? '')),'gestpermessi')){
 			$lista=ap_get_users(); 
 		// Azzera capacit࠵tenti di gestione ed amministrazione Albo Pretorio
 			foreach($lista as $riga){

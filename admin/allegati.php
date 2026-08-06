@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- pagina admin di visualizzazione/redisplay: le letture di superglobali servono al rendering del form; le mutazioni avvengono negli handler di admin.php, protetti da wp_verify_nonce.
 /**
  * Gestione Allegati.
  * @link       http://www.eduva.org
@@ -7,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * @package    Albo On Line
  */
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 ?>
 <div class="wrap">
 	<div class="HeadPage" style="margin-bottom: 30px;">
@@ -20,7 +21,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<input type="hidden" name="operazione" value="associa_allegato" />
 	<input type="hidden" name="action" value="memo-allegato-atto-associato" />
 	<input type="hidden" name="secure" value="<?php echo esc_attr( wp_create_nonce('uploallegatoassociato') )?>" />
-	<input type="hidden" name="id" value="<?php echo (int)$_REQUEST['id']; ?>" />
+	<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?(int)$_REQUEST['id']:0); ?>" />
 <?php 
 	if (isset($_REQUEST['ref']))
 		echo '<input type="hidden" name="ref" value="'.esc_attr( wp_unslash( $_REQUEST['ref'] ) ).'" />';

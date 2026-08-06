@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- shortcode/vista pubblica read-only: legge id e parametri di ricerca/filtro via GET per la sola visualizzazione (pre-sanitizzati), nessuna mutazione di stato.
 /**
  * Gestione Filtri FrontEnd.
  * @link       http://www.eduva.org
@@ -29,7 +30,7 @@ function get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 					<label for="ente" class="font-weight-bold">Ente</label>
 				</div>
         		<div class="col-12 col-lg-8">				
-					'.ap_get_dropdown_enti("ente","ente","form-control","",(isset($_REQUEST['ente'])?$_REQUEST['ente']:"")).'
+					'.ap_get_dropdown_enti("ente","ente","form-control","",(isset($_REQUEST['ente'])?sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')):"")).'
 				</div>
         	</div>
         	<div class="row mb-2">
@@ -37,7 +38,7 @@ function get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 					<label for="numero" class="font-weight-bold">'.__("Atto", 'albo-pretorio-considera').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
-					<input class="w-50 d-inline" placeholder="N&deg; Atto" type="number" id="numero" name="numero" value="'.(isset($_REQUEST['numero'])?$_REQUEST['numero']:"").'" />
+					<input class="w-50 d-inline" placeholder="N&deg; Atto" type="number" id="numero" name="numero" value="'.(isset($_REQUEST['numero'])?sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')):"").'" />
 				</div>
 			</div>
 
@@ -55,7 +56,7 @@ function get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 					<label for="riferimento" class="font-weight-bold">'.__("Riferimento", 'albo-pretorio-considera').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
-					<input type="text" size="40" name="riferimento" id ="riferimento" value="'.(isset($_REQUEST['riferimento'])?$_REQUEST['riferimento']:"").'"/>
+					<input type="text" size="40" name="riferimento" id ="riferimento" value="'.(isset($_REQUEST['riferimento'])?sanitize_text_field(wp_unslash($_REQUEST['riferimento'] ?? '')):"").'"/>
 				</div>
 			</div>
        		<div class="row mb-2">
@@ -63,7 +64,7 @@ function get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 					<label for="oggetto" class="font-weight-bold">'.__("Oggetto", 'albo-pretorio-considera').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
-					<input type="text" size="40" name="oggetto" id ="oggetto" value="'.(isset($_REQUEST['oggetto'])?$_REQUEST['oggetto']:"").'"/>
+					<input type="text" size="40" name="oggetto" id ="oggetto" value="'.(isset($_REQUEST['oggetto'])?sanitize_text_field(wp_unslash($_REQUEST['oggetto'] ?? '')):"").'"/>
 				</div>
 			</div>
        		<div class="row mb-2">
@@ -71,7 +72,7 @@ function get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 					<label for="DataInizio" class="font-weight-bold">'.__("da Data", 'albo-pretorio-considera').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
-					<input name="DataInizio" id="DataInizio" type="date" value="'.htmlentities((isset($_REQUEST['DataInizio'])?$_REQUEST['DataInizio']:"")).'" size="10"/>
+					<input name="DataInizio" id="DataInizio" type="date" value="'.htmlentities((isset($_REQUEST['DataInizio'])?sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? '')):"")).'" size="10"/>
 				</div>
 			</div>
        		<div class="row mb-2">
@@ -79,7 +80,7 @@ function get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 					<label for="DataFine" class="font-weight-bold">'.__("a Data", 'albo-pretorio-considera').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
-					<input name="DataFine" id="DataFine" type="date" value="'.htmlentities((isset($_REQUEST['DataFine'])?$_REQUEST['DataFine']:"")).'" size="10"/>
+					<input name="DataFine" id="DataFine" type="date" value="'.htmlentities((isset($_REQUEST['DataFine'])?sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? '')):"")).'" size="10"/>
 				</div>
 			</div>
       		<div class="row mt-2">

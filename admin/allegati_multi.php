@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- pagina admin di visualizzazione/redisplay: le letture di superglobali servono al rendering del form; le mutazioni avvengono negli handler di admin.php, protetti da wp_verify_nonce.
 /**
  * Gestione Allegati.
  * @link       http://www.eduva.org
@@ -7,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * @package    Albo On Line
  */
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 	echo "<h2>Allegati Multipli</h2>";
 	$TipiAmmessi=ap_tipiFileAmmessi(TRUE);
 	$ap_exts=array();       // ["pdf","doc"]  estensioni ammesse
@@ -23,7 +24,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	<input type="hidden" name="operazione" value="upload" />
 	<input type="hidden" name="action" value="memo-allegati-atto" />
 	<input type="hidden" name="uploallegato" value="<?php echo esc_attr( wp_create_nonce('uploadallegati') )?>" />
-	<input type="hidden" name="id" value="<?php echo (int)$_REQUEST['id']; ?>" />
+	<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?(int)$_REQUEST['id']:0); ?>" />
 <div>
   <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Seleziona gli allegati da caricare","albo-pretorio-considera");?></label>
   <input type="file" id="files" name="files[]" accept="<?php echo esc_attr( implode(',', $ap_accept) );?>" multiple>

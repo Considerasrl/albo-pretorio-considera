@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- shortcode/vista pubblica read-only: legge id e parametri di ricerca/filtro via GET per la sola visualizzazione (pre-sanitizzati), nessuna mutazione di stato.
 /**
  * Gestione Filtri FrontEnd.
  * @link       http://www.eduva.org
@@ -27,28 +28,28 @@ function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
 				<table id="tabella-filtro-atti" class="tabella-dati-albo" >
 					<tr>
 						<th scope="row"><label for="ente">'.__("Ente","albo-pretorio-considera").'</label></th>
-						<td>'.ap_get_dropdown_enti("ente","ente","","",wp_strip_all_tags((isset($_REQUEST['ente'])?$_REQUEST['ente']:""))).'</td>
+						<td>'.ap_get_dropdown_enti("ente","ente","","",wp_strip_all_tags((isset($_REQUEST['ente'])?sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')):""))).'</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="numero">'.__("Atto N./Anno","albo-pretorio-considera").'</label></th>
-						<td><input type="text" size="10" maxlength="10" name="numero" id ="numero" value="'.wp_strip_all_tags((isset($_REQUEST['numero'])?$_REQUEST['numero']:"")).'"/>/
+						<td><input type="text" size="10" maxlength="10" name="numero" id ="numero" value="'.wp_strip_all_tags((isset($_REQUEST['numero'])?sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')):"")).'"/>/
 						'.$anni.'</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="riferimento">'.__("Riferimento","albo-pretorio-considera").'</label></th>
-						<td><input type="text" size="40" style="width:100%;" name="riferimento" id ="riferimento" value="'.wp_strip_all_tags((isset($_REQUEST['riferimento'])?$_REQUEST['riferimento']:"")).'"/></td>
+						<td><input type="text" size="40" style="width:100%;" name="riferimento" id ="riferimento" value="'.wp_strip_all_tags((isset($_REQUEST['riferimento'])?sanitize_text_field(wp_unslash($_REQUEST['riferimento'] ?? '')):"")).'"/></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="oggetto">'.__("Oggetto","albo-pretorio-considera").'</label></th>
-						<td><input type="text" size="40" style="width:100%;" name="oggetto" id ="oggetto" value="'.wp_strip_all_tags((isset($_REQUEST['oggetto'])?$_REQUEST['oggetto']:"")).'"/></td>
+						<td><input type="text" size="40" style="width:100%;" name="oggetto" id ="oggetto" value="'.wp_strip_all_tags((isset($_REQUEST['oggetto'])?sanitize_text_field(wp_unslash($_REQUEST['oggetto'] ?? '')):"")).'"/></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="Calendario1">'.__("da Data","albo-pretorio-considera").'</label></th>
-						<td><input name="DataInizio" id="Calendario1" type="text" value="'.wp_strip_all_tags((isset($_REQUEST['DataInizio'])?$_REQUEST['DataInizio']:"")).'" size="10" maxlength="10" /></td>
+						<td><input name="DataInizio" id="Calendario1" type="text" value="'.wp_strip_all_tags((isset($_REQUEST['DataInizio'])?sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? '')):"")).'" size="10" maxlength="10" /></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="Calendario2">'.__("a Data","albo-pretorio-considera").'</label></th>
-						<td><input name="DataFine" id="Calendario2" type="text" value="'.wp_strip_all_tags((isset($_REQUEST['DataFine'])?$_REQUEST['DataFine']:"")).'" size="10" maxlength="10" /></td>
+						<td><input name="DataFine" id="Calendario2" type="text" value="'.wp_strip_all_tags((isset($_REQUEST['DataFine'])?sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? '')):"")).'" size="10" maxlength="10" /></td>
 					</tr>
 					<tr>
 						<td style="text-align:center;"><input type="submit" name="filtra" id="filtra" class="bottoneFE" value="'.__("Filtra","albo-pretorio-considera").'"  /></td>

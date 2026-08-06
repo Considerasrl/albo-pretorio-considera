@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package    Albo On Line
  */
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- il plugin opera su tabelle custom proprie: nessuna API core equivalente, il caching non si applica alle query amministrative e di scrittura.
 

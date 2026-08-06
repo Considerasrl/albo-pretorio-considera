@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- pagina admin di visualizzazione/redisplay: le letture di superglobali servono al rendering del form; le mutazioni avvengono negli handler di admin.php, protetti da wp_verify_nonce.
 /**
  * Gestione Atti.
  * @link       http://www.eduva.org
@@ -7,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * @package    Albo On Line
  */
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- schermata admin di gestione atti (WP_List_Table + form CRUD/view): l'output e' markup fisso + label i18n del plugin (__() su stringhe letterali) + output di helper che generano markup (dropdown, azioni, celle). I value degli input sono escapati inline (esc_attr) e le stringhe JS via esc_js; i dati mostrati provengono da tabelle custom con input gia' sanitizzato/validato in fase di scrittura (audit sicurezza 4.9.x/4.10.1).
 
@@ -51,7 +52,7 @@ class AdminTableAtti extends WP_List_Table
   	$this->Atti_Scaduti=ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true); 
   	$this->Atti_Eliminare=ap_get_all_atti(4,0,0,0,'', 0,0,"",0,0,true);
   	$this->Atti_Tutti=ap_get_all_atti(0,0,0,0,'', 0,0,"",0,0,true);
-    $this->Atti_Cerca=ap_get_all_atti(5,0,0,0,(isset($_REQUEST['s'])?$_REQUEST['s']:""), 0,0,"",0,0,true);
+    $this->Atti_Cerca=ap_get_all_atti(5,0,0,0,(isset($_REQUEST['s'])?sanitize_text_field(wp_unslash($_REQUEST['s'] ?? '')):""), 0,0,"",0,0,true);
     parent::__construct(array('singular'=>'Atto','plural'=>'Atti'));
   }
 
@@ -99,7 +100,7 @@ class AdminTableAtti extends WP_List_Table
 
     if (!isset($_REQUEST['paged'])) 
     	$paged = 0;
-      else $paged = max(0,(intval($_REQUEST['paged'])-1)*$per_page);
+      else $paged = max(0,((isset($_REQUEST['paged'])?intval($_REQUEST['paged']):0)-1)*$per_page);
 
     if (isset($_REQUEST['orderby'])and in_array($_REQUEST['orderby'],array_keys($sortable)))
     	$orderby = $_REQUEST['orderby']; 
@@ -120,7 +121,7 @@ class AdminTableAtti extends WP_List_Table
     	$Termine = isset($_REQUEST['s'])            ? $_REQUEST['s']                 : '';
     	$Rif     = isset($_REQUEST['f_riferimento'])? $_REQUEST['f_riferimento']     : '';
     	$NumParz = isset($_REQUEST['f_numero'])     ? $_REQUEST['f_numero']          : '';
-    	$Cat     = isset($_REQUEST['f_categoria'])  ? (int)$_REQUEST['f_categoria']  : 0;
+    	$Cat     = isset($_REQUEST['f_categoria'])  ? (isset($_REQUEST['f_categoria'])?(int)$_REQUEST['f_categoria']:0)  : 0;
     }
     $total_items = ap_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,"",0,0,true,false,$Rif,-1,false,$NumParz);
     $this->items = ap_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,$orderby." ".$order ,$paged,$per_page,false,false,$Rif,-1,false,$NumParz);
@@ -398,7 +399,7 @@ class AdminTableAtti extends WP_List_Table
 // azioni che devo essere presenti sul menu a tendina
 
 	function get_bulk_actions() {
-	  if (isset($_GET['stato_atti']) And $_GET['stato_atti']=="Eliminare" And current_user_can('editore_atti_albo'))	
+	  if (isset($_GET['stato_atti']) And sanitize_text_field(wp_unslash($_GET['stato_atti'] ?? '')) == "Eliminare" And current_user_can('editore_atti_albo'))	
 	  	return array('delete_bulk_atti' => __('Elimina','albo-pretorio-considera'));
 	}
 
@@ -415,14 +416,14 @@ class AdminTableAtti extends WP_List_Table
 if(isset($_REQUEST['action'])){
 	switch ($_REQUEST['action']){
 		case "metadati-atto":
-			Gestione_Metadati((int)$_REQUEST['id']);
+			Gestione_Metadati((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "logatto" :
 			echo json_encode(CreaLog(1,$IdAtto,0));
 			die();
 			break;
 		case "view-atto" :
-			View_atto((int)$_REQUEST['id']);
+			View_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 			
 			case "oblio-allegati-atto":
@@ -431,14 +432,14 @@ if(isset($_REQUEST['action'])){
 		            $action = 'operazioneoblioallegati';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
-			 		if (is_numeric($_REQUEST['id'])) {
- 	                    $MessaggiRitorno=CancellaAllegatiAtto((int)$_REQUEST['id']);
+			 		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
+ 	                    $MessaggiRitorno=CancellaAllegatiAtto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 					}
 				}else
 					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;				
 		case "annullamento-atto" :
-			Annulla_Atto((int)$_REQUEST['id']);
+			Annulla_Atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "new-atto" :
 			Nuovo_atto();
@@ -448,51 +449,51 @@ if(isset($_REQUEST['action'])){
 				Go_Atti();
 				break;	
 			}
-			if (!wp_verify_nonce($_REQUEST['modificaatto'],'editatto')){
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaatto'] ?? '')),'editatto')){
 				Go_Atti();
 				break;
 			} 		
-			Edit_atto((int)$_REQUEST['id']);
+			Edit_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "pubblica-atto":
-			if ( ! isset( $_REQUEST['pubblicaatto'] ) || ! wp_verify_nonce( $_REQUEST['pubblicaatto'], 'pubblicaatto-'.(int)$_REQUEST['id'] ) ) {
+			if ( ! isset( $_REQUEST['pubblicaatto'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['pubblicaatto'] ?? '')), 'pubblicaatto-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
 				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
-			Lista_Atti(ap_approva_atto((int)$_REQUEST['id']));
+			Lista_Atti(ap_approva_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0)));
 			break;
 		case "setta-anno":
-			if ( ! isset( $_REQUEST['settaanno'] ) || ! wp_verify_nonce( $_REQUEST['settaanno'], 'settaanno-'.(int)$_REQUEST['id'] ) ) {
-				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+			if ( ! isset( $_REQUEST['settaanno'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['settaanno'] ?? '')), 'settaanno-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
+				PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		  	update_option('opt_AP_NumeroProgressivo',1 );
-			PreApprovazione((int)$_REQUEST['id'],sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),gmdate("Y")));
+			PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),gmdate("Y")));
 			break;
 		case "approva-atto" :
 			$ret="";
-			if ( ! isset( $_REQUEST['approvaatto'] ) || ! wp_verify_nonce( $_REQUEST['approvaatto'], 'approvaatto-'.(int)$_REQUEST['id'] ) ) {
-				PreApprovazione((int)$_REQUEST['id'],__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+			if ( ! isset( $_REQUEST['approvaatto'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['approvaatto'] ?? '')), 'approvaatto-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
+				PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			if (isset($_REQUEST['apa'])){
-				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('Anno' => $_REQUEST['apa']),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");
+				$ret=ap_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('Anno' => sanitize_text_field(wp_unslash($_REQUEST['apa'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");
 			}
 			if (isset($_REQUEST['pnp'])){
-				update_option( 'opt_AP_NumeroProgressivo', (int)$_REQUEST['pnp']);
+				update_option( 'opt_AP_NumeroProgressivo', (isset($_REQUEST['pnp'])?(int)$_REQUEST['pnp']:0));
 			}
 			if (isset($_REQUEST['udi'])){
-				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('DataInizio' => $_REQUEST['udi']),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
+				$ret=ap_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataInizio' => sanitize_text_field(wp_unslash($_REQUEST['udi'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
 			}
 			if (isset($_REQUEST['udf'])){
-				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('DataFine' => $_REQUEST['udf']),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
+				$ret=ap_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataFine' => sanitize_text_field(wp_unslash($_REQUEST['udf'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
 			}
 			if (isset($_REQUEST['udo'])){
-				$ret=ap_update_selettivo_atto((int)$_REQUEST['id'],array('DataOblio' => $_REQUEST['udo']),array('%s'),"Modifica in Approvazione\n");	
+				$ret=ap_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataOblio' => sanitize_text_field(wp_unslash($_REQUEST['udo'] ?? ''))),array('%s'),"Modifica in Approvazione\n");	
 			}
 			if(isset($_REQUEST['id']))
-				$id=(int)$_REQUEST['id'];
+				$id=(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0);
 			else
 				$id=0;
 			PreApprovazione($id,$ret);
@@ -502,22 +503,22 @@ if(isset($_REQUEST['action'])){
 				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;	
 			}
-			if (!wp_verify_nonce($_REQUEST['allegatoatto'],'gestallegatiatto')){
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['allegatoatto'] ?? '')),'gestallegatiatto')){
 				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			} 		
-			Allegati_atto((int)$_REQUEST['id'],(isset($_REQUEST['messaggio'])?$_REQUEST['messaggio']:""));
+			Allegati_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),(isset($_REQUEST['messaggio'])?sanitize_text_field(wp_unslash($_REQUEST['messaggio'] ?? '')):""));
 			break;
 		case "edit-allegato-atto" :
 			if (!isset($_REQUEST['modificaallegatoatto'])) {
 				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;	
 			}
-			if (!wp_verify_nonce($_REQUEST['modificaallegatoatto'],'editallegatoatto')){
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaallegatoatto'] ?? '')),'editallegatoatto')){
 				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			} 				
-			Allegati_atto((int)$_REQUEST['id'],(isset($_REQUEST['messaggio'])?$_REQUEST['messaggio']:""),(int)$_REQUEST['idAlle']);
+			Allegati_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),(isset($_REQUEST['messaggio'])?sanitize_text_field(wp_unslash($_REQUEST['messaggio'] ?? '')):""),(isset($_REQUEST['idAlle'])?(int)$_REQUEST['idAlle']:0));
 			break;
 		case "UpAllegati":
 			include_once ( dirname (__FILE__) . '/allegati_multi.php' );
@@ -527,9 +528,9 @@ if(isset($_REQUEST['action'])){
 			break;
 		default:
 			if(isset($_REQUEST['message'])){
-				if (is_numeric($_REQUEST['message']))
+				if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''))))
 					$message=$_REQUEST['message'];
-				elseif(strlen($_REQUEST['message'])>0)
+				elseif(strlen(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')))>0)
 						$message=$_REQUEST['message'];
 				else $message="";
 			}else
@@ -540,9 +541,9 @@ if(isset($_REQUEST['action'])){
 	}	
 }else{
 	if(isset($_REQUEST['message'])){
-		if (is_numeric($_REQUEST['message']))
+		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''))))
 			$message=$_REQUEST['message'];
-		elseif(strlen($_REQUEST['message'])>0)
+		elseif(strlen(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')))>0)
 				$message=urldecode($_REQUEST['message']);
 	}else{
 		$message="";
@@ -1047,20 +1048,20 @@ echo '</div>';
 function Nuovo_atto(){
 /*	$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];*/
-	if (isset($_REQUEST['Data']) And $_REQUEST['Data']!="")
-		$dataCorrente=sanitize_text_field($_REQUEST['Data']);
+	if (isset($_REQUEST['Data']) And sanitize_text_field(wp_unslash($_REQUEST['Data'] ?? '')) != "")
+		$dataCorrente=sanitize_text_field(wp_unslash($_REQUEST['Data'] ?? ''));
 	else
 		$dataCorrente=gmdate("d/m/Y");
 	if (isset($_REQUEST['Ente']))
-		$defEnte=intval($_REQUEST['Ente']);
+		$defEnte=(isset($_REQUEST['Ente'])?intval($_REQUEST['Ente']):0);
 	else
 		$defEnte=get_option('opt_AP_DefaultEnte');
 	if (isset($_REQUEST['Riferimento']) )
-		$Riferimento=sanitize_text_field($_REQUEST['Riferimento']);
+		$Riferimento=sanitize_text_field(wp_unslash($_REQUEST['Riferimento'] ?? ''));
 	else
 		$Riferimento="";
 	if (isset($_REQUEST['Oggetto']))
-		$Oggetto=sanitize_text_field($_REQUEST['Oggetto']);
+		$Oggetto=sanitize_text_field(wp_unslash($_REQUEST['Oggetto'] ?? ''));
 	else
 		$Oggetto="";
 /*	if ($_REQUEST['DataInizio'])
@@ -1068,27 +1069,27 @@ function Nuovo_atto(){
 	else*/
 	$DataI=gmdate("d/m/Y");
 	if (isset($_REQUEST['DataFine']))
-		$DataF=sanitize_text_field($_REQUEST['DataFine']);
+		$DataF=sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? ''));
 	else
 		$DataF=gmdate("d/m/Y");
 	if (isset($_REQUEST['DataOblio']))
-		$DataO=sanitize_text_field($_REQUEST['DataOblio']);
+		$DataO=sanitize_text_field(wp_unslash($_REQUEST['DataOblio'] ?? ''));
 	else
 		$DataO=ap_VisualizzaData((gmdate("Y")+6)."-01-01");
 	if (isset($_REQUEST['Note']))
-		$Note=sanitize_textarea_field($_REQUEST['Note']);
+		$Note=sanitize_textarea_field(wp_unslash($_REQUEST['Note'] ?? ''));
 	else	
 		$Note="";
 	if (isset($_REQUEST['Categoria']))
-		$Categoria=intval($_REQUEST['Categoria']);
+		$Categoria=(isset($_REQUEST['Categoria'])?intval($_REQUEST['Categoria']):0);
 	else
 		$Categoria=0;
 	if (isset($_REQUEST['Unitao']))
-		$Unitao=intval($_REQUEST['Unitao']);
+		$Unitao=(isset($_REQUEST['Unitao'])?intval($_REQUEST['Unitao']):0);
 	else
 		$Unitao=0;
 	if (isset($_REQUEST['Responsabile']))
-		$Responsabile=intval($_REQUEST['Responsabile']);
+		$Responsabile=(isset($_REQUEST['Responsabile'])?intval($_REQUEST['Responsabile']):0);
 	else{
 		$Resp=ap_get_responsabili();
 		if (count($Resp)>0)
@@ -1097,7 +1098,7 @@ function Nuovo_atto(){
 			$Responsabile=0;	
 	}
 	if (isset($_REQUEST['Richiedente']))
-		$Richiedente=ap_sanifica_testo($_REQUEST['Richiedente']);
+		$Richiedente=ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['Richiedente'] ?? '')));
 	else	
 		$Richiedente="";
 	$DefaultSoggetti=get_option('opt_AP_DefaultSoggetti',
@@ -1281,7 +1282,7 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 
 	<form id="addatto" method="post" action="?page=atti" class="validate">
 		<input type="hidden" name="action" value="memo-atto" />
-		<input type="hidden" name="id" value="<?php echo (int)$_REQUEST['id'];?>" />
+		<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?(int)$_REQUEST['id']:0);?>" />
 		<input type="hidden" name="modificaatto" value="<?php echo wp_create_nonce('editatto')?>" />
 	<div id="poststuff">
 		<div id="post-body" class="metabox-holder columns-2">
@@ -1427,7 +1428,7 @@ function Allegati_atto($IdAtto,$messaggio="",$IdAllegato=0){
 if ( $messaggio!="" ) {
 	 	$messaggio=str_replace("%%br%%", "<br />", $messaggio);
 		print('<div id="message" class="updated"><p>'.$messaggio.'</p></div>');
-		$_SERVER['REQUEST_URI'] = remove_query_arg(array('messaggio'), $_SERVER['REQUEST_URI']);
+		$_SERVER['REQUEST_URI'] = remove_query_arg(array('messaggio'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 	}
 echo'
 <div id="col-container">
@@ -1625,7 +1626,7 @@ echo'
 function View_atto($IdAtto){
 	global $AP_OnLine;
 if (isset($_REQUEST['stato_atti']))
-	$Prov=sanitize_text_field($_REQUEST['stato_atti']);
+	$Prov=sanitize_text_field(wp_unslash($_REQUEST['stato_atti'] ?? ''));
 else
 	$Prov="DaPubblicare";
 $risultato=ap_get_atto($IdAtto);
@@ -2073,7 +2074,7 @@ function Annulla_Atto($IdAtto){
 		<div class="clear"><br /></div>
 		<form id="annullaatto" method="post" action="?page=atti" class="validate">
 		<input type="hidden" name="action" value="annulla-atto" />
-		<input type="hidden" name="id" value="'.(int)$_REQUEST['id'].'" />
+		<input type="hidden" name="id" value="'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0).'" />
 		<input type="hidden" name="annatto" value="'.esc_attr(wp_create_nonce('annatto')).'" />
 		<table class="widefat">
 		    <thead>
@@ -2210,7 +2211,7 @@ echo'			</td>
 
 function Lista_Atti($Msg_op=""){
 if (isset($_REQUEST['p']))
-	$Pag=intval($_REQUEST['p']);
+	$Pag=(isset($_REQUEST['p'])?intval($_REQUEST['p']):0);
 else
 	$Pag=0;
 $Message[0] = __("Messaggio non definito","albo-pretorio-considera");
@@ -2231,11 +2232,11 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 $messages[99] = __("OPERAZIONE NON AMMESSA!<br />l'atto non è ancora da eliminare","albo-pretorio-considera");
 //Gestione Messaggi di stato
 if (isset($_REQUEST['message'])) 
-	$msg = intval($_REQUEST['message']);
+	$msg = (isset($_REQUEST['message'])?intval($_REQUEST['message']):0);
 if (isset($_REQUEST['message2'])) 
-	$msg2 = intval($_REQUEST['message2']);
+	$msg2 = (isset($_REQUEST['message2'])?intval($_REQUEST['message2']):0);
 if (isset($_REQUEST['errore']))
-	$Errore=sanitize_text_field($_REQUEST['errore']);
+	$Errore=sanitize_text_field(wp_unslash($_REQUEST['errore'] ?? ''));
 if ($Msg_op!=""){
 	if (is_numeric($Msg_op))
 		$msg=$Msg_op;
@@ -2293,7 +2294,7 @@ echo'
 	if ( isset($msg) or isset($msg2) or isset($Errore) ){
 		$stato="";
 		if (isset($_GET['stato_atti'])){
-			switch(sanitize_text_field($_REQUEST['stato_atti'])){
+			switch(sanitize_text_field(wp_unslash($_REQUEST['stato_atti'] ?? ''))){
 				case "Tutti": $stato="&stato_atti=Tutti";break;
 				case "Nuovi": $stato="&stato_atti=DaPubblicare";break;
 				case "Correnti": $stato="&stato_atti=Correnti";break;
@@ -2314,7 +2315,7 @@ echo'
 		      return;
 	} 
 	if (isset($_REQUEST['stato_atti']))
-		switch(sanitize_text_field($_REQUEST['stato_atti'])){
+		switch(sanitize_text_field(wp_unslash($_REQUEST['stato_atti'] ?? ''))){
 			case "Tutti": $Titolo=__("Tutti gli atti","albo-pretorio-considera");$Azione="Tutti";break;
 			case "Nuovi": $Titolo=__("Atti da pubblicare","albo-pretorio-considera");$Azione="DaPubblicare";break;
 			case "Correnti": $Titolo=__("Atti in corso di Validità","albo-pretorio-considera");$Azione="Correnti";break;
@@ -2335,7 +2336,7 @@ echo'
 	// Valori correnti dei filtri di ricerca (per renderli persistenti nel form)
 	$f_rif = isset($_REQUEST['f_riferimento']) ? $_REQUEST['f_riferimento']    : '';
 	$f_num = isset($_REQUEST['f_numero'])      ? $_REQUEST['f_numero']         : '';
-	$f_cat = isset($_REQUEST['f_categoria'])   ? (int)$_REQUEST['f_categoria'] : 0;
+	$f_cat = isset($_REQUEST['f_categoria'])   ? (isset($_REQUEST['f_categoria'])?(int)$_REQUEST['f_categoria']:0) : 0;
 	echo '<h3>'.$Titolo.'</h3>
 		</div>
 		<div class="wrap">
@@ -2351,7 +2352,7 @@ echo'
 	    	$tablenew->views();
 	echo '</form>
         <form id="persons-table" method="GET">
-            <input type="hidden" name="page" value="'.esc_attr($_REQUEST['page']).'" />
+            <input type="hidden" name="page" value="'.esc_attr(sanitize_text_field(wp_unslash($_REQUEST['page'] ?? ''))).'" />
 		  	<input type="hidden" name="paged" value="'.esc_attr($paged).'"/>';
 	$tablenew->display(); // Metodo per visualizzare elenco records
 	echo '</form>

@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- shortcode/vista pubblica read-only: legge id e parametri di ricerca/filtro via GET per la sola visualizzazione (pre-sanitizzati), nessuna mutazione di stato.
 /**
  * Gestione FrontEnd.
  * @link       http://www.eduva.org
@@ -8,12 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package    Albo On Line
  */
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
 function Visualizza_Atto($Parametri){
 	ob_start();
 	if(isset($_GET["titolo"])){
-		$Titolo=sanitize_text_field(wp_unslash($_GET["titolo"]));
+		$Titolo=sanitize_text_field(wp_unslash($_GET["titolo"] ?? ''));
 	}else{
 		if (isset($Parametri['titolo'])){
 			$Titolo=$Parametri['titolo'];	
@@ -22,7 +23,7 @@ function Visualizza_Atto($Parametri){
 	if (isset($Parametri['numero']) And is_numeric($Parametri['numero'])){
 		$Numero=$Parametri['numero'];	
 	}else{
-		if(isset($_GET["numero"]) And is_numeric($_GET["numero"])){
+		if(isset($_GET["numero"]) And is_numeric(sanitize_text_field(wp_unslash($_GET["numero"] ?? '')))){
 			$Numero=$_GET["numero"];
 		}else{
 			echo esc_html__("Parametro Numero Atto non impostato","albo-pretorio-considera");
@@ -32,7 +33,7 @@ function Visualizza_Atto($Parametri){
 	if (isset($Parametri['anno']) And is_numeric($Parametri['anno'])){
 		$Anno=$Parametri['anno'];	
 	}else{
-		if(isset($_GET["anno"]) And is_numeric($_GET["anno"])){
+		if(isset($_GET["anno"]) And is_numeric(sanitize_text_field(wp_unslash($_GET["anno"] ?? '')))){
 			$Anno=$_GET["anno"];
 		}else{
 			echo esc_html__("Parametro Anno Atto non impostato","albo-pretorio-considera");

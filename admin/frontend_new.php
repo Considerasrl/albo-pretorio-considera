@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- shortcode/vista pubblica read-only: legge id e parametri di ricerca/filtro via GET per la sola visualizzazione (pre-sanitizzati), nessuna mutazione di stato.
 /**
  * Gestione FrontEnd.
  * @link       http://www.eduva.org
@@ -8,11 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package    Albo On Line
  */
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
 ob_start();
 
-if(isset($_REQUEST['id']) And !is_numeric($_REQUEST['id'])){
+if(isset($_REQUEST['id']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))){
 	$_REQUEST['id']=0;
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">ID</span>'));
 }
@@ -21,23 +22,23 @@ if(isset($_REQUEST['action']) And $_REQUEST['action']!=wp_strip_all_tags($_REQUE
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Action</span>'));
 	return;
 }
-if(isset($_REQUEST['categoria']) And !is_numeric($_REQUEST['categoria'])){
+if(isset($_REQUEST['categoria']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')))){
 	$_REQUEST['categoria']=0;
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Categoria</span>'));
 }
-if(isset($_REQUEST['numero']) And $_REQUEST['numero']!="" AND !is_numeric($_REQUEST['numero'])){
+if(isset($_REQUEST['numero']) And sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')) != "" AND !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')))){
 	$_REQUEST['numero']="";
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Numero</span>'));
 }
-if(isset($_REQUEST['anno']) And !is_numeric($_REQUEST['anno'])){
+if(isset($_REQUEST['anno']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')))){
 	$_REQUEST['anno']=0;
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Anno</span>'));
 }
-if(isset($_REQUEST['ente']) And !is_numeric($_REQUEST['ente'])){
+if(isset($_REQUEST['ente']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')))){
 	$_REQUEST['ente']="-1";
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Ente</span>'));
 }
-if(isset($_REQUEST['Pag']) And !is_numeric($_REQUEST['Pag'])){
+if(isset($_REQUEST['Pag']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['Pag'] ?? '')))){
 	$_REQUEST['Pag']=1;
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Pag</span>'));
 }
@@ -61,7 +62,7 @@ if(isset($_REQUEST['filtra']) And ($_REQUEST['filtra']!=__("Filtra","albo-pretor
 	$_REQUEST['filtra']="Filtra";
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">filtra</span>'));
 }
-if(isset($_REQUEST['vf']) And ($_REQUEST['vf']!="s" And $_REQUEST['vf']!="h" And $_REQUEST['vf']!="undefined")){
+if(isset($_REQUEST['vf']) And (sanitize_text_field(wp_unslash($_REQUEST['vf'] ?? '')) != "s" And sanitize_text_field(wp_unslash($_REQUEST['vf'] ?? '')) != "h" And sanitize_text_field(wp_unslash($_REQUEST['vf'] ?? '')) != "undefined")){
 	$_REQUEST['vf']="undefined";
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">vf</span>'));
 }
@@ -74,41 +75,41 @@ include_once(dirname (__FILE__) .'/frontend_filtro_new.php');
 if(isset($_REQUEST['action'])){
 	switch ($_REQUEST['action']){
         case 'printatto':
-            if (is_numeric($_REQUEST['id'])) {
+            if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
                 include_once(dirname (__FILE__) .'/stampe.php');
-                $AttoStampa = ap_get_atto((int)$_REQUEST['id']);
+                $AttoStampa = ap_get_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
                 if (!empty($AttoStampa)) {
                     $AttoStampa = $AttoStampa[0];
                     $Oggi = ap_oggi();
                     if (($AttoStampa->DataInizio!="0000-00-00" And $AttoStampa->DataInizio>$Oggi) Or ($AttoStampa->DataOblio!="0000-00-00" And $AttoStampa->DataOblio<=$Oggi))
                         wp_die(esc_html__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
                 }
-                if ($_REQUEST['pdf'] == 'c') {
-                    StampaAtto($_REQUEST['id'], 'c');
-                } elseif ($_REQUEST['pdf'] == 'a') {
-                    StampaAtto($_REQUEST['id'], 'a');
+                if (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'c') {
+                    StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'c');
+                } elseif (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'a') {
+                    StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'a');
                 }
             }else{
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 			}
             break;
 		case 'visatto':
-			if(is_numeric($_REQUEST['id']))
+			if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))))
 				$ret=VisualizzaAtto($_REQUEST['id']);
 			else{
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 			}
 			break;
 		case 'addstatall':
-			if(is_numeric($_GET['id']) and is_numeric($_GET['idAtto']))
-				ap_insert_log(5,5,(int)$_GET['id'],"Visualizzazione",(int)$_GET['idAtto']);
+			if(is_numeric(sanitize_text_field(wp_unslash($_GET['id'] ?? ''))) and is_numeric(sanitize_text_field(wp_unslash($_GET['idAtto'] ?? ''))))
+				ap_insert_log(5,5,(isset($_GET['id'])?(int)$_GET['id']:0),"Visualizzazione",(isset($_GET['idAtto'])?(int)$_GET['idAtto']:0));
 			break;
 		default: 
 			if (isset($_REQUEST['filtra'])){
-				if(!is_numeric($_REQUEST['categoria']) OR
-				   !is_numeric($_REQUEST['numero']) OR
-				   !is_numeric($_REQUEST['anno']) OR
-				   !is_numeric($_REQUEST['ente'])){
+				if(!is_numeric(sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? ''))) OR
+				   !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? ''))) OR
+				   !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? ''))) OR
+				   !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')))){
 						echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 						break;
 				}
@@ -124,10 +125,10 @@ if(isset($_REQUEST['action'])){
 				 			isset($_REQUEST['categoria'])?(int)$_REQUEST['categoria']:0,
 							isset($_REQUEST['numero'])?(int)$_REQUEST['numero']:0,
 							isset($_REQUEST['anno'])?(int)$_REQUEST['anno']:0, 
-							isset($_REQUEST['oggetto'])?esc_html($_REQUEST['oggetto']):"",
-							isset($_REQUEST['DataInizio'])?esc_html($_REQUEST['DataInizio']):0,
-							isset($_REQUEST['DataFine'])?esc_html($_REQUEST['DataFine']):0, 
-							isset($_REQUEST['riferimento'])?esc_html($_REQUEST['riferimento']):"",
+							isset($_REQUEST['oggetto'])?esc_html(sanitize_text_field(wp_unslash($_REQUEST['oggetto'] ?? ''))):"",
+							isset($_REQUEST['DataInizio'])?esc_html(sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? ''))):0,
+							isset($_REQUEST['DataFine'])?esc_html(sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? ''))):0, 
+							isset($_REQUEST['riferimento'])?esc_html(sanitize_text_field(wp_unslash($_REQUEST['riferimento'] ?? ''))):"",
 							isset($_REQUEST['ente'])?(int)$_REQUEST['ente']:-1);			
 			}else if(isset($_REQUEST['annullafiltro'])){
 					 unset($_REQUEST['categoria']);
@@ -145,10 +146,10 @@ if(isset($_REQUEST['action'])){
 		}	
 	}else{
 		if (isset($_REQUEST['filtra'])){
-			if((isset($_REQUEST['categoria']) And !is_numeric($_REQUEST['categoria'])) OR
-			   (isset($_REQUEST['numero']) And $_REQUEST['numero']!="" AND !is_numeric($_REQUEST['numero'])) OR
-			   (isset($_REQUEST['anno']) And !is_numeric($_REQUEST['anno'])) OR
-			   (isset($_REQUEST['ente']) And !is_numeric($_REQUEST['ente']))){
+			if((isset($_REQUEST['categoria']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')))) OR
+			   (isset($_REQUEST['numero']) And sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')) != "" AND !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')))) OR
+			   (isset($_REQUEST['anno']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')))) OR
+			   (isset($_REQUEST['ente']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? ''))))){
 					echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 					return;
 			}
@@ -164,10 +165,10 @@ if(isset($_REQUEST['action'])){
 							isset($_REQUEST['categoria'])?(int)$_REQUEST['categoria']:0,
 							isset($_REQUEST['numero'])?(int)$_REQUEST['numero']:0,
 							isset($_REQUEST['anno'])?(int)$_REQUEST['anno']:0, 
-							isset($_REQUEST['oggetto'])?esc_html($_REQUEST['oggetto']):"",
-							isset($_REQUEST['DataInizio'])?esc_html($_REQUEST['DataInizio']):0,
-							isset($_REQUEST['DataFine'])?esc_html($_REQUEST['DataFine']):0, 
-							isset($_REQUEST['riferimento'])?esc_html($_REQUEST['riferimento']):"",
+							isset($_REQUEST['oggetto'])?esc_html(sanitize_text_field(wp_unslash($_REQUEST['oggetto'] ?? ''))):"",
+							isset($_REQUEST['DataInizio'])?esc_html(sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? ''))):0,
+							isset($_REQUEST['DataFine'])?esc_html(sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? ''))):0, 
+							isset($_REQUEST['riferimento'])?esc_html(sanitize_text_field(wp_unslash($_REQUEST['riferimento'] ?? ''))):"",
 							isset($_REQUEST['ente'])?(int)$_REQUEST['ente']:-1);
 		}else 
 			if(isset($_REQUEST['annullafiltro'])){
@@ -511,7 +512,7 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 		$Da=0;
 		$A=$N_A_pp;
 	}else{
-		if(is_numeric($_REQUEST['Pag'])){
+		if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['Pag'] ?? '')))){
 			$Da=($_REQUEST['Pag']-1)*$N_A_pp;
 			$A=$N_A_pp;
 		}else{
@@ -534,7 +535,7 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
 	$VisFiltro="";
 	if(isset($Parametri['minfiltri']) And $Parametri['minfiltri']=="si"){
-		if(isset($_REQUEST['vf']) and  $_REQUEST['vf']=="s"){
+		if(isset($_REQUEST['vf']) and  sanitize_text_field(wp_unslash($_REQUEST['vf'] ?? '')) == "s"){
 //			$VisFiltro='<img src="'.Albo_URL.'img/minimize.png" id="maxminfiltro" class="s" alt="icona minimizza finestra filtri"/>';
 			$VisFiltro='<button id="maxminfiltro" class="albos"><span class="dashicons dashicons-filter"></span> '.esc_html__("Chiudi Ricerca atti mediante filtri","albo-pretorio-considera").'</button>';
 		}else{

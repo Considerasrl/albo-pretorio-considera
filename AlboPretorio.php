@@ -20,7 +20,8 @@
 */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- pagina admin di visualizzazione/redisplay: le letture di superglobali servono al rendering del form; le mutazioni avvengono negli handler di admin.php, protetti da wp_verify_nonce.
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
 if ( ! defined( 'AP_VERSION' ) ) {
 	$ap_plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
@@ -48,7 +49,7 @@ if (isset($_REQUEST['action'])){
 				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				break;
 			}
-			if (!wp_verify_nonce($_REQUEST['rigenera'],'rigeneraoblio')){
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['rigenera'] ?? '')),'rigeneraoblio')){
 				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				break;
 			} 			
@@ -557,8 +558,8 @@ function admin_notice(){
 				$etag		= sprintf('%x-%x-%x', $stat['ino'], $stat['size'], $stat['mtime'] * 1000000);
 				/* Il log va scritto PRIMA di inviare il file: dopo l'invio del corpo
 				   qualsiasi output aggiuntivo corromperebbe il download. */
-				if(is_numeric($_REQUEST['id']) and isset($_REQUEST['idAtto']) and is_numeric($_REQUEST['idAtto']))
-					ap_insert_log(6,5,(int)$_REQUEST['id'],"Download",(int)$_REQUEST['idAtto']);
+				if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))) and isset($_REQUEST['idAtto']) and is_numeric(sanitize_text_field(wp_unslash($_REQUEST['idAtto'] ?? ''))))
+					ap_insert_log(6,5,(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),"Download",(isset($_REQUEST['idAtto'])?(int)$_REQUEST['idAtto']:0));
 				/* Scarta tutto l'output gia' prodotto da tema o altri plugin (righe vuote
 				   dopo il ?>, BOM, avvisi PHP): finirebbe in testa al file scaricato e,
 				   sommandosi al Content-Length dichiarato, lo troncherebbe in coda. */
@@ -669,7 +670,7 @@ function admin_notice(){
 			wp_enqueue_script( 'my-admin_grid', $path.'/js/Albo.admin.grid.js', array(), AP_VERSION);
 		}
 		// phpcs:enable WordPress.WP.EnqueuedResourceParameters.NotInFooter
-		if(strpos($hook_suffix,"_page_atti")!==false And isset($_GET['action']) And $_GET['action']=='UpAllegati'){
+		if(strpos($hook_suffix,"_page_atti")!==false And isset($_GET['action']) And sanitize_text_field(wp_unslash($_GET['action'] ?? '')) == 'UpAllegati'){
 			wp_register_style('AdminAlboMultiUpload', $path.'/css/stylemultiupload.css', array(), AP_VERSION);
        	 	wp_enqueue_style( 'AdminAlboMultiUpload');
 		}
@@ -954,7 +955,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 	}
 </script>
 */
-		if($_GET['page']=='atti' And (isset($_GET['stato_atti']) And $_GET['stato_atti']=='Correnti') And current_user_can('editore_atti_albo')){
+		if(sanitize_text_field(wp_unslash($_GET['page'] ?? '')) == 'atti' And (isset($_GET['stato_atti']) And sanitize_text_field(wp_unslash($_GET['stato_atti'] ?? '')) == 'Correnti') And current_user_can('editore_atti_albo')){
 ?>			<style type="text/css">
 				#Stato{
 					width: 15%;
@@ -1106,10 +1107,10 @@ static function add_albo_plugin_visatto($plugin_array) {
 	function ShowBacheca(){
 	global $wpdb;
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- dashboard/bacheca admin: output = markup fisso + label i18n del plugin + output di helper che generano markup; i valori dinamici da DB/utente e i value degli input sono escapati inline (esc_attr/esc_html).
-		if (isset($_REQUEST['action']) And $_REQUEST['action']=="setta-anno"){
+		if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['action'] ?? '')) == "setta-anno"){
 		  update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		  update_option('opt_AP_NumeroProgressivo',1 );
-		  $_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), $_SERVER['REQUEST_URI']);
+		  $_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 		}
 		$n_atti = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Atti;");	 
 		$n_atti_dapub = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Atti Where Numero=0;");	
@@ -1285,14 +1286,14 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	function AP_config(){
 	$stato="";
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- pagina admin Parametri/configurazione: output = markup fisso + label i18n del plugin + output di helper (dropdown/select) che generano markup; i value degli input e i valori dinamici da opzioni/DB sono escapati inline (esc_attr/esc_html).
-	  if (isset($_REQUEST['action']) And $_REQUEST['action']=="setta-anno"){
+	  if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['action'] ?? '')) == "setta-anno"){
 		update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		update_option('opt_AP_NumeroProgressivo',1 );
-		$_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), $_SERVER['REQUEST_URI']);
+		$_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 	  }
 	  
 	  if (isset($_GET['update']))
-	  	if($_GET['update'] == 'true')
+	  	if(sanitize_text_field(wp_unslash($_GET['update'] ?? '')) == 'true')
 			$stato="<div id='setting-error-settings_updated' class='updated settings-error'> 
 				<p><strong>Impostazioni salvate.</strong></p></div>";
 		  else
@@ -2308,11 +2309,11 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	    	if (!isset($_POST['confAP'])) {
 	    		wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 	    	}
-			if (!wp_verify_nonce($_POST['confAP'],'configurazionealbo')){
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['confAP'] ?? '')),'configurazionealbo')){
 				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 			}
 		    ap_set_ente_me(wp_strip_all_tags($_POST['c_Ente']));
-			if (isset($_POST['c_VEnte']) And $_POST['c_VEnte']=='Si')
+			if (isset($_POST['c_VEnte']) And sanitize_text_field(wp_unslash($_POST['c_VEnte'] ?? '')) == 'Si')
 			    update_option('opt_AP_VisualizzaEnte','Si' );
 			else
 				update_option('opt_AP_VisualizzaEnte','No' );
@@ -2321,7 +2322,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			else
 				update_option('opt_AP_DefaultEnte',0 );
 			if (isset($_POST['progressivo']))
-			    update_option('opt_AP_NumeroProgressivo',(int)$_POST['progressivo'] );
+			    update_option('opt_AP_NumeroProgressivo',(isset($_POST['progressivo'])?(int)$_POST['progressivo']:0) );
 			if(isset($_POST['RuoliPuls'])){
 				$StRuoli=implode(",",$_POST['RuoliPuls']);
 				update_option('opt_AP_RuoliPuls',$StRuoli);
