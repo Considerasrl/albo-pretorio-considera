@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
-$ret=Lista_AttiGruppo($Parametri);								  
-function Lista_AttiGruppo($Parametri){
+$ret=albopc_Lista_AttiGruppo($Parametri);								  
+function albopc_Lista_AttiGruppo($Parametri){
 	ob_start();
 	$lista=albopc_get_GruppiAtti($Parametri['meta'],$Parametri['valore']); 
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');

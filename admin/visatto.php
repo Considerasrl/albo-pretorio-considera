@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
-function Visualizza_Atto($Parametri){
+function albopc_Visualizza_Atto($Parametri){
 	ob_start();
 	if(isset($_GET["titolo"])){
 		$Titolo=sanitize_text_field(wp_unslash($_GET["titolo"] ?? ''));

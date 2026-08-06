@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 
 // require_once(ABSPATH . 'wp-includes/pluggable.php'); 
-add_action( 'init', 'albo_post');
+add_action( 'init', 'albopc_albo_post');
 
-function DownloadFile($filename){
+function albopc_DownloadFile($filename){
 //	echo $filename."  ".basename($filename);die();
 	$fn=basename($filename);
 	if(!empty($fn)){
@@ -29,7 +29,7 @@ function DownloadFile($filename){
  }
 }
 
-function albo_post() {
+function albopc_albo_post() {
 	if(!is_user_logged_in())
 		return;
 	if(isset($_REQUEST['action'] )){
@@ -80,7 +80,7 @@ function albo_post() {
 				$file = fopen($file_path, "w") or die;
 				fwrite($file, $Testata."\n".$Atti);
 				fclose($file);
-				DownloadFile($file_path);
+				albopc_DownloadFile($file_path);
 				break;
 			case "ToXML":
 				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'] ?? '')), 'repertorio_export' ) )
@@ -116,7 +116,7 @@ function albo_post() {
 				$file = fopen($file_path, "w") or die;
 				fwrite($file, $xml->asXML());
 				fclose($file);
-				DownloadFile($file_path);
+				albopc_DownloadFile($file_path);
 				break;
 			case "ToJson":
 				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'] ?? '')), 'repertorio_export' ) )
@@ -133,7 +133,7 @@ function albo_post() {
 				fwrite($file, $txt);
 				fclose($file);
 	// phpcs:enable WordPress.WP.AlternativeFunctions
-				DownloadFile($file_path);
+				albopc_DownloadFile($file_path);
 				break;
 /*			case "ToPdf":
 				if (isset($_GET['Anno']))
@@ -165,7 +165,7 @@ function albo_post() {
 			 		$location = "?page=atti&stato_atti=Correnti" ;
 			 		include ('stampe.php');
 			 		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
- 	                    StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'a');
+ 	                    albopc_StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'a');
 					}
 					wp_die();
 				}else
@@ -180,7 +180,7 @@ function albo_post() {
 			 		$location = "?page=atti&stato_atti=Correnti" ;
 			 		include ('stampe.php');
 			 		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
- 	                    StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'c');
+ 	                    albopc_StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'c');
 					}
 					wp_die();
 				}else
@@ -218,11 +218,11 @@ function albo_post() {
 			break;
 		case "annulla-atto":
 			if (!isset($_REQUEST['annatto'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['annatto'] ?? '')),'annatto')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			} 
 			if (filter_input(INPUT_POST,'submit')== 'Annulla Pubblicazione Atto'){
@@ -245,14 +245,14 @@ function albo_post() {
 			break;
 		case "ExportBackupData":
 			if (!isset($_REQUEST['exportbckdata'])) {
-				Go_Utility();
+				albopc_Go_Utility();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['exportbckdata'] ?? '')),'EsportaBackupDatiAlbo')){
-				Go_Utility();
+				albopc_Go_Utility();
 				break;
 			} 		
-			DownloadFile(WP_CONTENT_DIR ."/AlboOnLine/BackupDatiAlbo/".basename(sanitize_text_field(wp_unslash($_REQUEST['elenco_Backup_Expo'] ?? ''))));
+			albopc_DownloadFile(WP_CONTENT_DIR ."/AlboOnLine/BackupDatiAlbo/".basename(sanitize_text_field(wp_unslash($_REQUEST['elenco_Backup_Expo'] ?? ''))));
 			break;
 		case "delete-allegato-atto" :
 			if ( ! isset( $_REQUEST['cancellaallegatoatto'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['cancellaallegatoatto'] ?? '')), 'deleteallegatoatto' ) )
@@ -270,11 +270,11 @@ function albo_post() {
 			break;
 		case 'add-responsabile':
 			if (!isset($_REQUEST['responsabili'])) {
-				Go_Responsabili();
+				albopc_Go_Responsabili();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['responsabili'] ?? '')),'elabresponsabili')){
-				Go_Responsabili();
+				albopc_Go_Responsabili();
 				break;
 			} 	
 			$location = "?page=soggetti" ;
@@ -307,11 +307,11 @@ function albo_post() {
 			break;
 		case 'edit-responsabile':
 			if (!isset($_REQUEST['modresp'])) {
-				Go_Responsabili();
+				albopc_Go_Responsabili();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modresp'] ?? '')),'editresponsabile')){
-				Go_Responsabili();
+				albopc_Go_Responsabili();
 				break;
 			} 		
 			$location = "?page=soggetti" ;
@@ -321,11 +321,11 @@ function albo_post() {
 			break;
 		case 'edit-tipofile':
 			if (!isset($_REQUEST['modtipfil'])) {
-				Go_Responsabili();
+				albopc_Go_Responsabili();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modtipfil'] ?? '')),'edittipofilee')){
-				Go_Responsabili();
+				albopc_Go_Responsabili();
 				break;
 			} 		
 			$location = "?page=tipifiles" ;
@@ -336,11 +336,11 @@ function albo_post() {
 		case 'set-default':
 //			var_dump($_REQUEST);die();
 			if (!isset($_REQUEST['tipifiles'])) {
-				Go_TipiFiles();
+				albopc_Go_TipiFiles();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['tipifiles'] ?? '')),'elabtipifiles')){
-				Go_TipiFiles();
+				albopc_Go_TipiFiles();
 				break;
 			} 		
 			$location = "?page=tipifiles" ;
@@ -354,11 +354,11 @@ function albo_post() {
 		case 'delete-tipofile':
 //			var_dump($_REQUEST);die();
 			if (!isset($_REQUEST['canctipfil'])) {
-				Go_TipiFiles();
+				albopc_Go_TipiFiles();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['canctipfil'] ?? '')),'deletetipofile')){
-				Go_TipiFiles();
+				albopc_Go_TipiFiles();
 				break;
 			} 		
 			$location = "?page=tipifiles" ;
@@ -372,11 +372,11 @@ function albo_post() {
 		case 'add-tipofile':
 //			var_dump($_REQUEST);die();
 			if (!isset($_REQUEST['tipifiles'])) {
-				Go_TipiFiles();
+				albopc_Go_TipiFiles();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['tipifiles'] ?? '')),'elabtipifiles')){
-				Go_TipiFiles();
+				albopc_Go_TipiFiles();
 				break;
 			} 	
 			$location = "?page=tipifiles" ;
@@ -398,11 +398,11 @@ function albo_post() {
 			break;	
 		case 'memo-tipofile':
 			if (!isset($_REQUEST['tipifiles'])) {
-				Go_TipiFiles();
+				albopc_Go_TipiFiles();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['tipifiles'] ?? '')),'elabtipifiles')){
-				Go_TipiFiles();
+				albopc_Go_TipiFiles();
 				break;
 			} 		
 //			var_dump($_REQUEST);die();
@@ -424,11 +424,11 @@ function albo_post() {
 			break;
 		case 'memo-responsabile':
 			if (!isset($_REQUEST['responsabili'])) {
-				Go_Responsabili();
+				albopc_Go_Responsabili();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['responsabili'] ?? '')),'elabresponsabili')){
-				Go_Responsabili();
+				albopc_Go_Responsabili();
 				break;
 			} 		
 			$location = "?page=soggetti" ;
@@ -463,11 +463,11 @@ function albo_post() {
 			break;
 		case 'delete-ente':
 			if (!isset($_REQUEST['cancellaente'])) {
-				Go_Enti();
+				albopc_Go_Enti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['cancellaente'] ?? '')),'deleteente')){
-				Go_Enti();
+				albopc_Go_Enti();
 				break;
 			} 			
 			$location = "?page=enti" ;
@@ -484,11 +484,11 @@ function albo_post() {
 			break;
 		case 'add-ente':
 			if (!isset($_REQUEST['enti'])) {
-				Go_Enti();
+				albopc_Go_Enti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['enti'] ?? '')),'enti')){
-				Go_Enti();
+				albopc_Go_Enti();
 				break;
 			} 		
 			$location = "?page=enti" ;
@@ -527,11 +527,11 @@ function albo_post() {
 			break;
 		case 'edit-ente':
 			if (!isset($_REQUEST['modificaente'])) {
-				Go_Enti();
+				albopc_Go_Enti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaente'] ?? '')),'editente')){
-				Go_Enti();
+				albopc_Go_Enti();
 				break;
 			} 		
 			$location = "?page=enti" ;
@@ -541,11 +541,11 @@ function albo_post() {
 			break;
 		case 'memo-ente':
 			if (!isset($_REQUEST['enti'])) {
-				Go_Enti();
+				albopc_Go_Enti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['enti'] ?? '')),'enti')){
-				Go_Enti();
+				albopc_Go_Enti();
 				break;
 			} 			
 			$location = "?page=enti" ;
@@ -586,11 +586,11 @@ function albo_post() {
 			break;
 		case 'delete-unitao':
 			if (!isset($_REQUEST['cancellaunitao'])) {
-				Go_Enti();
+				albopc_Go_Enti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['cancellaunitao'] ?? '')),'deleteunitao')){
-				Go_Enti();
+				albopc_Go_Enti();
 				break;
 			} 			
 			$location = "?page=unitao" ;
@@ -607,11 +607,11 @@ function albo_post() {
 			break;
 		case 'add-unitao':
 			if (!isset($_REQUEST['unitao'])) {
-				Go_Enti();
+				albopc_Go_Enti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['unitao'] ?? '')),'unitao')){
-				Go_Enti();
+				albopc_Go_Enti();
 				break;
 			} 		
 			$location = "?page=unitao" ;
@@ -649,11 +649,11 @@ function albo_post() {
 			break;
 		case 'edit-unitao':
 			if (!isset($_REQUEST['modificaunitao'])) {
-				Go_Unitao();
+				albopc_Go_Unitao();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaunitao'] ?? '')),'ediunitao')){
-				Go_Unitao();
+				albopc_Go_Unitao();
 				break;
 			} 		
 			$location = "?page=unitao" ;
@@ -663,11 +663,11 @@ function albo_post() {
 			break;
 		case 'memo-unitao':
 			if (!isset($_REQUEST['unitao'])) {
-				Go_Unitao();
+				albopc_Go_Unitao();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['unitao'] ?? '')),'unitao')){
-				Go_Unitao();
+				albopc_Go_Unitao();
 				break;
 			} 			
 			$location = "?page=unitao" ;
@@ -707,11 +707,11 @@ function albo_post() {
 			break;
 		case 'add-categorie':
 			if (!isset($_POST['categoria'])) {
-				Go_Categorie();
+				albopc_Go_Categorie();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['categoria'] ?? '')),'categoria')){
-				Go_Categorie();
+				albopc_Go_Categorie();
 				break;
 			} 		
 			$location = "?page=categorie" ;
@@ -731,11 +731,11 @@ function albo_post() {
 			break;
 		case 'delete-categorie':
 			if (!isset($_GET['canccategoria'])) {
-				Go_Categorie();
+				albopc_Go_Categorie();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['canccategoria'] ?? '')),'delcategoria')){
-				Go_Categorie();
+				albopc_Go_Categorie();
 				break;
 			} 		
 			$location = "?page=categorie" ;
@@ -755,11 +755,11 @@ function albo_post() {
 			break;
 		case 'edit-categorie':
 			if (!isset($_GET['modcategoria'])) {
-				Go_Categorie();
+				albopc_Go_Categorie();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['modcategoria'] ?? '')),'editcategoria')){
-				Go_Categorie();
+				albopc_Go_Categorie();
 				break;
 			} 		
 			$location = "?page=categorie" ;
@@ -769,11 +769,11 @@ function albo_post() {
 			break;
 		case 'memo-categoria':
 			if (!isset($_POST['categoria'])) {
-				Go_Categorie();
+				albopc_Go_Categorie();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['categoria'] ?? '')),'categoria')){
-				Go_Categorie();
+				albopc_Go_Categorie();
 				break;
 			} 		
 			$location = "?page=categorie" ;
@@ -789,11 +789,11 @@ function albo_post() {
 			break;
 	 	case "delete-atto":
 			if (!isset($_GET['cancellaatto'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['cancellaatto'] ?? '')),'deleteatto')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			} 		
 			$location = "?page=atti&stato_atti=Nuovi" ;
@@ -814,11 +814,11 @@ function albo_post() {
 			break;
 		case "add-atto" :
 			if (!isset($_POST['nuovoatto'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nuovoatto'] ?? '')),'nuovoatto')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			} 
 			if(isset($_POST['Soggetto'])){
@@ -857,11 +857,11 @@ function albo_post() {
 			break;
 		case "memo-atto" :
 			if (!isset($_REQUEST['modificaatto'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaatto'] ?? '')),'editatto')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			}	
 			if(isset($_POST['Soggetto'])){
@@ -900,11 +900,11 @@ function albo_post() {
 			break;
 		case "memo_metadati_atto":
 			if (!isset($_REQUEST['mmda'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['mmda'] ?? '')),'editmetadatiattoatto')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			}		
 			$location = "?page=atti&stato_atti=".filter_input(INPUT_POST,"stato_atti");	
@@ -923,17 +923,17 @@ function albo_post() {
 			$location='?page=atti&action=allegati-atto&id='.(isset($_REQUEST['id'])?intval($_REQUEST['id']):0).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 
 			if (!isset($_REQUEST['secure'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['secure'] ?? '')),'uploallegatoassociato')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			}
 			if (isset($_REQUEST['annulla'])){
 				wp_safe_redirect( $location );
 			}else{
-				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto_collegato()));
+				$messaggio =addslashes(str_replace(" ","%20",albopc_Memo_allegato_atto_collegato()));
 				if (isset($_REQUEST['ref']))
 					$location = add_query_arg(
 						array ( 'action' => sanitize_text_field(wp_unslash($_REQUEST['ref'] ?? '')), 
@@ -954,17 +954,17 @@ function albo_post() {
 		case "memo-allegato-atto":
 			$location='?page=atti&action=allegati-atto&id='.(isset($_REQUEST['id'])?intval($_REQUEST['id']):0).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 			if (!isset($_REQUEST['uploallegato'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['uploallegato'] ?? '')),'uploadallegati')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			}
 			if (isset($_REQUEST['annulla'])){
 				wp_safe_redirect( $location );
 			}else{
-				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto()));
+				$messaggio =addslashes(str_replace(" ","%20",albopc_Memo_allegato_atto()));
 				if (isset($_REQUEST['ref']))
 					$location = add_query_arg(
 						array ( 'action' => sanitize_text_field(wp_unslash($_REQUEST['ref'] ?? '')), 
@@ -985,17 +985,17 @@ function albo_post() {
 		case "memo-allegati-atto":
 			$location='?page=atti&action=allegati-atto&id='.(isset($_REQUEST['id'])?intval($_REQUEST['id']):0).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 			if (!isset($_REQUEST['uploallegato'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['uploallegato'] ?? '')),'uploadallegati')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			}
 			if (isset($_REQUEST['annulla'])){
 				wp_safe_redirect( $location );
 			}else{
-				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto()));
+				$messaggio =addslashes(str_replace(" ","%20",albopc_Memo_allegato_atto()));
 				if (isset($_REQUEST['ref']))
 					$location = add_query_arg(array ( 'action' => sanitize_text_field(wp_unslash($_REQUEST['ref'] ?? '')), 
 												  'messaggio' => $messaggio,
@@ -1011,11 +1011,11 @@ function albo_post() {
 			break;	
 		case "update-allegato-atto":
 			if (!isset($_REQUEST['modificaallegatoatto'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaallegatoatto'] ?? '')),'editallegatoatto')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			}		
 			$location='?page=atti&action=allegati-atto&id='.(isset($_REQUEST['id'])?intval($_REQUEST['id']):0).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
@@ -1040,7 +1040,7 @@ function albo_post() {
 	}		
 }
 }
-function Memo_allegato_atto_collegato(){
+function albopc_Memo_allegato_atto_collegato(){
 	if (sanitize_text_field(wp_unslash($_REQUEST["operazione"] ?? '')) == "associa_allegato"){
 		if (!isset($_REQUEST['secure'])) {
 			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
@@ -1067,7 +1067,7 @@ function Memo_allegato_atto_collegato(){
 	return __("File associato","albo-pretorio-considera")."%25%25br%25%25Nome: " . basename( $targetfile)." %25%25br%25%25".__("Percorso completo","albo-pretorio-considera")." : ".str_replace("//","/",str_replace("\\","/",$targetfile))." %25%25br%25%25".__("Impronta","albo-pretorio-considera")." : ".$Impronta."%25%25br%25%25".__("Documento Integrale","albo-pretorio-considera").": " .(isset($_REQUEST['Integrale'])?"Si":"No")."%25%25br%25%25".__("Natura documento","albo-pretorio-considera").": " .(sanitize_text_field(wp_unslash($_REQUEST['Natura'] ?? '')) == "D"?"Documento firmato":"Allegato");
 }
 
-function Memo_allegato_atto(){
+function albopc_Memo_allegato_atto(){
 	if (sanitize_text_field(wp_unslash($_REQUEST["operazione"] ?? '')) == "upload"){
 		if (!isset($_REQUEST['uploallegato'])) {
 			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
@@ -1136,37 +1136,37 @@ function Memo_allegato_atto(){
 	}
 	return $retMessages;
 }
-function Go_Atti(){
+function albopc_Go_Atti(){
 	$location = "?page=atti&p=1" ;
 	$location = add_query_arg( 'message', 80, $location );
 	wp_safe_redirect( $location );
 }
-function Go_Enti(){
+function albopc_Go_Enti(){
 	$location = "?page=enti" ;
 	$location = add_query_arg( 'message', 80, $location );
 	wp_safe_redirect( $location );
 }
-function Go_Unitao(){
+function albopc_Go_Unitao(){
 	$location = "?page=unitao" ;
 	$location = add_query_arg( 'message', 80, $location );
 	wp_safe_redirect( $location );
 }
-function Go_Categorie(){
+function albopc_Go_Categorie(){
 	$location = "?page=categorie" ;
 	$location = add_query_arg( 'message', 80, $location );
 	wp_safe_redirect( $location );
 }
-function Go_Responsabili(){
+function albopc_Go_Responsabili(){
 	$location = "?page=soggetti" ;
 	$location = add_query_arg( 'message', 80, $location );
 	wp_safe_redirect( $location );
 }
-function Go_TipiFiles(){
+function albopc_Go_TipiFiles(){
 	$location = "?page=tipifiles" ;
 	$location = add_query_arg( 'message', 80, $location );
 	wp_safe_redirect( $location );
 }
-function Go_Utility(){
+function albopc_Go_Utility(){
 	$location = "?page=utilityAlboP" ;
 	$location = add_query_arg( 'message', 80, $location );
 	wp_safe_redirect( $location );

@@ -416,14 +416,14 @@ class AdminTableAtti extends WP_List_Table
 if(isset($_REQUEST['action'])){
 	switch (sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 		case "metadati-atto":
-			Gestione_Metadati((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+			albopc_Gestione_Metadati((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "logatto" :
 			echo json_encode(CreaLog(1,$IdAtto,0));
 			die();
 			break;
 		case "view-atto" :
-			View_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+			albopc_View_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 			
 			case "oblio-allegati-atto":
@@ -433,48 +433,48 @@ if(isset($_REQUEST['action'])){
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
- 	                    $MessaggiRitorno=CancellaAllegatiAtto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+ 	                    $MessaggiRitorno=albopc_CancellaAllegatiAtto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 					}
 				}else
 					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;				
 		case "annullamento-atto" :
-			Annulla_Atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+			albopc_Annulla_Atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "new-atto" :
-			Nuovo_atto();
+			albopc_Nuovo_atto();
 			break;
 		case "edit-atto" :
 			if (!isset($_REQUEST['modificaatto'])) {
-				Go_Atti();
+				albopc_Go_Atti();
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaatto'] ?? '')),'editatto')){
-				Go_Atti();
+				albopc_Go_Atti();
 				break;
 			} 		
-			Edit_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+			albopc_Edit_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "pubblica-atto":
 			if ( ! isset( $_REQUEST['pubblicaatto'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['pubblicaatto'] ?? '')), 'pubblicaatto-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+				albopc_Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
-			Lista_Atti(albopc_approva_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0)));
+			albopc_Lista_Atti(albopc_approva_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0)));
 			break;
 		case "setta-anno":
 			if ( ! isset( $_REQUEST['settaanno'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['settaanno'] ?? '')), 'settaanno-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
-				PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+				albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		  	update_option('opt_AP_NumeroProgressivo',1 );
-			PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),gmdate("Y")));
+			albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),gmdate("Y")));
 			break;
 		case "approva-atto" :
 			$ret="";
 			if ( ! isset( $_REQUEST['approvaatto'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['approvaatto'] ?? '')), 'approvaatto-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
-				PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+				albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			if (isset($_REQUEST['apa'])){
@@ -496,29 +496,29 @@ if(isset($_REQUEST['action'])){
 				$id=(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0);
 			else
 				$id=0;
-			PreApprovazione($id,$ret);
+			albopc_PreApprovazione($id,$ret);
 			break;
 		case "allegati-atto" :
 			if (!isset($_REQUEST['allegatoatto'])) {
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+				albopc_Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['allegatoatto'] ?? '')),'gestallegatiatto')){
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+				albopc_Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			} 		
-			Allegati_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),(isset($_REQUEST['messaggio'])?sanitize_text_field(wp_unslash($_REQUEST['messaggio'] ?? '')):""));
+			albopc_Allegati_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),(isset($_REQUEST['messaggio'])?sanitize_text_field(wp_unslash($_REQUEST['messaggio'] ?? '')):""));
 			break;
 		case "edit-allegato-atto" :
 			if (!isset($_REQUEST['modificaallegatoatto'])) {
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+				albopc_Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;	
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaallegatoatto'] ?? '')),'editallegatoatto')){
-				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+				albopc_Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			} 				
-			Allegati_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),(isset($_REQUEST['messaggio'])?sanitize_text_field(wp_unslash($_REQUEST['messaggio'] ?? '')):""),(isset($_REQUEST['idAlle'])?(int)$_REQUEST['idAlle']:0));
+			albopc_Allegati_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),(isset($_REQUEST['messaggio'])?sanitize_text_field(wp_unslash($_REQUEST['messaggio'] ?? '')):""),(isset($_REQUEST['idAlle'])?(int)$_REQUEST['idAlle']:0));
 			break;
 		case "UpAllegati":
 			include_once ( dirname (__FILE__) . '/allegati_multi.php' );
@@ -536,7 +536,7 @@ if(isset($_REQUEST['action'])){
 			}else
 				$message="";
 
-			Lista_Atti($message);
+			albopc_Lista_Atti($message);
 			break;
 	}	
 }else{
@@ -548,12 +548,12 @@ if(isset($_REQUEST['action'])){
 	}else{
 		$message="";
 	}
-	Lista_Atti($message);
+	albopc_Lista_Atti($message);
 }
 
 unset($_REQUEST['action']);
 
-function Gestione_Metadati($IdAtto){
+function albopc_Gestione_Metadati($IdAtto){
 	global $AP_OnLine;
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
@@ -695,7 +695,7 @@ echo '</div>
 </div>';	
 }
 
-function PreApprovazione($id,$ret=''){
+function albopc_PreApprovazione($id,$ret=''){
 global $wpdb;
 if (!current_user_can('editore_atti_albo')){
 	echo '<div id="message" class="updated"><p>'.__("Questa Operazione non ti è consentita, operazione di pertinenza dell'amministratore dell'Albo o del redattore","albo-pretorio-considera").'</p></div>';
@@ -1045,7 +1045,7 @@ echo '</div>';
 }
 
 
-function Nuovo_atto(){
+function albopc_Nuovo_atto(){
 /*	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];*/
 	if (isset($_REQUEST['Data']) And sanitize_text_field(wp_unslash($_REQUEST['Data'] ?? '')) != "")
@@ -1258,7 +1258,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 }
 
 
-function Edit_atto($id){
+function albopc_Edit_atto($id){
 $atto=albopc_get_atto($id);
 $atto=$atto[0];
 $DataOblioStandard=(gmdate("Y")+6)."-01-01";
@@ -1411,7 +1411,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 <?php	
 }
 
-function Allegati_atto($IdAtto,$messaggio="",$IdAllegato=0){
+function albopc_Allegati_atto($IdAtto,$messaggio="",$IdAllegato=0){
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
 	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
@@ -1623,7 +1623,7 @@ echo'
 </div>
 </div>';	
 }
-function View_atto($IdAtto){
+function albopc_View_atto($IdAtto){
 	global $AP_OnLine;
 if (isset($_REQUEST['stato_atti']))
 	$Prov=sanitize_text_field(wp_unslash($_REQUEST['stato_atti'] ?? ''));
@@ -1850,7 +1850,7 @@ echo '</div>
 }
 
 
-function CancellaAllegatiAtto($IdAtto){
+function albopc_CancellaAllegatiAtto($IdAtto){
 	global $AP_OnLine;
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
@@ -2055,7 +2055,7 @@ echo '</div>
 	</div>
 </div>';	
 }
-function Annulla_Atto($IdAtto){
+function albopc_Annulla_Atto($IdAtto){
 	global $AP_OnLine;
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
@@ -2209,7 +2209,7 @@ echo'			</td>
 </div>';	
 }
 
-function Lista_Atti($Msg_op=""){
+function albopc_Lista_Atti($Msg_op=""){
 if (isset($_REQUEST['p']))
 	$Pag=(isset($_REQUEST['p'])?intval($_REQUEST['p']):0);
 else

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
 
-function load_Data_Funzioni(){
+function albopc_load_Data_Funzioni(){
 	$TabResponsabili=get_option('opt_AP_TabResp');
 	if((is_string($TabResponsabili) && (is_object(json_decode($TabResponsabili)) || is_array(json_decode($TabResponsabili))))){
 		$TR=json_decode($TabResponsabili);
@@ -43,7 +43,7 @@ $messages[5] = __('Elemento non aggiornato.','albo-pretorio-considera');
 $messages[6] = __('Elemento non cancellato.','albo-pretorio-considera');
 $messages[7] = __('Impossibile cancellare Enti che sono collegati ad Atti','albo-pretorio-considera');
 $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-load_Data_Funzioni();
+albopc_load_Data_Funzioni();
 ?>
 <div id="ElaborazioneTabella" style="width: 200px;height: 200px;position: absolute;top: 50%;left: 50%; margin-top: -100px; margin-left: -100px;display:none;" >
 	<img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) . 'css/images/ElaborazioneInCorso.gif' )?>" id="ElaborazioneTabella"/>

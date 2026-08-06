@@ -85,9 +85,9 @@ if(isset($_REQUEST['action'])){
                         wp_die(esc_html__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
                 }
                 if (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'c') {
-                    StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'c');
+                    albopc_StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'c');
                 } elseif (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'a') {
-                    StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'a');
+                    albopc_StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'a');
                 }
             }else{
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
@@ -95,7 +95,7 @@ if(isset($_REQUEST['action'])){
             break;
 		case 'visatto':
 			if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))))
-				$ret=VisualizzaAtto($_REQUEST['id']);
+				$ret=albopc_VisualizzaAtto($_REQUEST['id']);
 			else{
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 			}
@@ -121,7 +121,7 @@ if(isset($_REQUEST['action'])){
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 				break;
 			}
-	 		$ret=Lista_Atti($Parametri,
+	 		$ret=albopc_Lista_Atti($Parametri,
 				 			isset($_REQUEST['categoria'])?(int)$_REQUEST['categoria']:0,
 							isset($_REQUEST['numero'])?(int)$_REQUEST['numero']:0,
 							isset($_REQUEST['anno'])?(int)$_REQUEST['anno']:0, 
@@ -139,9 +139,9 @@ if(isset($_REQUEST['action'])){
 					 unset($_REQUEST['DataInizio']);
 					 unset($_REQUEST['DataFine']);
 					 unset($_REQUEST['ente']);
-					 $ret=Lista_Atti($Parametri);
+					 $ret=albopc_Lista_Atti($Parametri);
 				}else{
-					$ret=Lista_Atti($Parametri);
+					$ret=albopc_Lista_Atti($Parametri);
 				}
 		}	
 	}else{
@@ -161,7 +161,7 @@ if(isset($_REQUEST['action'])){
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 				return;
 			}
-			$ret=Lista_Atti($Parametri,
+			$ret=albopc_Lista_Atti($Parametri,
 				isset($_REQUEST['categoria'])?(int)$_REQUEST['categoria']:0,
 				isset($_REQUEST['numero'])?(int)$_REQUEST['numero']:0,
 				isset($_REQUEST['anno'])?(int)$_REQUEST['anno']:0, 
@@ -179,15 +179,15 @@ if(isset($_REQUEST['action'])){
 				 unset($_REQUEST['riferimento']);
 				 unset($_REQUEST['DataInizio']);
 				 unset($_REQUEST['ente']);
-				 $ret=Lista_Atti($Parametri);
+				 $ret=albopc_Lista_Atti($Parametri);
 			}else{
-				$ret=Lista_Atti($Parametri);
+				$ret=albopc_Lista_Atti($Parametri);
 
 			}
 	}
 
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- template di rendering front-end [Albo]: markup fisso + label i18n del plugin, con i valori DB/utente escapati singolarmente (esc_html/esc_url/esc_attr) e input gia sanitizzato a monte; le variabili $Link/$classe contengono solo markup fisso + dati gia escapati.
-function VisualizzaAtto($id){
+function albopc_VisualizzaAtto($id){
 	$risultato=albopc_get_atto($id);
 	$risultato=$risultato[0];
 	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
@@ -439,7 +439,7 @@ echo '</div>
 return ob_get_clean();
 }
 
-function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadata=0,$Adata=0,$Riferimento='',$Ente=-1){
+function albopc_Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadata=0,$Adata=0,$Riferimento='',$Ente=-1){
 	switch ($Parametri['stato']){
 			case 0:
 				$TitoloAtti=__("Tutti gli atti","albo-pretorio-considera");
@@ -523,7 +523,7 @@ if (get_option('opt_AP_VisualizzaEnte')=='Si')
 		echo '<'.$titEnte.' ><span  class="titoloEnte">'.stripslashes(get_option('opt_AP_Ente')).'</span></'.$titEnte.'>';
 echo '<'.$titPagina.'><span  class="titoloPagina">'.$TitoloAtti.'</span></'.$titPagina.'>';
 if (!isset($Parametri['filtri']) Or $Parametri['filtri']=="si")
-	echo '<'.$titFiltri.' class="filtri">'.$VisFiltro.'</'.$titFiltri.'>'.VisualizzaRicerca($Parametri['stato'],$Categoria,$Parametri['minfiltri']);
+	echo '<'.$titFiltri.' class="filtri">'.$VisFiltro.'</'.$titFiltri.'>'.albopc_VisualizzaRicerca($Parametri['stato'],$Categoria,$Parametri['minfiltri']);
 //$Contenuto.=  $nascondi;
 if ($TotAtti>$N_A_pp){
 		$appo=$_REQUEST;

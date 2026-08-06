@@ -8,13 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package    Albo On Line
  */
  
-function LinkStampaAtto($id) {/* mr */
+function albopc_LinkStampaAtto($id) {/* mr */
     if (current_user_can('admin_albo')) {
         echo '<a class="stpdf" href="' . esc_url(get_permalink() . '?action=printatto&id=' . $id . '&pdf=a') . '">'.esc_html__("Visualizza AVVISO DI INIZIO AFFISSIONE","albo-pretorio-considera").'</a><a href="' . esc_url(get_permalink() . '?action=printatto&id=' . $id . '&pdf=c') . '" class="stpdf">'.esc_html__("Visualizza CERTIFICATO DI PUBBLICAZIONE","albo-pretorio-considera").'</a>';
     }
 }
 
-function StampaAtto($id, $tipo) {
+function albopc_StampaAtto($id, $tipo) {
     $risultato = albopc_get_atto($id);
     $resp_pub = albopc_get_all_Oggetto_log(1, $id);
     $risultato = $risultato[0];

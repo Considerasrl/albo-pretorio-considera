@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * @package    Albo On Line
  */
-function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
+function albopc_VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
 	$anni=albopc_get_dropdown_anni_atti('anno','anno','postform','',(isset($_REQUEST['anno'])?sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')):0),$Stato); 
 	$categorie=albopc_get_dropdown_ricerca_categorie('categoria','categoria','postform','',(isset($_REQUEST['categoria'])?sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')):0),$Stato); 
 	albopc_Bonifica_Url();

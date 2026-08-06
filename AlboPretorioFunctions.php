@@ -282,7 +282,7 @@ function albopc_Formato_Dimensione_File($a_bytes)
 // Funzioni DataBase
 ################################################################################
 
-function AP_CreaCategoriaBase($CatNome,$Des,$Durata){
+function albopc_AP_CreaCategoriaBase($CatNome,$Des,$Durata){
 	$ret=albopc_insert_categoria($CatNome,0,$Des,$Durata);
 	$Risultato ='
 	<tr>
@@ -297,22 +297,22 @@ function AP_CreaCategoriaBase($CatNome,$Des,$Durata){
 	return $Risultato;
 }
 
-function AP_CreaCategorieBase(){
-	$Risultato=AP_CreaCategoriaBase(__('Bandi e gare','albo-pretorio-considera'),__('Bandi e gare','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Contratti - Personale ATA','albo-pretorio-considera'),__('Contratti - Personale ATA','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Contratti - Personale Docente','albo-pretorio-considera'),__('Contratti - Personale Docente','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Contratti e convenzioni','albo-pretorio-considera'),__('Contratti e convenzioni','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Convocazioni','albo-pretorio-considera'),__('Convocazioni','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Delibere Consiglio di Istituto','albo-pretorio-considera'),__('Delibere Consiglio di Istituto','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Documenti altre P.A.','albo-pretorio-considera'),__('Documenti altre P.A.','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Esiti esami','albo-pretorio-considera'),__('Esiti esami','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Graduatorie','albo-pretorio-considera'),__('Graduatorie','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Organi collegiali','albo-pretorio-considera'),__('Organi collegiali','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Organi collegiali - Elezioni','albo-pretorio-considera'),__('Organi collegiali - Elezioni','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Privacy','albo-pretorio-considera'),__('Privacy','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Programmi annuali e Consuntivi','albo-pretorio-considera'),__('Programmi annuali e Consuntivi','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Regolamenti','albo-pretorio-considera'),__('Regolamenti','albo-pretorio-considera'),15);
-	$Risultato.=AP_CreaCategoriaBase(__('Sicurezza','albo-pretorio-considera'),__('Sicurezza','albo-pretorio-considera'),15);
+function albopc_AP_CreaCategorieBase(){
+	$Risultato=albopc_AP_CreaCategoriaBase(__('Bandi e gare','albo-pretorio-considera'),__('Bandi e gare','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti - Personale ATA','albo-pretorio-considera'),__('Contratti - Personale ATA','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti - Personale Docente','albo-pretorio-considera'),__('Contratti - Personale Docente','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti e convenzioni','albo-pretorio-considera'),__('Contratti e convenzioni','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Convocazioni','albo-pretorio-considera'),__('Convocazioni','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Delibere Consiglio di Istituto','albo-pretorio-considera'),__('Delibere Consiglio di Istituto','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Documenti altre P.A.','albo-pretorio-considera'),__('Documenti altre P.A.','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Esiti esami','albo-pretorio-considera'),__('Esiti esami','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Graduatorie','albo-pretorio-considera'),__('Graduatorie','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Organi collegiali','albo-pretorio-considera'),__('Organi collegiali','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Organi collegiali - Elezioni','albo-pretorio-considera'),__('Organi collegiali - Elezioni','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Privacy','albo-pretorio-considera'),__('Privacy','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Programmi annuali e Consuntivi','albo-pretorio-considera'),__('Programmi annuali e Consuntivi','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Regolamenti','albo-pretorio-considera'),__('Regolamenti','albo-pretorio-considera'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Sicurezza','albo-pretorio-considera'),__('Sicurezza','albo-pretorio-considera'),15);
 	return $Risultato;
 }
 
@@ -605,7 +605,7 @@ function albopc_SeDate($test,$data1,$data2){
 	return false;
 }
 
-function daGiorniaAnniMesiGiorni($nGiorni){
+function albopc_daGiorniaAnniMesiGiorni($nGiorni){
 	if ($nGiorni>365)
 		$nAnni=floor($nGiorni/365);
 	else
@@ -1081,7 +1081,7 @@ function albopc_insert_categoria($cat_name,$cat_parente,$cat_descrizione,$cat_du
 	}
 }
 
-function is_array_di_categorie($Categorie){
+function albopc_is_array_di_categorie($Categorie){
 	$ArrCategorie=explode(",",$Categorie);
 	$Esito=false;
 	foreach($ArrCategorie as $Cate){

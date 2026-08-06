@@ -91,7 +91,7 @@ if (!class_exists('AlboPretorio')) {
 		add_action('init', array($this, 'add_albo_button'));
 		add_shortcode('Albo', array($this, 'VisualizzaAtti'));
 		add_shortcode('AlboGruppiAtti', array($this, 'VisualizzaGruppiAtti'));
-		add_shortcode('AlboAtto', array($this, 'VisualizzaAtto'));
+		add_shortcode('AlboAtto', array($this, 'albopc_VisualizzaAtto'));
 
 		add_action('wp_head', array($this,'head_Front_End'));
 		add_action( 'admin_menu', array ($this, 'add_menu') ); 
@@ -218,7 +218,7 @@ function admin_notice(){
 			 	       			if($param=='0'){
 									return true;
 								}else{
-									return is_array_di_categorie($param);
+									return albopc_is_array_di_categorie($param);
 									}
 	   						}),
     				'numero' => array('default'=>0,
@@ -518,7 +518,7 @@ function admin_notice(){
 		}else{
 			require_once ( dirname (__FILE__) . '/admin/gruppiatti_new.php' );
 		}		
-		return $content.Lista_AttiGruppo($Parametri);
+		return $content.albopc_Lista_AttiGruppo($Parametri);
 	}
 	function Gestione_Link(){
 		if(isset($_REQUEST['action'])){
@@ -1079,9 +1079,9 @@ static function add_albo_plugin_visatto($plugin_array) {
 				require_once ( dirname (__FILE__) . '/admin/gruppiatti_new.php' );
 			}	
 		}			
-		return Lista_AttiGruppo($Parametri);
+		return albopc_Lista_AttiGruppo($Parametri);
 	}
-	function VisualizzaAtto($Parametri){
+	function albopc_VisualizzaAtto($Parametri){
 		$ret="";
 		$Parametri=shortcode_atts(array(
 			'titolo' => __('Atto Albo on line','albo-pretorio-considera'),
@@ -1101,7 +1101,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 				require_once ( dirname (__FILE__) . '/admin/visatto_new.php' );
 			}		
 		}
-		return Visualizza_Atto($Parametri);
+		return albopc_Visualizza_Atto($Parametri);
 	}	
 
 	function ShowBacheca(){
