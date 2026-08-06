@@ -3495,7 +3495,7 @@ function albopc_oblio_atti($Atti){
 		}
 		$TabFunzResp=array();
 		foreach ($TRs as$TR ){
-			$TabFunzResp[$TR->ID]=array("Descrizione" =>$TR->Funzione,"Display" =>$TR->Display,"StaCert" =>$TR->StaCert);
+			$TabFunzResp[$TR->ID]=array("Descrizione" =>($TR->Funzione ?? ""),"Display" =>($TR->Display ?? "No"),"StaCert" =>($TR->StaCert ?? "No"));
 		}
 		switch ($Output){
 			case "Array":
