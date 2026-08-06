@@ -440,6 +440,7 @@ return ob_get_clean();
 }
 
 function albopc_Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadata=0,$Adata=0,$Riferimento='',$Ente=-1){
+	$TitoloAtti="";
 	switch ($Parametri['stato']){
 			case 0:
 				$TitoloAtti=__("Tutti gli atti","albo-pretorio-on-line");

@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio Considera
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.12.1
+ * Version:           4.12.2
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+

@@ -9,6 +9,23 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
+## [4.12.2] - 2026-08-06
+
+### Corretto
+- **Errore irreversibile** (`TypeError` PHP 8) nella scheda **Metadati** di un atto
+  e nelle viste/stampe front-end (`[AlboAtto]`, stampa certificato) quando l'atto
+  non ha soggetti assegnati: `unserialize()` di un valore vuoto restituiva `false`
+  e le successive `implode()`/`count()`/`foreach()` andavano in errore fatale.
+  Sistemati tutti i punti in `admin/atti.php`, `admin/visatto.php`,
+  `admin/visatto_new.php`, `admin/visatto_new2.php`, `admin/stampe.php`,
+  `admin/frontend_new2.php` e `AlboPretorioFunctions.php`.
+- **Errore irreversibile** nell'azione `logatto` (`admin/atti.php`): la funzione
+  di log veniva invocata senza l'istanza del plugin e senza l'ID dell'atto.
+- **Avviso PHP 8** nella pagina **Tabelle** (`admin/tabelle.php`) per la proprietà
+  `StaCert` mancante nei ruoli salvati con versioni precedenti.
+- **Avviso PHP 8** (variabile `$TitoloAtti` non inizializzata) negli elenchi atti
+  front-end quando lo stato non è tra quelli standard.
+
 ## [4.12.1] - 2026-08-06
 
 ### Corretto
