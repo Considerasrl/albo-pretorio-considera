@@ -14,56 +14,56 @@ ob_start();
 
 if(isset($_REQUEST['id']) And !is_numeric($_REQUEST['id'])){
 	$_REQUEST['id']=0;
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">ID</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">ID</span>'));
 }
 if(isset($_REQUEST['action']) And $_REQUEST['action']!=wp_strip_all_tags($_REQUEST['action'])){
 	unset($_REQUEST['action']);
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Action</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Action</span>'));
 	return;
 }
 if(isset($_REQUEST['categoria']) And !is_numeric($_REQUEST['categoria'])){
 	$_REQUEST['categoria']=0;
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Categoria</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Categoria</span>'));
 }
 if(isset($_REQUEST['numero']) And $_REQUEST['numero']!="" AND !is_numeric($_REQUEST['numero'])){
 	$_REQUEST['numero']="";
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Numero</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Numero</span>'));
 }
 if(isset($_REQUEST['anno']) And !is_numeric($_REQUEST['anno'])){
 	$_REQUEST['anno']=0;
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Anno</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Anno</span>'));
 }
 if(isset($_REQUEST['ente']) And !is_numeric($_REQUEST['ente'])){
 	$_REQUEST['ente']="-1";
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Ente</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Ente</span>'));
 }
 if(isset($_REQUEST['Pag']) And !is_numeric($_REQUEST['Pag'])){
 	$_REQUEST['Pag']=1;
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Pag</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Pag</span>'));
 }
 if(isset($_REQUEST['oggetto']) And $_REQUEST['oggetto']!=wp_strip_all_tags($_REQUEST['oggetto'])){
 	$_REQUEST['oggetto']="";
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Oggetto</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Oggetto</span>'));
 }
 if(isset($_REQUEST['riferimento']) And $_REQUEST['riferimento']!=wp_strip_all_tags($_REQUEST['riferimento'])){
 	$_REQUEST['riferimento']="";
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Riferimento</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Riferimento</span>'));
 }
 if(isset($_REQUEST['DataInizio']) And $_REQUEST['DataInizio']!=wp_strip_all_tags($_REQUEST['DataInizio'])){
 	$_REQUEST['DataInizio']="";
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Da Data</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Da Data</span>'));
 }
 if(isset($_REQUEST['DataFine']) And $_REQUEST['DataFine']!=wp_strip_all_tags($_REQUEST['DataFine'])){
 	$_REQUEST['DataFine']="";
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">A Data</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">A Data</span>'));
 }
 if(isset($_REQUEST['filtra']) And ($_REQUEST['filtra']!=__("Filtra","albo-pretorio-considera") And $_REQUEST['filtra']!=__("Annulla Filtro","albo-pretorio-considera"))){
 	$_REQUEST['filtra']="Filtra";
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">filtra</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">filtra</span>'));
 }
 if(isset($_REQUEST['vf']) And ($_REQUEST['vf']!="s" And $_REQUEST['vf']!="h" And $_REQUEST['vf']!="undefined")){
 	$_REQUEST['vf']="undefined";
-	echo "<br />".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">vf</span>');
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">vf</span>'));
 }
 foreach($_REQUEST as $Key => $Val){
 	$_REQUEST[$Key]=htmlspecialchars(wp_strip_all_tags($_REQUEST[$Key]));
@@ -124,10 +124,10 @@ if(isset($_REQUEST['action'])){
 				 			isset($_REQUEST['categoria'])?(int)$_REQUEST['categoria']:0,
 							isset($_REQUEST['numero'])?(int)$_REQUEST['numero']:0,
 							isset($_REQUEST['anno'])?(int)$_REQUEST['anno']:0, 
-							isset($_REQUEST['oggetto'])?htmlentities($_REQUEST['oggetto']):"",
-							isset($_REQUEST['DataInizio'])?htmlentities($_REQUEST['DataInizio']):0,
-							isset($_REQUEST['DataFine'])?htmlentities($_REQUEST['DataFine']):0, 
-							isset($_REQUEST['riferimento'])?htmlentities($_REQUEST['riferimento']):"",
+							isset($_REQUEST['oggetto'])?esc_html($_REQUEST['oggetto']):"",
+							isset($_REQUEST['DataInizio'])?esc_html($_REQUEST['DataInizio']):0,
+							isset($_REQUEST['DataFine'])?esc_html($_REQUEST['DataFine']):0, 
+							isset($_REQUEST['riferimento'])?esc_html($_REQUEST['riferimento']):"",
 							isset($_REQUEST['ente'])?(int)$_REQUEST['ente']:-1);				 		
 			}else if(isset($_REQUEST['annullafiltro'])){
 					 unset($_REQUEST['categoria']);
@@ -164,10 +164,10 @@ if(isset($_REQUEST['action'])){
 				 			isset($_REQUEST['categoria'])?(int)$_REQUEST['categoria']:0,
 							isset($_REQUEST['numero'])?(int)$_REQUEST['numero']:0,
 							isset($_REQUEST['anno'])?(int)$_REQUEST['anno']:0, 
-							isset($_REQUEST['oggetto'])?htmlentities($_REQUEST['oggetto']):"",
-							isset($_REQUEST['DataInizio'])?htmlentities($_REQUEST['DataInizio']):0,
-							isset($_REQUEST['DataFine'])?htmlentities($_REQUEST['DataFine']):0, 
-							isset($_REQUEST['riferimento'])?htmlentities($_REQUEST['riferimento']):"",
+							isset($_REQUEST['oggetto'])?esc_html($_REQUEST['oggetto']):"",
+							isset($_REQUEST['DataInizio'])?esc_html($_REQUEST['DataInizio']):0,
+							isset($_REQUEST['DataFine'])?esc_html($_REQUEST['DataFine']):0, 
+							isset($_REQUEST['riferimento'])?esc_html($_REQUEST['riferimento']):"",
 							isset($_REQUEST['ente'])?(int)$_REQUEST['ente']:-1);			
 		}else 
 			if(isset($_REQUEST['annullafiltro'])){
@@ -344,18 +344,18 @@ foreach ($documenti as $allegato) {
 				</div>
 				<div class="col-11 break-word">  				
 				<?php 
-				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-considera").'</strong>: '.wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br />';
+				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-considera")).'</strong>: '.wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br />';
 				if(!is_file($allegato->Allegato) And $allegato->Note!=""){
-					echo '<strong>'.__("Documento rimosso","albo-pretorio-considera").'</strong>: '.$allegato->Note.'<br /><strong><br />';
+					echo '<strong>'.esc_html(esc_html__("Documento rimosso","albo-pretorio-considera")).'</strong>: '.$allegato->Note.'<br /><strong><br />';
 				}else{
-					echo '<strong>'.__("Impronta","albo-pretorio-considera").'</strong>: '.$allegato->Impronta.'<br /><strong>'.__("Dimensione file","albo-pretorio-considera").'</strong>: '.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)."<br />";
+					echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.$allegato->Impronta.'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-considera")).'</strong>: '.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)."<br />";
 					if (is_file($allegato->Allegato)){
 						if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-							echo '<a href="'.ap_DaPath_a_URL($allegato->Allegato).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" title="'.__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
+							echo '<a href="'.ap_DaPath_a_URL($allegato->Allegato).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
 							<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg></a> ';
 						}
 						if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-							echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" class="noUnderLine" title="'.__("Scarica allegato","albo-pretorio-considera").'">
+							echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" class="noUnderLine" title="'.esc_html__("Scarica allegato","albo-pretorio-considera").'">
 							<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>';
 								if($StatoAllegati=="dwn"){
 									echo " <strong>".basename( $allegato->Allegato).'</strong></a>';
@@ -393,18 +393,18 @@ foreach ($allegati as $allegato) {
 				</div>
 				<div class="col-11 break-word">  				
 				<?php 
-				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-considera").'</strong>: '.wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br />';
+				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-considera")).'</strong>: '.wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato))).'</strong><br />';
 				if(!is_file($allegato->Allegato) And $allegato->Note!=""){
-					echo '<strong>'.__("Allegato rimosso","albo-pretorio-considera").'</strong>: '.$allegato->Note.'<br /><strong>';
+					echo '<strong>'.esc_html(esc_html__("Allegato rimosso","albo-pretorio-considera")).'</strong>: '.$allegato->Note.'<br /><strong>';
 				}else{
-					echo '<strong>'.__("Impronta","albo-pretorio-considera").'</strong>: '.$allegato->Impronta.'<br /><strong>'.__("Dimensione file","albo-pretorio-considera").'</strong>: '.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)."<br />";
+					echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.$allegato->Impronta.'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-considera")).'</strong>: '.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)."<br />";
 					if (is_file($allegato->Allegato)){
 						if($StatoAllegati=="all" Or $StatoAllegati=="vis"){ 
-							echo '<a href="'.ap_DaPath_a_URL($allegato->Allegato).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" title="'.__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
+							echo '<a href="'.ap_DaPath_a_URL($allegato->Allegato).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
 							<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg></a> ';
 						}
 						if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-							echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$id.'" class="noUnderLine" title="'.__("Scarica allegato","albo-pretorio-considera").'">
+							echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" class="noUnderLine" title="'.esc_html__("Scarica allegato","albo-pretorio-considera").'">
 							<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>';
 								if($StatoAllegati=="dwn"){
 									echo " <strong>".basename( $allegato->Allegato).'</strong> ('.ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0).')</a>';
