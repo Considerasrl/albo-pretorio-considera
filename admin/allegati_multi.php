@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- pagina admin di visualizzazione/redisplay: le letture di superglobali servono al rendering del form; le mutazioni avvengono negli handler di admin.php, protetti da wp_verify_nonce.
 /**
  * Gestione Allegati.
  * @link       http://www.eduva.org
@@ -7,36 +8,32 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * @package    Albo On Line
  */
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 	echo "<h2>Allegati Multipli</h2>";
-	$TipiAmmessi=ap_tipiFileAmmessi(TRUE);
-//	$TipiAmmessi=implode(",",$TipiAmmessi);
-	$TEE="";
-	$TE="";
-	$AI="";
-	foreach ( $TipiAmmessi as $Tipo) {
-		$TE.='"'.$Tipo["."].'", ';
-		$TEE.='.'.$Tipo["."].', ';
-		$AI.='"'.$Tipo["."].'":"'.$Tipo["Icon"].'", ';
+	$albopc_TipiAmmessi=albopc_tipiFileAmmessi(TRUE);
+	$albopc_exts=array();       // ["pdf","doc"]  estensioni ammesse
+	$albopc_accept=array();     // [".pdf",".doc"] per attributo accept
+	$albopc_icone=array();      // {"pdf":"icona.png"} mappa estensione->icona
+	foreach ( $albopc_TipiAmmessi as $albopc_Tipo) {
+		$albopc_exts[]   = $albopc_Tipo["."];
+		$albopc_accept[] = '.'.$albopc_Tipo["."];
+		$albopc_icone[$albopc_Tipo["."]] = $albopc_Tipo["Icon"];
 	}
-//	$TA=substr($TA,0,-2);
-	$TE=substr($TE,0,-2);
-	$AI=substr($AI,0,-2);
 ?>
 <form action="?page=atti" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="operazione" value="upload" />
 	<input type="hidden" name="action" value="memo-allegati-atto" />
-	<input type="hidden" name="uploallegato" value="<?php echo wp_create_nonce('uploadallegati')?>" />
-	<input type="hidden" name="id" value="<?php echo (int)$_REQUEST['id']; ?>" />
+	<input type="hidden" name="uploallegato" value="<?php echo esc_attr( wp_create_nonce('uploadallegati') )?>" />
+	<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?(int)$_REQUEST['id']:0); ?>" />
 <div>
-  <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo __("Seleziona gli allegati da caricare","albo-pretorio-considera");?></label>
-  <input type="file" id="files" name="files[]" accept="<?php echo $TEE;?>" multiple>
+  <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Seleziona gli allegati da caricare","albo-pretorio-on-line");?></label>
+  <input type="file" id="files" name="files[]" accept="<?php echo esc_attr( implode(',', $albopc_accept) );?>" multiple>
 </div>
 <div class="preview">
-  <p><?php echo __("Nessun file selezionato per il caricamento","albo-pretorio-considera");?></p>
+  <p><?php echo esc_html__("Nessun file selezionato per il caricamento","albo-pretorio-on-line");?></p>
 </div>
 <div>
-  <button id="pulCar"><span class="dashicons dashicons-upload" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo __("Carica","albo-pretorio-considera");?></button>
+  <button id="pulCar"><span class="dashicons dashicons-upload" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Carica","albo-pretorio-on-line");?></button>
 </div>
 </form>
      <script>
@@ -50,7 +47,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
           }
           var curFiles = input.files;
           var list = document.createElement('ol');
-          var icone = {<?Php echo $AI;?>};
+          var icone = <?php echo wp_json_encode($albopc_icone);?>;
 	        preview.appendChild(list);
 	        for(var i = 0; i < curFiles.length; i++) {
 	          var icona=IconFileType(curFiles[i]);
@@ -64,12 +61,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 	          des.className="des";
 	          
 	          var LBLnatura=document.createElement('span');
-	          LBLnatura.textContent = '<?php esc_html_e("Documento firmato","albo-pretorio-considera");?>  ';
+	          LBLnatura.textContent = '<?php esc_html_e("Documento firmato","albo-pretorio-on-line");?>  ';
 	          var natura= document.createElement('input');
 	          natura.setAttribute("type", "checkbox");
 	          natura.setAttribute("name", "Natura["+ i.toString() +"]");
 	          var LBLintegrale=document.createElement('span');
-	          LBLintegrale.textContent = '<?php esc_html_e("Documento Integrale","albo-pretorio-considera");?>  ';
+	          LBLintegrale.textContent = '<?php esc_html_e("Documento Integrale","albo-pretorio-on-line");?>  ';
 	          var integrale= document.createElement('input');
 	          integrale.setAttribute("type", "checkbox");
 	          integrale.setAttribute("name", "Integrale["+ i.toString() +"]");
@@ -89,7 +86,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		        listItem.appendChild(LBLintegrale);
 				listItem.appendChild(integrale);
 	          } else {
-	            para.textContent = 'File name ' + curFiles[i].name + ':<?php echo __("Tipo di file non permesso. Riprova selezionando un file con estensione diversa.","albo-pretorio-considera");?>';
+	            para.textContent = 'File name ' + curFiles[i].name + ':<?php echo esc_js(__("Tipo di file non permesso. Riprova selezionando un file con estensione diversa.","albo-pretorio-on-line"));?>';
 	            listItem.appendChild(para);
 	          }
 	          list.appendChild(listItem);
@@ -99,7 +96,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			var parti=filename.split(".");
 			return parti[(parti.length) - 1].toLowerCase();
 		}
-        var fileTypes = [ <?php echo $TE;?> ];
+        var fileTypes = <?php echo wp_json_encode($albopc_exts);?>;
         function validFileType(file) {
           var estensione=getEstensione(file.name);
           for(var i = 0; i < fileTypes.length; i++) {
@@ -109,7 +106,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
           }
           return false;
         }
-       var icone = {<?Php echo $AI;?>};
+       var icone = <?php echo wp_json_encode($albopc_icone);?>;
         function IconFileType(file) {
         	var estensione=getEstensione(file.name);
             for(var i = 0; i < fileTypes.length; i++) {

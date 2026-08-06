@@ -3,3 +3,5 @@
 /.github        export-ignore
 /.gitignore     export-ignore
 /.gitattributes export-ignore
+/.distignore    export-ignore
+/css/build/src  export-ignore

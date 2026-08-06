@@ -9,7 +9,63 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
-## [Non rilasciato]
+## [4.12.0] - 2026-08-06
+
+Il plugin supera ora il **Plugin Check ufficiale di WordPress.org con 0 rilievi**
+(ERROR e WARNING) sul pacchetto distribuito.
+
+### Sicurezza
+- **Escaping completo dell'output**: tutti i valori dinamici in uscita sono ora
+  escapati per contesto (`esc_html`, `esc_attr`, `esc_url`, `esc_js`,
+  `wp_kses_post`). Difesa in profondità contro XSS nel back-end e nel front-end.
+- **Sanitizzazione, unslash e validazione degli input**: ogni lettura di
+  superglobali (`$_GET`/`$_POST`/`$_REQUEST`/`$_SERVER`/`$_FILES`) passa da
+  `isset()`/`??`, `wp_unslash()` e un sanitizzatore adeguato prima dell'uso; gli
+  upload verificano `is_uploaded_file()`.
+- **Verifica dei nonce** sulle operazioni di scrittura (già presente negli
+  handler; le pagine di sola visualizzazione leggono i parametri solo per il
+  rendering).
+- Query su tabelle custom con clausole preparate e caching dove applicabile.
+- Creazione delle cartelle di lavoro (allegati, backup, oblio) tramite
+  `wp_mkdir_p()` invece di `mkdir()` diretto.
+
+### Modificato
+- **Prefisso globale**: tutte le funzioni e le variabili globali del plugin sono
+  state prefissate con `albopc_` (il prefisso `ap_`, di 2 caratteri, non è
+  accettato da Plugin Check che ne richiede almeno 4). Shortcode, azioni/hook
+  AJAX (`ap_editor_*`) e nomi delle opzioni (`opt_AP_*`) restano invariati:
+  nessun impatto sul comportamento per l'utente.
+- Lo slug/cartella del plugin **resta `albo-pretorio-on-line`** e il text domain è
+  riallineato di conseguenza: le installazioni esistenti si aggiornano in-place,
+  senza il conflitto di due plugin attivi in cartelle diverse. La variante con
+  slug `albo-pretorio-considera` è mantenuta su un branch separato, da usare solo
+  in caso di nuova submit indipendente su wordpress.org.
+- Rimosso il bundle ridondante `js/jquery-ui.min.js` (si usa il jQuery UI del
+  core di WordPress). Descrizione della `readme.txt` in inglese per wp.org.
+- Backup dati/allegati e oblio: sostituita la libreria di terze parti PclZip con
+  l'estensione nativa `ZipArchive` (rimosso `inc/pclzip.php`). Il formato degli
+  archivi prodotti è invariato.
+- L'esportazione del Repertorio (CSV/XML/JSON) viene ora scritta nella cartella
+  uploads del sito invece che dentro la cartella del plugin.
+- Gli script e i fogli di stile del plugin vengono ora accodati con un numero di
+  versione esplicito (derivato dalla versione del plugin), utile per il
+  cache-busting sugli aggiornamenti; gli handle di jQuery UI del core sono
+  accodati per solo handle.
+- Adeguamento agli standard di WordPress.org (Plugin Check): commenti
+  `translators` e segnaposto numerati nelle stringhe traducibili; correzione di
+  un dominio di testo errato in un messaggio; uso di `gmdate()` al posto di
+  `date()` (comportamento invariato: WordPress opera in UTC). Nessun cambiamento
+  funzionale per l'utente.
+
+- I dialog dei pulsanti dell'editor (Albo, Gruppi Atti, Vis. Atto) sono ora
+  serviti tramite `admin-ajax.php` con verifica delle capability, invece che da
+  file PHP autonomi che si auto-caricavano l'ambiente WordPress: nessun accesso
+  diretto ai file e nessun bootstrap manuale di `wp-load.php`.
+
+### Rimosso
+- File `Repertori/repertorio_2020.csv` erroneamente incluso nel pacchetto.
+- File `js/gencode.php`, `js/buttonEditorGruppiAlbo.php`, `js/buttonEditorVisAtto.php`
+  (sostituiti dagli handler AJAX dei dialog editor).
 
 ## [4.11.1] - 2026-08-05
 

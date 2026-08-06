@@ -9,7 +9,7 @@
     		ed.addCommand('frmAlbogrp', function() {
 				ed.windowManager.open({
 					title : title_button_gruppi,
-					file : url + '/buttonEditorGruppiAlbo.php',
+					file : ajaxurl + '?action=ap_editor_gruppi',
 					width : 350, 
 					height : 200,
 					inline : 1

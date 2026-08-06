@@ -9,7 +9,7 @@
     		ed.addCommand('frmAlbo', function() {
 				ed.windowManager.open({
 					title : title_button_albo,
-					file : url + '/gencode.php',
+					file : ajaxurl + '?action=ap_editor_albo',
 					width : 350, 
 					height : 320,
 					inline : 1

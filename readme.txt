@@ -4,54 +4,53 @@ Tags: albo pretorio, pubblica amministrazione, atti, trasparenza, comuni
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 4.11.1
+Stable tag: 4.12.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
-Pubblicazione degli atti nell'albo pretorio online dell'ente (art. 32 L. 69/2009). Fork manutenuto e messo in sicurezza del plugin di Ignazio Scimone.
+Publish official notices on an Italian public body's online notice board ("albo pretorio", art. 32 Law 69/2009). Maintained, security-hardened fork.
 
 == Description ==
 
-Albo Pretorio Considera permette la pubblicazione degli atti nell'albo pretorio
-online di un ente, in adempimento dell'art. 32 della Legge 18 giugno 2009 n. 69,
-che dal 1° gennaio 2011 richiede la pubblicazione degli atti sul sito
-istituzionale perché abbiano efficacia legale.
+Albo Pretorio Considera lets an Italian public body publish official acts on its
+online notice board ("albo pretorio"), as required by art. 32 of Law no. 69 of
+18 June 2009, which since 1 January 2011 requires acts to be published on the
+institutional website in order to have legal effect.
 
-È un fork mantenuto da Considera del plugin **Albo Pretorio On line** di Ignazio
-Scimone, fermo alla versione 4.8 e rimosso da wordpress.org il 7 marzo 2024.
-L'autore originale non lo aggiorna più; questo fork parte dall'ultima versione
-pubblicata, ne prosegue la manutenzione e ne ha corretto le vulnerabilità di
-sicurezza.
+It is a fork, maintained by Considera, of the **Albo Pretorio On line** plugin by
+Ignazio Scimone, which stopped at version 4.8 and was removed from wordpress.org
+on 7 March 2024. The original author no longer updates it; this fork starts from
+the last published version, continues its maintenance and has fixed its security
+vulnerabilities.
 
-= Funzionalità principali =
+= Main features =
 
-* Gestione degli atti (inserimento, pubblicazione, scadenza, oblio) dal backend.
-* Categorie, enti, unità organizzative e soggetti responsabili.
-* Pubblicazione front-end tramite shortcode.
-* Filtri di ricerca degli atti nel backend (oggetto, riferimento, numero anche
-  parziale, categoria).
-* Icone per i tipi di file comuni allegati agli atti.
-* Repertorio ed esportazioni (CSV / XML / JSON).
+* Manage acts (create, publish, expiry, right-to-be-forgotten) from the backend.
+* Categories, bodies, organizational units and responsible people.
+* Front-end publishing via shortcodes.
+* Backend search filters for acts (subject, reference, full or partial number,
+  category).
+* Icons for the common file types attached to acts.
+* Register and exports (CSV / XML / JSON).
 
-= Shortcode =
+= Shortcodes =
 
-* `[Albo]` — tabella degli atti nel front-end (parametri: stato, per_page, cat,
+* `[Albo]` — table of acts on the front-end (parameters: stato, per_page, cat,
   filtri, minfiltri).
-* `[AlboGruppiAtti]` — atti raggruppati per metadato (titolo, meta, valore).
-* `[AlboAtto]` — dati di un singolo atto (titolo, numero, anno).
+* `[AlboGruppiAtti]` — acts grouped by metadata (titolo, meta, valore).
+* `[AlboAtto]` — details of a single act (titolo, numero, anno).
 
-= Sicurezza =
+= Security =
 
-Il fork è stato sottoposto a una revisione di sicurezza sistematica (release
-4.9.x e 4.10.1), con audit del codice e proof-of-concept su installazione reale.
-Sono state corrette vulnerabilità anche critiche. Per segnalare un problema di
-sicurezza usare il canale privato descritto in SECURITY.md: non aprire una
-segnalazione pubblica.
+The fork underwent a systematic security review (releases 4.9.x and 4.10.1), with
+code audit and proof-of-concept on a real installation. Vulnerabilities, some of
+them critical, have been fixed. To report a security issue please use the private
+channel described in SECURITY.md: do not open a public report.
 
-= Progetto =
+= Project =
 
-Fork open source (GPL) mantenuto da Considera, con repository pubblico aperto ai
-contributi. Codice, changelog completo e canale di segnalazione:
+Open source fork (GPL) maintained by Considera, with a public repository open to
+contributions. Code, full changelog and reporting channel:
 https://github.com/Considerasrl/albo-pretorio-considera
 
 == Installation ==

@@ -9,6 +9,8 @@
 		
 if( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) exit();
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- disinstallazione: rimozione delle tabelle custom del plugin, nessuna API core equivalente.
+
 include_once(dirname (__FILE__) .'/AlboPretorioFunctions.php');			/* libreria delle funzioni */
 
 global $wpdb,$table_prefix;
@@ -18,13 +20,13 @@ define("Albo_DIR",dirname (__FILE__));
 define("APHomePath",substr(plugin_dir_path(__FILE__),0,strpos(plugin_dir_path(__FILE__),"wp-content")-1));
 define("AlboBCK",WP_CONTENT_DIR."/AlboOnLine");
 
-$uploads = wp_upload_dir(); 
-define("AP_BASE_DIR",$uploads['basedir']."/");
+$albopc_uploads = wp_upload_dir(); 
+define("AP_BASE_DIR",$albopc_uploads['basedir']."/");
 
 // Backup di sicurezza
 // creo copia dei dati e dei files allegati prima di disinstallare e cancellare tutto
 
-		$Data=date('Ymd_H_i_s');
+		$albopc_Data=gmdate('Ymd_H_i_s');
 		$wpdb->table_name_Atti = $table_prefix . "albopretorio_atti";
 		$wpdb->table_name_Attimeta = $table_prefix . "albopretorio_attimeta";
 		$wpdb->table_name_Categorie = $table_prefix . "albopretorio_categorie";
@@ -33,8 +35,8 @@ define("AP_BASE_DIR",$uploads['basedir']."/");
 		$wpdb->table_name_RespProc=$table_prefix . "albopretorio_resprocedura";
 		$wpdb->table_name_Enti=$table_prefix . "albopretorio_enti";
 		$wpdb->table_name_UO=$table_prefix . "albopretorio_unitaorganizzative";
-		$nf=ap_BackupDatiFiles($Data);
-		copy($nf, AP_BASE_DIR."BackupAlboPretorioUninstall".$Data.".zip");
+		$albopc_nf=albopc_BackupDatiFiles($albopc_Data);
+		copy($albopc_nf, AP_BASE_DIR."BackupAlboPretorioUninstall".$albopc_Data.".zip");
 // Eliminazioni capacità
 		$role =& get_role( 'administrator' );
 		if ( !empty( $role ) ) {
@@ -43,14 +45,14 @@ define("AP_BASE_DIR",$uploads['basedir']."/");
         }
 
 // Eliminazioni ruoli
-        $roles_to_delete = array(
+        $albopc_roles_to_delete = array(
             'admin_albo',
             'gest_atti_albo');
 
-        foreach ( $roles_to_delete as $role ) {
+        foreach ( $albopc_roles_to_delete as $role ) {
 
-            $users = get_users( array( 'role' => $role ) );
-            if ( count( $users ) <= 0 ) {
+            $albopc_users = get_users( array( 'role' => $role ) );
+            if ( count( $albopc_users ) <= 0 ) {
                 remove_role( $role );
             }
         }		
@@ -100,6 +102,6 @@ define("AP_BASE_DIR",$uploads['basedir']."/");
 		delete_option( 'opt_AP_UpCSSNewInterface' );
 		delete_option( 'opt_AP_FolderUploadMeseAnno' );
 		delete_option( 'opt_AP_BootstrapItalia' );
-		ap_Rmdir(AlboBCK);
-		ap_Rmdir(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
+		albopc_Rmdir(AlboBCK);
+		albopc_Rmdir(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 ?>

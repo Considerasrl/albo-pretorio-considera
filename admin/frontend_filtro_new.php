@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- shortcode/vista pubblica read-only: legge id e parametri di ricerca/filtro via GET per la sola visualizzazione (pre-sanitizzati), nessuna mutazione di stato.
 /**
  * Gestione Filtri FrontEnd.
  * @link       http://www.eduva.org
@@ -7,52 +8,52 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * @package    Albo On Line
  */
-function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
-	$anni=ap_get_dropdown_anni_atti('anno','anno','postform','',(isset($_REQUEST['anno'])?$_REQUEST['anno']:0),$Stato); 
-	$categorie=ap_get_dropdown_ricerca_categorie('categoria','categoria','postform','',(isset($_REQUEST['categoria'])?$_REQUEST['categoria']:0),$Stato); 
-	ap_Bonifica_Url();
-	if (strpos($_SERVER['REQUEST_URI'],"?")>0)
+function albopc_VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
+	$anni=albopc_get_dropdown_anni_atti('anno','anno','postform','',(isset($_REQUEST['anno'])?sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')):0),$Stato); 
+	$categorie=albopc_get_dropdown_ricerca_categorie('categoria','categoria','postform','',(isset($_REQUEST['categoria'])?sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')):0),$Stato); 
+	albopc_Bonifica_Url();
+	if (strpos(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')),"?")>0)
 		$sep="&amp;";
 	else
 		$sep="?";
 	$titFiltri=get_option('opt_AP_LivelloTitoloFiltri');
 	if ($titFiltri=='')
 		$titFiltri="h3";
-	$HTML='		<form id="filtro-atti" action="'.htmlentities(wp_strip_all_tags($_SERVER['REQUEST_URI'])).'" method="post">
+	$HTML='		<form id="filtro-atti" action="'.htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))).'" method="post">
 	';
-	if (strpos(htmlentities($_SERVER['REQUEST_URI']),'page_id')>0){
-		$HTML.= '<input type="hidden" name="page_id" value="'.ap_Estrai_PageID_Url().'" />';
+	if (strpos(htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))),'page_id')>0){
+		$HTML.= '<input type="hidden" name="page_id" value="'.albopc_Estrai_PageID_Url().'" />';
 	}	
 	$HTML.= '<input type="hidden" name="categoria" value="'.$cat.'" />
 				<table id="tabella-filtro-atti" class="Table Table--withBorder js-TableResponsive tablesaw tablesaw-stack" data-tablesaw-mode="stack" >
 					<tr>
-						<th scope="row"><label for="ente">'.__("Ente","albo-pretorio-considera").'</label></th>
-						<td>'.ap_get_dropdown_enti("ente","ente","","",wp_strip_all_tags((isset($_REQUEST['ente'])?$_REQUEST['ente']:""))).'</td>
+						<th scope="row"><label for="ente">'.__("Ente","albo-pretorio-on-line").'</label></th>
+						<td>'.albopc_get_dropdown_enti("ente","ente","","",wp_strip_all_tags((isset($_REQUEST['ente'])?sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')):""))).'</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="numero">'.__("Atto N./Anno","albo-pretorio-considera").'</label></th>
-						<td><input type="text" size="10" maxlength="10" name="numero" id ="numero" value="'.wp_strip_all_tags((isset($_REQUEST['numero'])?$_REQUEST['numero']:"")).'"/>/
+						<th scope="row"><label for="numero">'.__("Atto N./Anno","albo-pretorio-on-line").'</label></th>
+						<td><input type="text" size="10" maxlength="10" name="numero" id ="numero" value="'.wp_strip_all_tags((isset($_REQUEST['numero'])?sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')):"")).'"/>/
 						'.$anni.'</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="riferimento">'.__("Riferimento","albo-pretorio-considera").'</label></th>
-						<td><input type="text" size="40" style="width:100%;" name="riferimento" id ="riferimento" value="'.wp_strip_all_tags((isset($_REQUEST['riferimento'])?$_REQUEST['riferimento']:"")).'"/></td>
+						<th scope="row"><label for="riferimento">'.__("Riferimento","albo-pretorio-on-line").'</label></th>
+						<td><input type="text" size="40" style="width:100%;" name="riferimento" id ="riferimento" value="'.wp_strip_all_tags((isset($_REQUEST['riferimento'])?sanitize_text_field(wp_unslash($_REQUEST['riferimento'] ?? '')):"")).'"/></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="oggetto">'.__("Oggetto","albo-pretorio-considera").'</label></th>
-						<td><input type="text" size="40" style="width:100%;" name="oggetto" id ="oggetto" value="'.wp_strip_all_tags((isset($_REQUEST['oggetto'])?$_REQUEST['oggetto']:"")).'"/></td>
+						<th scope="row"><label for="oggetto">'.__("Oggetto","albo-pretorio-on-line").'</label></th>
+						<td><input type="text" size="40" style="width:100%;" name="oggetto" id ="oggetto" value="'.wp_strip_all_tags((isset($_REQUEST['oggetto'])?sanitize_text_field(wp_unslash($_REQUEST['oggetto'] ?? '')):"")).'"/></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="Calendario1">'.__("da Data","albo-pretorio-considera").'</label></th>
-						<td><input name="DataInizio" id="Calendario1" type="text" value="'.wp_strip_all_tags((isset($_REQUEST['DataInizio'])?$_REQUEST['DataInizio']:"")).'" size="10"  maxlength="10"/></td>
+						<th scope="row"><label for="Calendario1">'.__("da Data","albo-pretorio-on-line").'</label></th>
+						<td><input name="DataInizio" id="Calendario1" type="text" value="'.wp_strip_all_tags((isset($_REQUEST['DataInizio'])?sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? '')):"")).'" size="10"  maxlength="10"/></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="Calendario2">'.__("a Data","albo-pretorio-considera").'</label></th>
-						<td><input name="DataFine" id="Calendario2" type="text" value="'.wp_strip_all_tags((isset($_REQUEST['DataFine'])?$_REQUEST['DataFine']:"")).'" size="10"  maxlength="10" /></td>
+						<th scope="row"><label for="Calendario2">'.__("a Data","albo-pretorio-on-line").'</label></th>
+						<td><input name="DataFine" id="Calendario2" type="text" value="'.wp_strip_all_tags((isset($_REQUEST['DataFine'])?sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? '')):"")).'" size="10"  maxlength="10" /></td>
 					</tr>
 					<tr>
-						<td style="text-align:center;"><input type="submit" name="filtra" id="filtra" class="bottoneFE" value="'.__("Filtra","albo-pretorio-considera").'"  /></td>
-						<td style="text-align:center;"><input type="submit" name="annullafiltro" id="annullafiltro" class="bottoneFE" value="'.__("Annulla Filtro","albo-pretorio-considera").'"  /></td>
+						<td style="text-align:center;"><input type="submit" name="filtra" id="filtra" class="bottoneFE" value="'.__("Filtra","albo-pretorio-on-line").'"  /></td>
+						<td style="text-align:center;"><input type="submit" name="annullafiltro" id="annullafiltro" class="bottoneFE" value="'.__("Annulla Filtro","albo-pretorio-on-line").'"  /></td>
 					</tr>		
 				</table>
 			</form>
@@ -63,19 +64,19 @@ function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
 		$stile="";
 	$HTMLC='<div id="fe-tabs-container" '.$stile.'>
 					<ul>
-						<li><a href="#fe-tab-1">'.__("Parametri","albo-pretorio-considera").'</a></li>
-						<li><a href="#fe-tab-2">'.__("Categorie","albo-pretorio-considera").'</a></li>
+						<li><a href="#fe-tab-1">'.__("Parametri","albo-pretorio-on-line").'</a></li>
+						<li><a href="#fe-tab-2">'.__("Categorie","albo-pretorio-on-line").'</a></li>
 					</ul>
 					<div id="fe-tab-1">';
 	$HTMLC.=$HTML;
-	$lista=ap_get_categorie_gerarchica();
+	$lista=albopc_get_categorie_gerarchica();
 	$HTMLL='
 	          <div class="ricercaCategoria">
 	              <ul style="list-style-type: none;">';
 	if ($lista){
 		foreach($lista as $riga){
 		 	$shift=(((int)$riga[2])*15);
-	   		$numAtti=ap_num_atti_categoria($riga[0],$Stato);
+	   		$numAtti=albopc_num_atti_categoria($riga[0],$Stato);
 		 	if (strpos(get_permalink(),"?")>0)
 		  		$sep="&amp;";
 	   		else
@@ -84,7 +85,7 @@ function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
 	      		$HTMLL.='               <li style="text-align:left;padding-left:'.$shift.'px;font-weight: bold;"><a href="'.get_permalink().$sep.'filtra=Filtra&amp;categoria='.$riga[0].'"  >'.$riga[1].'</a> '.$numAtti.'</li>'; 
 		}
 	}else{
-		$HTMLL.= '                <li>'.__("Nessuna Categoria Codificata","albo-pretorio-considera").'</li>';
+		$HTMLL.= '                <li>'.__("Nessuna Categoria Codificata","albo-pretorio-on-line").'</li>';
 	}
 	$HTMLL.='             </ul>
 	          </div>';

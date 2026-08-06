@@ -4,12 +4,12 @@
  * Plugin Name:       Albo Pretorio Considera
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.11.1
+ * Version:           4.12.0
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       albo-pretorio-considera
+ * Text Domain:       albo-pretorio-on-line
  * Domain Path:       /languages
 */
 /*
@@ -19,33 +19,43 @@
  * distribuite con la stessa licenza.
 */
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- pagina admin di visualizzazione/redisplay: le letture di superglobali servono al rendering del form; le mutazioni avvengono negli handler di admin.php, protetti da wp_verify_nonce.
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
+
+if ( ! defined( 'AP_VERSION' ) ) {
+	$albopc_plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
+	define( 'AP_VERSION', $albopc_plugin_data['Version'] );
+}
+
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- il plugin opera su tabelle custom proprie: nessuna API core equivalente, il caching non si applica alle query amministrative e di scrittura.
 
 include_once(dirname (__FILE__) .'/AlboPretorioFunctions.php');			/* libreria delle funzioni */
 include_once(dirname (__FILE__) .'/AlboPretorioWidget.php');
+include_once(dirname (__FILE__) .'/inc/editor-dialogs.php');			/* dialog AJAX dei pulsanti editor */
 
 define("Albo_URL",plugin_dir_url(dirname (__FILE__).'/AlboPretorio.php'));
 define("Albo_DIR",dirname (__FILE__));
 define("APHomePath",substr(plugin_dir_path(__FILE__),0,strpos(plugin_dir_path(__FILE__),"wp-content")-1));
 define("AlboBCK",WP_CONTENT_DIR."/AlboOnLine");
 
-$uploads = wp_upload_dir(); 
-define("AP_BASE_DIR",$uploads['basedir']."/");
+$albopc_uploads = wp_upload_dir(); 
+define("AP_BASE_DIR",$albopc_uploads['basedir']."/");
 if (isset($_REQUEST['action'])){
 	require_once( ABSPATH . 'wp-includes/pluggable.php' );
-	switch($_REQUEST['action']){
+	switch(sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 		case "creafoblio":
 			if (!isset($_REQUEST['rigenera'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line");
 				break;
 			}
-			if (!wp_verify_nonce($_REQUEST['rigenera'],'rigeneraoblio')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['rigenera'] ?? '')),'rigeneraoblio')){
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line");
 				break;
 			} 			
-			ap_crearobots();
-			$newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
-			ap_NoIndexNoDirectLink($newPathAllegati);
+			albopc_crearobots();
+			$albopc_newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
+			albopc_NoIndexNoDirectLink($albopc_newPathAllegati);
 			wp_safe_redirect("?page=Albo_Pretorio");
 			break;
 	}
@@ -60,7 +70,7 @@ if (!class_exists('AlboPretorio')) {
 	var $plugin_name = '';
 
 	function __construct() {
-		load_plugin_textdomain( 'albo-pretorio-considera', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+		load_plugin_textdomain( 'albo-pretorio-on-line', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- il plugin distribuisce le proprie traduzioni .mo nella cartella languages/; per il caricamento da fork self-hosted (non wp.org) la chiamata resta necessaria
 		if ( ! function_exists( 'get_plugins' ) )
 	 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	    $plugins = get_plugins( "/".plugin_basename( dirname( __FILE__ ) ) );
@@ -81,17 +91,17 @@ if (!class_exists('AlboPretorio')) {
 		add_action('init', array($this, 'add_albo_button'));
 		add_shortcode('Albo', array($this, 'VisualizzaAtti'));
 		add_shortcode('AlboGruppiAtti', array($this, 'VisualizzaGruppiAtti'));
-		add_shortcode('AlboAtto', array($this, 'VisualizzaAtto'));
+		add_shortcode('AlboAtto', array($this, 'albopc_VisualizzaAtto'));
 
 		add_action('wp_head', array($this,'head_Front_End'));
 		add_action( 'admin_menu', array ($this, 'add_menu') ); 
 		add_action('template_redirect', array($this, 'Gestione_Link'));
 		add_filter('set-screen-option', array($this, 'atti_set_option'), 10, 3);
 		add_filter( 'the_content', array($this, 'VisualizzaTabellaInAVCP'),10,1);
-		add_action( 'wp_ajax_MemoFunzioni','ap_MemoFunzioni' );
-		add_action( 'wp_ajax_LoadDefaultFunzioni','ap_LoadDefaultFunzioni' );
-		add_action( 'wp_ajax_dismiss_alboonline_notice','ap_dismiss_alboonline_notice' );
-		add_action( 'wp_ajax_rimuoviAllegato','ap_rimuoviallegatoPP' );
+		add_action( 'wp_ajax_MemoFunzioni','albopc_MemoFunzioni' );
+		add_action( 'wp_ajax_LoadDefaultFunzioni','albopc_LoadDefaultFunzioni' );
+		add_action( 'wp_ajax_dismiss_alboonline_notice','albopc_dismiss_alboonline_notice' );
+		add_action( 'wp_ajax_rimuoviAllegato','albopc_rimuoviallegatoPP' );
 
 		add_filter( 'post_link',array($this,'permalinkSearchAlbo'), 10, 3);
 		$RestApi=get_option('opt_AP_RestApi');
@@ -121,8 +131,8 @@ function admin_notice(){
 ?>
     <div class="updated notice albo-notice-dismis is-dismissible" >
         <h3>Albo Online</h3>
-        <p><?php echo sprintf(__('Aggiornato alla versione %s', 'albo-pretorio-considera' ),$this->version); ?></p>
-        <p><?php echo sprintf(__('Per visualizzare le modifiche apportate consultare il %sregistro delle modifiche su GitHub%s', 'albo-pretorio-considera' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>'); ?></p>
+        <p><?php echo esc_html(sprintf(/* translators: %s: numero di versione */ __('Aggiornato alla versione %s', 'albo-pretorio-on-line' ),$this->version)); ?></p>
+        <p><?php echo wp_kses_post(sprintf(/* translators: %1$s e %2$s: tag di apertura/chiusura del link */ __('Per visualizzare le modifiche apportate consultare il %1$sregistro delle modifiche su GitHub%2$s', 'albo-pretorio-on-line' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>')); ?></p>
     </div>
 
 
@@ -208,7 +218,7 @@ function admin_notice(){
 			 	       			if($param=='0'){
 									return true;
 								}else{
-									return is_array_di_categorie($param);
+									return albopc_is_array_di_categorie($param);
 									}
 	   						}),
     				'numero' => array('default'=>0,
@@ -246,9 +256,9 @@ function admin_notice(){
 	function rest_api_atto_get_byID($request){
 		$Atto=array();
 		$IDAtto=$request->get_param("id");
-		$risultato=ap_get_atto($IDAtto);
+		$risultato=albopc_get_atto($IDAtto);
 		if(count($risultato)==0){
-			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-considera'), array( 'status' => 404 ) );
+			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-on-line'), array( 'status' => 404 ) );
   		}
 		return new WP_REST_Response($this->REST_API_get_atto($risultato), 200 );
 	}
@@ -256,9 +266,9 @@ function admin_notice(){
 		$Atto=array();
 		$NumeroAtto=$request->get_param("num");
 		$AnnoAtto=$request->get_param("anno");
-		$risultato=ap_get_all_atti(0,$NumeroAtto,$AnnoAtto);
+		$risultato=albopc_get_all_atti(0,$NumeroAtto,$AnnoAtto);
 		if(count($risultato)==0){
-			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-considera'), array( 'status' => 404 ) );
+			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-on-line'), array( 'status' => 404 ) );
   		}
 
 		return new WP_REST_Response($this->REST_API_get_atto($risultato), 200 );
@@ -266,7 +276,7 @@ function admin_notice(){
 	function REST_API_get_atto($risultato){
 		$risultato=$risultato[0];
 		$IdAtto=$risultato->IdAtto;
-		$DatiAtto=ap_get_atto($IdAtto);
+		$DatiAtto=albopc_get_atto($IdAtto);
 		$DatiCategoria=array();
 		$DatiEnte=array();
 		$DatiSoggetti=array();
@@ -274,13 +284,13 @@ function admin_notice(){
 		$Meta="";
 		foreach($DatiAtto as $D_Atto){
 //Categoria Atto
-			$D_Catergoria=ap_get_categoria($D_Atto->IdCategoria);
+			$D_Catergoria=albopc_get_categoria($D_Atto->IdCategoria);
 			$D_Catergoria=$D_Catergoria[0];
 			$DatiCategoria["Nome"]          =$D_Catergoria->Nome;
 			$DatiCategoria["Descrizione"]	=$D_Catergoria->Descrizione;
 //Fine Categoria Atto
 //Ente Atto
-			$D_Ente=ap_get_ente($D_Atto->Ente);
+			$D_Ente=albopc_get_ente($D_Atto->Ente);
 			$DatiEnte["Nome"]       =$D_Ente->Nome;
 			$DatiEnte["Indirizzo"]	=$D_Ente->Indirizzo;
 			$DatiEnte["Url"]		=$D_Ente->Url;
@@ -293,10 +303,10 @@ function admin_notice(){
 // Soggetti
 			$Soggetti=unserialize($D_Atto->Soggetti, array('allowed_classes'=>false));
 			if($Soggetti){
-				$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+				$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 				$Ruolo="";
 				foreach($Soggetti as $Soggetto){
-					if(ap_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
+					if(albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
 						continue;
 					}
 					$DatiSoggetti[$Soggetto->IdResponsabile]=array(
@@ -307,15 +317,15 @@ function admin_notice(){
 						"Orario" 	=>$Soggetto->Orario,
 						"Note" 		=>$Soggetto->Note,
 						"CodFun" 	=>$Soggetto->Funzione,
-						"Funzione"	=>ap_get_Funzione_Responsabile($Soggetto->Funzione,__('Descrizione','albo-pretorio-considera')));
+						"Funzione"	=>albopc_get_Funzione_Responsabile($Soggetto->Funzione,__('Descrizione','albo-pretorio-on-line')));
 				}				
 			}
 
 
 // Fine Soggetti
 // Allegati
-			$allegatiatto=ap_get_all_allegati_atto($IdAtto);
-			$TipidiFiles=ap_get_tipidifiles();
+			$allegatiatto=albopc_get_all_allegati_atto($IdAtto);
+			$TipidiFiles=albopc_get_tipidifiles();
 			$sep="?";
 			$PagAlboCor=get_option('opt_AP_PAttiCor');
 			$PagAlboSto=get_option('opt_AP_PAttiSto');
@@ -323,20 +333,20 @@ function admin_notice(){
 				if (strpos($PagAlboCor,"?")>0)
 					$sep="&amp;";
 			foreach ($allegatiatto as $allegato) {
-				$Estensione=ap_ExtensionType($allegato->Allegato);
+				$Estensione=albopc_ExtensionType($allegato->Allegato);
 				if($Estensione!="ndf" && isset($TipidiFiles[$Estensione])){
 					$Icona=$TipidiFiles[$Estensione]['Icona'];
 					$TipoFile=$TipidiFiles[$Estensione]['Descrizione'];
 				}else{
 					// tipo non registrato: icona di ripiego per estensione nota
-					$Fallback=ap_icona_fallback_tipo(pathinfo($allegato->Allegato, PATHINFO_EXTENSION));
+					$Fallback=albopc_icona_fallback_tipo(pathinfo($allegato->Allegato, PATHINFO_EXTENSION));
 					$Icona=$Fallback['Icona'];
 					$TipoFile=$Fallback['Descrizione'];
 				}
 				if (is_file($allegato->Allegato)){
-					$Link=ap_DaPath_a_URL($allegato->Allegato);
-					$Rel=(ap_is_atto_corrente($IdAtto)?$PagAlboCor:$PagAlboSto).$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$IdAtto;
-					$Dimensione=ap_Formato_Dimensione_File(filesize($allegato->Allegato));
+					$Link=albopc_DaPath_a_URL($allegato->Allegato);
+					$Rel=(albopc_is_atto_corrente($IdAtto)?$PagAlboCor:$PagAlboSto).$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$IdAtto;
+					$Dimensione=albopc_Formato_Dimensione_File(filesize($allegato->Allegato));
 					
 				}
 				$Allegati[]=array("Titolo"		=>$allegato->TitoloAllegato,
@@ -349,7 +359,7 @@ function admin_notice(){
 								  "Rel"			=>$Rel);
 			}
 // Fine Allegati
-			$MetaDati=ap_get_meta_atto($IdAtto);	
+			$MetaDati=albopc_get_meta_atto($IdAtto);	
 			if($MetaDati!==FALSE){
 				foreach($MetaDati as $Metadato){
 					$Meta.=$Metadato->Meta."=".$Metadato->Value."<br />";
@@ -380,22 +390,22 @@ function admin_notice(){
 	function rest_api_statistiche_get($request){
 		global $wpdb;
 		$Statistiche=array();
-	  	$n_atti_attivi =ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true);	
-	  	$n_atti_storico=ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true);
-	  	$n_atti_attivi_ANN =ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true,true);	
-	  	$n_atti_storico_ANN=ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true,true);
+	  	$n_atti_attivi =albopc_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true);	
+	  	$n_atti_storico=albopc_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true);
+	  	$n_atti_attivi_ANN =albopc_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true,true);	
+	  	$n_atti_storico_ANN=albopc_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true,true);
 		$Statistiche=array(
-					"num_Categorie"				=>ap_num_categorie(),
+					"num_Categorie"				=>albopc_num_categorie(),
 					"num_AttiCorrenti"	 		=>$n_atti_attivi,
 					"num_AttiStorico"			=>$n_atti_storico,
 					"num_AttiCorrenti_Annullati"=>$n_atti_attivi_ANN,
 					"num_AttiStorico_Annullati"	=>$n_atti_storico_ANN,
-					"num_Allegati"				=>ap_num_allegati());
+					"num_Allegati"				=>albopc_num_allegati());
 		return new WP_REST_Response($Statistiche, 200 );
 	}
 	function rest_api_categorie_get($request){
 		$Categorie=array();
-		$ArrCategorie=ap_get_categorie();
+		$ArrCategorie=albopc_get_categorie();
 		foreach($ArrCategorie as $Categoria){
 			$Categorie[$Categoria->IdCategoria]=array(
 					"Nome"			=>$Categoria->Nome,
@@ -406,7 +416,7 @@ function admin_notice(){
 	}
 	function rest_api_enti_get($request){
 		$Enti=array();
-		$ArrEnti=ap_get_enti();
+		$ArrEnti=albopc_get_enti();
 		foreach($ArrEnti as $Ente){
 			$Enti[$Ente->IdEnte]=array(
 					"Nome"			=>$Ente->Nome,
@@ -424,8 +434,8 @@ function admin_notice(){
 	function rest_api_atti_get($request ) {
 		$PagAlbo=get_option('opt_AP_PAtto');
 		if(!isset($PagAlbo) || $PagAlbo=="")
-			return new WP_REST_Response(__('Errore:Pagina visualizzazione atto non impostata','albo-pretorio-considera'),200);
-	$Stato=$request->get_param("stato");
+			return new WP_REST_Response(__('Errore:Pagina visualizzazione atto non impostata','albo-pretorio-on-line'),200);
+	$albopc_Stato=$request->get_param("stato");
 	$N_A_pp=$request->get_param("per_page");
 	$Pag=$request->get_param("page");
 	$Categorie=$request->get_param("categorie");
@@ -449,8 +459,8 @@ function admin_notice(){
 		$Da=($Pag-1)*$N_A_pp;
 		$A=$N_A_pp;
 	}
-	$TotAtti=ap_get_all_atti($Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'',0,0,true,false,$Riferimento,$Ente);
-	$ListaAtti=ap_get_all_atti($Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 			
+	$TotAtti=albopc_get_all_atti($albopc_Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'',0,0,true,false,$Riferimento,$Ente);
+	$ListaAtti=albopc_get_all_atti($albopc_Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 			
 			
 	if($N_A_pp>0){
 		$Npag=(int)($TotAtti/$N_A_pp);
@@ -468,7 +478,7 @@ function admin_notice(){
 			$sep="?";
 		$Atti=array();
 		foreach($ListaAtti as $riga){
-			$MetaDati=ap_get_meta_atto($riga->IdAtto);
+			$MetaDati=albopc_get_meta_atto($riga->IdAtto);
 			$Meta="";
 			if($MetaDati!==FALSE){
 				foreach($MetaDati as $Metadato){
@@ -483,11 +493,11 @@ function admin_notice(){
 			$Atti[$riga->IdAtto]["DataInizio"]=$riga->DataInizio;
 			$Atti[$riga->IdAtto]["DataFine"]=$riga->DataFine;
 			$Atti[$riga->IdAtto]["Informazioni"]=$riga->Informazioni;
-			$Categoria=ap_get_categoria($riga->IdCategoria);
+			$Categoria=albopc_get_categoria($riga->IdCategoria);
 			$Atti[$riga->IdAtto]["Categoria"]=$Categoria[0]->Nome;
 			$Atti[$riga->IdAtto]["DataAnnullamento"]=$riga->DataAnnullamento;
 			$Atti[$riga->IdAtto]["MotivoAnnullamento"]=$riga->MotivoAnnullamento;
-			$Atti[$riga->IdAtto]["Ente"]=ap_get_ente($riga->Ente);
+			$Atti[$riga->IdAtto]["Ente"]=albopc_get_ente($riga->Ente);
 			$Atti[$riga->IdAtto]["Metadati"]=stripslashes($Meta);
 			$Atti[$riga->IdAtto]["DataOblio"]=$riga->DataOblio;
 			$Atti[$riga->IdAtto]["Link"]=$PagAlbo.$sep.'numero='.$riga->Numero.'&anno='.$riga->Anno.'&titolo=';
@@ -501,31 +511,31 @@ function admin_notice(){
 		if (get_post_type( $PostID) !="avcp" Or get_option('opt_AP_AutoShortcode')!="Si")
 			return $content;
 		$Cig=get_post_meta($PostID,'avcp_cig',TRUE);
-		$Parametri=array('meta'=>"CIG",'valore'=>$Cig,'titolo' => __('Atti Albo on line di riferimento','albo-pretorio-considera'));
+		$Parametri=array('meta'=>"CIG",'valore'=>$Cig,'titolo' => __('Atti Albo on line di riferimento','albo-pretorio-on-line'));
 		$OldInterfaccia=get_option('opt_AP_OldInterfaccia');
 		if($OldInterfaccia=="Si"){
 			require_once ( dirname (__FILE__) . '/admin/gruppiatti.php' );		
 		}else{
 			require_once ( dirname (__FILE__) . '/admin/gruppiatti_new.php' );
 		}		
-		return $content.Lista_AttiGruppo($Parametri);
+		return $content.albopc_Lista_AttiGruppo($Parametri);
 	}
 	function Gestione_Link(){
 		if(isset($_REQUEST['action'])){
-			switch ($_REQUEST['action']){
+			switch (sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 			case "dwnalle":
 				if(!isset($_SERVER["HTTP_REFERER"])){
-					wp_die(__('Oooooo!<br />
+					wp_die(wp_kses_post(__('Oooooo!<br />
 					        Stai tentando di fare il furbo!<br />
-					        Non puoi accedere a questo file direttamente.','albo-pretorio-considera'));
+					        Non puoi accedere a questo file direttamente.','albo-pretorio-on-line')));
 					break;
 				}
-				$Allegato	= ap_get_allegato_atto($_REQUEST['id']);
+				$Allegato	= albopc_get_allegato_atto(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')));
 				if (empty($Allegato))
-					wp_die(__("Allegato non trovato","albo-pretorio-considera"));
+					wp_die(esc_html__("Allegato non trovato","albo-pretorio-on-line"));
 				$file_path	=$Allegato[0]->Allegato;
 				if (!is_file($file_path) or !is_readable($file_path))
-					wp_die(__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera"));
+					wp_die(esc_html__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-on-line"));
 				/* Il controllo sul Referer non basta a limitare l'accesso: chiunque
 				   scorra gli id puo' scaricare gli allegati di atti non ancora
 				   pubblicati o oltre la data di oblio, che il front-end non mostra.
@@ -534,22 +544,22 @@ function admin_notice(){
 				   DataOblio>oggi. Il valore '0000-00-00' significa "non impostato"
 				   e non deve bloccare. Gli atti annullati restano scaricabili,
 				   coerentemente con il fatto che il front-end li mostra ancora. */
-				$Atto = ap_get_atto((int)$Allegato[0]->IdAtto);
+				$Atto = albopc_get_atto((int)$Allegato[0]->IdAtto);
 				if (!empty($Atto)) {
 					$Atto = $Atto[0];
-					$Oggi = ap_oggi();
+					$Oggi = albopc_oggi();
 					$NonPubblicato = ($Atto->DataInizio!="0000-00-00" And $Atto->DataInizio>$Oggi);
 					$OltreOblio    = ($Atto->DataOblio !="0000-00-00" And $Atto->DataOblio <=$Oggi);
 					if ($NonPubblicato Or $OltreOblio)
-						wp_die(__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
+						wp_die(esc_html__("Documento non disponibile","albo-pretorio-on-line"),"",array('response'=>404));
 				}
 				$chunksize	= 2*(1024*1024);
 				$stat 		= stat($file_path);
 				$etag		= sprintf('%x-%x-%x', $stat['ino'], $stat['size'], $stat['mtime'] * 1000000);
 				/* Il log va scritto PRIMA di inviare il file: dopo l'invio del corpo
 				   qualsiasi output aggiuntivo corromperebbe il download. */
-				if(is_numeric($_REQUEST['id']) and isset($_REQUEST['idAtto']) and is_numeric($_REQUEST['idAtto']))
-					ap_insert_log(6,5,(int)$_REQUEST['id'],"Download",(int)$_REQUEST['idAtto']);
+				if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))) and isset($_REQUEST['idAtto']) and is_numeric(sanitize_text_field(wp_unslash($_REQUEST['idAtto'] ?? ''))))
+					albopc_insert_log(6,5,(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),"Download",(isset($_REQUEST['idAtto'])?(int)$_REQUEST['idAtto']:0));
 				/* Scarta tutto l'output gia' prodotto da tema o altri plugin (righe vuote
 				   dopo il ?>, BOM, avvisi PHP): finirebbe in testa al file scaricato e,
 				   sommandosi al Content-Length dichiarato, lo troncherebbe in coda. */
@@ -557,7 +567,7 @@ function admin_notice(){
 					@ob_end_clean();
 				}
 				/* La compressione ricalcola la lunghezza del corpo e va disattivata. */
-				@ini_set('zlib.output_compression', 'Off');
+				@ini_set('zlib.output_compression', 'Off'); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged, WordPress.PHP.NoSilencedErrors.Discouraged -- necessario per il download: la compressione zlib ricalcola il body e falserebbe Content-Length dello streaming file
 				if (function_exists('apache_setenv')) @apache_setenv('no-gzip', '1');
 				nocache_headers();
 
@@ -568,21 +578,23 @@ function admin_notice(){
 				header('Content-Type: application/octet-stream');
 				header('Content-Disposition: attachment; filename="'.basename($file_path).'"');
 				header('Content-Transfer-Encoding: binary');
-				header('Last-Modified: ' . date('r', $stat['mtime']));
+				header('Last-Modified: ' . gmdate('r', $stat['mtime']));
 				header('Etag: "' . $etag . '"');
 				header('Content-Length: '.$stat['size']);
 				header('Accept-Ranges: bytes');
 				flush();
 				if ($stat['size'] < $chunksize) {
+	// phpcs:disable WordPress.WP.AlternativeFunctions -- I/O su file di export/download nelle cartelle di lavoro in wp-content/uploads: streaming e download non gestibili da WP_Filesystem.
 					readfile($file_path);
 				}
 				else {
 					$handle = fopen($file_path, 'rb');
 					while (!feof($handle)) {
-						echo fread($handle, $chunksize);
+						echo fread($handle, $chunksize); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- streaming dei byte grezzi del file in download (Content-Type gia' impostato), non output HTML
 						flush();
 					}
 					fclose($handle);
+	// phpcs:enable WordPress.WP.AlternativeFunctions
 				}
 				exit();
 				break;
@@ -599,65 +611,67 @@ function admin_notice(){
 		   And !current_user_can('editore_atti_albo') And !current_user_can('gest_atti_albo'))
 			return;?>
 <script type='text/javascript'>
-	var myajaxsec = "<?php echo wp_create_nonce('adminsecretAlboOnLine');?>",
-	    title_button_albo="<?php echo str_replace('"',"''",__('Albo OnLine','albo-pretorio-considera'));?>",
-	    title_button_gruppi="<?php echo str_replace('"',"''",__('Albo OnLine raggruppamento atti','albo-pretorio-considera'));?>",
-	    title_button_atto="<?php echo str_replace('"',"''",__('Albo OnLine visualizza atto','albo-pretorio-considera'));?>",
-	    NonVal="<?php echo str_replace('"',"''",__("Non Valorizzato","albo-pretorio-considera"));?>",
-	    NonValAmm="<?php echo str_replace('"',"''",__("Valore Non Valido","albo-pretorio-considera"));?>",
-	    NonSOg="<?php echo str_replace('"',"''",__("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-pretorio-considera"));?>",
-	    TabFunSog="<?php echo str_replace('"',"''",__("Tabella Funzioni Soggetti","albo-pretorio-considera"));?>",
-	    Codice="<?php echo str_replace('"',"''",__("Codice","albo-pretorio-considera"));?>",
-	    ValidateCodice="<?php echo str_replace('"',"''",__("Il campo Codice deve essere di 2 o 3 caratteri","albo-pretorio-considera"));?>",
-	    Funzione="<?php echo str_replace('"',"''",__("Funzione","albo-pretorio-considera"));?>",
-	    ValidateFunzione="<?php echo str_replace('"',"''",__("Il campo Funzione deve essere di almeno 5 caratteri","albo-pretorio-considera"));?>",
-	    Visualizza="<?php echo str_replace('"',"''",__("Visualizza","albo-pretorio-considera"));?>",
-	    ValidateVisualizza="<?php echo str_replace('"',"''",__("Visualizza in elenco Soggetti nei dettagli dell'atto","albo-pretorio-considera"));?>",
-	    Stampa="<?php echo str_replace('"',"''",__("Stampa","albo-pretorio-considera"));?>",
-	    ValidateStampa="<?php echo str_replace('"',"''",__("Stampa nella colonna Sinitra del Certificato di Pubblicazione<br />Da impostarne uno solo, comunque verrà preso in considerazione solo il primo","albo-pretorio-considera"));?>",
-	    append= "<?php echo str_replace('"',"''",__("Aggiungi Riga","albo-pretorio-considera"));?>",
-        removeLast= "<?php echo str_replace('"',"''",__("Rimuovi ultima Riga","albo-pretorio-considera"));?>",
-        insert= "<?php echo str_replace('"',"''",__("Inserisci Riga prima","albo-pretorio-considera"));?>",
-        remove= "<?php echo str_replace('"',"''",__("Rimuovi la Riga corrente","albo-pretorio-considera"));?>",
-        moveUp= "<?php echo str_replace('"',"''",__("Sposta Su","albo-pretorio-considera"));?>",
-        moveDown= "<?php echo str_replace('"',"''",__("Sposta Giù","albo-pretorio-considera"));?>",
-        rowDrag= "<?php echo str_replace('"',"''",__("Ordina Riga","albo-pretorio-considera"));?>",
-        rowEmpty= "<?php echo str_replace('"',"''",__("Questa Griglia è vuota","albo-pretorio-considera"));?>";  
+	var myajaxsec = "<?php echo esc_js(wp_create_nonce('adminsecretAlboOnLine'));?>",
+	    title_button_albo="<?php echo esc_js(__('Albo OnLine','albo-pretorio-on-line'));?>",
+	    title_button_gruppi="<?php echo esc_js(__('Albo OnLine raggruppamento atti','albo-pretorio-on-line'));?>",
+	    title_button_atto="<?php echo esc_js(__('Albo OnLine visualizza atto','albo-pretorio-on-line'));?>",
+	    NonVal="<?php echo esc_js(__("Non Valorizzato","albo-pretorio-on-line"));?>",
+	    NonValAmm="<?php echo esc_js(__("Valore Non Valido","albo-pretorio-on-line"));?>",
+	    NonSOg="<?php echo esc_js(__("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-pretorio-on-line"));?>",
+	    TabFunSog="<?php echo esc_js(__("Tabella Funzioni Soggetti","albo-pretorio-on-line"));?>",
+	    Codice="<?php echo esc_js(__("Codice","albo-pretorio-on-line"));?>",
+	    ValidateCodice="<?php echo esc_js(__("Il campo Codice deve essere di 2 o 3 caratteri","albo-pretorio-on-line"));?>",
+	    Funzione="<?php echo esc_js(__("Funzione","albo-pretorio-on-line"));?>",
+	    ValidateFunzione="<?php echo esc_js(__("Il campo Funzione deve essere di almeno 5 caratteri","albo-pretorio-on-line"));?>",
+	    Visualizza="<?php echo esc_js(__("Visualizza","albo-pretorio-on-line"));?>",
+	    ValidateVisualizza="<?php echo esc_js(__("Visualizza in elenco Soggetti nei dettagli dell'atto","albo-pretorio-on-line"));?>",
+	    Stampa="<?php echo esc_js(__("Stampa","albo-pretorio-on-line"));?>",
+	    ValidateStampa="<?php echo esc_js(__("Stampa nella colonna Sinitra del Certificato di Pubblicazione<br />Da impostarne uno solo, comunque verrà preso in considerazione solo il primo","albo-pretorio-on-line"));?>",
+	    append= "<?php echo esc_js(__("Aggiungi Riga","albo-pretorio-on-line"));?>",
+        removeLast= "<?php echo esc_js(__("Rimuovi ultima Riga","albo-pretorio-on-line"));?>",
+        insert= "<?php echo esc_js(__("Inserisci Riga prima","albo-pretorio-on-line"));?>",
+        remove= "<?php echo esc_js(__("Rimuovi la Riga corrente","albo-pretorio-on-line"));?>",
+        moveUp= "<?php echo esc_js(__("Sposta Su","albo-pretorio-on-line"));?>",
+        moveDown= "<?php echo esc_js(__("Sposta Giù","albo-pretorio-on-line"));?>",
+        rowDrag= "<?php echo esc_js(__("Ordina Riga","albo-pretorio-on-line"));?>",
+        rowEmpty= "<?php echo esc_js(__("Questa Griglia è vuota","albo-pretorio-on-line"));?>";  
 </script>
 	<?php		
-		$TitoloAlbo=sanitize_title(__('Albo OnLine','albo-pretorio-considera'));
+		$TitoloAlbo=sanitize_title(__('Albo OnLine','albo-pretorio-on-line'));
 		$path=plugins_url('', __FILE__ );
 	    wp_enqueue_script('jquery');
 	    wp_enqueue_script('jquery-ui-core');
-	    wp_enqueue_script('jquery-ui-tabs', '', array('jquery'));
-	    wp_enqueue_script('jquery-ui-dialog', '', array('jquery'));    
-		wp_enqueue_script( 'jquery-ui-datepicker', '', array('jquery'));
-		wp_enqueue_script( 'wp-color-picker', '', array('jquery'));
-		wp_enqueue_script( 'my-public-admin', $path.'/js/Albo.admin.public.js');
+	    wp_enqueue_script('jquery-ui-tabs');
+	    wp_enqueue_script('jquery-ui-dialog');    
+		wp_enqueue_script( 'jquery-ui-datepicker');
+		wp_enqueue_script( 'wp-color-picker');
+		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.NotInFooter -- caricati in head: le pagine admin del plugin (tabelle/appendGrid, uploader allegati, ecc.) eseguono script inline che richiamano queste librerie prima del footer.
+		wp_enqueue_script( 'my-public-admin', $path.'/js/Albo.admin.public.js', array(), AP_VERSION);
 		if (strpos($hook_suffix,$TitoloAlbo)===false)
 			return;
-		wp_register_style('AdminAlbo', $path.'/css/styleAdmin.css');
+		wp_register_style('AdminAlbo', $path.'/css/styleAdmin.css', array(), AP_VERSION);
 		wp_enqueue_style( 'AdminAlbo');
-	    wp_enqueue_script( 'my-admin-fields', $path.'/js/Fields.js');
-	    wp_enqueue_script( 'my-admin', $path.'/js/Albo.admin.js');
+	    wp_enqueue_script( 'my-admin-fields', $path.'/js/Fields.js', array(), AP_VERSION);
+	    wp_enqueue_script( 'my-admin', $path.'/js/Albo.admin.js', array(), AP_VERSION);
 		wp_enqueue_style( 'wp-color-picker' );
-		wp_enqueue_style( 'jquery.ui.theme', $path.'/css/jquery-ui-custom.css');	
+		wp_enqueue_style( 'jquery.ui.theme', $path.'/css/jquery-ui-custom.css', array(), AP_VERSION);
 		if(strpos($hook_suffix,"_page_tipifiles")!==false or strpos($hook_suffix,"page_configAlboP")!==false){
 			wp_enqueue_media();
-			wp_register_script('uploader_tipi_files', $path.'/js/Uploader.js', array('jquery'));
+			wp_register_script('uploader_tipi_files', $path.'/js/Uploader.js', array('jquery'), AP_VERSION);
 			wp_enqueue_script( 'uploader_tipi_files');
 		}
 		if(strpos($hook_suffix,"_page_tabelle")!==false ){
-			wp_enqueue_script( 'jquery-ui-tooltip', '', array('jquery'));
-			wp_enqueue_script( "Albo_appendGrid", $path . '/plugin/appendGrid/jquery.appendGrid-1.7.1.js');
-			wp_enqueue_style("Albo_appendGrid", $path . '/plugin/appendGrid/jquery.appendGrid-1.7.1.css');
-			wp_enqueue_style("Albo_ui_tema", $path. '/plugin/appendGrid/jquery-ui.theme.min.css');
+			wp_enqueue_script( 'jquery-ui-tooltip');
+			wp_enqueue_script( "Albo_appendGrid", $path . '/plugin/appendGrid/jquery.appendGrid-1.7.1.js', array(), '1.7.1');
+			wp_enqueue_style("Albo_appendGrid", $path . '/plugin/appendGrid/jquery.appendGrid-1.7.1.css', array(), '1.7.1');
+			wp_enqueue_style("Albo_ui_tema", $path. '/plugin/appendGrid/jquery-ui.theme.min.css', array(), AP_VERSION);
 //			wp_enqueue_style( "Albo_ui", $path . '/css/jquery-ui.css' );
-			wp_enqueue_style("Albo_ui_structure_table", $path.'/plugin/appendGrid/jquery-ui.structure.min.css');
-			wp_enqueue_script( 'my-admin_grid', $path.'/js/Albo.admin.grid.js');
-		}		
-		if(strpos($hook_suffix,"_page_atti")!==false And isset($_GET['action']) And $_GET['action']=='UpAllegati'){
-			wp_register_style('AdminAlboMultiUpload', $path.'/css/stylemultiupload.css');
+			wp_enqueue_style("Albo_ui_structure_table", $path.'/plugin/appendGrid/jquery-ui.structure.min.css', array(), AP_VERSION);
+			wp_enqueue_script( 'my-admin_grid', $path.'/js/Albo.admin.grid.js', array(), AP_VERSION);
+		}
+		// phpcs:enable WordPress.WP.EnqueuedResourceParameters.NotInFooter
+		if(strpos($hook_suffix,"_page_atti")!==false And isset($_GET['action']) And sanitize_text_field(wp_unslash($_GET['action'] ?? '')) == 'UpAllegati'){
+			wp_register_style('AdminAlboMultiUpload', $path.'/css/stylemultiupload.css', array(), AP_VERSION);
        	 	wp_enqueue_style( 'AdminAlboMultiUpload');
 		}
 	}
@@ -665,21 +679,21 @@ function admin_notice(){
 	function CreaStatistiche($IdAtto,$Oggetto){
 		switch($Oggetto){
 			case 5: 
-					$righe=ap_get_Stat_Visite($IdAtto);
-					$righeTot=ap_get_Stat_VisiteRagg($IdAtto);
+					$righe=albopc_get_Stat_Visite($IdAtto);
+					$righeTot=albopc_get_Stat_VisiteRagg($IdAtto);
 					$righe=array_merge($righeTot,$righe);
 					break;
-			case 6: $righe=ap_get_Stat_Download($IdAtto);break;
+			case 6: $righe=albopc_get_Stat_Download($IdAtto);break;
 		}
 		$HtmlTesto='
-				<h3>Totale '.($Oggetto==5?"Visualizzazioni":"Download").' Allegati '.ap_get_Stat_Num_log($IdAtto,$Oggetto).'</h3>
+				<h3>Totale '.($Oggetto==5?"Visualizzazioni":"Download").' Allegati '.albopc_get_Stat_Num_log($IdAtto,$Oggetto).'</h3>
 				<table class="widefat striped">
 				    <thead>
 					<tr>
-						<th style="font-size:1.2em;">'.__('Data','albo-pretorio-considera').'</th>
-						<th style="font-size:1.2em;">'.__('Nome Allegato','albo-pretorio-considera').'</th>
-						<th style="font-size:1.2em;">'.__('File','albo-pretorio-considera').'</th>
-						<th style="font-size:1.2em;">'.($Oggetto==5?__('N° Visualizzazioni','albo-pretorio-considera'):__('N° Download','albo-pretorio-considera')).'</th>
+						<th style="font-size:1.2em;">'.__('Data','albo-pretorio-on-line').'</th>
+						<th style="font-size:1.2em;">'.__('Nome Allegato','albo-pretorio-on-line').'</th>
+						<th style="font-size:1.2em;">'.__('File','albo-pretorio-on-line').'</th>
+						<th style="font-size:1.2em;">'.($Oggetto==5?__('N° Visualizzazioni','albo-pretorio-on-line'):__('N° Download','albo-pretorio-on-line')).'</th>
 					</tr>
 				    </thead>
 				    <tbody>';
@@ -693,7 +707,7 @@ function admin_notice(){
 				else
 					$Allegato="";
 				$HtmlTesto.= '<tr >
-							<td >'.ap_VisualizzaData($riga->Data).'</td>
+							<td >'.albopc_VisualizzaData($riga->Data).'</td>
 							<td >'.$TitoloAllegato.'</td>
 							<td width="30%">'.$Allegato.'</td>
 							<td >'.$riga->Accessi.'</td>
@@ -789,10 +803,10 @@ static function add_albo_plugin_visatto($plugin_array) {
 		$HtmlTesto='';
 		switch ($Tipo){
 			case 1:
-				$righe=ap_get_all_Oggetto_log($Tipo,$IdOggetto);
+				$righe=albopc_get_all_Oggetto_log($Tipo,$IdOggetto);
 				break;
 			case 3:
-				$righe=ap_get_all_Oggetto_log($Tipo,0,$IdOggetto);
+				$righe=albopc_get_all_Oggetto_log($Tipo,0,$IdOggetto);
 				break;
 			case 5:
 			case 6:
@@ -806,9 +820,9 @@ static function add_albo_plugin_visatto($plugin_array) {
 			<table class="widefat striped">
 			    <thead>
 				<tr>
-					<th style="font-size:1.2em;">'.__('Data','albo-pretorio-considera').'</th>
-					<th style="font-size:1.2em;">'.__('Operazione','albo-pretorio-considera').'</th>
-					<th style="font-size:1.2em;">'.__('Informazioni','albo-pretorio-considera').'</th>
+					<th style="font-size:1.2em;">'.__('Data','albo-pretorio-on-line').'</th>
+					<th style="font-size:1.2em;">'.__('Operazione','albo-pretorio-on-line').'</th>
+					<th style="font-size:1.2em;">'.__('Informazioni','albo-pretorio-on-line').'</th>
 				</tr>
 			    </thead>
 			    <tbody>';
@@ -816,22 +830,22 @@ static function add_albo_plugin_visatto($plugin_array) {
 		foreach ($righe as $riga) {
 			switch ($riga->TipoOperazione){
 			 	case 1:
-			 		$Operazione=__('Inserimento','albo-pretorio-considera');
+			 		$Operazione=__('Inserimento','albo-pretorio-on-line');
 			 		break;
 			 	case 2:
-			 		$Operazione=__('Modifica','albo-pretorio-considera');
+			 		$Operazione=__('Modifica','albo-pretorio-on-line');
 					break;
 			 	case 3:
-			 		$Operazione=__('Cancellazione','albo-pretorio-considera');
+			 		$Operazione=__('Cancellazione','albo-pretorio-on-line');
 					break;
 			 	case 4:
-			 		$Operazione=__('Approvazione','albo-pretorio-considera');
+			 		$Operazione=__('Approvazione','albo-pretorio-on-line');
 					break;
 			}
 			$HtmlTesto.= '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
-						<td >'.ap_VisualizzaData($riga->Data)." ".ap_VisualizzaOra($riga->Data).'</td>
+						<td >'.albopc_VisualizzaData($riga->Data)." ".albopc_VisualizzaOra($riga->Data).'</td>
 						<td >'.$Operazione.'</td>
-						<td >'.stripslashes(ap_removeCaratteriSpeciali($riga->Operazione)).'</td>
+						<td >'.stripslashes(albopc_removeCaratteriSpeciali($riga->Operazione)).'</td>
 					</tr>';
 		}
 		$HtmlTesto.= '    </tbody>
@@ -840,24 +854,24 @@ static function add_albo_plugin_visatto($plugin_array) {
 	}
 
 	function add_menu(){
-  		add_menu_page('Panoramica', __('Albo OnLine','albo-pretorio-considera'), 'gest_atti_albo', 'Albo_Pretorio',array( 'AlboPretorio','show_menu'),Albo_URL."img/logo.png");
-		$atti_page=add_submenu_page( 'Albo_Pretorio', 'Atti', __('Atti','albo-pretorio-considera'), 'gest_atti_albo', 'atti', array( 'AlboPretorio','show_menu'));
-		$categorie_page=add_submenu_page( 'Albo_Pretorio', 'Categorie', __('Categorie','albo-pretorio-considera'), 'gest_atti_albo', 'categorie', array( 'AlboPretorio', 'show_menu'));
-		$enti=add_submenu_page( 'Albo_Pretorio', 'Enti', __('Enti','albo-pretorio-considera'), 'editore_atti_albo', 'enti', array('AlboPretorio', 'show_menu'));
-		$uo_page=add_submenu_page( 'Albo_Pretorio', 'Unità Organizzative', __('Unità Organizzative','albo-pretorio-considera'), 'editore_atti_albo', 'unitao', array( 'AlboPretorio','show_menu'));
-		$responsabili_page=add_submenu_page( 'Albo_Pretorio', 'Soggetti', __('Soggetti','albo-pretorio-considera'), 'editore_atti_albo', 'soggetti', array( 'AlboPretorio','show_menu'));
-		$tipifiles=add_submenu_page( 'Albo_Pretorio', 'Tipi di files', __('Tipi di Files','albo-pretorio-considera'), 'admin_albo', 'tipifiles', array( 'AlboPretorio','show_menu'));
-		$tipifiles=add_submenu_page( 'Albo_Pretorio', 'Tabelle', __('Tabelle','albo-pretorio-considera'), 'admin_albo', 'tabelle', array( 'AlboPretorio','show_menu'));
-		$parametri_page=add_submenu_page( 'Albo_Pretorio', 'Generale', __('Parametri','albo-pretorio-considera'), 'admin_albo', 'configAlboP', array( 'AlboPretorio','show_menu'));
-		$permessi=add_submenu_page( 'Albo_Pretorio', 'Permessi', __('Permessi','albo-pretorio-considera'), 'admin_albo', 'permessiAlboP', array('AlboPretorio', 'show_menu'));
-		$utility=add_submenu_page( 'Albo_Pretorio', 'Utility', __('Utility','albo-pretorio-considera'), 'admin_albo', 'utilityAlboP', array('AlboPretorio', 'show_menu'));
-		add_action( 'admin_head-'. $atti_page, array( 'AlboPretorio','ap_head' ));
+  		add_menu_page('Panoramica', __('Albo OnLine','albo-pretorio-on-line'), 'gest_atti_albo', 'Albo_Pretorio',array( 'AlboPretorio','show_menu'),Albo_URL."img/logo.png");
+		$atti_page=add_submenu_page( 'Albo_Pretorio', 'Atti', __('Atti','albo-pretorio-on-line'), 'gest_atti_albo', 'atti', array( 'AlboPretorio','show_menu'));
+		$categorie_page=add_submenu_page( 'Albo_Pretorio', 'Categorie', __('Categorie','albo-pretorio-on-line'), 'gest_atti_albo', 'categorie', array( 'AlboPretorio', 'show_menu'));
+		$enti=add_submenu_page( 'Albo_Pretorio', 'Enti', __('Enti','albo-pretorio-on-line'), 'editore_atti_albo', 'enti', array('AlboPretorio', 'show_menu'));
+		$uo_page=add_submenu_page( 'Albo_Pretorio', 'Unità Organizzative', __('Unità Organizzative','albo-pretorio-on-line'), 'editore_atti_albo', 'unitao', array( 'AlboPretorio','show_menu'));
+		$responsabili_page=add_submenu_page( 'Albo_Pretorio', 'Soggetti', __('Soggetti','albo-pretorio-on-line'), 'editore_atti_albo', 'soggetti', array( 'AlboPretorio','show_menu'));
+		$tipifiles=add_submenu_page( 'Albo_Pretorio', 'Tipi di files', __('Tipi di Files','albo-pretorio-on-line'), 'admin_albo', 'tipifiles', array( 'AlboPretorio','show_menu'));
+		$tipifiles=add_submenu_page( 'Albo_Pretorio', 'Tabelle', __('Tabelle','albo-pretorio-on-line'), 'admin_albo', 'tabelle', array( 'AlboPretorio','show_menu'));
+		$parametri_page=add_submenu_page( 'Albo_Pretorio', 'Generale', __('Parametri','albo-pretorio-on-line'), 'admin_albo', 'configAlboP', array( 'AlboPretorio','show_menu'));
+		$permessi=add_submenu_page( 'Albo_Pretorio', 'Permessi', __('Permessi','albo-pretorio-on-line'), 'admin_albo', 'permessiAlboP', array('AlboPretorio', 'show_menu'));
+		$utility=add_submenu_page( 'Albo_Pretorio', 'Utility', __('Utility','albo-pretorio-on-line'), 'admin_albo', 'utilityAlboP', array('AlboPretorio', 'show_menu'));
+		add_action( 'admin_head-'. $atti_page, array( 'AlboPretorio','albopc_head' ));
 		add_action( "load-$atti_page", array('AlboPretorio', 'screen_option'));
 
 }
 	static function screen_option() {
 		if(!isset($_GET['action'])){
-			$args=array('label'   => __('Atti per pagina','albo-pretorio-considera'),
+			$args=array('label'   => __('Atti per pagina','albo-pretorio-on-line'),
 				   'default' => 25,
 				   'option'  => 'atti_per_page');
 			add_screen_option( 'per_page', $args );			
@@ -870,14 +884,14 @@ static function add_albo_plugin_visatto($plugin_array) {
 	}	
 
 	static function show_menu() {
-		global $AP_OnLine;
+		global $albopc_AP_OnLine;
 
-		switch ($_REQUEST['page']){
+		switch (sanitize_text_field(wp_unslash($_REQUEST['page'] ?? ''))){
 			case "Albo_Pretorio" :
-				$AP_OnLine->ShowBacheca();
+				$albopc_AP_OnLine->ShowBacheca();
 				break;
 			case "configAlboP" :
-				$AP_OnLine->AP_config();
+				$albopc_AP_OnLine->AP_config();
 				break;
 			case "categorie" :
 			// interfaccia per la gestione delle categorie
@@ -932,7 +946,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 ################################################################################
 
 
-	static function ap_head() {
+	static function albopc_head() {
 /*		global $wp_db_version, $wp_dlm_root;
 		?>
 <script language="JavaScript">
@@ -941,7 +955,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 	}
 </script>
 */
-		if($_GET['page']=='atti' And (isset($_GET['stato_atti']) And $_GET['stato_atti']=='Correnti') And current_user_can('editore_atti_albo')){
+		if(sanitize_text_field(wp_unslash($_GET['page'] ?? '')) == 'atti' And (isset($_GET['stato_atti']) And sanitize_text_field(wp_unslash($_GET['stato_atti'] ?? '')) == 'Correnti') And current_user_can('editore_atti_albo')){
 ?>			<style type="text/css">
 				#Stato{
 					width: 15%;
@@ -991,20 +1005,23 @@ static function add_albo_plugin_visatto($plugin_array) {
 <?php
 	}
 	    wp_enqueue_script('jquery');
-	    wp_enqueue_script('Albo-Public-Jquery-UI',plugins_url('js/jquery-ui.min.js', __FILE__ ));
-	    wp_enqueue_script('jquery-ui-tabs', '', array('jquery'));
-		wp_enqueue_script( 'jquery-ui-datepicker', '', array('jquery'));
+		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.NotInFooter -- caricati in head: gli shortcode dell'Albo emettono markup/script inline che dipendono da jQuery UI e da Albo.public.js prima del footer.
+	    // jQuery UI dal core di WordPress (tabs + datepicker); il bundle jquery-ui.min.js completo era ridondante ed e' stato rimosso.
+	    wp_enqueue_script('jquery-ui-core');
+	    wp_enqueue_script('jquery-ui-tabs');
+		wp_enqueue_script( 'jquery-ui-datepicker');
 		if(get_option('opt_AP_BootstrapItalia')!="Si")
-			wp_enqueue_script( 'Albo-Public', plugins_url('js/Albo.public.js', __FILE__ ));
+			wp_enqueue_script( 'Albo-Public', plugins_url('js/Albo.public.js', __FILE__ ), array(), AP_VERSION);
 //		var_dump($OldInterfaccia);var_dump($UploadCSSNI);var_dump(get_option('opt_AP_BootstrapItalia'));
     if($OldInterfaccia!="Si"  AND $UploadCSSNI!="Si"){
-		wp_register_style('AlboPretorioWTS', plugins_url( 'css/build/build.css', __FILE__ ) );
+		wp_register_style('AlboPretorioWTS', plugins_url( 'css/build/build.css', __FILE__ ), array(), AP_VERSION );
         wp_enqueue_style( 'AlboPretorioWTS');
 //		wp_register_style('AlboPretorioNewStyle', plugins_url( 'css/stylenew.css', __FILE__ ) );
 //        wp_enqueue_style( 'AlboPretorioNewStyle');
-		wp_enqueue_script('Albo-PublicDesignItalia', plugins_url('css/build/IWT.min.js', __FILE__ ));
+		wp_enqueue_script('Albo-PublicDesignItalia', plugins_url('css/build/IWT.min.js', __FILE__ ), array(), AP_VERSION);
 	}
-        wp_register_style('AlboPretorioStyle', plugins_url( 'css/style.css', __FILE__ ) );
+		// phpcs:enable WordPress.WP.EnqueuedResourceParameters.NotInFooter
+        wp_register_style('AlboPretorioStyle', plugins_url( 'css/style.css', __FILE__ ), array(), AP_VERSION );
         wp_enqueue_style( 'AlboPretorioStyle');
 		echo "<!--FINE HEAD Albo Preotrio On line -->";	
 		}
@@ -1018,7 +1035,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 		}
 	
 	function VisualizzaAtti($Parametri){
-		$ret="";
+		$albopc_ret="";
 		$Parametri=shortcode_atts(array(
 			'stato' => '-2',
 			'cat' => 0,
@@ -1039,14 +1056,14 @@ static function add_albo_plugin_visatto($plugin_array) {
 				require_once ( dirname (__FILE__) . '/admin/frontend_new.php' );
 			}		
 		}
-		return $ret;
+		return $albopc_ret;
 	}
 	function VisualizzaGruppiAtti($Parametri){
 		if(get_option('opt_AP_AutoShortcode'))
 			return;
-		$ret="";
+		$albopc_ret="";
 		$Parametri=shortcode_atts(array(
-			'titolo' => __('Atti Albo on line di riferimento','albo-pretorio-considera'),
+			'titolo' => __('Atti Albo on line di riferimento','albo-pretorio-on-line'),
 			'meta' => '',
 			'valore' => '',
 		), $Parametri,"AlboGruppiAtti");
@@ -1063,12 +1080,12 @@ static function add_albo_plugin_visatto($plugin_array) {
 				require_once ( dirname (__FILE__) . '/admin/gruppiatti_new.php' );
 			}	
 		}			
-		return Lista_AttiGruppo($Parametri);
+		return albopc_Lista_AttiGruppo($Parametri);
 	}
-	function VisualizzaAtto($Parametri){
-		$ret="";
+	function albopc_VisualizzaAtto($Parametri){
+		$albopc_ret="";
 		$Parametri=shortcode_atts(array(
-			'titolo' => __('Atto Albo on line','albo-pretorio-considera'),
+			'titolo' => __('Atto Albo on line','albo-pretorio-on-line'),
 			'numero' => '',
 			'anno' => '',
 		), $Parametri,"AlboAtto");
@@ -1085,15 +1102,16 @@ static function add_albo_plugin_visatto($plugin_array) {
 				require_once ( dirname (__FILE__) . '/admin/visatto_new.php' );
 			}		
 		}
-		return Visualizza_Atto($Parametri);
+		return albopc_Visualizza_Atto($Parametri);
 	}	
 
 	function ShowBacheca(){
 	global $wpdb;
-		if (isset($_REQUEST['action']) And $_REQUEST['action']=="setta-anno"){
-		  update_option('opt_AP_AnnoProgressivo',date("Y") );
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- dashboard/bacheca admin: output = markup fisso + label i18n del plugin + output di helper che generano markup; i valori dinamici da DB/utente e i value degli input sono escapati inline (esc_attr/esc_html).
+		if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['action'] ?? '')) == "setta-anno"){
+		  update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		  update_option('opt_AP_NumeroProgressivo',1 );
-		  $_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), $_SERVER['REQUEST_URI']);
+		  $_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 		}
 		$n_atti = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Atti;");	 
 		$n_atti_dapub = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Atti Where Numero=0;");	
@@ -1110,51 +1128,51 @@ static function add_albo_plugin_visatto($plugin_array) {
 		if(!is_file(APHomePath."/robots.txt"))
 			$oblio=FALSE;	
 		$Cartella=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
-		//$permessi=ap_get_fileperm($Cartella);		
-		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+		//$permessi=albopc_get_fileperm($Cartella);		
+		$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 		$StatoCartella="";
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
 		$Cartella=AlboBCK;
-		//$permessi=ap_get_fileperm($Cartella);		
-		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+		//$permessi=albopc_get_fileperm($Cartella);		
+		$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
 		$Cartella=AlboBCK.'/BackupDatiAlbo';
-		//$permessi=ap_get_fileperm($Cartella);		
-		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+		//$permessi=albopc_get_fileperm($Cartella);		
+		$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
 		$Cartella=AlboBCK.'/OblioDatiAlbo';
-		//$permessi=ap_get_fileperm($Cartella);		
-		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+		//$permessi=albopc_get_fileperm($Cartella);		
+		$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
 		echo ' <div class="my-welcome-panel">
 	         	<div class="my-welcome-panel-content" style="display:inline;float:left;width:35%;">
 					<p style="float:left;">
-					'.__('Versione','albo-pretorio-considera').' <strong>'.$this->version.'</strong></p>
-					<p style="font-size:1.2em;text-align: center;">'.__('Plugin sviluppato da','albo-pretorio-considera').' <strong>Scimone Ignazio</strong><br />
-					<span style="font-size:0.85em;">'.__('Fork mantenuto da','albo-pretorio-considera').' <strong><a href="https://www.considera.it/" target="_blank" rel="noopener">Considera</a></strong> &middot; <a href="mailto:info@considera.it" title="'.__('Invia email a chi mantiene il fork','albo-pretorio-considera').'">info@considera.it</a></span>
+					'.__('Versione','albo-pretorio-on-line').' <strong>'.$this->version.'</strong></p>
+					<p style="font-size:1.2em;text-align: center;">'.__('Plugin sviluppato da','albo-pretorio-on-line').' <strong>Scimone Ignazio</strong><br />
+					<span style="font-size:0.85em;">'.__('Fork mantenuto da','albo-pretorio-on-line').' <strong><a href="https://www.considera.it/" target="_blank" rel="noopener">Considera</a></strong> &middot; <a href="mailto:info@considera.it" title="'.__('Invia email a chi mantiene il fork','albo-pretorio-on-line').'">info@considera.it</a></span>
 					</p>
 				</div>
 				<div class="my-welcome-panel-content"  style="display:inline;float:right;width:60%;">
 					<div class="widefat" style="display:inline;">
 						<table style="margin-bottom:20px;border: 1px solid #e5e5e5;">
-							<caption style="font-size:1.2em;font-weight:bold;">'.__('Sommario','albo-pretorio-considera').'</caption>
+							<caption style="font-size:1.2em;font-weight:bold;">'.__('Sommario','albo-pretorio-on-line').'</caption>
 							<thead>
 								<tr>
-									<th>'.__('Oggetto','albo-pretorio-considera').'</th>
-									<th>'.__('N.','albo-pretorio-considera').'</th>
-									<th>'.__('In Attesa di Pubblicazione','albo-pretorio-considera').'</th>
-									<th>'.__('Attivi','albo-pretorio-considera').'</th>
-									<th>'.__('Scaduti','albo-pretorio-considera').'</th>
-									<th>'.__('Da eliminare','albo-pretorio-considera').'</th>
+									<th>'.__('Oggetto','albo-pretorio-on-line').'</th>
+									<th>'.__('N.','albo-pretorio-on-line').'</th>
+									<th>'.__('In Attesa di Pubblicazione','albo-pretorio-on-line').'</th>
+									<th>'.__('Attivi','albo-pretorio-on-line').'</th>
+									<th>'.__('Scaduti','albo-pretorio-on-line').'</th>
+									<th>'.__('Da eliminare','albo-pretorio-on-line').'</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr class="first">
-									<td style="text-align:left;width:200px;" >'.__('Atti','albo-pretorio-considera').'</td>
+									<td style="text-align:left;width:200px;" >'.__('Atti','albo-pretorio-on-line').'</td>
 									<td style="text-align:left;width:200px;">'.$n_atti.'</td>
 									<td style="text-align:left;width:200px;">'.$n_atti_dapub.'</td>
 									<td style="text-align:left;width:200px;">'.$n_atti_attivi.'</td>
@@ -1162,11 +1180,11 @@ static function add_albo_plugin_visatto($plugin_array) {
 									<td style="text-align:left;width:200px;">'.$n_atti_oblio.'</td>
 								</tr>
 								<tr>
-									<td>'.__('Categorie','albo-pretorio-considera').'</td>
+									<td>'.__('Categorie','albo-pretorio-on-line').'</td>
 									<td colspan="4">'.$n_categorie.'</td>
 								</tr>
 								<tr>
-									<td>'.__('Allegati','albo-pretorio-considera').'</td>
+									<td>'.__('Allegati','albo-pretorio-on-line').'</td>
 									<td colspan="4">'.$n_allegati.'</td>
 								</tr>
 							</tbody>
@@ -1175,44 +1193,44 @@ static function add_albo_plugin_visatto($plugin_array) {
 		</div>
 	<div style="clear:both;"></div>
 	<div class="widefat" >
-		<h3 style="text-align:center;font-size:1.5em;font-weight: bold;">'.__('Cruscotto','albo-pretorio-considera').'</p>
+		<h3 style="text-align:center;font-size:1.5em;font-weight: bold;">'.__('Cruscotto','albo-pretorio-on-line').'</p>
 		<table style="width:100%;">
 			<thead>
 				<tr>
-					<th>'.__('Ambito','albo-pretorio-considera').'</th>
-					<th>'.__('Stato','albo-pretorio-considera').'</th>
-					<th>'.__('Note','albo-pretorio-considera').'</th>
-					<th>'.__('Azioni','albo-pretorio-considera').'</th>
+					<th>'.__('Ambito','albo-pretorio-on-line').'</th>
+					<th>'.__('Stato','albo-pretorio-on-line').'</th>
+					<th>'.__('Note','albo-pretorio-on-line').'</th>
+					<th>'.__('Azioni','albo-pretorio-on-line').'</th>
 				</tr>
 			</thead>
 			<tbody>
 			<tr>
-				<th scope="row">'.__('Librerie','albo-pretorio-considera').'</th>';
-	if (is_file(Albo_DIR.'/inc/pclzip.php')){
+				<th scope="row">'.__('Librerie','albo-pretorio-on-line').'</th>';
+	if (class_exists('ZipArchive')){
  		echo'<td><span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td>
 		     <td></td>
 			 <td></td>';
 	}else{
 		echo'<td><span class="dashicons dashicons-no" style="color:red;font-size:2em;"></span></td>
-			<td>'.__('Senza questa libreria non puoi eseguire i Backup','albo-pretorio-considera').'</td>
+			<td>'.__('Senza questa libreria non puoi eseguire i Backup','albo-pretorio-on-line').'</td>
 			</td>';
 	}
 	echo '</tr>
 			<tr>
-				<th scope="row">'.__("Diritto all'oblio",'albo-pretorio-considera').'</th>';
-	if ($oblio And ap_VerificaRobots() And ap_VerificaOblio()){
+				<th scope="row">'.__("Diritto all'oblio",'albo-pretorio-on-line').'</th>';
+	if ($oblio And albopc_VerificaRobots() And albopc_VerificaOblio()){
  		echo'<td><span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td>
 		     <td></td>
 			 <td></td>';
 	}else{		
  		echo '<td><span class="dashicons dashicons-no" style="color:red;font-size:2em;"></td>
 		     <td></td>
-			 <td><a href="?page=Albo_Pretorio&amp;action=creafoblio&amp;rigenera='.wp_create_nonce('rigeneraoblio').'">'.__('Rigenera files','albo-pretorio-considera').'</a>
+			 <td><a href="?page=Albo_Pretorio&amp;action=creafoblio&amp;rigenera='.wp_create_nonce('rigeneraoblio').'">'.__('Rigenera files','albo-pretorio-on-line').'</a>
 			</td>';		
 	}
 	echo'	</tr>
 			<tr>
-				<th scope="row">'.__('Cartelle esistenza e permessi','albo-pretorio-considera').'</th>';
+				<th scope="row">'.__('Cartelle esistenza e permessi','albo-pretorio-on-line').'</th>';
 	if(strlen($StatoCartella)>0){
  		echo'<td><span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td>
 		     <td></td>
@@ -1221,67 +1239,69 @@ static function add_albo_plugin_visatto($plugin_array) {
  		echo '<td><span class="dashicons dashicons-no" style="color:red;font-size:2em;"></td>
 		     <td>'.$StatoCartella.'</td>
 			 <td>';
-		echo (!$oblio?'<a href="?page=Albo_Pretorio&amp;action=creafoblio&amp;rigenera='.wp_create_nonce('rigeneraoblio').'">'.__('Rigenera files','albo-pretorio-considera').'</a>':'');
+		echo (!$oblio?'<a href="?page=Albo_Pretorio&amp;action=creafoblio&amp;rigenera='.wp_create_nonce('rigeneraoblio').'">'.__('Rigenera files','albo-pretorio-on-line').'</a>':'');
 		echo	 '</td>';		
 	}		
 	echo		'</tr>
 		</tbody>
 		</table>
-		<p><em>'.__('per maggiori dettagli eseguire la verifica della procedura presente nel menu Utility','albo-pretorio-considera').'</em></p>
+		<p><em>'.__('per maggiori dettagli eseguire la verifica della procedura presente nel menu Utility','albo-pretorio-on-line').'</em></p>
 	</div>';
-if (ap_get_num_categorie()==0) {
+if (albopc_get_num_categorie()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-					'.__('Non risultano categorie codificate, se vuoi posso impostare le categorie di default','albo-pretorio-considera').' &ensp;&ensp;<a href="?page=utilityAlboP&amp;action=creacategorie">'.__('Crea Categorie di Default','albo-pretorio-considera').'</a></p>
+					'.__('Non risultano categorie codificate, se vuoi posso impostare le categorie di default','albo-pretorio-on-line').' &ensp;&ensp;<a href="?page=utilityAlboP&amp;action=creacategorie">'.__('Crea Categorie di Default','albo-pretorio-on-line').'</a></p>
 				</div>
 			</div>';
 }
-if (ap_num_responsabili()==0) {
+if (albopc_num_responsabili()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-					'.sprintf(__('Non risultano %sResponsabili%s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti','albo-pretorio-considera'),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'.__('Crea Soggetti','albo-pretorio-considera').'</a></p>
+					'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non risultano %1$sResponsabili%2$s codificati, devi crearne almeno uno prima di iniziare a codificare gli Atti','albo-pretorio-on-line'),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=soggetti">'.__('Crea Soggetti','albo-pretorio-on-line').'</a></p>
 				</div>
 			</div>';
 }
-if (ap_num_unitao()==0) {
+if (albopc_num_unitao()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
-				'. sprintf(__("Non risulta nessuna %sUnità Organizzativa%s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-pretorio-considera"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-pretorio-considera").'</a>
+				'. sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Non risulta nessuna %1\$sUnità Organizzativa%2\$s codificata, devi crearne almeno una prima di iniziare a codificare gli Atti","albo-pretorio-on-line"),"<strong>","</strong>").' &ensp;&ensp;<a href="?page=unitao">'. __("Crea Unità Organizzativa","albo-pretorio-on-line").'</a>
 				</p>
 			</div>';
 }
-if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
+if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	echo '<div style="border: medium groove Blue;margin-top:10px;">
 			<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 				<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
 					<input type="hidden" name="action" value="setta-anno" />
-				<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-pretorio-considera').'"  />
+				<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-pretorio-on-line').'"  />
 				</form>
 			</div>
 		 </div>';
 }
-}	
+	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
+}
 
 	function AP_config(){
 	$stato="";
-	  if (isset($_REQUEST['action']) And $_REQUEST['action']=="setta-anno"){
-		update_option('opt_AP_AnnoProgressivo',date("Y") );
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- pagina admin Parametri/configurazione: output = markup fisso + label i18n del plugin + output di helper (dropdown/select) che generano markup; i value degli input e i valori dinamici da opzioni/DB sono escapati inline (esc_attr/esc_html).
+	  if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['action'] ?? '')) == "setta-anno"){
+		update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		update_option('opt_AP_NumeroProgressivo',1 );
-		$_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), $_SERVER['REQUEST_URI']);
+		$_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 	  }
 	  
 	  if (isset($_GET['update']))
-	  	if($_GET['update'] == 'true')
+	  	if(sanitize_text_field(wp_unslash($_GET['update'] ?? '')) == 'true')
 			$stato="<div id='setting-error-settings_updated' class='updated settings-error'> 
 				<p><strong>Impostazioni salvate.</strong></p></div>";
 		  else
 			$stato="<div id='setting-error-settings_updated' class='updated settings-error'> 
-				<p><strong>".__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera")."</strong></p></div>";
+				<p><strong>".__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line")."</strong></p></div>";
 	  $current_user 		= wp_get_current_user();
-	  $ente   				= stripslashes(ap_get_ente_me());
+	  $ente   				= stripslashes(albopc_get_ente_me());
 	  $entedefault			= get_option('opt_AP_DefaultEnte');
 	  $nprog  				= get_option('opt_AP_NumeroProgressivo');
 	  $nanno				= get_option('opt_AP_AnnoProgressivo');
@@ -1316,7 +1336,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	  $RestApiUrlEst		= get_option('opt_AP_RestApi_UrlEst');
 	  if(!is_array($Testi)){
 	  	$Testi=array("NoResp"=>"",
-	  	             "CertPub"=>__("Si attesta l'avvenuta pubblicazione del documento all'albo pretorio sopra indicato per il quale non sono pervenute osservazioni",'albo-pretorio-considera'));
+	  	             "CertPub"=>__("Si attesta l'avvenuta pubblicazione del documento all'albo pretorio sopra indicato per il quale non sono pervenute osservazioni",'albo-pretorio-on-line'));
 	  }
 	  $RuoliPl=array();
 	  if($RuoliPuls){
@@ -1367,7 +1387,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	  else
 	  	$ve_selezionato='';
 	  if (!$nanno){
-		$nanno=date("Y");
+		$nanno=gmdate("Y");
 		}
 	  $dirUpload =  stripslashes(get_option('opt_AP_FolderUpload'));
 	  if($OldInterfaccia=="Si"){
@@ -1398,38 +1418,38 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	  echo '
 		<div class="wrap">
 			<div class="HeadPage">
-				<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-settings" style="font-size:1em;"></span> '.__('Parametri','albo-pretorio-considera').'</h2>
+				<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-settings" style="font-size:1em;"></span> '.__('Parametri','albo-pretorio-on-line').'</h2>
 			</div>'.$stato.'
 	 <form name="AlboPretorio_cnf" action="'.get_bloginfo('wpurl').'/wp-admin/index.php" method="post">
-	  <input type="hidden" name="c_AnnoProgressivo" value="'.$nanno.'"/>
-	  <input type="hidden" name="confAP" value="'.wp_create_nonce('configurazionealbo').'" />
+	  <input type="hidden" name="c_AnnoProgressivo" value="'.esc_attr($nanno).'"/>
+	  <input type="hidden" name="confAP" value="'.esc_attr(wp_create_nonce('configurazionealbo')).'" />
 	  <div id="config-tabs-container" style="margin-top:20px;">
 		<ul>
-			<li><a href="#Conf-tab-1">'.__('Impostazioni Generali','albo-pretorio-considera').'</a></li>
-			<li><a href="#Conf-tab-2">'.__('Interfaccia','albo-pretorio-considera').'</a></li>
-			<li><a href="#Conf-tab-3">'.__('Log','albo-pretorio-considera').'</a></li>
-			<li><a href="#Conf-tab-4">'.__('Shortcode','albo-pretorio-considera').'</a></li>
-			<li><a href="#Conf-tab-5">'.__('Testi','albo-pretorio-considera').'</a></li>
-			<li><a href="#Conf-tab-6">'.__('Soggetti predefiniti','albo-pretorio-considera').'</a></li>
-			<li><a href="#Conf-tab-7">'.__('Rest Api','albo-pretorio-considera').'</a></li>
-			<li><a href="#Conf-tab-8">'.__('Allegati','albo-pretorio-considera').'</a></li>
+			<li><a href="#Conf-tab-1">'.__('Impostazioni Generali','albo-pretorio-on-line').'</a></li>
+			<li><a href="#Conf-tab-2">'.__('Interfaccia','albo-pretorio-on-line').'</a></li>
+			<li><a href="#Conf-tab-3">'.__('Log','albo-pretorio-on-line').'</a></li>
+			<li><a href="#Conf-tab-4">'.__('Shortcode','albo-pretorio-on-line').'</a></li>
+			<li><a href="#Conf-tab-5">'.__('Testi','albo-pretorio-on-line').'</a></li>
+			<li><a href="#Conf-tab-6">'.__('Soggetti predefiniti','albo-pretorio-on-line').'</a></li>
+			<li><a href="#Conf-tab-7">'.__('Rest Api','albo-pretorio-on-line').'</a></li>
+			<li><a href="#Conf-tab-8">'.__('Allegati','albo-pretorio-on-line').'</a></li>
 		</ul>	 
 		<div id="Conf-tab-1">
 		  <table class="albo_cell">
 			<tr>
-				<th scope="row"><label for="nomeente">'.__('Nome Ente','albo-pretorio-considera').'</label></th>
-				<td><input type="text" name="c_Ente" value="'.$ente.'" style="width:80%;" id="nomeente"/></td>
+				<th scope="row"><label for="nomeente">'.__('Nome Ente','albo-pretorio-on-line').'</label></th>
+				<td><input type="text" name="c_Ente" value="'.esc_attr($ente).'" style="width:80%;" id="nomeente"/></td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="defEnte">'.__('Ente di default','albo-pretorio-considera').'</label></th>
-				<td>'.ap_get_dropdown_enti('defEnte',__('Ente','albo-pretorio-considera'),'postform','',$entedefault).'</td>
+				<th scope="row"><label for="defEnte">'.__('Ente di default','albo-pretorio-on-line').'</label></th>
+				<td>'.albopc_get_dropdown_enti('defEnte',__('Ente','albo-pretorio-on-line'),'postform','',$entedefault).'</td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="visente">'.__('Visualizza Nome Ente','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="visente">'.__('Visualizza Nome Ente','albo-pretorio-on-line').'</label></th>
 				<td><input type="checkbox" name="c_VEnte" value="Si" '.$ve_selezionato.' id="visente"/></td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="LivelloTitoloEnte">'.__('Titolo Nome Ente','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="LivelloTitoloEnte">'.__('Titolo Nome Ente','albo-pretorio-on-line').'</label></th>
 				<td>
 					<select name="c_LTE" id="LivelloTitoloEnte" >';
 				for ($i=2;$i<5;$i++){
@@ -1441,7 +1461,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			echo '</select></td>
 			</tr>		
 			<tr>
-				<th scope="row"><label for="LivelloTitoloPagina">'.__('Titolo Pagina Albo','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="LivelloTitoloPagina">'.__('Titolo Pagina Albo','albo-pretorio-on-line').'</label></th>
 				<td>
 					<select name="c_LTP" id="LivelloTitoloPagina" >';
 				for ($i=2;$i<5;$i++){
@@ -1453,7 +1473,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			echo '</select></td>
 			</tr>		
 			<tr>
-				<th scope="row"><label for="LivelloTitoloFiltri">'.__('Titolo Filtri','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="LivelloTitoloFiltri">'.__('Titolo Filtri','albo-pretorio-on-line').'</label></th>
 				<td>
 					<select name="c_LTF" id="LivelloTitoloFiltri" >';
 				for ($i=2;$i<5;$i++){
@@ -1465,37 +1485,37 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			echo '</select></td>
 			</tr>		
 			<tr>
-				<th scope="row"><label>'.__('Numero Progressivo','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label>'.__('Numero Progressivo','albo-pretorio-on-line').'</label></th>
 				<td><strong> ';
-				if(ap_get_all_atti(0,0,0,0,'',0,0,"",0,0,TRUE,FALSE)==0)
-					echo '<input type="text" id="progressivo" name="progressivo" value="'.$nprog.'" size="5"/>';
+				if(albopc_get_all_atti(0,0,0,0,'',0,0,"",0,0,TRUE,FALSE)==0)
+					echo '<input type="text" id="progressivo" name="progressivo" value="'.esc_attr($nprog).'" size="5"/>';
 				else
 					echo $nprog;
 			echo ' / '.$nanno.'</strong>	
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><label>'.__('Cartella Upload<br />organizzazione in Anno/Mese','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label>'.__('Cartella Upload<br />organizzazione in Anno/Mese','albo-pretorio-on-line').'</label></th>
 				<td><strong> '.AP_BASE_DIR.get_option('opt_AP_FolderUpload').'<br />'.$dirUploadMA.'</strong></td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="visoldstyle">'.__('Stile visualizzazione FrontEnd','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="visoldstyle">'.__('Stile visualizzazione FrontEnd','albo-pretorio-on-line').'</label></th>
 				<td><input type="checkbox" name="visoldstyle" value="Si" '.$OldInterfacciaS.' id="visoldstyle"/>
 					'.__('Selezionare questa opzione per mantenere la visualizzazione classica del FrontEnd.<br />
-					Se si deseleziona l\'opzione verrà visualizzato il FrontEnd con layout in linea con le linee guida di','albo-pretorio-considera').' <a href="https://italia.github.io/design-web-toolkit/">design.italia.it</a> 
+					Se si deseleziona l\'opzione verrà visualizzato il FrontEnd con layout in linea con le linee guida di','albo-pretorio-on-line').' <a href="https://italia.github.io/design-web-toolkit/">design.italia.it</a> 
 					
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="uploadCSSNI">'.__('Tema compatibile con il Design KIT di Designers Italia','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="uploadCSSNI">'.__('Tema compatibile con il Design KIT di Designers Italia','albo-pretorio-on-line').'</label></th>
 				<td><input type="checkbox" name="uploadCSSNI" value="Si" '.$UploadCSSNIS.' id="uploadCSSNI"/>
-					'.__('Selezionare questa opzione nel caso in cui si utilizza un tema sviluppato partendo dal Design KIT di <a href="https://designers.italia.it/">design.italia.it</a> verranno caricati i CSS ed i JS del Kit','albo-pretorio-considera').'
+					'.__('Selezionare questa opzione nel caso in cui si utilizza un tema sviluppato partendo dal Design KIT di <a href="https://designers.italia.it/">design.italia.it</a> verranno caricati i CSS ed i JS del Kit','albo-pretorio-on-line').'
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="BootstrapItalia">'.__('Tema compatibile con Bootstrap Italia di Designers Italia','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="BootstrapItalia">'.__('Tema compatibile con Bootstrap Italia di Designers Italia','albo-pretorio-on-line').'</label></th>
 				<td><input type="checkbox" name="BootstrapItalia" value="Si" '.$BootstrapItalia.' id="BootstrapItalia"/>
-					'.__('Selezionare questa opzione nel caso in cui si utilizza un tema sviluppato partendo da Bootstrap Italia','albo-pretorio-considera').'
+					'.__('Selezionare questa opzione nel caso in cui si utilizza un tema sviluppato partendo da Bootstrap Italia','albo-pretorio-on-line').'
 				</td>
 			</tr>
 		</table>
@@ -1505,21 +1525,21 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			<h3>Colori</h3>	  
 			<table class="albo_cell">
 				<tr>
-					<th scope="row"><label for="color">'.__('Righe Atti Annullati','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="color">'.__('Righe Atti Annullati','albo-pretorio-on-line').'</label></th>
 					<td> 
-						<input type="text" id="color" name="color" value="'.$colAnnullati.'" size="5"/>
+						<input type="text" id="color" name="color" value="'.esc_attr($colAnnullati).'" size="5"/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="colorp">'.__('Righe Pari','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="colorp">'.__('Righe Pari','albo-pretorio-on-line').'</label></th>
 					<td> 
-						<input type="text" id="colorp" name="colorp" value="'.$colPari.'" size="5"/>
+						<input type="text" id="colorp" name="colorp" value="'.esc_attr($colPari).'" size="5"/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="colord">'.__('Righe Dispari','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="colord">'.__('Righe Dispari','albo-pretorio-on-line').'</label></th>
 					<td> 
-						<input type="text" id="colord" name="colord" value="'.$colDispari.'" size="5"/>
+						<input type="text" id="colord" name="colord" value="'.esc_attr($colDispari).'" size="5"/>
 					</td>
 				</tr>
 			</table>
@@ -1528,49 +1548,49 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				<h3>Colonne Tabella</h3>
 				<table class="albo_cell">
 				<tr>
-					<th scope="row"><label for="data">'.__('Data','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="data">'.__('Data','albo-pretorio-on-line').'</label></th>
 					<td> 
 						<input type="checkbox" id="data" name="Data" value="1" '.($FEColsOption['Data']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="ente">'.__('Ente','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="ente">'.__('Ente','albo-pretorio-on-line').'</label></th>
 					<td> 
 						<input type="checkbox" id="ente" name="Ente" value="1" '.($FEColsOption['Ente']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="riferimento">'.__('Riferimento','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="riferimento">'.__('Riferimento','albo-pretorio-on-line').'</label></th>
 					<td> 
 						<input type="checkbox" id="riferimento" name="Riferimento" value="1" '.($FEColsOption['Riferimento']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="oggetto">'.__('Oggetto','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="oggetto">'.__('Oggetto','albo-pretorio-on-line').'</label></th>
 					<td> 
 						<input type="checkbox" id="oggetto" name="Oggetto" value="1" '.($FEColsOption['Oggetto']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="validita">'.__('Validità','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="validita">'.__('Validità','albo-pretorio-on-line').'</label></th>
 					<td> 
 						<input type="checkbox" id="validita" name="Validita" value="1" '.($FEColsOption['Validita']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="categoria">'.__('Categoria','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="categoria">'.__('Categoria','albo-pretorio-on-line').'</label></th>
 					<td> 
 						<input type="checkbox" id="categoria" name="Categoria" value="1" '.($FEColsOption['Categoria']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="note">'.__('Note','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="note">'.__('Note','albo-pretorio-on-line').'</label></th>
 					<td> 
 						<input type="checkbox" id="note" name="Note" value="1" '.($FEColsOption['Note']==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="oblio">'.__('Data Oblio','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label for="oblio">'.__('Data Oblio','albo-pretorio-on-line').'</label></th>
 					<td> 
 						<input type="checkbox" id="oblio" name="DataOblio" value="1" '.($FEColsOption['DataOblio']==1?"checked":"").'/>
 					</td>
@@ -1579,7 +1599,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</div>
 				<table class="albo_cell">
 				<tr>
-					<th scope="row"><label for="PaginaAttiCorrenti">'.__('Pagina Atti Correnti','albo-pretorio-considera').'</label>
+					<th scope="row"><label for="PaginaAttiCorrenti">'.__('Pagina Atti Correnti','albo-pretorio-on-line').'</label>
 					</th>
 					<td>
 						<select name="P_AttiCor" id="PaginaAttiCorrenti" >';
@@ -1597,7 +1617,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				echo '</select></td>
 				</tr>		
 				<tr>
-					<th scope="row"><label for="PaginaAttiStorico">'.__('Pagina Albo Storico','albo-pretorio-considera').'</label>
+					<th scope="row"><label for="PaginaAttiStorico">'.__('Pagina Albo Storico','albo-pretorio-on-line').'</label>
 					</th>
 					<td>
 						<select name="P_AttiSto" id="PaginaAttiStorico" >';
@@ -1616,7 +1636,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="PaginaAtto">'.__('Pagina Visualizzazione singolo atto','albo-pretorio-considera').'</label>
+					<th scope="row"><label for="PaginaAtto">'.__('Pagina Visualizzazione singolo atto','albo-pretorio-on-line').'</label>
 					</th>
 					<td>
 						<select name="P_Atto" id="PaginaAtt0" >';
@@ -1636,11 +1656,11 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 				</tr>
 				<tr>
 					<th>
-						<label for="icona">'.__('Immagine documenti','albo-pretorio-considera').'</label>
+						<label for="icona">'.__('Immagine documenti','albo-pretorio-on-line').'</label>
 					</th>
 					<td>
-						<input name="imgDocumenti" id="icona" type="text" value="'.$IconaDocumenti.'" style="width:80%;" aria-required="true" />
-						<input id="icona_upload" class="button" type="button" value="Carica" /><br />'.__('Dimensione max 256x256','albo-pretorio-considera').'
+						<input name="imgDocumenti" id="icona" type="text" value="'.esc_attr($IconaDocumenti).'" style="width:80%;" aria-required="true" />
+						<input id="icona_upload" class="button" type="button" value="Carica" /><br />'.__('Dimensione max 256x256','albo-pretorio-on-line').'
 						<div style="margin-top:5px;">
 							<img src="'.$IconaDocumenti.'" width="30" height="30" id="IconaTipoFile"/>
 						</div>
@@ -1651,17 +1671,17 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		<div id="Conf-tab-3">		  
 			<table class="albo_cell">
 			<tr>
-				<th scope="row"><label for="LogOperazioni">'.__("Abilita il Log sulle Operazioni di gestione degli Oggetti dell'Albo",'albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="LogOperazioni">'.__("Abilita il Log sulle Operazioni di gestione degli Oggetti dell'Albo",'albo-pretorio-on-line').'</label></th>
 				<td> 
-					<input type="radio" id="LogOperazioniSi" name="LogOperazioni" value="Si" '.$LOStatoS.'>'.__('Si','albo-pretorio-considera').'<br>
-					<input type="radio" id="LogOperazioniNo" name="LogOperazioni" value="No" '.$LOStatoN.'>'.__('No','albo-pretorio-considera').'
+					<input type="radio" id="LogOperazioniSi" name="LogOperazioni" value="Si" '.$LOStatoS.'>'.__('Si','albo-pretorio-on-line').'<br>
+					<input type="radio" id="LogOperazioniNo" name="LogOperazioni" value="No" '.$LOStatoN.'>'.__('No','albo-pretorio-on-line').'
 				</td>		
 			</tr>
 			<tr>
-				<th scope="row"><label for="LogOperazioni">'.__('Abilita il Log sulle Visualizzazioni/Download degli atti pubblicati','albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="LogOperazioni">'.__('Abilita il Log sulle Visualizzazioni/Download degli atti pubblicati','albo-pretorio-on-line').'</label></th>
 				<td> 
-					<input type="radio" id="LogAccessiSi" name="LogAccessi" value="Si" '.$LOAccessiS.'>'.__('Si','albo-pretorio-considera').'<br>
-					<input type="radio" id="LogAccessiNo" name="LogAccessi" value="No" '.$LOAccessiN.'>'.__('No','albo-pretorio-considera').'
+					<input type="radio" id="LogAccessiSi" name="LogAccessi" value="Si" '.$LOAccessiS.'>'.__('Si','albo-pretorio-on-line').'<br>
+					<input type="radio" id="LogAccessiNo" name="LogAccessi" value="No" '.$LOAccessiN.'>'.__('No','albo-pretorio-on-line').'
 				</td>		
 			</tr>
 		</table>
@@ -1669,7 +1689,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	   	<div id="Conf-tab-4">
 			  <table class="albo_cell">
 				<tr>
-					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-considera').' [Albo ....]</label></th>
+					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-on-line').' [Albo ....]</label></th>
 					<td>';
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -1686,7 +1706,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 					</td>
 				</tr>		
 				<tr>
-					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-considera').' [AlboGruppiAtti ....]</label></th>
+					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-on-line').' [AlboGruppiAtti ....]</label></th>
 					<td>';
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -1703,7 +1723,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 					</td>
 				</tr>		
 				<tr>
-					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-considera').' [AlboVisAtto ....]</label></th>
+					<th scope="row"><label>'.__('Ruoli Abilitati a visualizzare il pulsante per la creazione dello shortcode','albo-pretorio-on-line').' [AlboVisAtto ....]</label></th>
 					<td>';
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -1720,7 +1740,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 					</td>
 				</tr>	
 			<tr>
-				<th scope="row"><label for="AutoShortCode">'.__("Abilita l'inserimento automatico della visualizzazione degli atti nei Bandi di gara e contratti attraverso il MetaDato CIG",'albo-pretorio-considera').'</label></th>
+				<th scope="row"><label for="AutoShortCode">'.__("Abilita l'inserimento automatico della visualizzazione degli atti nei Bandi di gara e contratti attraverso il MetaDato CIG",'albo-pretorio-on-line').'</label></th>
 				<td><input type="checkbox" id="AutoShortCode" name="AutoShortCode" value="Si" '.($AutoShortcode=="Si"?"checked":"").'/></td>
 			</tr>
 				</table>
@@ -1728,15 +1748,15 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	   	<div id="Conf-tab-5">
 			  <table class="albo_cell">
 				<tr>
-					<th scope="row"><label>'.__('Nome Responsabile','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label>'.__('Nome Responsabile','albo-pretorio-on-line').'</label></th>
 					<td>
-						<input type="text" id="NoResp" name="NoResp" maxlength="255" value="'.$Testi["NoResp"].'" style="width:100%;"/>
+						<input type="text" id="NoResp" name="NoResp" maxlength="255" value="'.esc_attr($Testi["NoResp"]).'" style="width:100%;"/>
 					</td>
 				</tr>	
 				<tr>
-					<th scope="row"><label>'.__('Certificato Pubblicazione','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label>'.__('Certificato Pubblicazione','albo-pretorio-on-line').'</label></th>
 					<td>
-						<input type="text" id="CertPub" name="CertPub" maxlength="255" value="'.$Testi["CertPub"].'" style="width:100%;"/>
+						<input type="text" id="CertPub" name="CertPub" maxlength="255" value="'.esc_attr($Testi["CertPub"]).'" style="width:100%;"/>
 					</td>
 				</tr>	
 			  </table>	
@@ -1744,22 +1764,22 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	   	<div id="Conf-tab-6">
 			  <table style="text-align:right;line-height:3em;">
 				<tr>
-					<th scope="row"><label>'.__('Responsabile Giudirico Amministrativo','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label>'.__('Responsabile Giudirico Amministrativo','albo-pretorio-on-line').'</label></th>
 					<td>'.
-					ap_get_dropdown_responsabili("resp_giu_am","resp_giu_am","ElencoSoggetti","",(isset($DefaultSoggetti["AM"])?$DefaultSoggetti["AM"]:0),array("SC","DR"))
+					albopc_get_dropdown_responsabili("resp_giu_am","resp_giu_am","ElencoSoggetti","",(isset($DefaultSoggetti["AM"])?$DefaultSoggetti["AM"]:0),array("SC","DR"))
 					.'</td>
 				</tr>	
 				<tr>
-					<th scope="row"><label>'.__('Responsabile Procedimento','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label>'.__('Responsabile Procedimento','albo-pretorio-on-line').'</label></th>
 					<td>'.
-					ap_get_dropdown_responsabili("resp_giu_rp","resp_giu_rp","ElencoSoggetti","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP")
+					albopc_get_dropdown_responsabili("resp_giu_rp","resp_giu_rp","ElencoSoggetti","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP")
 					.'	
 					</td>
 				</tr>	
 				<tr>
-					<th scope="row"><label>'.__('Responsabile Pubblicazione','albo-pretorio-considera').'</label></th>
+					<th scope="row"><label>'.__('Responsabile Pubblicazione','albo-pretorio-on-line').'</label></th>
 					<td>'.
-					ap_get_dropdown_responsabili("resp_giu_rb","resp_giu_rb","ElencoSoggetti","",(isset($DefaultSoggetti["RB"])?$DefaultSoggetti["RB"]:0),"RB")
+					albopc_get_dropdown_responsabili("resp_giu_rb","resp_giu_rb","ElencoSoggetti","",(isset($DefaultSoggetti["RB"])?$DefaultSoggetti["RB"]:0),"RB")
 					.'	
 						
 					</td>
@@ -1770,23 +1790,23 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		  <table class="albo_cell" border=1>
 			<tr>
 				<th scope="row">
-					<label for="rest_api">'.__('Abilitazione Rest Api','albo-pretorio-considera').'</label>
+					<label for="rest_api">'.__('Abilitazione Rest Api','albo-pretorio-on-line').'</label>
 				</th>
 				<td>
-					<input type="checkbox" name="rest_api" value="Si" '.$ChkRestApi.' id="rest_api"/> '.__("Selezionare questa opzione per abilitare le Rest Api per l'Albo",'albo-pretorio-considera').'
+					<input type="checkbox" name="rest_api" value="Si" '.$ChkRestApi.' id="rest_api"/> '.__("Selezionare questa opzione per abilitare le Rest Api per l'Albo",'albo-pretorio-on-line').'
 				</td>
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="rest_api_urlest">'.__('Url da abilitare','albo-pretorio-considera').'</label>
+					<label for="rest_api_urlest">'.__('Url da abilitare','albo-pretorio-on-line').'</label>
 				</th>
 				<td>
-					<input type="text" name="rest_api_urlest" value="'.$RestApiUrlEst.'" id="rest_api_urlest" size="50"/>  <br />'.__("Inserire l'Url del sito client che in cui viene interrogato l'Albo, per abilitare la visualizzazione degli allegati",'albo-pretorio-considera').'
+					<input type="text" name="rest_api_urlest" value="'.esc_attr($RestApiUrlEst).'" id="rest_api_urlest" size="50"/>  <br />'.__("Inserire l'Url del sito client che in cui viene interrogato l'Albo, per abilitare la visualizzazione degli allegati",'albo-pretorio-on-line').'
 				</td>
 			</tr>
 			<tr>
 				<th scope="row">
-					<label>'.__('Endpoint per le Categorie','albo-pretorio-considera').'</label>
+					<label>'.__('Endpoint per le Categorie','albo-pretorio-on-line').'</label>
 				</th>
 				<td>
 				'.$BaseUrlRestApi.'categorie
@@ -1794,7 +1814,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</tr>
 			<tr>
 				<th scope="row">
-					<label>'.__('Endpoint per gli Enti','albo-pretorio-considera').'</label>
+					<label>'.__('Endpoint per gli Enti','albo-pretorio-on-line').'</label>
 				</th>
 				<td>
 				'.$BaseUrlRestApi.'enti
@@ -1802,19 +1822,19 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</tr>
 			<tr>
 				<th scope="row">
-					<label>'.__('Endpoint per il singolo Atto','albo-pretorio-considera').'</label>
+					<label>'.__('Endpoint per il singolo Atto','albo-pretorio-on-line').'</label>
 				</th>
 				<td>
 					<table class="noalbo_cell">
 						<tr>
 							<td>
-				'.$BaseUrlRestApi.'atto/'.__('Numero_atto/Anno_Atto oppure','albo-pretorio-considera').'<br />'.$BaseUrlRestApi.'atto/ID_Atto
+				'.$BaseUrlRestApi.'atto/'.__('Numero_atto/Anno_Atto oppure','albo-pretorio-on-line').'<br />'.$BaseUrlRestApi.'atto/ID_Atto
 							</td>
 						</tr>
 						<tr>
 							<td>
-				<em>es. '.$BaseUrlRestApi.'atto/1/2018  '.__("verranno restituiti i dati dell'atto n. 1 del 2018",'albo-pretorio-considera').'<br />
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$BaseUrlRestApi.'atto/305  '.__("verranno restituiti i dati dell'atto con ",'albo-pretorio-considera').'ID n° 305</em>
+				<em>es. '.$BaseUrlRestApi.'atto/1/2018  '.__("verranno restituiti i dati dell'atto n. 1 del 2018",'albo-pretorio-on-line').'<br />
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$BaseUrlRestApi.'atto/305  '.__("verranno restituiti i dati dell'atto con ",'albo-pretorio-on-line').'ID n° 305</em>
 							</td>
 						</tr>
 					</table>
@@ -1822,133 +1842,134 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 			</tr>
 			<tr>
 				<th scope="row">
-					<label>'.__('Endpoint per gli Atti','albo-pretorio-considera').'</label>
+					<label>'.__('Endpoint per gli Atti','albo-pretorio-on-line').'</label>
 				</th>
 				<td>
 					<table class="noalbo_cell" border=1>
 						<tr>
 							<td colspan=3>
-				'.$BaseUrlRestApi.'atti?'.__('parametro1=valore1&amp;parametro2=valore2 ...','albo-pretorio-considera').'
+				'.$BaseUrlRestApi.'atti?'.__('parametro1=valore1&amp;parametro2=valore2 ...','albo-pretorio-on-line').'
 							</td>
 						</tr>
 						<tr>
 							<td colspan=3>
-				<em>es. '.$BaseUrlRestApi.'atti?stato=1  '.__('verranno restituiti i dati di tutti gli atti correnti','albo-pretorio-considera').'</em>
+				<em>es. '.$BaseUrlRestApi.'atti?stato=1  '.__('verranno restituiti i dati di tutti gli atti correnti','albo-pretorio-on-line').'</em>
 							</td>
 						</tr>
 						<tr>
-							<th>'.__('Parametro','albo-pretorio-considera').'</th>
-							<th>'.__('Valore di Default','albo-pretorio-considera').'</th>
-							<th>'.__('Valori ammissibili','albo-pretorio-considera').'</th>
+							<th>'.__('Parametro','albo-pretorio-on-line').'</th>
+							<th>'.__('Valore di Default','albo-pretorio-on-line').'</th>
+							<th>'.__('Valori ammissibili','albo-pretorio-on-line').'</th>
 						</tr>
 						<tr>
-							<td>'.__('stato','albo-pretorio-considera').'</td>
+							<td>'.__('stato','albo-pretorio-on-line').'</td>
 							<td>1</td>
-							<td>'.__('Numero 1 (atti correnti) o 2 (atti storico)','albo-pretorio-considera').'</td>
+							<td>'.__('Numero 1 (atti correnti) o 2 (atti storico)','albo-pretorio-on-line').'</td>
 						</tr>
 						<tr>
 							<td>per_page</td>
 							<td>10</td>
-							<td> -1 '.__('per tutti gli atti dello stato','albo-pretorio-considera').'Numero atti per pagina > 0<br /></td>
+							<td> -1 '.__('per tutti gli atti dello stato','albo-pretorio-on-line').'Numero atti per pagina > 0<br /></td>
 						</tr>						
 						<tr>
 							<td>page</td>
 							<td>1</td>
-							<td>'.__('Numero pagina','albo-pretorio-considera').' > 0</td>
+							<td>'.__('Numero pagina','albo-pretorio-on-line').' > 0</td>
 						</tr>						
 						<tr>
 							<td>categorie</td>
-							<td>0 '.__('(Nessun filtro sulle categorie)','albo-pretorio-considera').'</td>
-							<td>'.__('Elenco ID delle Categorie codificate separate da','albo-pretorio-considera').' , es. 1,5,9</td>
+							<td>0 '.__('(Nessun filtro sulle categorie)','albo-pretorio-on-line').'</td>
+							<td>'.__('Elenco ID delle Categorie codificate separate da','albo-pretorio-on-line').' , es. 1,5,9</td>
 						</tr>						
 						<tr>
 							<td>ente</td>
-							<td>-1 '.__('ente principale','albo-pretorio-considera').'</td>
-							<td>'.__('Ente degli atti','albo-pretorio-considera').'</td>
+							<td>-1 '.__('ente principale','albo-pretorio-on-line').'</td>
+							<td>'.__('Ente degli atti','albo-pretorio-on-line').'</td>
 						</tr>						
 						<tr>
 							<td>numero</td>
-							<td>0 '.__('(Nessun filtro sul numero)','albo-pretorio-considera').'</td>
-							<td>'.__('Numero atto','albo-pretorio-considera').'</td>
+							<td>0 '.__('(Nessun filtro sul numero)','albo-pretorio-on-line').'</td>
+							<td>'.__('Numero atto','albo-pretorio-on-line').'</td>
 						</tr>						
 						<tr>
 							<td>anno</td>
-							<td>0 '.__("(Nessun filtro sull'anno)",'albo-pretorio-considera').'</td>
-							<td>'.__('Anno atto','albo-pretorio-considera').'</td>
+							<td>0 '.__("(Nessun filtro sull'anno)",'albo-pretorio-on-line').'</td>
+							<td>'.__('Anno atto','albo-pretorio-on-line').'</td>
 						</tr>						
 						<tr>
 							<td>oggetto</td>
-							<td>\'\' '.__("(Nessun filtro sull'oggetto)",'albo-pretorio-considera').'</td>
-							<td>'.__('Oggetto atto','albo-pretorio-considera').'</td>
+							<td>\'\' '.__("(Nessun filtro sull'oggetto)",'albo-pretorio-on-line').'</td>
+							<td>'.__('Oggetto atto','albo-pretorio-on-line').'</td>
 						</tr>						
 						<tr>
 							<td>riferimento</td>
-							<td>\'\' '.__('(Nessun filtro sul riferimento)','albo-pretorio-considera').'</td>
-							<td>'.__('Riferimento atti','albo-pretorio-considera').'</td>
+							<td>\'\' '.__('(Nessun filtro sul riferimento)','albo-pretorio-on-line').'</td>
+							<td>'.__('Riferimento atti','albo-pretorio-on-line').'</td>
 						</tr>						
 						<tr>
 							<td>dadata</td>
-							<td>0 '.__('(Nessun filtro sulla data di inizio)','albo-pretorio-considera').'</td>
-							<td>'.__('Data inizio intervallo di filtro in formato gg/mm/aaaa','albo-pretorio-considera').'</td>
+							<td>0 '.__('(Nessun filtro sulla data di inizio)','albo-pretorio-on-line').'</td>
+							<td>'.__('Data inizio intervallo di filtro in formato gg/mm/aaaa','albo-pretorio-on-line').'</td>
 						</tr>						
 						<tr>
 							<td>adata</td>
-							<td>0 '.__('(Nessun filtro sulla data di fine)','albo-pretorio-considera').'</td>
-							<td>'.__('Data fine intervallo di filtro in formato gg/mm/aaaa','albo-pretorio-considera').'</td>
+							<td>0 '.__('(Nessun filtro sulla data di fine)','albo-pretorio-on-line').'</td>
+							<td>'.__('Data fine intervallo di filtro in formato gg/mm/aaaa','albo-pretorio-on-line').'</td>
 						</tr>	
 					</table>
 			</tr>
 		  </table>		
 		</div>
 	<div id="Conf-tab-8">
-		<p>'.__('Impostazione dello stato dei link degli Allegati nel Back-End','albo-pretorio-considera').'</p>
+		<p>'.__('Impostazione dello stato dei link degli Allegati nel Back-End','albo-pretorio-on-line').'</p>
 		<table class="albo_cell">
 		  <tr>
 			  <th scope="row">
-				  <label for="all">'.__('Link visualizza e scarica Allegati','albo-pretorio-considera').'</label>
+				  <label for="all">'.__('Link visualizza e scarica Allegati','albo-pretorio-on-line').'</label>
 			  </th>
 			  <td>
-				  <input type="radio" name="allegati" id="all" value="all" '.($StatoAllegati=="all"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto il link per la Visualizzazione ed il link di Scaricamento degli Allegati",'albo-pretorio-considera').'
+				  <input type="radio" name="allegati" id="all" value="all" '.($StatoAllegati=="all"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto il link per la Visualizzazione ed il link di Scaricamento degli Allegati",'albo-pretorio-on-line').'
 			  </td>
 		  </tr>
 		  <tr>
 			  <th scope="row">
-				  <label for="vis">'.__('SOLO Link visualizza Allegati','albo-pretorio-considera').'</label>
+				  <label for="vis">'.__('SOLO Link visualizza Allegati','albo-pretorio-on-line').'</label>
 			  </th>
 			  <td>
-				  <input type="radio" name="allegati" id="vis" value="vis" '.($StatoAllegati=="vis"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per la Visualizzazione degli Allegati",'albo-pretorio-considera').'
+				  <input type="radio" name="allegati" id="vis" value="vis" '.($StatoAllegati=="vis"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per la Visualizzazione degli Allegati",'albo-pretorio-on-line').'
 			  </td>
 		  </tr>
 		  <tr>
 			  <th scope="row">
-				  <label for="dwn">'.__('SOLO Link scarica Allegati','albo-pretorio-considera').'</label>
+				  <label for="dwn">'.__('SOLO Link scarica Allegati','albo-pretorio-on-line').'</label>
 			  </th>
 			  <td>
-				  <input type="radio" name="allegati" id="dwn" value="dwn" '.($StatoAllegati=="dwn"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per il Download degli Allegati",'albo-pretorio-considera').'
+				  <input type="radio" name="allegati" id="dwn" value="dwn" '.($StatoAllegati=="dwn"?"checked='checked'":"").'/><br />'.__("Selezionare questa opzione se si vuole inserire nella visualizzazione dell'atto SOLO il link per il Download degli Allegati",'albo-pretorio-on-line').'
 			  </td>
 		  </tr>
 		</table>
 	</div>
   </div>
 	    <p class="submit">
-	        <input type="submit" name="AlboPretorio_submit_button" value="'.__('Salva Modifiche','albo-pretorio-considera').'" />
+	        <input type="submit" name="AlboPretorio_submit_button" value="'.__('Salva Modifiche','albo-pretorio-on-line').'" />
 	    </p> 
 	    </form>
 	    </div>';
-		if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
+		if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			echo '<div style="border: medium groove Blue;margin-top:10px;margin-right:250px;">
 					<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 						<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
 						<input type="hidden" name="action" value="setta-anno" />
-	  					<input type="hidden" name="confAP" value="'.wp_create_nonce('configurazionealbo').'" />
-						<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-pretorio-considera').'"  />
+	  					<input type="hidden" name="confAP" value="'.esc_attr(wp_create_nonce('configurazionealbo')).'" />
+						<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-pretorio-on-line').'"  />
 						</form>
 					</div>
 				  </div>';
 		}
 
+	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
-	function define_tables() {		
+	function define_tables() {
 		global $wpdb,$table_prefix;
 		
 		// add database pointer 
@@ -1980,24 +2001,15 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 */
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine');
 	if(!is_dir($Dir)){
-		mkdir($Dir, 0744,TRUE);		
+		wp_mkdir_p($Dir);		
 	}
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/BackupDatiAlbo');
 	if(!is_dir($Dir)){
-		mkdir($Dir, 0744,TRUE);
+		wp_mkdir_p($Dir);
 	}
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/OblioDatiAlbo');
 	if(!is_dir($Dir)){
-		mkdir($Dir, 0744,TRUE);
-	}
-	if (file_exists(Albo_DIR."/js/gencode.php")){
-		chmod(Albo_DIR."/js/gencode.php", 0755);
-	}
-	if (file_exists(Albo_DIR."/js/buttonEditorGruppiAlbo.php")){
-		chmod(Albo_DIR."/js/buttonEditorGruppiAlbo.php", 0755);
-	}
-	if (file_exists(Albo_DIR."/js/buttonEditorVisAtto.php")){
-		chmod(Albo_DIR."/js/buttonEditorVisAtto.php", 0755);
+		wp_mkdir_p($Dir);
 	}
 /**
 * Impostazione Ruoli
@@ -2087,9 +2099,9 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		}
 	if(get_option('opt_AP_TipidiFiles')  == '' || !get_option('opt_AP_TipidiFiles')){
 		$TipidiFiles=array();
-		$TipidiFiles["ndf"]= array("Descrizione"=>__('Tipo file non definito','albo-pretorio-considera'),"Icona"=>Albo_URL."img/notipofile.png","Verifica"=>"");
-		$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-pretorio-considera'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
-		$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-considera'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-considera')."</a>"));
+		$TipidiFiles["ndf"]= array("Descrizione"=>__('Tipo file non definito','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/notipofile.png","Verifica"=>"");
+		$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
+		$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-on-line')."</a>"));
 		add_option('opt_AP_TipidiFiles', $TipidiFiles);
 	}
 	// Migrazione: riallinea le URL delle icone dei Tipi di Files alla cartella
@@ -2109,21 +2121,21 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		if ($TdF_mod) { update_option('opt_AP_TipidiFiles', $TdF); }
 	}
 	if(get_option('opt_AP_AnnoProgressivo')  == '' || !get_option('opt_AP_AnnoProgressivo')){
-		add_option('opt_AP_AnnoProgressivo', ''.date("Y").'');
+		add_option('opt_AP_AnnoProgressivo', ''.gmdate("Y").'');
 	}
 	if(get_option('opt_AP_NumeroProgressivo')  == '' || !get_option('opt_AP_NumeroProgressivo')){
 		add_option('opt_AP_NumeroProgressivo', '1');
 	}
 	if(get_option('opt_AP_FolderUpload') == '' || !get_option('opt_AP_FolderUpload') ){
 		if(!is_dir(AP_BASE_DIR.'AllegatiAttiAlboPretorio')){   
-			mkdir(AP_BASE_DIR.'AllegatiAttiAlboPretorio', 0755);
+			wp_mkdir_p(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 		}
 		add_option('opt_AP_FolderUpload', 'AllegatiAttiAlboPretorio');
 	}else{
 		if (get_option('opt_AP_FolderUpload')!='AllegatiAttiAlboPretorio')
 			update_option('opt_AP_FolderUpload', 'AllegatiAttiAlboPretorio');
 	}
-	ap_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');	
+	albopc_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');	
 	if(get_option('opt_AP_VisualizzaEnte') == '' || !get_option('opt_AP_VisualizzaEnte')){
 		add_option('opt_AP_VisualizzaEnte', 'Si');
 	}
@@ -2196,152 +2208,152 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 		delete_option('opt_AP_EffettiCSS3');
 		delete_option( 'opt_AP_stileTableFE' );  
 
-		ap_CreaTabella($wpdb->table_name_Atti);
-		ap_CreaTabella($wpdb->table_name_Categorie);
-		ap_CreaTabella($wpdb->table_name_Allegati);
-		ap_CreaTabella($wpdb->table_name_Log);
-		ap_CreaTabella($wpdb->table_name_RespProc);
-		ap_CreaTabella($wpdb->table_name_Enti);		
-		ap_CreaTabella($wpdb->table_name_Attimeta);
-		ap_CreaTabella($wpdb->table_name_UO);
+		albopc_CreaTabella($wpdb->table_name_Atti);
+		albopc_CreaTabella($wpdb->table_name_Categorie);
+		albopc_CreaTabella($wpdb->table_name_Allegati);
+		albopc_CreaTabella($wpdb->table_name_Log);
+		albopc_CreaTabella($wpdb->table_name_RespProc);
+		albopc_CreaTabella($wpdb->table_name_Enti);		
+		albopc_CreaTabella($wpdb->table_name_Attimeta);
+		albopc_CreaTabella($wpdb->table_name_UO);
 /*************************************************************************************
 ** Area riservata per l'aggiunta di nuovi campi in una delle tabelle dell' albo ******
 *************************************************************************************/
- 		if(ap_get_ente_me() == '' || !ap_get_ente(0)){
-			ap_create_ente_me();
+ 		if(albopc_get_ente_me() == '' || !albopc_get_ente(0)){
+			albopc_create_ente_me();
 		}         
-		if (!ap_existFieldInTable($wpdb->table_name_RespProc, "Funzione")){
-			ap_AggiungiCampoTabella($wpdb->table_name_RespProc, "Funzione", " CHAR(8) DEFAULT 'RP'");		
+		if (!albopc_existFieldInTable($wpdb->table_name_RespProc, "Funzione")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_RespProc, "Funzione", " CHAR(8) DEFAULT 'RP'");		
 		}		
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "TipoFile")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "TipoFile", " VARCHAR(6) DEFAULT ''");
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "TipoFile")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "TipoFile", " VARCHAR(6) DEFAULT ''");
 		}	
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "Soggetti")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "Soggetti", " VARCHAR(100) NOT NULL");			
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "Soggetti")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "Soggetti", " VARCHAR(100) NOT NULL");			
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "RespProc")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "RespProc", " INT NOT NULL");				
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "RespProc")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "RespProc", " INT NOT NULL");				
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "DataOblio")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "DataOblio", " date NOT NULL DEFAULT '0000-00-00'");
-			ap_SetDefaultDataScadenza();
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "DataOblio")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "DataOblio", " date NOT NULL DEFAULT '0000-00-00'");
+			albopc_SetDefaultDataScadenza();
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "MotivoAnnullamento")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "MotivoAnnullamento", " varchar(100) default ''");
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "MotivoAnnullamento")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "MotivoAnnullamento", " varchar(100) default ''");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "Ente")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "Ente", " INT NOT NULL default 0");
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "Ente")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "Ente", " INT NOT NULL default 0");
 		}
 
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "IdUnitaOrganizzativa")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "IdUnitaOrganizzativa", " INT NOT NULL default 0");
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "IdUnitaOrganizzativa")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "IdUnitaOrganizzativa", " INT NOT NULL default 0");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "Richiedente")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "Richiedente", " varchar(100) NOT NULL default ''");
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "Richiedente")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "Richiedente", " varchar(100) NOT NULL default ''");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "DocIntegrale")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "DocIntegrale", " tinyint(1) NOT NULL DEFAULT '1'");
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "DocIntegrale")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "DocIntegrale", " tinyint(1) NOT NULL DEFAULT '1'");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "Impronta")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "Impronta", " CHAR(64) NOT NULL");
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "Impronta")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "Impronta", " CHAR(64) NOT NULL");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "Natura")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "Natura", " CHAR(1) NOT NULL default 'A'");
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "Natura")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "Natura", " CHAR(1) NOT NULL default 'A'");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "Note")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "Note", " varchar(255) default ''");		
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "Note")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "Note", " varchar(255) default ''");		
 		}		
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"Riferimento"))!="varchar(255)"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "Riferimento", "varchar(255)");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"Riferimento"))!="varchar(255)"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "Riferimento", "varchar(255)");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"Oggetto"))!="text"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "Oggetto", "TEXT");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"Oggetto"))!="text"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "Oggetto", "TEXT");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"MotivoAnnullamento"))!="varchar(255)"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "MotivoAnnullamento", "varchar(255)");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"MotivoAnnullamento"))!="varchar(255)"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "MotivoAnnullamento", "varchar(255)");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"Informazioni"))!="text"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "Informazioni", "TEXT");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"Informazioni"))!="text"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "Informazioni", "TEXT");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"Riferimento"))!="text"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "Riferimento", "TEXT");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"Riferimento"))!="text"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "Riferimento", "TEXT");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"MotivoAnnullamento"))!="text"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "MotivoAnnullamento", "TEXT");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"MotivoAnnullamento"))!="text"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "MotivoAnnullamento", "TEXT");
 		}
 
-//		ap_ModificaParametriCampo($Tabella, $Campo, $Tipo $Parametro)
-		$par=ap_EstraiParametriCampo($wpdb->table_name_Atti,"Riferimento");
+//		albopc_ModificaParametriCampo($Tabella, $Campo, $Tipo $Parametro)
+		$par=albopc_EstraiParametriCampo($wpdb->table_name_Atti,"Riferimento");
 		if(strtolower($par["Null"])=="yes")
-			ap_ModificaParametriCampo($wpdb->table_name_Atti, "Riferimento",$par["Type"] ,"NOT NULL");
-		$par=ap_EstraiParametriCampo($wpdb->table_name_Atti,"Oggetto");
+			albopc_ModificaParametriCampo($wpdb->table_name_Atti, "Riferimento",$par["Type"] ,"NOT NULL");
+		$par=albopc_EstraiParametriCampo($wpdb->table_name_Atti,"Oggetto");
 		if(strtolower($par["Null"])=="yes")
-			ap_ModificaParametriCampo($wpdb->table_name_Atti, "Oggetto",$par["Type"] ,"NOT NULL");    
-		ap_manutenzioneLogVisualizzazione();
+			albopc_ModificaParametriCampo($wpdb->table_name_Atti, "Oggetto",$par["Type"] ,"NOT NULL");    
+		albopc_manutenzioneLogVisualizzazione();
 	}  	 
 	
 	
 	function deactivate() {
 	    if ( ! current_user_can( 'activate_plugins' ) )
 	        return;
-	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	    $plugin = isset( $_REQUEST['plugin'] ) ? sanitize_text_field(wp_unslash($_REQUEST['plugin'] ?? '')) : '';
 	    check_admin_referer( "deactivate-plugin_{$plugin}" );
 		flush_rewrite_rules();	
 		remove_shortcode('Albo');
 	}
 
 	function update_AlboPretorio_settings(){
-	    if(isset($_POST['AlboPretorio_submit_button']) And $_POST['AlboPretorio_submit_button'] == __('Salva Modifiche','albo-pretorio-considera')){
+	    if(isset($_POST['AlboPretorio_submit_button']) And sanitize_text_field(wp_unslash($_POST['AlboPretorio_submit_button'] ?? '')) == __('Salva Modifiche','albo-pretorio-on-line')){
 	    	if (!current_user_can('admin_albo')) {
-	    		wp_die(esc_html__("Non hai i permessi per modificare la configurazione dell'Albo","albo-pretorio-considera"));
+	    		wp_die(esc_html__("Non hai i permessi per modificare la configurazione dell'Albo","albo-pretorio-on-line"));
 	    	}
 	    	if (!isset($_POST['confAP'])) {
-	    		wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+	    		wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line"));
 	    	}
-			if (!wp_verify_nonce($_POST['confAP'],'configurazionealbo')){
-				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['confAP'] ?? '')),'configurazionealbo')){
+				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line"));
 			}
-		    ap_set_ente_me(wp_strip_all_tags($_POST['c_Ente']));
-			if (isset($_POST['c_VEnte']) And $_POST['c_VEnte']=='Si')
+		    albopc_set_ente_me(sanitize_text_field(wp_unslash($_POST['c_Ente'] ?? '')));
+			if (isset($_POST['c_VEnte']) And sanitize_text_field(wp_unslash($_POST['c_VEnte'] ?? '')) == 'Si')
 			    update_option('opt_AP_VisualizzaEnte','Si' );
 			else
 				update_option('opt_AP_VisualizzaEnte','No' );
 			if (isset($_POST['defEnte']))
-			    update_option('opt_AP_DefaultEnte',$_POST['defEnte'] );
+			    update_option('opt_AP_DefaultEnte',sanitize_text_field(wp_unslash($_POST['defEnte'] ?? '')) );
 			else
 				update_option('opt_AP_DefaultEnte',0 );
 			if (isset($_POST['progressivo']))
-			    update_option('opt_AP_NumeroProgressivo',(int)$_POST['progressivo'] );
+			    update_option('opt_AP_NumeroProgressivo',(isset($_POST['progressivo'])?(int)$_POST['progressivo']:0) );
 			if(isset($_POST['RuoliPuls'])){
-				$StRuoli=implode(",",$_POST['RuoliPuls']);
+				$StRuoli=implode(",",isset($_POST['RuoliPuls'])?array_map('sanitize_text_field',wp_unslash($_POST['RuoliPuls'])):array());
 				update_option('opt_AP_RuoliPuls',$StRuoli);
 			}
 			if(isset($_POST['RuoliPulsG'])){
-				$StRuoliG=implode(",",$_POST['RuoliPulsG']);
+				$StRuoliG=implode(",",isset($_POST['RuoliPulsG'])?array_map('sanitize_text_field',wp_unslash($_POST['RuoliPulsG'])):array());
 				update_option('opt_AP_RuoliPulsGruppi',$StRuoliG);
 			}
 			if(isset($_POST['RuoliPulsVA'])){
-				$StRuoliVA=implode(",",$_POST['RuoliPulsVA']);
+				$StRuoliVA=implode(",",isset($_POST['RuoliPulsVA'])?array_map('sanitize_text_field',wp_unslash($_POST['RuoliPulsVA'])):array());
 				update_option('opt_AP_RuoliPulsVisualizzaAtto',$StRuoliVA);
 			}
-			update_option('opt_AP_Ente',stripslashes($_POST['c_Ente']));
-		    update_option('opt_AP_AnnoProgressivo',$_POST['c_AnnoProgressivo'] );
-		    update_option('opt_AP_LivelloTitoloPagina',$_POST['c_LTP'] );
-		    update_option('opt_AP_LivelloTitoloEnte',$_POST['c_LTE'] );
-		    update_option('opt_AP_LivelloTitoloFiltri',$_POST['c_LTF'] );
-			update_option('opt_AP_ColoreAnnullati',wp_strip_all_tags($_POST['color']) );
-			update_option('opt_AP_ColorePari',wp_strip_all_tags($_POST['colorp']) );
-			update_option('opt_AP_ColoreDispari',wp_strip_all_tags($_POST['colord']) );
-			update_option('opt_AP_LogOp', $_POST['LogOperazioni']);
-			update_option('opt_AP_LogAc', $_POST['LogAccessi']);
-			update_option('opt_AP_PAttiCor', $_POST['P_AttiCor']);
-			update_option('opt_AP_PAttiSto', $_POST['P_AttiSto']);
-			update_option('opt_AP_PAtto', $_POST['P_Atto']);
-			update_option('opt_AP_Allegati', $_POST['allegati']);
-			update_option('opt_AP_AutoShortcode',(isset($_POST['AutoShortCode'])?$_POST['AutoShortCode']:0));
-			update_option('opt_AP_OldInterfaccia',(isset($_POST['visoldstyle'])?$_POST['visoldstyle']:0));
-			update_option('opt_AP_UpCSSNewInterface',(isset($_POST['uploadCSSNI'])?$_POST['uploadCSSNI']:0));
-			update_option('opt_AP_BootstrapItalia',(isset($_POST['BootstrapItalia'])?$_POST['BootstrapItalia']:0));
+			update_option('opt_AP_Ente',sanitize_text_field(wp_unslash($_POST['c_Ente'] ?? '')));
+		    update_option('opt_AP_AnnoProgressivo',sanitize_text_field(wp_unslash($_POST['c_AnnoProgressivo'] ?? '')) );
+		    update_option('opt_AP_LivelloTitoloPagina',sanitize_text_field(wp_unslash($_POST['c_LTP'] ?? '')) );
+		    update_option('opt_AP_LivelloTitoloEnte',sanitize_text_field(wp_unslash($_POST['c_LTE'] ?? '')) );
+		    update_option('opt_AP_LivelloTitoloFiltri',sanitize_text_field(wp_unslash($_POST['c_LTF'] ?? '')) );
+			update_option('opt_AP_ColoreAnnullati',sanitize_text_field(wp_unslash($_POST['color'] ?? '')) );
+			update_option('opt_AP_ColorePari',sanitize_text_field(wp_unslash($_POST['colorp'] ?? '')) );
+			update_option('opt_AP_ColoreDispari',sanitize_text_field(wp_unslash($_POST['colord'] ?? '')) );
+			update_option('opt_AP_LogOp', sanitize_text_field(wp_unslash($_POST['LogOperazioni'] ?? '')));
+			update_option('opt_AP_LogAc', sanitize_text_field(wp_unslash($_POST['LogAccessi'] ?? '')));
+			update_option('opt_AP_PAttiCor', sanitize_text_field(wp_unslash($_POST['P_AttiCor'] ?? '')));
+			update_option('opt_AP_PAttiSto', sanitize_text_field(wp_unslash($_POST['P_AttiSto'] ?? '')));
+			update_option('opt_AP_PAtto', sanitize_text_field(wp_unslash($_POST['P_Atto'] ?? '')));
+			update_option('opt_AP_Allegati', sanitize_text_field(wp_unslash($_POST['allegati'] ?? '')));
+			update_option('opt_AP_AutoShortcode',(isset($_POST['AutoShortCode'])?sanitize_text_field(wp_unslash($_POST['AutoShortCode'] ?? '')):0));
+			update_option('opt_AP_OldInterfaccia',(isset($_POST['visoldstyle'])?sanitize_text_field(wp_unslash($_POST['visoldstyle'] ?? '')):0));
+			update_option('opt_AP_UpCSSNewInterface',(isset($_POST['uploadCSSNI'])?sanitize_text_field(wp_unslash($_POST['uploadCSSNI'] ?? '')):0));
+			update_option('opt_AP_BootstrapItalia',(isset($_POST['BootstrapItalia'])?sanitize_text_field(wp_unslash($_POST['BootstrapItalia'] ?? '')):0));
 		  	$FEColsOption=array("Data"=>(isset($_POST['Data'])?1:0),
 		  					  "Ente"=>(isset($_POST['Ente'])?1:0),
 		  					  "Riferimento"=>(isset($_POST['Riferimento'])?1:0),
@@ -2356,24 +2368,24 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
 	  	                "CertPub"=>filter_input(INPUT_POST,"CertPub"));
 			update_option('opt_AP_Testi', json_encode($Testi)); 
 			update_option('opt_AP_IconaDocumenti', filter_input(INPUT_POST,"imgDocumenti")); 
-		  	$DefaultSoggetti=array("AM"=>(isset($_POST['resp_giu_am'])?$_POST['resp_giu_am']:0),
-		  					  	   "RP"=>(isset($_POST['resp_giu_rp'])?$_POST['resp_giu_rp']:0),
-		  					       "RB"=>(isset($_POST['resp_giu_rb'])?$_POST['resp_giu_rb']:0));
+		  	$DefaultSoggetti=array("AM"=>(isset($_POST['resp_giu_am'])?sanitize_text_field(wp_unslash($_POST['resp_giu_am'] ?? '')):0),
+		  					  	   "RP"=>(isset($_POST['resp_giu_rp'])?sanitize_text_field(wp_unslash($_POST['resp_giu_rp'] ?? '')):0),
+		  					       "RB"=>(isset($_POST['resp_giu_rb'])?sanitize_text_field(wp_unslash($_POST['resp_giu_rb'] ?? '')):0));
 			update_option('opt_AP_DefaultSoggetti', json_encode($DefaultSoggetti)); 
 	  		if(null !== get_option('opt_AP_RestApi'))
 	  			$OldRestApi= get_option('opt_AP_RestApi');
 	  		else
 	  			$OldRestApi=NULL;
 			if(isset($_POST['rest_api'])){
-				update_option('opt_AP_RestApi', $_POST['rest_api']); 
+				update_option('opt_AP_RestApi', sanitize_text_field(wp_unslash($_POST['rest_api'] ?? ''))); 
 		  		if(null !== get_option('opt_AP_RestApi_UrlEst'))
 		  			$OldUrlEstRestApi= get_option('opt_AP_RestApi_UrlEst');
 		  		else
 		  			$OldUrlEstRestApi="";
-				update_option('opt_AP_RestApi_UrlEst', $_POST['rest_api_urlest']);
-		  		if($_POST['rest_api_urlest']!=$OldUrlEstRestApi ||
-		  		   $_POST['rest_api']!=$OldRestApi){
-		  			ap_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
+				update_option('opt_AP_RestApi_UrlEst', sanitize_text_field(wp_unslash($_POST['rest_api_urlest'] ?? '')));
+		  		if(sanitize_text_field(wp_unslash($_POST['rest_api_urlest'] ?? ''))!=$OldUrlEstRestApi ||
+		  		   sanitize_text_field(wp_unslash($_POST['rest_api'] ?? ''))!=$OldRestApi){
+		  			albopc_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 		  		}
 		  	}else{
 		  		update_option('opt_AP_RestApi', ""); 
@@ -2383,7 +2395,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=date("Y")){
    		}
 	}
 }
-	global $AP_OnLine;
-	$AP_OnLine = new AlboPretorio();
+	global $albopc_AP_OnLine;
+	$albopc_AP_OnLine = new AlboPretorio();
 }
 ?>
