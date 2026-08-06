@@ -40,8 +40,12 @@ jobs:
 
       - name: Costruisci lo zip pulito
         run: |
-          OUT="albo-pretorio-considera-${{ steps.ver.outputs.version }}.zip"
-          git archive --format=zip --prefix=albo-pretorio-considera/ -o "$OUT" "${GITHUB_REF_NAME}"
+          # Lo slug/cartella deriva dal Text Domain dell'header, così la cartella
+          # interna dello zip combacia con l'installazione esistente (evita il
+          # conflitto di due plugin attivi in cartelle diverse).
+          SLUG=$(grep -m1 'Text Domain:' AlboPretorio.php | sed -E 's/.*Text Domain:[[:space:]]*//' | tr -d '[:space:]\r')
+          OUT="${SLUG}-${{ steps.ver.outputs.version }}.zip"
+          git archive --format=zip --prefix="${SLUG}/" -o "$OUT" "${GITHUB_REF_NAME}"
           unzip -t "$OUT" > /dev/null
           echo "OUT=$OUT" >> "$GITHUB_ENV"
 
