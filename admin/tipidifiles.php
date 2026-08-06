@@ -8,7 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package    Albo On Line
  */
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- pagina di sola VISUALIZZAZIONE/redisplay del form: le letture di $_REQUEST/$_GET servono a ripopolare il form (link edit via GET, valori dopo errore di validazione); le MUTAZIONI effettive (add/memo/delete) avvengono negli handler di admin.php, ciascuno protetto da wp_verify_nonce.
 
 $messages[1] = __('Elemento aggiunto.','albo-pretorio-considera');
 $messages[2] = __('Elemento cancellato.','albo-pretorio-considera');
@@ -37,10 +38,10 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-tipidifiles"){
 	if (!isset($_REQUEST['canctipfil'])) {
 		$NC=$messages[80];
 	}else{
-		if (!wp_verify_nonce($_REQUEST['canctipfil'],'deletetipidifiles')){
+		if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['canctipfil'])),'deletetipidifiles')){
 			$NC=$messages[80];
 		}else{
-			$risultato=ap_del_tipidifiles(intval($_REQUEST['id']));
+			$risultato=ap_del_tipidifiles((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
 			if(is_array($risultato)){
 				/* translators: %s: numero di atti che utilizzano il tipo di file */
 				$NC=sprintf(__("Il Tipo di File non può essere cancellato perchè ci sono %s atti che lo utilizzano","albo-pretorio-considera"),$risultato["atti"]);
@@ -48,12 +49,12 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-tipidifiles"){
 		}
 	}	
 } 
-if ( (isset($_REQUEST['message']) && ( $msg = intval($_REQUEST['message']))) or $NC!="") {
+if ( (isset($_REQUEST['message']) && ( $msg = (isset($_REQUEST['message'])?intval($_REQUEST['message']):0))) or $NC!="") {
 	echo '<div id="message" class="updated"><p>'.esc_html($messages[$msg]). esc_html($NC);
 	if (isset($_REQUEST['errore'])) 
-		echo '<br />'.esc_html($_REQUEST['errore']);
+		echo '<br />'.esc_html(sanitize_text_field(wp_unslash($_REQUEST['errore'])));
 	echo '</p></div>';
-	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 }
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
 	$edit=True;
@@ -137,7 +138,7 @@ foreach ($righe as $riga) {
 echo '    </tbody>
 	</table>
 </div>';
-$IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo($_REQUEST['id']):"";
+$IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['id']))):"";
 ?>
 </div><!-- /col-right -->
 
@@ -184,7 +185,7 @@ if($edit) {
 	}
 }else{
  	if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit_err")
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Formato File","albo-pretorio-considera").' '.(isset($_GET['resp-cognome'])?$_GET['resp-cognome']:"")).'" rel="'.esc_attr(isset($_GET['resp-cognome'])?$_GET['resp-cognome']:"").'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Formato File","albo-pretorio-considera").' '.(isset($_GET['resp-cognome'])?sanitize_text_field(wp_unslash($_GET['resp-cognome'])):"")).'" rel="'.esc_attr(isset($_GET['resp-cognome'])?sanitize_text_field(wp_unslash($_GET['resp-cognome'])):"").'" />';
 	else
 		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr__("Aggiungi nuovo Tipo File","albo-pretorio-considera").'"  />';	
 }

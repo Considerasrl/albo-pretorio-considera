@@ -7,7 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * @package    Albo On Line
  */
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
+if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
+// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- pagina di sola VISUALIZZAZIONE/redisplay del form: le letture di $_REQUEST/$_GET servono a ripopolare il form (link edit via GET, valori dopo errore di validazione); le MUTAZIONI effettive (add/memo/delete) avvengono negli handler di admin.php, ciascuno protetto da wp_verify_nonce.
 
 $messages[1] = __('Elemento aggiunto.','albo-pretorio-considera');
 $messages[2] = __('Elemento cancellato.','albo-pretorio-considera');
@@ -33,10 +34,10 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 <?php 
 if ( isset($_REQUEST['message']) && ( $msg = intval($_REQUEST['message'] )) ) {
 	echo '<div id="message" class="updated"><p>'.esc_html($messages[$msg]).'</p></div>';
-	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 }
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
-	$risultato=ap_get_categoria(intval($_REQUEST['id']));
+	$risultato=ap_get_categoria((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
 //	print_r($risultato);
 	$edit=True;
 }else{
