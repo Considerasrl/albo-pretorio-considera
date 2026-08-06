@@ -283,12 +283,12 @@ function albopc_Formato_Dimensione_File($a_bytes)
 ################################################################################
 
 function albopc_AP_CreaCategoriaBase($CatNome,$Des,$Durata){
-	$ret=albopc_insert_categoria($CatNome,0,$Des,$Durata);
+	$albopc_ret=albopc_insert_categoria($CatNome,0,$Des,$Durata);
 	$Risultato ='
 	<tr>
 		<td>'.$CatNome.'</td>
 		<td>';
-	if ( !$ret && !is_wp_error( $ret ) )
+	if ( !$albopc_ret && !is_wp_error( $albopc_ret ) )
 		$Risultato .='<span class="dashicons dashicons-yes" style="color:green;"></span>';
 	else
 		$Risultato .='<span class="dashicons dashicons-no" style="color:red;"></span>';

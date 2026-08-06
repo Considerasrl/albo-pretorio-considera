@@ -96,7 +96,7 @@ if(isset($_REQUEST['action'])){
             break;
 		case 'visatto':
 			if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))))
-				$ret=albopc_VisualizzaAtto($_REQUEST['id']);
+				$albopc_ret=albopc_VisualizzaAtto($_REQUEST['id']);
 			else{
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 			}
@@ -122,7 +122,7 @@ if(isset($_REQUEST['action'])){
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 				break;
 			}
-	 		$ret=albopc_Lista_Atti($Parametri,
+	 		$albopc_ret=albopc_Lista_Atti($Parametri,
 				 			isset($_REQUEST['categoria'])?(int)$_REQUEST['categoria']:0,
 							isset($_REQUEST['numero'])?(int)$_REQUEST['numero']:0,
 							isset($_REQUEST['anno'])?(int)$_REQUEST['anno']:0, 
@@ -140,9 +140,9 @@ if(isset($_REQUEST['action'])){
 					 unset($_REQUEST['DataInizio']);
 					 unset($_REQUEST['DataFine']);
 					 unset($_REQUEST['ente']);
-					 $ret=albopc_Lista_Atti($Parametri);
+					 $albopc_ret=albopc_Lista_Atti($Parametri);
 				}else{
-					$ret=albopc_Lista_Atti($Parametri);
+					$albopc_ret=albopc_Lista_Atti($Parametri);
 				}
 		}	
 	}else{
@@ -162,7 +162,7 @@ if(isset($_REQUEST['action'])){
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
 				return;
 			}
-			$ret=albopc_Lista_Atti($Parametri,
+			$albopc_ret=albopc_Lista_Atti($Parametri,
 				 			isset($_REQUEST['categoria'])?(int)$_REQUEST['categoria']:0,
 							isset($_REQUEST['numero'])?(int)$_REQUEST['numero']:0,
 							isset($_REQUEST['anno'])?(int)$_REQUEST['anno']:0, 
@@ -180,9 +180,9 @@ if(isset($_REQUEST['action'])){
 				 unset($_REQUEST['riferimento']);
 				 unset($_REQUEST['DataInizio']);
 				 unset($_REQUEST['ente']);
-				 $ret=albopc_Lista_Atti($Parametri);
+				 $albopc_ret=albopc_Lista_Atti($Parametri);
 			}else{
-				$ret=albopc_Lista_Atti($Parametri);
+				$albopc_ret=albopc_Lista_Atti($Parametri);
 
 			}
 	}

@@ -16,7 +16,7 @@ if (!class_exists('WP_List_Table')) {
  require_once(ABSPATH.'wp-admin/includes/class-wp-list-table.php');
 }
 
-class AdminTableAtti extends WP_List_Table
+class albopc_AdminTableAtti extends WP_List_Table
 {
 /*		 1 - in corso di validità 	"Correnti"
 		 2 - scaduti				"Scaduti"	
@@ -472,31 +472,31 @@ if(isset($_REQUEST['action'])){
 			albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-considera'),gmdate("Y")));
 			break;
 		case "approva-atto" :
-			$ret="";
+			$albopc_ret="";
 			if ( ! isset( $_REQUEST['approvaatto'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['approvaatto'] ?? '')), 'approvaatto-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
 				albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
 			if (isset($_REQUEST['apa'])){
-				$ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('Anno' => sanitize_text_field(wp_unslash($_REQUEST['apa'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");
+				$albopc_ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('Anno' => sanitize_text_field(wp_unslash($_REQUEST['apa'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");
 			}
 			if (isset($_REQUEST['pnp'])){
 				update_option( 'opt_AP_NumeroProgressivo', (isset($_REQUEST['pnp'])?(int)$_REQUEST['pnp']:0));
 			}
 			if (isset($_REQUEST['udi'])){
-				$ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataInizio' => sanitize_text_field(wp_unslash($_REQUEST['udi'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
+				$albopc_ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataInizio' => sanitize_text_field(wp_unslash($_REQUEST['udi'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
 			}
 			if (isset($_REQUEST['udf'])){
-				$ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataFine' => sanitize_text_field(wp_unslash($_REQUEST['udf'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
+				$albopc_ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataFine' => sanitize_text_field(wp_unslash($_REQUEST['udf'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
 			}
 			if (isset($_REQUEST['udo'])){
-				$ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataOblio' => sanitize_text_field(wp_unslash($_REQUEST['udo'] ?? ''))),array('%s'),"Modifica in Approvazione\n");	
+				$albopc_ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataOblio' => sanitize_text_field(wp_unslash($_REQUEST['udo'] ?? ''))),array('%s'),"Modifica in Approvazione\n");	
 			}
 			if(isset($_REQUEST['id']))
 				$id=(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0);
 			else
 				$id=0;
-			albopc_PreApprovazione($id,$ret);
+			albopc_PreApprovazione($id,$albopc_ret);
 			break;
 		case "allegati-atto" :
 			if (!isset($_REQUEST['allegatoatto'])) {
@@ -695,14 +695,14 @@ echo '</div>
 </div>';	
 }
 
-function albopc_PreApprovazione($id,$ret=''){
+function albopc_PreApprovazione($id,$albopc_ret=''){
 global $wpdb;
 if (!current_user_can('editore_atti_albo')){
 	echo '<div id="message" class="updated"><p>'.__("Questa Operazione non ti è consentita, operazione di pertinenza dell'amministratore dell'Albo o del redattore","albo-pretorio-considera").'</p></div>';
 	return;
 }
-if ($ret!=""){
-	$ret=str_replace("%%br%%","<br />",$ret);
+if ($albopc_ret!=""){
+	$albopc_ret=str_replace("%%br%%","<br />",$albopc_ret);
 }
 	$NumeroDaDb=albopc_get_last_num_anno(gmdate("Y"));
 	$atto=albopc_get_atto($id);
@@ -719,8 +719,8 @@ echo'
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> Atti</h2>
 		<a href="'.site_url().'/wp-admin/admin.php?page=atti" class="add-new-h2 tornaindietro">'.__("Torna indietro","albo-pretorio-considera").'</a>';
-	if ( $ret!="" ) {
-		echo '<div id="message" class="updated"><p>'.$ret.'</p></div>';
+	if ( $albopc_ret!="" ) {
+		echo '<div id="message" class="updated"><p>'.$albopc_ret.'</p></div>';
 	}
 	echo '
 		<h3>'.__("Approvazione Atto","albo-pretorio-considera").'</h3>	
@@ -2328,7 +2328,7 @@ echo'
 			$Titolo=__("Tutti gli atti","albo-pretorio-considera");
 			$Azione="Tutti";
 	}
-	$tablenew = new AdminTableAtti(); // Il codice della classe a seguire
+	$tablenew = new albopc_AdminTableAtti(); // Il codice della classe a seguire
    	$tablenew->stato_atti=$Azione;
   	$tablenew->prepare_items(); // Metodo per elenco campi
   	$page = filter_input(INPUT_GET,'page' ,FILTER_SANITIZE_FULL_SPECIAL_CHARS);

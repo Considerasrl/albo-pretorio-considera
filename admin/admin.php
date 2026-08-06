@@ -291,14 +291,14 @@ function albopc_albo_post() {
 				$location = add_query_arg( 'action', 'add', $location );
 			}
 			else{
-				$ret=albopc_insert_responsabile(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['resp-cognome'] ?? ''))),
+				$albopc_ret=albopc_insert_responsabile(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['resp-cognome'] ?? ''))),
 											albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['resp-nome'] ?? ''))),
 											albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['resp-funzione'] ?? ''))),
 											albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['resp-email'] ?? ''))),
 											albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['resp-telefono'] ?? ''))),
 											albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['resp-orario'] ?? ''))),
 											sanitize_textarea_field(wp_unslash($_POST['resp-note'] ?? '')));
-				if ( !$ret && !is_wp_error( $ret ) )
+				if ( !$albopc_ret && !is_wp_error( $albopc_ret ) )
 					$location = add_query_arg( 'message', 1, $location );
 				else
 					$location = add_query_arg( 'message', 4, $location );
@@ -510,7 +510,7 @@ function albopc_albo_post() {
 				$location = add_query_arg( 'action', 'add', $location );
 			}
 			else{
-				$ret=albopc_insert_ente(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-nome'] ?? ''))),
+				$albopc_ret=albopc_insert_ente(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-nome'] ?? ''))),
 									albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-indirizzo'] ?? ''))),
 									albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-url'] ?? ''))),
 									albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-email'] ?? ''))),
@@ -518,7 +518,7 @@ function albopc_albo_post() {
 									albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-telefono'] ?? ''))),
 									albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-fax'] ?? ''))),
 									albopc_sanifica_areatesto(sanitize_textarea_field(wp_unslash($_REQUEST['ente-note'] ?? ''))));
-				if ( !$ret && !is_wp_error( $ret ) )
+				if ( !$albopc_ret && !is_wp_error( $albopc_ret ) )
 					$location = add_query_arg( 'message', 1, $location );
 				else
 					$location = add_query_arg( 'message', 4, $location );
@@ -632,7 +632,7 @@ function albopc_albo_post() {
 				$location = add_query_arg( 'action', 'add', $location );
 			}
 			else{
-				$ret=albopc_insert_unitao(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['unitao-nome'] ?? ''))),
+				$albopc_ret=albopc_insert_unitao(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['unitao-nome'] ?? ''))),
 									  albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['unitao-indirizzo'] ?? ''))),
 									  albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['unitao-url'] ?? ''))),
 									  albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['unitao-email'] ?? ''))),
@@ -640,7 +640,7 @@ function albopc_albo_post() {
 									  albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['unitao-telefono'] ?? ''))),
 									  albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['unitao-fax'] ?? ''))),
 									  albopc_sanifica_areatesto(sanitize_textarea_field(wp_unslash($_REQUEST['unitao-note'] ?? ''))));
-				if ( !$ret && !is_wp_error( $ret ) )
+				if ( !$albopc_ret && !is_wp_error( $albopc_ret ) )
 					$location = add_query_arg( 'message', 1, $location );
 				else
 					$location = add_query_arg( 'message', 4, $location );
@@ -718,11 +718,11 @@ function albopc_albo_post() {
 			if (sanitize_text_field(wp_unslash($_POST['cat-name'] ?? '')) == '')
 				$location = add_query_arg( 'message', 9, $location );
 			else{
-				$ret=albopc_insert_categoria(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['cat-name'] ?? ''))),
+				$albopc_ret=albopc_insert_categoria(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['cat-name'] ?? ''))),
 										 (isset($_POST['cat-parente'])?intval($_POST['cat-parente']):0),
 										 albopc_sanifica_areatesto(sanitize_textarea_field(wp_unslash($_POST['cat-descrizione'] ?? ''))),
 										 (isset($_POST['cat-durata'])?intval($_POST['cat-durata']):0));
-				if ( !$ret && !is_wp_error( $ret ) )
+				if ( !$albopc_ret && !is_wp_error( $albopc_ret ) )
 					$location = add_query_arg( 'message', 1, $location );
 				else
 					$location = add_query_arg( 'message', 4, $location );
@@ -844,7 +844,7 @@ function albopc_albo_post() {
 				$location = add_query_arg( 'message', 1, $location );
 			else{
 				$location = add_query_arg( 'message', 4, $location );
-				$location = add_query_arg( 'errore', $ret , $location );		
+				$location = add_query_arg( 'errore', $albopc_ret , $location );		
 			}
 			if(is_numeric( $NewIDAtto ) And (isset($_REQUEST['newMetaName']) && is_array($_REQUEST['newMetaName']))){
 				for($i=0;$i<count(is_array($_REQUEST['newMetaName']) ? wp_unslash($_REQUEST['newMetaName']) : array());$i++){
@@ -870,7 +870,7 @@ function albopc_albo_post() {
 				$Soggetti=serialize(array());
 			}
 			$location = "?page=atti&stato_atti=Nuovi" ;
-			$ret=albopc_memo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),
+			$albopc_ret=albopc_memo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),
 							  sanitize_text_field(wp_unslash($_REQUEST['Ente'] ?? '')),
 							  albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['Data'] ?? ''))),
 							  albopc_sanifica_testo(sanitize_text_field(wp_unslash($_POST['Riferimento'] ?? ''))),
@@ -884,7 +884,7 @@ function albopc_albo_post() {
 							  $Soggetti,
 							  (isset($_POST['Unitao'])?intval($_POST['Unitao']):0),
 							  sanitize_text_field(wp_unslash($_POST['Richiedente'] ?? '')));
-							  if ( !$ret && !is_wp_error( $ret ) )
+							  if ( !$albopc_ret && !is_wp_error( $albopc_ret ) )
 				$location = add_query_arg( 'message', 3, $location );
 			else
 				$location = add_query_arg( 'message', 5, $location );
@@ -1023,13 +1023,13 @@ function albopc_albo_post() {
 				wp_safe_redirect( $location );
 			}else{
 //				var_dump($_REQUEST);wp_die();
-				$ret=albopc_memo_allegato((isset($_REQUEST['idAlle'])?intval($_REQUEST['idAlle']):0),
+				$albopc_ret=albopc_memo_allegato((isset($_REQUEST['idAlle'])?intval($_REQUEST['idAlle']):0),
 									   albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['titolo'] ?? ''))),
 									   (isset($_REQUEST['id'])?intval($_REQUEST['id']):0),
 									   (isset($_REQUEST['Integrale'])?intval($_REQUEST['Integrale']):0), 
 									   albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['Natura'] ?? ''))));
-				if ( is_object($ret)){
-					$location = add_query_arg( 'messaggio', str_replace(' ',"%20",$ret->get_error_message()), $location );	
+				if ( is_object($albopc_ret)){
+					$location = add_query_arg( 'messaggio', str_replace(' ',"%20",$albopc_ret->get_error_message()), $location );	
 				}
 				else{
 				 	$location = add_query_arg( 'messaggio', "Allegato%20Aggiornato", $location );

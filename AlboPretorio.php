@@ -1034,7 +1034,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 		}
 	
 	function VisualizzaAtti($Parametri){
-		$ret="";
+		$albopc_ret="";
 		$Parametri=shortcode_atts(array(
 			'stato' => '-2',
 			'cat' => 0,
@@ -1055,12 +1055,12 @@ static function add_albo_plugin_visatto($plugin_array) {
 				require_once ( dirname (__FILE__) . '/admin/frontend_new.php' );
 			}		
 		}
-		return $ret;
+		return $albopc_ret;
 	}
 	function VisualizzaGruppiAtti($Parametri){
 		if(get_option('opt_AP_AutoShortcode'))
 			return;
-		$ret="";
+		$albopc_ret="";
 		$Parametri=shortcode_atts(array(
 			'titolo' => __('Atti Albo on line di riferimento','albo-pretorio-considera'),
 			'meta' => '',
@@ -1082,7 +1082,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 		return albopc_Lista_AttiGruppo($Parametri);
 	}
 	function albopc_VisualizzaAtto($Parametri){
-		$ret="";
+		$albopc_ret="";
 		$Parametri=shortcode_atts(array(
 			'titolo' => __('Atto Albo on line','albo-pretorio-considera'),
 			'numero' => '',
