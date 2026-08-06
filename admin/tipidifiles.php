@@ -49,9 +49,9 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-tipidifiles"){
 	}	
 } 
 if ( (isset($_REQUEST['message']) && ( $msg = intval($_REQUEST['message']))) or $NC!="") {
-	echo '<div id="message" class="updated"><p>'.$messages[$msg]. $NC;
+	echo '<div id="message" class="updated"><p>'.esc_html($messages[$msg]). esc_html($NC);
 	if (isset($_REQUEST['errore'])) 
-		echo '<br />'.htmlentities($_REQUEST['errore']);
+		echo '<br />'.esc_html($_REQUEST['errore']);
 	echo '</p></div>';
 	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
 }
@@ -65,7 +65,7 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
 <div id="col-container">
 <div id="col-right">
 <div class="col-wrap">
-<h3><?php  esc_html_e("Elenco Tipi di Files","albo-pretorio-considera");?> <a href="?page=tipifiles&action=set-default&tipifiles=<?php echo wp_create_nonce('elabtipifiles')?>" class="add-new-h2"><?php  esc_html_e("Reimposta Estensioni di Default","albo-pretorio-considera");?></a></h3>
+<h3><?php  esc_html_e("Elenco Tipi di Files","albo-pretorio-considera");?> <a href="?page=tipifiles&action=set-default&tipifiles=<?php echo esc_attr(wp_create_nonce('elabtipifiles'))?>" class="add-new-h2"><?php  esc_html_e("Reimposta Estensioni di Default","albo-pretorio-considera");?></a></h3>
 <table class="widefat" id="elenco-tipidifiles"> 
     <thead>
     	<tr>
@@ -83,19 +83,19 @@ if ($lista){
 		echo'<li style="text-align:left;padding-left:1px;">';
 		$Tab=0;
 		if($Tipi[strtolower($TipoFile)]==0 and $TipoFile!="ndf")
-			echo '<span class="cancella"><a href="?page=tipifiles&amp;action=delete-tipofile&amp;id='.$TipoFile.'&amp;canctipfil='.wp_create_nonce('deletetipofile').'" rel="'.$riga['Descrizione'].'" class="confdel">
-			<span class="dashicons dashicons-trash" title="'.__('Cancella tipo file','albo-pretorio-considera').'"></span>
+			echo '<span class="cancella"><a href="?page=tipifiles&amp;action=delete-tipofile&amp;id='.esc_attr($TipoFile).'&amp;canctipfil='.esc_attr(wp_create_nonce('deletetipofile')).'" rel="'.esc_attr($riga['Descrizione']).'" class="confdel">
+			<span class="dashicons dashicons-trash" title="'.esc_html__('Cancella tipo file','albo-pretorio-considera').'"></span>
 			</a></span>';
 		else
 			$Tab=23;
 		echo '
-			<a href="?page=tipifiles&amp;action=edit-tipofile&amp;id='.$TipoFile.'&amp;modtipfil='.wp_create_nonce('edittipofilee').'" rel="'.$riga['Descrizione'].'">
-			<span class="dashicons dashicons-edit" title="'.__('Modifica tipo file','albo-pretorio-considera').'" style="margin-left:'.$Tab.'px;"></span>
+			<a href="?page=tipifiles&amp;action=edit-tipofile&amp;id='.esc_attr($TipoFile).'&amp;modtipfil='.esc_attr(wp_create_nonce('edittipofilee')).'" rel="'.esc_attr($riga['Descrizione']).'">
+			<span class="dashicons dashicons-edit" title="'.esc_html__('Modifica tipo file','albo-pretorio-considera').'" style="margin-left:'.(int)$Tab.'px;"></span>
 			</a>
-			('.$TipoFile.') '.$riga['Descrizione'] .($TipoFile!="ndf"?'(n&ordm; atti '.$Tipi[$TipoFile].')':"").'</li>'; 
+			('.esc_html($TipoFile).') '.esc_html($riga['Descrizione']) .($TipoFile!="ndf"?'(n&ordm; atti '.(int)($Tipi[$TipoFile]).')':"").'</li>'; 
 	}
 } else {
-		echo '<li>'.__('Nessun Tipo File Codificato','albo-pretorio-considera').'</li>';
+		echo '<li>'.esc_html__('Nessun Tipo File Codificato','albo-pretorio-considera').'</li>';
 }
 echo '</td>
 	</tr>
@@ -110,9 +110,9 @@ echo'
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th style="font-size:1.2em;">'.__("Data","albo-pretorio-considera").'</th>
-			<th style="font-size:1.2em;">'.__("Operazione","albo-pretorio-considera").'</th>
-			<th style="font-size:1.2em;">'.__("Informazioni","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Data","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Operazione","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Informazioni","albo-pretorio-considera").'</th>
 		</tr>
 	    </thead>
 	    <tbody id="righe-log">';
@@ -128,10 +128,10 @@ foreach ($righe as $riga) {
 	 		$Operazione=__("Cancellazione","albo-pretorio-considera");
 			break;
 	}
-	echo '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
-			<td >'.$riga->Data.'</th>
-			<td >'.$Operazione.'</th>
-			<td >'.stripslashes($riga->Operazione).'</td>
+	echo '<tr  title="'.esc_attr($riga->Utente.' da '.$riga->IPAddress).'">
+			<td >'.esc_html($riga->Data).'</th>
+			<td >'.esc_html($Operazione).'</th>
+			<td >'.esc_html(stripslashes($riga->Operazione)).'</td>
 		</tr>';
 }
 echo '    </tbody>
@@ -143,50 +143,50 @@ $IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo($_REQUEST['id']):"";
 
 <div id="col-left">
 	<div class="Obbligatori">
-		<span style="color:red;font-weight: bold;">*</span> <?php printf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("i campi contrassegnati dall'asterisco sono %1\$s obbligatori %2\$s","albo-pretorio-considera"),"<strong>","</strong>");?>
+		<span style="color:red;font-weight: bold;">*</span> <?php /* translators: %1$s e %2$s: tag grassetto */ echo wp_kses_post(sprintf(__("i campi contrassegnati dall'asterisco sono %1\$s obbligatori %2\$s","albo-pretorio-considera"),"<strong>","</strong>"));?>
 	</div>
 	<br />
 <div class="form-wrap">
 	<form id="addtag" method="post" action="?page=tipifiles" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >
 		<input type="hidden" name="action" value="<?php if($edit ||(isset($_REQUEST['action']) And  $_REQUEST['action']=="edit_err")) echo "memo-tipofile"; else echo "add-tipofile"; ?>"/>
-		<input type="hidden" name="id" value="<?php echo $IDTipo; ?>" />
-		<input type="hidden" name="tipifiles" value="<?php echo wp_create_nonce('elabtipifiles')?>" />
+		<input type="hidden" name="id" value="<?php echo esc_attr($IDTipo); ?>" />
+		<input type="hidden" name="tipifiles" value="<?php echo esc_attr(wp_create_nonce('elabtipifiles'))?>" />
 		<div class="form-required">
 			<label for="estensione"><?php esc_html_e("Tipo File","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="id" id="<?php esc_html_e("Tipo File","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo $IDTipo;?>" size="6" aria-required="true" <?php echo ($edit?'Disabled':"");?> required/>
+			<input name="id" id="<?php esc_html_e("Tipo File","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo esc_attr($IDTipo);?>" size="6" aria-required="true" <?php echo ($edit?'Disabled':"");?> required/>
 		</div>
 		<div class="form-field form-required">
 			<label for="descrizione"><?php esc_html_e("Descrizione","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="descrizione" id="<?php esc_html_e("Descrizione","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Descrizione"])?$lista[$IDTipo]["Descrizione"]:""); ?>" size="60" aria-required="true" required/>
+			<input name="descrizione" id="<?php esc_html_e("Descrizione","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo esc_attr(sanitize_text_field(isset($lista[$IDTipo]["Descrizione"])?$lista[$IDTipo]["Descrizione"]:"")); ?>" size="60" aria-required="true" required/>
 		</div>
 		<div class="form-field form-required">
 			<label for="icona"><?php esc_html_e("Icona","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
-			<input name="icona" id="<?php esc_html_e("Icona","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Icona"])?$lista[$IDTipo]["Icona"]:"");?>" size="60" aria-required="true" required/>
+			<input name="icona" id="<?php esc_html_e("Icona","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo esc_attr(sanitize_text_field(isset($lista[$IDTipo]["Icona"])?$lista[$IDTipo]["Icona"]:""));?>" size="60" aria-required="true" required/>
 				<div style="float:left;"><input id="icona_upload" class="button" type="button" value="Carica" />
 					<br /><?php esc_html_e("Dimensione max 30x30","albo-pretorio-considera");?>
 				</div>
 				<div style="float:left;margin-left:10%;margin-top:5px;">
 		<?php if(isset($lista[$IDTipo]["Icona"]) And $lista[$IDTipo]["Icona"]){?>
-					<img src="<?php if($edit) echo stripslashes($lista[$IDTipo]["Icona"]);?>" width="30" height="30" id="IconaTipoFile"/>
+					<img src="<?php if($edit) echo esc_url(stripslashes($lista[$IDTipo]["Icona"]));?>" width="30" height="30" id="IconaTipoFile"/>
 		<?php }?>
 		</div>
 </div>
 	<div class="clear"></div>
 	<div class="form-field form-required">
 		<label for="verifica"><?php esc_html_e("Verifica","albo-pretorio-considera");?></label>
-		<input name="verifica" id="verifica" type="text" value="<?php if($edit) echo sanitize_text_field(isset($lista[$IDTipo]["Verifica"])?$lista[$IDTipo]["Verifica"]:"");?>" size="60" aria-required="true" />
+		<input name="verifica" id="verifica" type="text" value="<?php if($edit) echo esc_attr(sanitize_text_field(isset($lista[$IDTipo]["Verifica"])?$lista[$IDTipo]["Verifica"]:""));?>" size="60" aria-required="true" />
 	</div>
 
 <?php
 if($edit) {
 	if(isset($lista[$IDTipo])){
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-pretorio-considera").' '.$IDTipo.'" rel="'.$IDTipo.'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Formato File","albo-pretorio-considera").' '.$IDTipo).'" rel="'.esc_attr($IDTipo).'" />';
 	}
 }else{
  	if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit_err")
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Formato File","albo-pretorio-considera").' '.htmlentities($_GET['resp-cognome']).'" rel="'.htmlentities($_GET['resp-cognome']).'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Formato File","albo-pretorio-considera").' '.(isset($_GET['resp-cognome'])?$_GET['resp-cognome']:"")).'" rel="'.esc_attr(isset($_GET['resp-cognome'])?$_GET['resp-cognome']:"").'" />';
 	else
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Aggiungi nuovo Tipo File","albo-pretorio-considera").'"  />';	
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr__("Aggiungi nuovo Tipo File","albo-pretorio-considera").'"  />';	
 }
 ?>
 </form>

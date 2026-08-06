@@ -32,7 +32,7 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 	</div>
 <?php 
 if ( isset($_REQUEST['message']) && ( $msg = intval($_REQUEST['message'] )) ) {
-	echo '<div id="message" class="updated"><p>'.$messages[$msg].'</p></div>';
+	echo '<div id="message" class="updated"><p>'.esc_html($messages[$msg]).'</p></div>';
 	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
 }
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
@@ -63,26 +63,26 @@ echo '<tr>
 if ($lista){
 	foreach($lista as $riga){
 	 $shift=((intval($riga[2]))*30)+5;
-	 echo'<li style="text-align:left;padding-left:'.$shift.'px;">';
+	 echo'<li style="text-align:left;padding-left:'.(int)$shift.'px;">';
 	 $Tab=0;
 	 $Testo_da=__("Confermi la cancellazione della Categoria","albo-pretorio-considera")." ".ap_sanifica_testo($riga[1]). "?\n\n".__("Sei sicuro di voler proseguire con la CANCELLAZIONE?","albo-pretorio-considera");
  	 if (ap_num_atti_categoria($riga[0])==0)
 		echo'<span class="cancella">
-			<a href="?page=categorie&amp;action=delete-categorie&amp;id='.$riga[0].'&amp;canccategoria='.wp_create_nonce('delcategoria').'" rel="'.$Testo_da.'" class="confdel">			
-			<span class="dashicons dashicons-trash" title="'.__("Cancella categoria","albo-pretorio-considera").'"></span>
+			<a href="?page=categorie&amp;action=delete-categorie&amp;id='.esc_attr($riga[0]).'&amp;canccategoria='.esc_attr(wp_create_nonce('delcategoria')).'" rel="'.esc_attr($Testo_da).'" class="confdel">			
+			<span class="dashicons dashicons-trash" title="'.esc_html__("Cancella categoria","albo-pretorio-considera").'"></span>
 		</a></span>
 ';
 	 else
 		$Tab=23;
 	 echo'					
-			<a href="?page=categorie&amp;action=edit-categorie&amp;id='.$riga[0].'&amp;modcategoria='.wp_create_nonce('editcategoria').'" rel="'.$riga[1].'">
-			<span class="dashicons dashicons-edit" title="'.__("Modifica categoria","albo-pretorio-considera").'" style="margin-left:'.$Tab.'px;"></span>
+			<a href="?page=categorie&amp;action=edit-categorie&amp;id='.esc_attr($riga[0]).'&amp;modcategoria='.esc_attr(wp_create_nonce('editcategoria')).'" rel="'.esc_attr($riga[1]).'">
+			<span class="dashicons dashicons-edit" title="'.esc_html__("Modifica categoria","albo-pretorio-considera").'" style="margin-left:'.(int)$Tab.'px;"></span>
 			</a>
-			('.$riga[0] .') '.$riga[1] .' (n&ordm; atti '.ap_num_atti_categoria($riga[0]).')
+			('.esc_html($riga[0]) .') '.esc_html($riga[1]) .' (n&ordm; atti '.(int)(ap_num_atti_categoria($riga[0])).')
 			</li>'; 
 	}
 } else {
-		echo '<li>'.__("Nessuna Categoria Codificata","albo-pretorio-considera").'</li>';
+		echo '<li>'.esc_html__("Nessuna Categoria Codificata","albo-pretorio-considera").'</li>';
 }
 echo '</ul>
 		</td>
@@ -97,9 +97,9 @@ echo'
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th style="font-size:1.2em;">'.__("Data","albo-pretorio-considera").'</th>
-			<th style="font-size:1.2em;">'.__("Operazione","albo-pretorio-considera").'</th>
-			<th style="font-size:1.2em;">'.__("Informazioni","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Data","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Operazione","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Informazioni","albo-pretorio-considera").'</th>
 		</tr>
 	    </thead>
 	    <tbody id="righe-log">';
@@ -115,10 +115,10 @@ foreach ($righe as $riga) {
 	 		$Operazione=__("Cancellazione","albo-pretorio-considera");
 			break;
 	}
-	echo '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
-			<td >'.$riga->Data.'</th>
-			<td >'.$Operazione.'</th>
-			<td >'.ap_sanifica_testo($riga->Operazione).'</td>
+	echo '<tr  title="'.esc_attr($riga->Utente.' da '.$riga->IPAddress).'">
+			<td >'.esc_html($riga->Data).'</th>
+			<td >'.esc_html($Operazione).'</th>
+			<td >'.esc_html(ap_sanifica_testo($riga->Operazione)).'</td>
 		</tr>';
 }
 echo '    </tbody>
@@ -129,33 +129,33 @@ echo '    </tbody>
 
 <div id="col-left">
 	<div class="Obbligatori">
-		<span style="color:red;font-weight: bold;">*</span> <?php printf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("i campi contrassegnati dall'asterisco sono %1\$s obbligatori %2\$s","albo-pretorio-considera"),"<strong>","</strong>");?>
+		<span style="color:red;font-weight: bold;">*</span> <?php /* translators: %1$s e %2$s: tag grassetto */ echo wp_kses_post(sprintf(__("i campi contrassegnati dall'asterisco sono %1\$s obbligatori %2\$s","albo-pretorio-considera"),"<strong>","</strong>"));?>
 	</div>
 <div class="form-wrap">
 	<form id="addtag" method="post" action="?page=categorie" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >
 		<input type="hidden" name="action" value="<?php if($edit) echo "memo-categoria"; else echo "add-categorie"; ?>"/>
 		<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?intval($_REQUEST['id']):0); ?>" />
-		<input type="hidden" name="categoria" value="<?php echo wp_create_nonce('categoria')?>" />
+		<input type="hidden" name="categoria" value="<?php echo esc_attr(wp_create_nonce('categoria'))?>" />
 
 		<div class="form-field form-required">
 			<label for="tag-name"><?php esc_html_e("Nome","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="cat-name" id="<?php esc_html_e("Nome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo ap_sanifica_testo($risultato[0]->Nome); ?>" size="40" request/>
+			<input name="cat-name" id="<?php esc_html_e("Nome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo esc_attr(ap_sanifica_testo($risultato[0]->Nome)); ?>" size="40" request/>
 			<p><?php esc_html_e("Nome della categoria.","albo-pretorio-considera");?></p>
 		</div>
 		<div class="form-field">
 			<label for="parent"><?php esc_html_e("Parente di","albo-pretorio-considera");?>:</label>
 			<?php 
 			if($edit){
-				echo ap_get_dropdown_categorie('cat-parente','cat-parente','','',ap_sanifica_testo($risultato[0]->Genitore));
+				/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> interno */ echo ap_get_dropdown_categorie('cat-parente','cat-parente','','',ap_sanifica_testo($risultato[0]->Genitore));
 			}else{
-				echo ap_get_dropdown_categorie('cat-parente','cat-parente','postform','',0); 
+				/* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> interno */ echo ap_get_dropdown_categorie('cat-parente','cat-parente','postform','',0); 
 			}
 			?>
 			<p><?php esc_html_e("Se si sta creando una sottocategoria, selezionare il genitore. Questo sistema permette di creare una struttura gerarchica di categorie.","albo-pretorio-considera");?></p>
 		</div>
 		<div class="form-field">
 			<label for="tag-description"><?php esc_html_e("Descrizione","albo-pretorio-considera");?></label>
-			<textarea name="cat-descrizione" id="cat-descrizione" rows="5" cols="40"><?php if($edit) echo ap_sanifica_areatesto($risultato[0]->Descrizione); ?></textarea>
+			<textarea name="cat-descrizione" id="cat-descrizione" rows="5" cols="40"><?php if($edit) echo esc_textarea(ap_sanifica_areatesto($risultato[0]->Descrizione)); ?></textarea>
 			<p><?php esc_html_e("Breve descrizione della categoria","albo-pretorio-considera");?></p>
 		</div>
 		<div class="form-field  form-required">
@@ -166,9 +166,9 @@ echo '    </tbody>
 
 <?php
 if($edit) {
-	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Categoria","albo-pretorio-considera").' '.ap_sanifica_testo($risultato[0]->Nome).'" rel="'.ap_sanifica_testo($risultato[0]->Nome).'" />';
+	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Categoria","albo-pretorio-considera").' '.ap_sanifica_testo($risultato[0]->Nome)).'" rel="'.esc_attr(ap_sanifica_testo($risultato[0]->Nome)).'" />';
 }else{
-	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Aggiungi nuova Categoria","albo-pretorio-considera").'"  />';	
+	echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr__("Aggiungi nuova Categoria","albo-pretorio-considera").'"  />';	
 }
 ?>
 	</form>

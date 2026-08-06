@@ -28,9 +28,9 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 	</div>
 <?php 
 if ( (isset($_REQUEST['message']) && ( $msg = (int) $_REQUEST['message']))) {
-	echo '<div id="message" class="updated"><p>'.$messages[$msg];
+	echo '<div id="message" class="updated"><p>'.esc_html($messages[$msg]);
 	if (isset($_REQUEST['errore'])) 
-		echo '<br />'.htmlentities($_REQUEST['errore']);
+		echo '<br />'.esc_html($_REQUEST['errore']);
 	echo '</p></div>';
 	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
 }
@@ -70,19 +70,19 @@ if ($lista){
 	 	$Tab=0;
 		$Testo_da=__("Confermi la cancellazione dell'Unità Organizzativa","albo-pretorio-considera")." ".stripslashes($riga->Nome). "?\n\n".__("Sei sicuro di voler proseguire con la CANCELLAZIONE?","albo-pretorio-considera");
 		if($riga->IdUO>0 and ap_num_unitao_atto($riga->IdUO)==0)
-			echo '<span class="cancella"><a href="?page=unitao&amp;action=delete-unitao&amp;id='.$riga->IdUO.'&amp;cancellaunitao='.wp_create_nonce('deleteunitao').'" rel="'.$Testo_da.'" class="confdel">
-					<span class="dashicons dashicons-trash" title="'.__("Cancella unità organizzativa","albo-pretorio-considera").'"></span>
+			echo '<span class="cancella"><a href="?page=unitao&amp;action=delete-unitao&amp;id='.esc_attr($riga->IdUO).'&amp;cancellaunitao='.esc_attr(wp_create_nonce('deleteunitao')).'" rel="'.esc_attr($Testo_da).'" class="confdel">
+					<span class="dashicons dashicons-trash" title="'.esc_html__("Cancella unità organizzativa","albo-pretorio-considera").'"></span>
 					</a></span>';
 		else
 			$Tab=23;		
-		echo '					<a href="?page=unitao&amp;action=edit-unitao&amp;id='.$riga->IdUO.'&amp;modificaunitao='.wp_create_nonce('ediunitao').'" rel="'.stripslashes($riga->Nome).'">
-					<span class="dashicons dashicons-edit" title="'.__("Modifica Unità Organizzativa","albo-pretorio-considera").'" style="margin-left:'.$Tab.'px;"></span>
+		echo '					<a href="?page=unitao&amp;action=edit-unitao&amp;id='.esc_attr($riga->IdUO).'&amp;modificaunitao='.esc_attr(wp_create_nonce('ediunitao')).'" rel="'.esc_attr(stripslashes($riga->Nome)).'">
+					<span class="dashicons dashicons-edit" title="'.esc_html__("Modifica Unità Organizzativa","albo-pretorio-considera").'" style="margin-left:'.(int)$Tab.'px;"></span>
 					</a>';
-		echo '<strong>'.stripslashes($riga->Nome).'</strong> (n&ordm; atti '.ap_num_enti_atto($riga->IdUO).')';
+		echo '<strong>'.esc_html(stripslashes($riga->Nome)).'</strong> (n&ordm; atti '.(int)(ap_num_enti_atto($riga->IdUO)).')';
 		echo '</li>';
 	}
 } else {
-		echo '<li>'.__("Nessuna Unità Organizzativa Codificata","albo-pretorio-considera").'</li>';
+		echo '<li>'.esc_html__("Nessuna Unità Organizzativa Codificata","albo-pretorio-considera").'</li>';
 }
 echo '</td>
 	</tr>
@@ -97,9 +97,9 @@ echo'
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th style="font-size:1.2em;">'.__("Data","albo-pretorio-considera").'</th>
-			<th style="font-size:1.2em;">'.__("Operazione","albo-pretorio-considera").'</th>
-			<th style="font-size:1.2em;">'.__("Informazioni","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Data","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Operazione","albo-pretorio-considera").'</th>
+			<th style="font-size:1.2em;">'.esc_html__("Informazioni","albo-pretorio-considera").'</th>
 		</tr>
 	    </thead>
 	    <tbody id="righe-log">';
@@ -115,10 +115,10 @@ foreach ($righe as $riga) {
 	 		$Operazione=__("Cancellazione","albo-pretorio-considera");
 			break;
 	}
-	echo '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
-			<td >'.$riga->Data.'</th>
-			<td >'.$Operazione.'</th>
-			<td >'.stripslashes($riga->Operazione).'</td>
+	echo '<tr  title="'.esc_attr($riga->Utente.' da '.$riga->IPAddress).'">
+			<td >'.esc_html($riga->Data).'</th>
+			<td >'.esc_html($Operazione).'</th>
+			<td >'.esc_html(stripslashes($riga->Operazione)).'</td>
 		</tr>';
 }
 echo '    </tbody>
@@ -130,59 +130,59 @@ echo '    </tbody>
 <div id="col-left">
 <div class="form-wrap">
 	<div class="Obbligatori">
-		<span style="color:red;font-weight: bold;">*</span> <?php printf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("i campi contrassegnati dall'asterisco sono %1\$s obbligatori %2\$s","albo-pretorio-considera"),"<strong>","</strong>");?>
+		<span style="color:red;font-weight: bold;">*</span> <?php /* translators: %1$s e %2$s: tag grassetto */ echo wp_kses_post(sprintf(__("i campi contrassegnati dall'asterisco sono %1\$s obbligatori %2\$s","albo-pretorio-considera"),"<strong>","</strong>"));?>
 	</div>
 	<br />
 	<form id="addtag" method="post" action="?page=unitao" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >
 		<input type="hidden" name="action" value="<?php if($edit || (isset($_REQUEST['action']) And  $_REQUEST['action']=="edit_err")) echo "memo-unitao"; else echo "add-unitao"; ?>"/>
-		<input type="hidden" name="action2" value="<?php echo htmlentities(isset($_REQUEST['action'])?$_REQUEST['action']:""); ?>"/>
+		<input type="hidden" name="action2" value="<?php echo esc_attr(isset($_REQUEST['action'])?$_REQUEST['action']:""); ?>"/>
 		<input type="hidden" name="id" value="<?php echo isset($_REQUEST['id'])?intval($_REQUEST['id']):0; ?>" />
-		<input type="hidden" name="unitao" value="<?php echo wp_create_nonce('unitao')?>" />
+		<input type="hidden" name="unitao" value="<?php echo esc_attr(wp_create_nonce('unitao'))?>" />
 
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-nome"><?php esc_html_e("Nome Unità Organizzativa","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="unitao-nome" id="<?php esc_html_e("Nome Unità Organizzativa","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo (isset($risultato->Nome)?ap_sanifica_testo($risultato->Nome):__("Non Definito","albo-pretorio-considera")); else echo (isset($_REQUEST['unitao-nome'])?ap_sanifica_testo($_REQUEST['unitao-nome']):""); ?>" size="30" required/>
+			<input name="unitao-nome" id="<?php esc_html_e("Nome Unità Organizzativa","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo (isset($risultato->Nome)?esc_attr(ap_sanifica_testo($risultato->Nome)):esc_attr__("Non Definito","albo-pretorio-considera")); else echo (isset($_REQUEST['unitao-nome'])?esc_attr(ap_sanifica_testo($_REQUEST['unitao-nome'])):""); ?>" size="30" required/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-indirizzo"><?php esc_html_e("Indirizzo","albo-pretorio-considera");?></label>
-			<input name="unitao-indirizzo" id="unitao-indirizzo" type="text" value="<?php if($edit) echo (isset($risultato->Indirizzo)?ap_sanifica_testo($risultato->Indirizzo):__("Non Definito","albo-pretorio-considera")); else echo (isset($_REQUEST['unitao-indirizzo'])?ap_sanifica_testo($_REQUEST['unitao-indirizzo']):""); ?>" size="150"/>
+			<input name="unitao-indirizzo" id="unitao-indirizzo" type="text" value="<?php if($edit) echo (isset($risultato->Indirizzo)?esc_attr(ap_sanifica_testo($risultato->Indirizzo)):esc_attr__("Non Definito","albo-pretorio-considera")); else echo (isset($_REQUEST['unitao-indirizzo'])?esc_attr(ap_sanifica_testo($_REQUEST['unitao-indirizzo'])):""); ?>" size="150"/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-url"><?php esc_html_e("Url","albo-pretorio-considera");?></label>
-			<input name="unitao-url" id="unitao-url" type="url" value="<?php if($edit) echo (isset($risultato->Url)?ap_sanifica_testo($risultato->Url):__("Non Definito","albo-pretorio-considera")); else echo (isset($_REQUEST['unitao-url'])?ap_sanifica_testo($_REQUEST['unitao-url']):"");?>" size="100"/>
+			<input name="unitao-url" id="unitao-url" type="url" value="<?php if($edit) echo (isset($risultato->Url)?esc_attr(ap_sanifica_testo($risultato->Url)):esc_attr__("Non Definito","albo-pretorio-considera")); else echo (isset($_REQUEST['unitao-url'])?esc_attr(ap_sanifica_testo($_REQUEST['unitao-url'])):"");?>" size="100"/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-email"><?php esc_html_e("Email","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="unitao-email" id="<?php esc_html_e("Email","albo-pretorio-considera");?>" type="email" required value="<?php if($edit) echo (isset($risultato->Email)?ap_sanifica_testo($risultato->Email):__("Non Definito","albo-pretorio-considera")); else echo ((isset($_REQUEST['unitao-email'])?ap_sanifica_testo($_REQUEST['unitao-email']):""));?>" size="100"/>
+			<input name="unitao-email" id="<?php esc_html_e("Email","albo-pretorio-considera");?>" type="email" required value="<?php if($edit) echo (isset($risultato->Email)?esc_attr(ap_sanifica_testo($risultato->Email)):esc_attr__("Non Definito","albo-pretorio-considera")); else echo esc_attr((isset($_REQUEST['unitao-email'])?ap_sanifica_testo($_REQUEST['unitao-email']):""));?>" size="100"/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-pec"><?php esc_html_e("Pec","albo-pretorio-considera");?></label>
-			<input name="unitao-pec" id="unitao-pec" type="email" value="<?php if($edit) echo (isset($risultato->Pec)?ap_sanifica_testo($risultato->Pec):__("Non Definito","albo-pretorio-considera")); else echo ((isset($_REQUEST['unitao-pec'])?ap_sanifica_testo($_REQUEST['unitao-pec']):""));?>" size="100"/>
+			<input name="unitao-pec" id="unitao-pec" type="email" value="<?php if($edit) echo (isset($risultato->Pec)?esc_attr(ap_sanifica_testo($risultato->Pec)):esc_attr__("Non Definito","albo-pretorio-considera")); else echo esc_attr((isset($_REQUEST['unitao-pec'])?ap_sanifica_testo($_REQUEST['unitao-pec']):""));?>" size="100"/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-telefono"><?php esc_html_e("Telefono","albo-pretorio-considera");?></label>
-			<input name="unitao-telefono" id="unitao-telefono" type="text" value="<?php if($edit) echo (isset($risultato->Telefono)?ap_sanifica_testo($risultato->Telefono):__("Non Definito","albo-pretorio-considera")); else echo ((isset($_REQUEST['unitao-telefono'])?ap_sanifica_testo($_REQUEST['unitao-telefono']):"")); ?>"' size="30"/>
+			<input name="unitao-telefono" id="unitao-telefono" type="text" value="<?php if($edit) echo (isset($risultato->Telefono)?esc_attr(ap_sanifica_testo($risultato->Telefono)):esc_attr__("Non Definito","albo-pretorio-considera")); else echo esc_attr((isset($_REQUEST['unitao-telefono'])?ap_sanifica_testo($_REQUEST['unitao-telefono']):"")); ?>"' size="30"/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="unitao-fax"><?php esc_html_e("Fax","albo-pretorio-considera");?></label>
-			<input name="unitao-fax" id="unitao-fax" type="text" value="<?php if($edit) echo (isset($risultato->Fax)?ap_sanifica_testo($risultato->Fax):__("Non Definito","albo-pretorio-considera")); else echo ((isset($_REQUEST['unitao-fax'])?ap_sanifica_testo($_REQUEST['unitao-fax']):"")); ?>" size="30"/>
+			<input name="unitao-fax" id="unitao-fax" type="text" value="<?php if($edit) echo (isset($risultato->Fax)?esc_attr(ap_sanifica_testo($risultato->Fax)):esc_attr__("Non Definito","albo-pretorio-considera")); else echo esc_attr((isset($_REQUEST['unitao-fax'])?ap_sanifica_testo($_REQUEST['unitao-fax']):"")); ?>" size="30"/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="tag-description"><?php esc_html_e("Note","albo-pretorio-considera");?></label>
-			<textarea name="unitao-note" id="unitao-note" rows="5" cols="40"><?php if($edit) echo (isset($risultato->Note)?ap_sanifica_areatesto($risultato->Note):__("Non Definito","albo-pretorio-considera")); else echo ((isset($_REQUEST['unitao-note'])?ap_sanifica_areatesto($_REQUEST['unitao-note']):"")); ?></textarea>
+			<textarea name="unitao-note" id="unitao-note" rows="5" cols="40"><?php if($edit) echo (isset($risultato->Note)?esc_textarea(ap_sanifica_areatesto($risultato->Note)):esc_html__("Non Definito","albo-pretorio-considera")); else echo esc_textarea((isset($_REQUEST['unitao-note'])?ap_sanifica_areatesto($_REQUEST['unitao-note']):"")); ?></textarea>
 			<p><?php esc_html_e("inserire eventuali informazioni aggiuntive","albo-pretorio-considera");?></p>
 		</div>
 
 <?php
 if($edit) {
 	if(isset($risultato->Nome)){
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Unità Organizzativa","albo-pretorio-considera").' '.(isset($risultato->Nome)?ap_sanifica_testo($risultato->Nome):"").'" rel="'.(isset($risultato->Nome)?ap_sanifica_testo($risultato->Nome):"").'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Unità Organizzativa","albo-pretorio-considera").' '.(isset($risultato->Nome)?ap_sanifica_testo($risultato->Nome):"")).'" rel="'.esc_attr((isset($risultato->Nome)?ap_sanifica_testo($risultato->Nome):"")).'" />';
 	}
 }else{
  	if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit_err")
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Memorizza Modifiche Unità Organizzativa","albo-pretorio-considera").' '.(isset($_GET['unitao-nome'])?ap_sanifica_testo($_GET['unitao-nome']):"").'" rel="'.(isset($_GET['unitao-nome'])?ap_sanifica_testo($_GET['unitao-nome']):"").'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Unità Organizzativa","albo-pretorio-considera").' '.(isset($_GET['unitao-nome'])?ap_sanifica_testo($_GET['unitao-nome']):"")).'" rel="'.esc_attr(isset($_GET['unitao-nome'])?ap_sanifica_testo($_GET['unitao-nome']):"").'" />';
 	else
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. __("Aggiungi nuovo Unità Organizzativa","albo-pretorio-considera").'"  />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr__("Aggiungi nuovo Unità Organizzativa","albo-pretorio-considera").'"  />';
 }
 ?>
 	</form>
