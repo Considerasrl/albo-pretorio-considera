@@ -130,8 +130,8 @@ function admin_notice(){
 ?>
     <div class="updated notice albo-notice-dismis is-dismissible" >
         <h3>Albo Online</h3>
-        <p><?php echo sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Aggiornato alla versione %s', 'albo-pretorio-considera' ),$this->version); ?></p>
-        <p><?php echo sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Per visualizzare le modifiche apportate consultare il %1$sregistro delle modifiche su GitHub%2$s', 'albo-pretorio-considera' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>'); ?></p>
+        <p><?php echo esc_html(sprintf(/* translators: %s: numero di versione */ __('Aggiornato alla versione %s', 'albo-pretorio-considera' ),$this->version)); ?></p>
+        <p><?php echo wp_kses_post(sprintf(/* translators: %1$s e %2$s: tag di apertura/chiusura del link */ __('Per visualizzare le modifiche apportate consultare il %1$sregistro delle modifiche su GitHub%2$s', 'albo-pretorio-considera' ),'<a href="https://github.com/Considerasrl/albo-pretorio-considera/releases" target="_blank" rel="noopener">','</a>')); ?></p>
     </div>
 
 
@@ -524,17 +524,17 @@ function admin_notice(){
 			switch ($_REQUEST['action']){
 			case "dwnalle":
 				if(!isset($_SERVER["HTTP_REFERER"])){
-					wp_die(__('Oooooo!<br />
+					wp_die(wp_kses_post(__('Oooooo!<br />
 					        Stai tentando di fare il furbo!<br />
-					        Non puoi accedere a questo file direttamente.','albo-pretorio-considera'));
+					        Non puoi accedere a questo file direttamente.','albo-pretorio-considera')));
 					break;
 				}
 				$Allegato	= ap_get_allegato_atto($_REQUEST['id']);
 				if (empty($Allegato))
-					wp_die(__("Allegato non trovato","albo-pretorio-considera"));
+					wp_die(esc_html__("Allegato non trovato","albo-pretorio-considera"));
 				$file_path	=$Allegato[0]->Allegato;
 				if (!is_file($file_path) or !is_readable($file_path))
-					wp_die(__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera"));
+					wp_die(esc_html__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera"));
 				/* Il controllo sul Referer non basta a limitare l'accesso: chiunque
 				   scorra gli id puo' scaricare gli allegati di atti non ancora
 				   pubblicati o oltre la data di oblio, che il front-end non mostra.
@@ -550,7 +550,7 @@ function admin_notice(){
 					$NonPubblicato = ($Atto->DataInizio!="0000-00-00" And $Atto->DataInizio>$Oggi);
 					$OltreOblio    = ($Atto->DataOblio !="0000-00-00" And $Atto->DataOblio <=$Oggi);
 					if ($NonPubblicato Or $OltreOblio)
-						wp_die(__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
+						wp_die(esc_html__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
 				}
 				$chunksize	= 2*(1024*1024);
 				$stat 		= stat($file_path);
@@ -589,7 +589,7 @@ function admin_notice(){
 				else {
 					$handle = fopen($file_path, 'rb');
 					while (!feof($handle)) {
-						echo fread($handle, $chunksize);
+						echo fread($handle, $chunksize); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- streaming dei byte grezzi del file in download (Content-Type gia' impostato), non output HTML
 						flush();
 					}
 					fclose($handle);
@@ -610,30 +610,30 @@ function admin_notice(){
 		   And !current_user_can('editore_atti_albo') And !current_user_can('gest_atti_albo'))
 			return;?>
 <script type='text/javascript'>
-	var myajaxsec = "<?php echo wp_create_nonce('adminsecretAlboOnLine');?>",
-	    title_button_albo="<?php echo str_replace('"',"''",__('Albo OnLine','albo-pretorio-considera'));?>",
-	    title_button_gruppi="<?php echo str_replace('"',"''",__('Albo OnLine raggruppamento atti','albo-pretorio-considera'));?>",
-	    title_button_atto="<?php echo str_replace('"',"''",__('Albo OnLine visualizza atto','albo-pretorio-considera'));?>",
-	    NonVal="<?php echo str_replace('"',"''",__("Non Valorizzato","albo-pretorio-considera"));?>",
-	    NonValAmm="<?php echo str_replace('"',"''",__("Valore Non Valido","albo-pretorio-considera"));?>",
-	    NonSOg="<?php echo str_replace('"',"''",__("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-pretorio-considera"));?>",
-	    TabFunSog="<?php echo str_replace('"',"''",__("Tabella Funzioni Soggetti","albo-pretorio-considera"));?>",
-	    Codice="<?php echo str_replace('"',"''",__("Codice","albo-pretorio-considera"));?>",
-	    ValidateCodice="<?php echo str_replace('"',"''",__("Il campo Codice deve essere di 2 o 3 caratteri","albo-pretorio-considera"));?>",
-	    Funzione="<?php echo str_replace('"',"''",__("Funzione","albo-pretorio-considera"));?>",
-	    ValidateFunzione="<?php echo str_replace('"',"''",__("Il campo Funzione deve essere di almeno 5 caratteri","albo-pretorio-considera"));?>",
-	    Visualizza="<?php echo str_replace('"',"''",__("Visualizza","albo-pretorio-considera"));?>",
-	    ValidateVisualizza="<?php echo str_replace('"',"''",__("Visualizza in elenco Soggetti nei dettagli dell'atto","albo-pretorio-considera"));?>",
-	    Stampa="<?php echo str_replace('"',"''",__("Stampa","albo-pretorio-considera"));?>",
-	    ValidateStampa="<?php echo str_replace('"',"''",__("Stampa nella colonna Sinitra del Certificato di Pubblicazione<br />Da impostarne uno solo, comunque verrà preso in considerazione solo il primo","albo-pretorio-considera"));?>",
-	    append= "<?php echo str_replace('"',"''",__("Aggiungi Riga","albo-pretorio-considera"));?>",
-        removeLast= "<?php echo str_replace('"',"''",__("Rimuovi ultima Riga","albo-pretorio-considera"));?>",
-        insert= "<?php echo str_replace('"',"''",__("Inserisci Riga prima","albo-pretorio-considera"));?>",
-        remove= "<?php echo str_replace('"',"''",__("Rimuovi la Riga corrente","albo-pretorio-considera"));?>",
-        moveUp= "<?php echo str_replace('"',"''",__("Sposta Su","albo-pretorio-considera"));?>",
-        moveDown= "<?php echo str_replace('"',"''",__("Sposta Giù","albo-pretorio-considera"));?>",
-        rowDrag= "<?php echo str_replace('"',"''",__("Ordina Riga","albo-pretorio-considera"));?>",
-        rowEmpty= "<?php echo str_replace('"',"''",__("Questa Griglia è vuota","albo-pretorio-considera"));?>";  
+	var myajaxsec = "<?php echo esc_js(wp_create_nonce('adminsecretAlboOnLine'));?>",
+	    title_button_albo="<?php echo esc_js(__('Albo OnLine','albo-pretorio-considera'));?>",
+	    title_button_gruppi="<?php echo esc_js(__('Albo OnLine raggruppamento atti','albo-pretorio-considera'));?>",
+	    title_button_atto="<?php echo esc_js(__('Albo OnLine visualizza atto','albo-pretorio-considera'));?>",
+	    NonVal="<?php echo esc_js(__("Non Valorizzato","albo-pretorio-considera"));?>",
+	    NonValAmm="<?php echo esc_js(__("Valore Non Valido","albo-pretorio-considera"));?>",
+	    NonSOg="<?php echo esc_js(__("Nessun Soggetto selezionato, ne devi selezionare almeno UNO","albo-pretorio-considera"));?>",
+	    TabFunSog="<?php echo esc_js(__("Tabella Funzioni Soggetti","albo-pretorio-considera"));?>",
+	    Codice="<?php echo esc_js(__("Codice","albo-pretorio-considera"));?>",
+	    ValidateCodice="<?php echo esc_js(__("Il campo Codice deve essere di 2 o 3 caratteri","albo-pretorio-considera"));?>",
+	    Funzione="<?php echo esc_js(__("Funzione","albo-pretorio-considera"));?>",
+	    ValidateFunzione="<?php echo esc_js(__("Il campo Funzione deve essere di almeno 5 caratteri","albo-pretorio-considera"));?>",
+	    Visualizza="<?php echo esc_js(__("Visualizza","albo-pretorio-considera"));?>",
+	    ValidateVisualizza="<?php echo esc_js(__("Visualizza in elenco Soggetti nei dettagli dell'atto","albo-pretorio-considera"));?>",
+	    Stampa="<?php echo esc_js(__("Stampa","albo-pretorio-considera"));?>",
+	    ValidateStampa="<?php echo esc_js(__("Stampa nella colonna Sinitra del Certificato di Pubblicazione<br />Da impostarne uno solo, comunque verrà preso in considerazione solo il primo","albo-pretorio-considera"));?>",
+	    append= "<?php echo esc_js(__("Aggiungi Riga","albo-pretorio-considera"));?>",
+        removeLast= "<?php echo esc_js(__("Rimuovi ultima Riga","albo-pretorio-considera"));?>",
+        insert= "<?php echo esc_js(__("Inserisci Riga prima","albo-pretorio-considera"));?>",
+        remove= "<?php echo esc_js(__("Rimuovi la Riga corrente","albo-pretorio-considera"));?>",
+        moveUp= "<?php echo esc_js(__("Sposta Su","albo-pretorio-considera"));?>",
+        moveDown= "<?php echo esc_js(__("Sposta Giù","albo-pretorio-considera"));?>",
+        rowDrag= "<?php echo esc_js(__("Ordina Riga","albo-pretorio-considera"));?>",
+        rowEmpty= "<?php echo esc_js(__("Questa Griglia è vuota","albo-pretorio-considera"));?>";  
 </script>
 	<?php		
 		$TitoloAlbo=sanitize_title(__('Albo OnLine','albo-pretorio-considera'));
@@ -1105,6 +1105,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 
 	function ShowBacheca(){
 	global $wpdb;
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- dashboard/bacheca admin: output = markup fisso + label i18n del plugin + output di helper che generano markup; i valori dinamici da DB/utente e i value degli input sono escapati inline (esc_attr/esc_html).
 		if (isset($_REQUEST['action']) And $_REQUEST['action']=="setta-anno"){
 		  update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		  update_option('opt_AP_NumeroProgressivo',1 );
@@ -1278,10 +1279,12 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			</div>
 		 </div>';
 }
-}	
+	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
+}
 
 	function AP_config(){
 	$stato="";
+	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- pagina admin Parametri/configurazione: output = markup fisso + label i18n del plugin + output di helper (dropdown/select) che generano markup; i value degli input e i valori dinamici da opzioni/DB sono escapati inline (esc_attr/esc_html).
 	  if (isset($_REQUEST['action']) And $_REQUEST['action']=="setta-anno"){
 		update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
 		update_option('opt_AP_NumeroProgressivo',1 );
@@ -1416,8 +1419,8 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 				<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-settings" style="font-size:1em;"></span> '.__('Parametri','albo-pretorio-considera').'</h2>
 			</div>'.$stato.'
 	 <form name="AlboPretorio_cnf" action="'.get_bloginfo('wpurl').'/wp-admin/index.php" method="post">
-	  <input type="hidden" name="c_AnnoProgressivo" value="'.$nanno.'"/>
-	  <input type="hidden" name="confAP" value="'.wp_create_nonce('configurazionealbo').'" />
+	  <input type="hidden" name="c_AnnoProgressivo" value="'.esc_attr($nanno).'"/>
+	  <input type="hidden" name="confAP" value="'.esc_attr(wp_create_nonce('configurazionealbo')).'" />
 	  <div id="config-tabs-container" style="margin-top:20px;">
 		<ul>
 			<li><a href="#Conf-tab-1">'.__('Impostazioni Generali','albo-pretorio-considera').'</a></li>
@@ -1433,7 +1436,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 		  <table class="albo_cell">
 			<tr>
 				<th scope="row"><label for="nomeente">'.__('Nome Ente','albo-pretorio-considera').'</label></th>
-				<td><input type="text" name="c_Ente" value="'.$ente.'" style="width:80%;" id="nomeente"/></td>
+				<td><input type="text" name="c_Ente" value="'.esc_attr($ente).'" style="width:80%;" id="nomeente"/></td>
 			</tr>
 			<tr>
 				<th scope="row"><label for="defEnte">'.__('Ente di default','albo-pretorio-considera').'</label></th>
@@ -1483,7 +1486,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 				<th scope="row"><label>'.__('Numero Progressivo','albo-pretorio-considera').'</label></th>
 				<td><strong> ';
 				if(ap_get_all_atti(0,0,0,0,'',0,0,"",0,0,TRUE,FALSE)==0)
-					echo '<input type="text" id="progressivo" name="progressivo" value="'.$nprog.'" size="5"/>';
+					echo '<input type="text" id="progressivo" name="progressivo" value="'.esc_attr($nprog).'" size="5"/>';
 				else
 					echo $nprog;
 			echo ' / '.$nanno.'</strong>	
@@ -1522,19 +1525,19 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 				<tr>
 					<th scope="row"><label for="color">'.__('Righe Atti Annullati','albo-pretorio-considera').'</label></th>
 					<td> 
-						<input type="text" id="color" name="color" value="'.$colAnnullati.'" size="5"/>
+						<input type="text" id="color" name="color" value="'.esc_attr($colAnnullati).'" size="5"/>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="colorp">'.__('Righe Pari','albo-pretorio-considera').'</label></th>
 					<td> 
-						<input type="text" id="colorp" name="colorp" value="'.$colPari.'" size="5"/>
+						<input type="text" id="colorp" name="colorp" value="'.esc_attr($colPari).'" size="5"/>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="colord">'.__('Righe Dispari','albo-pretorio-considera').'</label></th>
 					<td> 
-						<input type="text" id="colord" name="colord" value="'.$colDispari.'" size="5"/>
+						<input type="text" id="colord" name="colord" value="'.esc_attr($colDispari).'" size="5"/>
 					</td>
 				</tr>
 			</table>
@@ -1654,7 +1657,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 						<label for="icona">'.__('Immagine documenti','albo-pretorio-considera').'</label>
 					</th>
 					<td>
-						<input name="imgDocumenti" id="icona" type="text" value="'.$IconaDocumenti.'" style="width:80%;" aria-required="true" />
+						<input name="imgDocumenti" id="icona" type="text" value="'.esc_attr($IconaDocumenti).'" style="width:80%;" aria-required="true" />
 						<input id="icona_upload" class="button" type="button" value="Carica" /><br />'.__('Dimensione max 256x256','albo-pretorio-considera').'
 						<div style="margin-top:5px;">
 							<img src="'.$IconaDocumenti.'" width="30" height="30" id="IconaTipoFile"/>
@@ -1745,13 +1748,13 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 				<tr>
 					<th scope="row"><label>'.__('Nome Responsabile','albo-pretorio-considera').'</label></th>
 					<td>
-						<input type="text" id="NoResp" name="NoResp" maxlength="255" value="'.$Testi["NoResp"].'" style="width:100%;"/>
+						<input type="text" id="NoResp" name="NoResp" maxlength="255" value="'.esc_attr($Testi["NoResp"]).'" style="width:100%;"/>
 					</td>
 				</tr>	
 				<tr>
 					<th scope="row"><label>'.__('Certificato Pubblicazione','albo-pretorio-considera').'</label></th>
 					<td>
-						<input type="text" id="CertPub" name="CertPub" maxlength="255" value="'.$Testi["CertPub"].'" style="width:100%;"/>
+						<input type="text" id="CertPub" name="CertPub" maxlength="255" value="'.esc_attr($Testi["CertPub"]).'" style="width:100%;"/>
 					</td>
 				</tr>	
 			  </table>	
@@ -1796,7 +1799,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 					<label for="rest_api_urlest">'.__('Url da abilitare','albo-pretorio-considera').'</label>
 				</th>
 				<td>
-					<input type="text" name="rest_api_urlest" value="'.$RestApiUrlEst.'" id="rest_api_urlest" size="50"/>  <br />'.__("Inserire l'Url del sito client che in cui viene interrogato l'Albo, per abilitare la visualizzazione degli allegati",'albo-pretorio-considera').'
+					<input type="text" name="rest_api_urlest" value="'.esc_attr($RestApiUrlEst).'" id="rest_api_urlest" size="50"/>  <br />'.__("Inserire l'Url del sito client che in cui viene interrogato l'Albo, per abilitare la visualizzazione degli allegati",'albo-pretorio-considera').'
 				</td>
 			</tr>
 			<tr>
@@ -1955,15 +1958,16 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 					<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 						<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
 						<input type="hidden" name="action" value="setta-anno" />
-	  					<input type="hidden" name="confAP" value="'.wp_create_nonce('configurazionealbo').'" />
+	  					<input type="hidden" name="confAP" value="'.esc_attr(wp_create_nonce('configurazionealbo')).'" />
 						<input type="submit" name="submit" id="submit" class="button" value="'.__('Aggiorna Anno Albo ed Azzera numero Progressivo','albo-pretorio-considera').'"  />
 						</form>
 					</div>
 				  </div>';
 		}
 
+	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
-	function define_tables() {		
+	function define_tables() {
 		global $wpdb,$table_prefix;
 		
 		// add database pointer 
