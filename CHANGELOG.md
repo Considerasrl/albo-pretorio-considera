@@ -9,13 +9,34 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
-## [Non rilasciato]
+## [4.12.0] - 2026-08-06
+
+Il plugin supera ora il **Plugin Check ufficiale di WordPress.org con 0 rilievi**
+(ERROR e WARNING) sul pacchetto distribuito.
 
 ### Sicurezza
+- **Escaping completo dell'output**: tutti i valori dinamici in uscita sono ora
+  escapati per contesto (`esc_html`, `esc_attr`, `esc_url`, `esc_js`,
+  `wp_kses_post`). Difesa in profondità contro XSS nel back-end e nel front-end.
+- **Sanitizzazione, unslash e validazione degli input**: ogni lettura di
+  superglobali (`$_GET`/`$_POST`/`$_REQUEST`/`$_SERVER`/`$_FILES`) passa da
+  `isset()`/`??`, `wp_unslash()` e un sanitizzatore adeguato prima dell'uso; gli
+  upload verificano `is_uploaded_file()`.
+- **Verifica dei nonce** sulle operazioni di scrittura (già presente negli
+  handler; le pagine di sola visualizzazione leggono i parametri solo per il
+  rendering).
+- Query su tabelle custom con clausole preparate e caching dove applicabile.
 - Creazione delle cartelle di lavoro (allegati, backup, oblio) tramite
   `wp_mkdir_p()` invece di `mkdir()` diretto.
 
 ### Modificato
+- **Prefisso globale**: tutte le funzioni e le variabili globali del plugin sono
+  state prefissate con `albopc_` (il prefisso `ap_`, di 2 caratteri, non è
+  accettato da Plugin Check che ne richiede almeno 4). Shortcode, azioni/hook
+  AJAX (`ap_editor_*`) e nomi delle opzioni (`opt_AP_*`) restano invariati:
+  nessun impatto sul comportamento per l'utente.
+- Rimosso il bundle ridondante `js/jquery-ui.min.js` (si usa il jQuery UI del
+  core di WordPress). Descrizione della `readme.txt` in inglese per wp.org.
 - Backup dati/allegati e oblio: sostituita la libreria di terze parti PclZip con
   l'estensione nativa `ZipArchive` (rimosso `inc/pclzip.php`). Il formato degli
   archivi prodotti è invariato.
