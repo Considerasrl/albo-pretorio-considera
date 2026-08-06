@@ -24,7 +24,7 @@ function DownloadFile($filename){
     }
     else
     {
-      wp_die(basename($filename)." ".__("File non trovato","albo-pretorio-considera"));
+      wp_die(esc_html(basename($filename))." ".esc_html__("File non trovato","albo-pretorio-considera"));
     }
  }
 }
@@ -148,9 +148,9 @@ function albo_post() {
 	            	$nonce  = filter_input( INPUT_GET, '_wpnonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 	            	$action = 'bulk-atti' ;
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
+		                wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 		        }else{
-		        	wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
+		        	wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") );
 		        }
 			 	$Msg=ap_oblio_atti(intval($_GET['IdAtto']));
 			 	$location = "?page=atti&stato_atti=Eliminare&message=".urlencode($Msg);
@@ -161,7 +161,7 @@ function albo_post() {
 		            $nonce  = filter_input( INPUT_GET, 'avvisoatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazioneavviso_affissione';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
+		                wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,esc_html__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		$location = "?page=atti&stato_atti=Correnti" ;
 			 		include ('stampe.php');
 			 		if (is_numeric($_REQUEST['id'])) {
@@ -169,14 +169,14 @@ function albo_post() {
 					}
 					wp_die();
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,esc_html__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;
  			case "certificato_pubblicazione-atto":
 				if ( isset( $_GET['certificatoatto'] ) && ! empty( $_GET['certificatoatto'] ) ) {
 		            $nonce  = filter_input( INPUT_GET, 'certificatoatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionecertificato_pubblicazione';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
+		                wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,esc_html__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		$location = "?page=atti&stato_atti=Correnti" ;
 			 		include ('stampe.php');
 			 		if (is_numeric($_REQUEST['id'])) {
@@ -184,14 +184,14 @@ function albo_post() {
 					}
 					wp_die();
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,esc_html__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;
  			case "oblia-atto":
 				if ( isset( $_GET['oatto'] ) && ! empty( $_GET['oatto'] ) ) {
 		            $nonce  = filter_input( INPUT_GET, 'oatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionebliaatto';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
+		                wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,esc_html__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		$location = "?page=atti&stato_atti=Scaduti" ;
 			 		if (is_numeric($_REQUEST['id'])) {
  	                    $MessaggiRitorno=ap_setOblioOggi(intval($_REQUEST['id']));
@@ -199,7 +199,7 @@ function albo_post() {
 					$location = add_query_arg( 'message',$MessaggiRitorno, $location );
 					wp_safe_redirect( $location );
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,esc_html__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;	
  
  			case "elimina-atto":
@@ -207,14 +207,14 @@ function albo_post() {
 		            $nonce  = filter_input( INPUT_GET, 'cancellatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		            $action = 'operazionecancelaatto';
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
-		               wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );
+		               wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,esc_html__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );
 			 		$location = "?page=atti&stato_atti=Eliminare" ;
 			 		$MessaggiRitorno=ap_oblio_atti(intval($_GET['id']));
 					$location = add_query_arg( 'message',$MessaggiRitorno["Message"], $location );
 					$location = add_query_arg( 'message2',$MessaggiRitorno["Message2"], $location );
 					wp_safe_redirect( $location );
 				}else
-					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
+					wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,esc_html__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
 			break;
 		case "annulla-atto":
 			if (!isset($_REQUEST['annatto'])) {
@@ -237,7 +237,7 @@ function albo_post() {
 					$Risultato=ap_annulla_atto(intval($_REQUEST['id']),sanitize_textarea_field($_REQUEST['Motivo']),$Allegati);
 				}				
 			}else{
-				$Risultato=wp_die( __("Operazione Annullata","albo-pretorio-considera"));
+				$Risultato=wp_die( esc_html__("Operazione Annullata","albo-pretorio-considera"));
 			}
 	 		$location = "?page=atti&stato_atti=Correnti" ;
 			$location = add_query_arg( 'message', $Risultato, $location );

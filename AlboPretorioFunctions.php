@@ -67,26 +67,26 @@ function ap_Move_Allegati_CartellaMeseAnno(){
 		$NewAllegato=$NewPath."/".basename($allegato->Allegato);
 		if (is_file($allegato->Allegato)) {
 			if (!copy($allegato->Allegato, $NewAllegato)) {
-				echo '<spam style="color:red;">'.__('Errore','albo-pretorio-considera').'</spam> '.__("nello spostamento dell'Allegato ",'albo-pretorio-considera').$allegato->Allegato.' in '. $NewAllegato."<br />";
+				echo '<spam style="color:red;">'.esc_html__('Errore','albo-pretorio-considera').'</spam> '.esc_html__("nello spostamento dell'Allegato ",'albo-pretorio-considera').esc_html($allegato->Allegato).' in '. esc_html($NewAllegato)."<br />";
 				fwrite($fplog, __('Non sono riuscito a copiare il file','albo-pretorio-considera')." ".$allegato->Allegato." ".__('in','albo-pretorio-considera')." ". $NewAllegato."\n");
 			} else {
 				if (!unlink($allegato->Allegato)) {
 		$msg.='<spam style="color:red;">'.__('Errore','albo-pretorio-considera').'</spam> '.__("errata cancellazione dell'Allegato",'albo-pretorio-considera').' </spam>'.$allegato->Allegato."<br />";
 	fwrite($fplog, __('Non sono riuscito a cancellare il file','albo-pretorio-considera').$allegato->Allegato."\n");
 	}				
-				echo '<spam style="color:green;">File</spam> '.$allegato->Allegato.'<br /><spam style="color:green;">'.__('spostato in','albo-pretorio-considera').'</spam> '.$NewAllegato.'<br />';
+				echo '<spam style="color:green;">File</spam> '.esc_html($allegato->Allegato).'<br /><spam style="color:green;">'.esc_html__('spostato in','albo-pretorio-considera').'</spam> '.esc_html($NewAllegato).'<br />';
 				fwrite($fplog,"File ".$allegato->Allegato." ".__('spostato in','albo-pretorio-considera')." ".$NewAllegato."\n");
 				if ($wpdb->update($wpdb->table_name_Allegati,
 				array('Allegato' => $NewAllegato),
 				array('IdAllegato' => $allegato->IdAllegato ),
 				array('%s'),
 				array('%d'))>0) {
-					echo '<spam style="color:green;">'.__('Aggiornamento Link Allegato','albo-pretorio-considera').'</spam> '.$allegato->Allegato."<br />";
+					echo '<spam style="color:green;">'.esc_html__('Aggiornamento Link Allegato','albo-pretorio-considera').'</spam> '.esc_html($allegato->Allegato)."<br />";
 					fwrite($fplog, __('Aggiornato il link nel Data Base per','albo-pretorio-considera')." ".$allegato->Allegato." ".__('in','albo-pretorio-considera')." ".$NewAllegato."\n");
 				}
 			}
 		} else {
-			echo '<spam style="color:red;">'.__('Errore','albo-pretorio-considera').'</spam> '.__('Allegato','albo-pretorio-considera').' '.$allegato->Allegato.' '.__('Inesistente','albo-pretorio-considera').' <br />';
+			echo '<spam style="color:red;">'.esc_html__('Errore','albo-pretorio-considera').'</spam> '.esc_html__('Allegato','albo-pretorio-considera').' '.esc_html($allegato->Allegato).' '.esc_html__('Inesistente','albo-pretorio-considera').' <br />';
 		}
 		echo "<hr />";
 	}
@@ -2881,7 +2881,7 @@ function ap_backup_table($table,$fp,$Filtro="",$Delete=TRUE) {
 	}
 	$table_structure = $wpdb->get_results("DESCRIBE $table");
 	if (! $table_structure) {
-		echo __("Errore nell'estrazione della struttura della tabella","albo-pretorio-considera").' : '.$table;
+		echo esc_html__("Errore nell.estrazione della struttura della tabella","albo-pretorio-considera")." : ".esc_html($table);
 		return false;
 	}
 	// Table structure
@@ -2973,8 +2973,8 @@ global $wpdb;
 	}	
 	$Risultato=__('Risultato del Backup','albo-pretorio-considera'). ":<br />";
 	if ($Echo){
-		echo "<h2>".__('Risultato del Backup','albo-pretorio-considera'). ":</h2>";
-		echo "<h3>".__('Verifica struttura Directory destinazione','albo-pretorio-considera'). "</h3>"
+		echo "<h2>".esc_html__('Risultato del Backup','albo-pretorio-considera'). ":</h2>";
+		echo "<h3>".esc_html__('Verifica struttura Directory destinazione','albo-pretorio-considera'). "</h3>"
 		. "<ul>";
 	}
 	if (class_exists('ZipArchive')) {
@@ -2982,9 +2982,9 @@ global $wpdb;
 		if (!is_dir ( $Destinazione)){
 			if (!wp_mkdir_p($Destinazione)){
 				if ($Echo){
-					echo "<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Destinazione)."</li>";
+					echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Destinazione))."</li>";
 				}else{
-					 echo"<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$Destinazione)."</li>";
+					 echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$Destinazione))."</li>";
 				}
 				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory  %s \n Fine Operazione','albo-pretorio-considera'),$Destinazione);
 			}
@@ -2993,9 +2993,9 @@ global $wpdb;
 			if (!is_dir ( $Dir)){
 				if (!wp_mkdir_p($Dir)) {
 					if ($Echo){
-						echo "<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Dir)."</li>";
+						echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Dir))."</li>";
 					}else{
-						echo"<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$Dir)."</li>";
+						echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$Dir))."</li>";
 					}
 					$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$Dir);
 				}
@@ -3004,9 +3004,9 @@ global $wpdb;
 		if (!is_dir ( $DirTmp)){	
 			if (!wp_mkdir_p($DirTmp)){
 				if ($Echo){
-					echo "<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirTmp)."</li>";
+					echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirTmp))."</li>";
 				}else{
-					echo"<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$DirTmp)."</li>";
+					echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$DirTmp))."</li>";
 				}
 				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$DirTmp);
 			}
@@ -3014,9 +3014,9 @@ global $wpdb;
 		if (!is_dir ( $DirLog)){							
 			if (!wp_mkdir_p($DirLog)){
 				if ($Echo){
-					 echo "<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog)."</li>";
+					 echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog))."</li>";
 				}else{
-					echo"<li>".sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$DirLog)."</li>";
+					echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$DirLog))."</li>";
 				}
 				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$DirLog);
 			} 
@@ -3048,7 +3048,7 @@ global $wpdb;
 		fwrite($fplog,__("Svuotamento tabella","albo-pretorio-considera")." ".$DirTmp."\n");
 		$fp = @fopen($DirTmp."/AlboPretorio".gmdate("Ymd_Hi").".sql", "wb");
 		$Risultato="";
-		if ($Echo) echo "<h3>".__("Avvio Backup Dati (Tabelle del Data Base)","albo-pretorio-considera")."</h3>"
+		if ($Echo) echo "<h3>".esc_html__("Avvio Backup Dati (Tabelle del Data Base)","albo-pretorio-considera")."</h3>"
 			. "</ul>";
 		foreach ($tables as $table) {
 			ap_backup_table($table,$fp);
@@ -3084,7 +3084,7 @@ global $wpdb;
 				}
 			}
 			$allegati=ap_get_all_allegati();
-			if ($Echo) echo "<h3>".__("Avvio Backup Allegati","albo-pretorio-considera")."</h3>"
+			if ($Echo) echo "<h3>".esc_html__("Avvio Backup Allegati","albo-pretorio-considera")."</h3>"
 				. "</ul>";
 			$BaseUploadAllegati=AP_BASE_DIR.get_option('opt_AP_FolderUpload');
 			foreach ($allegati as $allegato) {
@@ -3104,7 +3104,7 @@ global $wpdb;
 				}
 				$Risultato.=$tmp_risultato.'<br />';
 				if ($Echo)	
-					echo '<li>'. $tmp_risultato .'</li>';					
+					echo "<li>".esc_html($tmp_risultato)."</li>";					
 									
 			}
 			// Chiusura e momorizzazione del del file
@@ -3120,7 +3120,7 @@ global $wpdb;
 		$fplog = @fopen($nomefileLog, "wb");
 		$Risultato.=__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-considera")."<br />";
 		fwrite($fplog,__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-considera")."\n");
-		if ($Echo) echo "<h3>".__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-considera")."</h3>";
+		if ($Echo) echo "<h3>".esc_html__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-considera")."</h3>";
 		return;	
 	}
 	//Svuoto cartella tmp che contiene i files dati
@@ -3550,7 +3550,7 @@ function ap_MemoFunzioni(){
 //	print_r($_POST);wp_die();
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
-		wp_die(__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
+		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
 	$ValoriPost= explode("&", str_replace("%20"," ",filter_input(INPUT_POST, 'valori')));
 	$Valori=array();
 	$NumeroRighe=0;
@@ -3578,7 +3578,7 @@ function ap_MemoFunzioni(){
 function ap_dismiss_alboonline_notice(){
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
-		wp_die(__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
+		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
 	update_option("alboonline-notice-dismissed",TRUE);
 	wp_die();
 }
@@ -3586,7 +3586,7 @@ function ap_rimuoviallegatoPP(){
 	global $wpdb;
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('editore_atti_albo'))
-		wp_die(__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
+		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
 	$IDAllegato= intval(filter_input(INPUT_POST, 'idAllegato'));
 	$IDAtto= intval(filter_input(INPUT_POST, 'idAtto'));
 	$Motivo= sanitize_text_field(filter_input(INPUT_POST, 'desmotivo'));
@@ -3610,10 +3610,10 @@ function ap_rimuoviallegatoPP(){
 function ap_LoadDefaultFunzioni(){
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
-		wp_die(__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
+		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
 	$Default='[{"ID":"RP","Funzione":"Responsabile Procedimento","Display":"Si","StaCert":"No"},{"ID":"OP","Funzione":"Gestore procedura","Display":"Si","StaCert":"No"},{"ID":"SC","Funzione":"Segretario Comunale","Display":"No","StaCert":"No"},{"ID":"RB","Funzione":"Responsabile Pubblicazione","Display":"No","StaCert":"No"},{"ID":"DR","Funzione":"Direttore dei Servizi Generali e Ammistrativi","Display":"No","StaCert":"No"}]';
 	update_option('opt_AP_TabResp',$Default ); 
-	echo __('Caricamento valori di default avvenuto con successo','albo-pretorio-considera');
+	echo esc_html__("Caricamento valori di default avvenuto con successo","albo-pretorio-considera");
 	wp_die();
 }
 /*****************************************************
