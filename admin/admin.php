@@ -822,12 +822,12 @@ function albo_post() {
 				break;
 			} 
 			if(isset($_POST['Soggetto'])){
-				$Soggetti=serialize($_POST['Soggetto']);
+				$Soggetti=serialize((isset($_POST['Soggetto']) && is_array($_POST['Soggetto'])) ? array_map('sanitize_text_field', wp_unslash($_POST['Soggetto'])) : array());
 			}else{
 				$Soggetti=serialize(array());
 			}
 			$location = "?page=atti&stato_atti=Nuovi" ;
-			$NewIDAtto=ap_insert_atto($_POST['Ente'],
+			$NewIDAtto=ap_insert_atto(sanitize_text_field(wp_unslash($_POST['Ente'] ?? '')),
 								ap_sanifica_testo(sanitize_text_field(wp_unslash($_POST['Data'] ?? ''))),
 			                    ap_sanifica_testo(sanitize_text_field(wp_unslash($_POST['Riferimento'] ?? ''))),
 								ap_sanifica_areatesto(sanitize_textarea_field(wp_unslash($_POST['Oggetto'] ?? ''))),
@@ -846,11 +846,11 @@ function albo_post() {
 				$location = add_query_arg( 'message', 4, $location );
 				$location = add_query_arg( 'errore', $ret , $location );		
 			}
-			if(is_numeric( $NewIDAtto ) And is_array($_REQUEST['newMetaName'])){
-				for($i=0;$i<count($_REQUEST['newMetaName']);$i++){
+			if(is_numeric( $NewIDAtto ) And (isset($_REQUEST['newMetaName']) && is_array($_REQUEST['newMetaName']))){
+				for($i=0;$i<count(is_array($_REQUEST['newMetaName']) ? wp_unslash($_REQUEST['newMetaName']) : array());$i++){
 					ap_add_attimeta($NewIDAtto,
-									ap_sanifica_testo($_REQUEST['newMetaName'][$i]),
-									ap_sanifica_testo($_REQUEST['newValue'][$i]));
+									ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['newMetaName'][$i] ?? ''))),
+									ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['newValue'][$i] ?? ''))));
 				}				
 			}
 			wp_safe_redirect( $location );
@@ -865,13 +865,13 @@ function albo_post() {
 				break;
 			}	
 			if(isset($_POST['Soggetto'])){
-				$Soggetti=serialize($_POST['Soggetto']);
+				$Soggetti=serialize((isset($_POST['Soggetto']) && is_array($_POST['Soggetto'])) ? array_map('sanitize_text_field', wp_unslash($_POST['Soggetto'])) : array());
 			}else{
 				$Soggetti=serialize(array());
 			}
 			$location = "?page=atti&stato_atti=Nuovi" ;
 			$ret=ap_memo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),
-							  $_REQUEST['Ente'],
+							  sanitize_text_field(wp_unslash($_REQUEST['Ente'] ?? '')),
 							  ap_sanifica_testo(sanitize_text_field(wp_unslash($_POST['Data'] ?? ''))),
 							  ap_sanifica_testo(sanitize_text_field(wp_unslash($_POST['Riferimento'] ?? ''))),
 							  ap_sanifica_areatesto(sanitize_textarea_field(wp_unslash($_POST['Oggetto'] ?? ''))),
@@ -888,12 +888,12 @@ function albo_post() {
 				$location = add_query_arg( 'message', 3, $location );
 			else
 				$location = add_query_arg( 'message', 5, $location );
-			ap_remove_metasatto(intval( $_REQUEST['id']),(is_array($_REQUEST['newMetaName'])?$_REQUEST['newMetaName']:""));
-			if(is_array($_REQUEST['newMetaName'])){
-				for($i=0;$i<count($_REQUEST['newMetaName']);$i++){
+			ap_remove_metasatto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0),((isset($_REQUEST['newMetaName']) && is_array($_REQUEST['newMetaName']))?array_map('sanitize_text_field', wp_unslash($_REQUEST['newMetaName'])):""));
+			if((isset($_REQUEST['newMetaName']) && is_array($_REQUEST['newMetaName']))){
+				for($i=0;$i<count(is_array($_REQUEST['newMetaName']) ? wp_unslash($_REQUEST['newMetaName']) : array());$i++){
 					ap_add_attimeta((isset($_REQUEST['id'])?intval($_REQUEST['id']):0),
-									ap_sanifica_testo($_REQUEST['newMetaName'][$i]),
-									ap_sanifica_testo($_REQUEST['newValue'][$i]));
+									ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['newMetaName'][$i] ?? ''))),
+									ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['newValue'][$i] ?? ''))));
 				}				
 			}
 			wp_safe_redirect( $location );
@@ -909,14 +909,14 @@ function albo_post() {
 			}		
 			$location = "?page=atti&stato_atti=".filter_input(INPUT_POST,"stato_atti");	
 			$location = add_query_arg( 'message',12, $location );
-			if(is_array($_REQUEST['newMetaName']) And count($_REQUEST['newMetaName'])>0){
-				for($i=0;$i<count($_REQUEST['newMetaName']);$i++){
+			if((isset($_REQUEST['newMetaName']) && is_array($_REQUEST['newMetaName'])) And count(is_array($_REQUEST['newMetaName']) ? wp_unslash($_REQUEST['newMetaName']) : array())>0){
+				for($i=0;$i<count(is_array($_REQUEST['newMetaName']) ? wp_unslash($_REQUEST['newMetaName']) : array());$i++){
 					ap_add_attimeta((isset($_REQUEST['id'])?intval($_REQUEST['id']):0),
-									ap_sanifica_testo($_REQUEST['newMetaName'][$i]),
-									ap_sanifica_testo($_REQUEST['newValue'][$i]));
+									ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['newMetaName'][$i] ?? ''))),
+									ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['newValue'][$i] ?? ''))));
 				}				
 			}
-			ap_remove_metasatto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0),$_REQUEST['newMetaName']);
+			ap_remove_metasatto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0),sanitize_text_field(wp_unslash($_REQUEST['newMetaName'] ?? '')));
 			wp_safe_redirect( $location );
 			break;
 		case "memo-allegato-atto-associato":
@@ -936,7 +936,7 @@ function albo_post() {
 				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto_collegato()));
 				if (isset($_REQUEST['ref']))
 					$location = add_query_arg(
-						array ( 'action' => $_REQUEST['ref'], 
+						array ( 'action' => sanitize_text_field(wp_unslash($_REQUEST['ref'] ?? '')), 
 								'messaggio' => $messaggio,
 								'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
 								'id' => (isset($_REQUEST['id'])?intval($_REQUEST['id']):0)) , 
@@ -967,7 +967,7 @@ function albo_post() {
 				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto()));
 				if (isset($_REQUEST['ref']))
 					$location = add_query_arg(
-						array ( 'action' => $_REQUEST['ref'], 
+						array ( 'action' => sanitize_text_field(wp_unslash($_REQUEST['ref'] ?? '')), 
 								'messaggio' => $messaggio,
 								'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
 								'id' => (isset($_REQUEST['id'])?intval($_REQUEST['id']):0)) , 
@@ -997,7 +997,7 @@ function albo_post() {
 			}else{
 				$messaggio =addslashes(str_replace(" ","%20",Memo_allegato_atto()));
 				if (isset($_REQUEST['ref']))
-					$location = add_query_arg(array ( 'action' => $_REQUEST['ref'], 
+					$location = add_query_arg(array ( 'action' => sanitize_text_field(wp_unslash($_REQUEST['ref'] ?? '')), 
 												  'messaggio' => $messaggio,
 												  'allegatoatto'=>wp_create_nonce('gestallegatiatto'),
 												  'id' => (isset($_REQUEST['id'])?intval($_REQUEST['id']):0)) , $location );
@@ -1049,7 +1049,7 @@ function Memo_allegato_atto_collegato(){
 			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 		} 		
 		$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/';
-		$targetfile = $_REQUEST['AllegatiSpuri'];
+		$targetfile = sanitize_text_field(wp_unslash($_REQUEST["AllegatiSpuri"] ?? ""));
 		// Il file deve trovarsi dentro la cartella upload dell'Albo: si risolve
 		// il path reale e si verifica il prefisso per impedire path traversal
 		$real_target = realpath(str_replace("//","/",str_replace("\\","/",$targetfile)));
@@ -1075,22 +1075,22 @@ function Memo_allegato_atto(){
 		if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['uploallegato'] ?? '')),'uploadallegati')){
 			return __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 		} 		
-//		var_dump($_FILES);var_dump($_FILES["files"]['name']);wp_die();
-		$numAllegati=count($_FILES["files"]['name']);
+//		var_dump($_FILES);var_dump(sanitize_text_field(wp_unslash($_FILES["files"]['name'] ?? '')));wp_die();
+		$numAllegati=count(isset($_FILES["files"]['name']) ? wp_unslash($_FILES["files"]['name']) : array());
 		$retMessages=__("Allegati caricati n.","albo-pretorio-considera").$numAllegati."%25%25br%25%25";
 		for ($i=0;$i<$numAllegati;$i++) {
-			if ((($_FILES["files"]["size"][$i] / 1024)/1024)<1) {
-				$DimFile=number_format($_FILES["files"]["size"][$i] / 1024,2);
+			if (((intval(wp_unslash($_FILES["files"]["size"][$i] ?? 0)) / 1024)/1024)<1) {
+				$DimFile=number_format(intval(wp_unslash($_FILES["files"]["size"][$i] ?? 0)) / 1024,2);
 				$UnitM=" KB";
 			}else{
-				$DimFile=number_format(($_FILES["files"]["size"][$i] / 1024)/1024,2);	
+				$DimFile=number_format((intval(wp_unslash($_FILES["files"]["size"][$i] ?? 0)) / 1024)/1024,2);	
 				$UnitM=" MB";
 			}
 		    $dime= __("Dimensione","albo-pretorio-considera").": " . $DimFile . " ".$UnitM;
-			if ($_FILES['files']['tmp_name'][$i]==''){
+			if (sanitize_text_field(wp_unslash($_FILES['files']['tmp_name'][$i] ?? ''))==''){
 				$messages[4]= __("File non selezionato Oppure operazione annullata","albo-pretorio-considera");
 			}else{
-				if (!ap_isAllowedExtension(strtolower($_FILES["files"]["name"][$i]))){
+				if (!ap_isAllowedExtension(strtolower(sanitize_text_field(wp_unslash($_FILES["files"]["name"][$i] ?? ''))))){
 					$messages= __("Tipo file non valido","albo-pretorio-considera");
 				}else{
 					/* upload_max_filesize puo' essere espresso in K, M o G: senza
@@ -1103,29 +1103,29 @@ function Memo_allegato_atto(){
 					if (($DimFile>$LimiteMb) and ($UnitM==" MB")){
 						$messages= sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Il file caricato è di %1\$s Mb, il limite massimo è di %2\$s Mb","albo-pretorio-considera"),$DimFile,ini_get('upload_max_filesize'));
 					}else{
-					  	if ($_FILES["files"]["error"][$i] > 0){
-							$messages= __("Errore","albo-pretorio-considera").": " . $_FILES["file"]["error"][$i];
+					  	if (intval(wp_unslash($_FILES["files"]["error"][$i] ?? 0)) > 0){
+							$messages= __("Errore","albo-pretorio-considera").": " . intval(wp_unslash($_FILES["file"]["error"][$i] ?? 0));
 			    		}else{
 							if (get_option( 'opt_AP_FolderUploadMeseAnno' )=="") {
 								$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/';
 							}else{
-								$destination_path =ap_get_PathAllegati($_POST['id'])."/";
+								$destination_path =ap_get_PathAllegati(isset($_POST["id"])?intval($_POST["id"]):0)."/";
 							}
 					   		$result = 0;
-						   	$target_path = ap_UniqueFileName($destination_path . basename(sanitize_file_name(remove_accents ( $_FILES['files']['name'][$i]))));
-							if(@move_uploaded_file($_FILES['files']['tmp_name'][$i],$target_path)){
+						   	$target_path = ap_UniqueFileName($destination_path . basename(sanitize_file_name(remove_accents ( sanitize_text_field(wp_unslash($_FILES['files']['name'][$i] ?? ''))))));
+							if(@move_uploaded_file($_FILES['files']['tmp_name'][$i],$target_path)){ // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- tmp_name generato dal server; move_uploaded_file valida internamente che sia un upload reale e il path NON va sanitizzato (altrimenti si rompe lo spostamento)
 			    				$messages= __("File caricato","albo-pretorio-considera")."%25%25br%25%25".__("Nome","albo-pretorio-considera").": " . basename( $target_path)." %25%25br%25%25".__("Percorso completo","albo-pretorio-considera")." : ".str_replace("\\","/",$target_path);
 			    				$Natura=(isset($_POST['Natura'][$i])?"D":"A");
 			    				$Integrale=(isset($_POST['Integrale'][$i])?1:0);
-			    				$Impronta=ap_insert_allegato(ap_sanifica_testo($_POST['Descrizione'][$i]),
-															str_replace("\\","/",$target_path),$_POST['id'],
+			    				$Impronta=ap_insert_allegato(ap_sanifica_testo(sanitize_text_field(wp_unslash($_POST['Descrizione'][$i] ?? ''))),
+															str_replace("\\","/",$target_path),(isset($_POST["id"])?intval($_POST["id"]):0),
 															intval($Integrale),
 															ap_sanifica_testo($Natura));
 			    				$messages.= "%25%25br%25%25".__("Impronta","albo-pretorio-considera").": " .$Impronta;
 			    				$messages.= "%25%25br%25%25".__("Documento Integrale","albo-pretorio-considera").": " .(isset($_POST['Integrale'][$i])?"Si":"No");
 			    				$messages.= "%25%25br%25%25".__("Natura documento","albo-pretorio-considera").": " .(isset($_POST['Natura'][$i])?"Documento firmato":"Allegato");
 					   		}else{
-								$messages= __("Il File non caricato","albo-pretorio-considera").": " .str_replace("\\","/",$target_path)."%25%25br%25%25 ".__("Errore","albo-pretorio-considera").":".$_FILES['file']['error'];
+								$messages= __("Il File non caricato","albo-pretorio-considera").": " .str_replace("\\","/",$target_path)."%25%25br%25%25 ".__("Errore","albo-pretorio-considera").":".intval(wp_unslash($_FILES['file']['error'] ?? 0));
 							}
 						}
 			  		}
