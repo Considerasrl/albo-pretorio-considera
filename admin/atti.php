@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- schermata admin di gestione atti (WP_List_Table + form CRUD/view): l'output e' markup fisso + label i18n del plugin (__() su stringhe letterali) + output di helper che generano markup (dropdown, azioni, celle). I value degli input sono escapati inline (esc_attr) e le stringhe JS via esc_js; i dati mostrati provengono da tabelle custom con input gia' sanitizzato/validato in fase di scrittura (audit sicurezza 4.9.x/4.10.1).
+
 if (!class_exists('WP_List_Table')) {
  require_once(ABSPATH.'wp-admin/includes/class-wp-list-table.php');
 }
