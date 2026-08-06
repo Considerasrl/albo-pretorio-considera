@@ -23,7 +23,7 @@ function albopc_sanifica_areatesto($Testo){
 	return albopc_removeCaratteriSpeciali(sanitize_textarea_field($Testo),array( '\\','\'', '"', '<', '>' ));
 }
 function albopc_removeCaratteriSpeciali($Testo,$DaRimpiazzare=array(),$Rimpiazza=""){
-	return str_replace( $DaRimpiazzare, $Rimpiazza, $Testo);
+	return str_replace( $DaRimpiazzare, $Rimpiazza, $Testo ?? '');
 }
 function albopc_get_PathAllegati($IDAtto){
 	$Result=albopc_get_atto($IDAtto);
@@ -825,23 +825,23 @@ global $wpdb;
 
 function albopc_get_Stat_Visite($IdAtto){
 global $wpdb;			
-	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
+	return $wpdb->get_results("SELECT DATE( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
 							   INNER JOIN $wpdb->table_name_Allegati 
 							   	ON $wpdb->table_name_Log.`IdOggetto` = $wpdb->table_name_Allegati.IdAllegato
 							   WHERE `Oggetto` =5
 							   AND $wpdb->table_name_Allegati.`IdAtto` =". (int)$IdAtto."
-							   GROUP BY gmdate( `Data` ) , IdOggetto
+							   GROUP BY DATE( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
 function albopc_get_Stat_VisiteRagg($IdAtto){
 global $wpdb;		
-	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, \" \", \" \", count( `Data` ) AS Accessi
+	return $wpdb->get_results("SELECT DATE( `Data` ) AS Data, \" \", \" \", count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
 							   WHERE `Oggetto` =5
 							   AND $wpdb->table_name_Log.`IdAtto` =". (int)$IdAtto."
 							   And $wpdb->table_name_Log.`IdAtto` =$wpdb->table_name_Log.`IdOggetto`
-							   GROUP BY gmdate( `Data` ) , IdOggetto
+							   GROUP BY DATE( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
 function albopc_get_Stat_Num_log($IdAtto,$Oggetto){
@@ -851,13 +851,13 @@ global $wpdb;
 
 function albopc_get_Stat_Download($IdAtto){
 global $wpdb;
-	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
+	return $wpdb->get_results("SELECT DATE( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
 							   INNER JOIN $wpdb->table_name_Allegati 
 							   	ON $wpdb->table_name_Log.`IdOggetto` = $wpdb->table_name_Allegati.IdAllegato
 							   WHERE `Oggetto` =6
 							   AND $wpdb->table_name_Allegati.`IdAtto` =". (int)$IdAtto."
-							   GROUP BY gmdate( `Data` ) , IdOggetto
+							   GROUP BY DATE( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
 function albopc_get_Stat_Log($TipoInformazione){

@@ -9,6 +9,20 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
+## [4.12.1] - 2026-08-06
+
+### Corretto
+- **Errore irreversibile** nella visualizzazione di un atto dal back-end
+  (`Call to a member function CreaLog() on null`): la variabile globale con
+  l'istanza del plugin era stata rinominata in un file ma non nell'altro durante
+  il cambio di prefisso della 4.12.0; ora il riferimento è coerente.
+- Statistiche di visite/download dell'atto: le query usavano per errore
+  `gmdate()` (funzione PHP) al posto di `DATE()` (funzione MySQL), generando un
+  errore SQL; ripristinata `DATE()`.
+- Corretto un errore di precedenza degli operatori nel nome del responsabile
+  (il ternario `is_object()?...:...` non era racchiuso tra parentesi) e resa
+  robusta ai valori `null` la funzione di pulizia dei caratteri speciali.
+
 ## [4.12.0] - 2026-08-06
 
 Il plugin supera ora il **Plugin Check ufficiale di WordPress.org con 0 rilievi**

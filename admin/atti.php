@@ -554,7 +554,7 @@ if(isset($_REQUEST['action'])){
 unset($_REQUEST['action']);
 
 function albopc_Gestione_Metadati($IdAtto){
-	global $AP_OnLine;
+	global $albopc_AP_OnLine;
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
 	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
@@ -1624,7 +1624,7 @@ echo'
 </div>';	
 }
 function albopc_View_atto($IdAtto){
-	global $AP_OnLine;
+	global $albopc_AP_OnLine;
 if (isset($_REQUEST['stato_atti']))
 	$Prov=sanitize_text_field(wp_unslash($_REQUEST['stato_atti'] ?? ''));
 else
@@ -1663,16 +1663,16 @@ echo '
 							<li><a href="#log-tab-4">'. __("Statistiche Download","albo-pretorio-considera").'</a></li>
 						</ul>
 						<div id="log-tab-1">
-							<div id="DatiLog">'.$AP_OnLine->CreaLog(1,$IdAtto,0).'</div>
+							<div id="DatiLog">'.$albopc_AP_OnLine->CreaLog(1,$IdAtto,0).'</div>
 						</div>
 						<div id="log-tab-2">
-							<div id="DatiLog">'.$AP_OnLine->CreaLog(3,$IdAtto,0).'</div>
+							<div id="DatiLog">'.$albopc_AP_OnLine->CreaLog(3,$IdAtto,0).'</div>
 						</div>
 						<div id="log-tab-3">
-							<div id="DatiLog">'.$AP_OnLine->CreaLog(5,$IdAtto,0).'</div>
+							<div id="DatiLog">'.$albopc_AP_OnLine->CreaLog(5,$IdAtto,0).'</div>
 						</div>
 						<div id="log-tab-4">
-							<div id="DatiLog">'.$AP_OnLine->CreaLog(6,$IdAtto,0).'</div>
+							<div id="DatiLog">'.$albopc_AP_OnLine->CreaLog(6,$IdAtto,0).'</div>
 						</div>
 					</div>
 				</div>
@@ -1736,7 +1736,7 @@ echo '
 			</tr>
 			<tr>
 				<th>'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</th>
-				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(is_object($NomeResp))?stripslashes(albopc_removeCaratteriSpeciali($NomeResp->Nome))." ".stripslashes(albopc_removeCaratteriSpeciali($NomeResp->Cognome)):stripslashes(albopc_removeCaratteriSpeciali($NomeResp)).'</td>
+				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(is_object($NomeResp)?stripslashes(albopc_removeCaratteriSpeciali($NomeResp->Nome))." ".stripslashes(albopc_removeCaratteriSpeciali($NomeResp->Cognome)):stripslashes(albopc_removeCaratteriSpeciali($NomeResp))).'</td>
 			</tr>
 			<tr>
 				<th>'. __("Categoria","albo-pretorio-considera").'</th>
@@ -1851,7 +1851,7 @@ echo '</div>
 
 
 function albopc_CancellaAllegatiAtto($IdAtto){
-	global $AP_OnLine;
+	global $albopc_AP_OnLine;
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
 	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
@@ -2056,7 +2056,7 @@ echo '</div>
 </div>';	
 }
 function albopc_annulla_atto_page($IdAtto){
-	global $AP_OnLine;
+	global $albopc_AP_OnLine;
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
 	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
@@ -2193,16 +2193,16 @@ echo'			</td>
 							<li><a href="#log-tab-4">'. __("Statistiche Download","albo-pretorio-considera").'</a></li>
 						</ul>
 						<div id="log-tab-1">
-							<div id="DatiLog1">'.$AP_OnLine->CreaLog(1,$IdAtto,0).'</div>
+							<div id="DatiLog1">'.$albopc_AP_OnLine->CreaLog(1,$IdAtto,0).'</div>
 						</div>
 						<div id="log-tab-2">
-							<div id="DatiLog2">'.$AP_OnLine->CreaLog(3,$IdAtto,0).'</div>
+							<div id="DatiLog2">'.$albopc_AP_OnLine->CreaLog(3,$IdAtto,0).'</div>
 						</div>
 						<div id="log-tab-3">
-							<div id="DatiLog3">'.$AP_OnLine->CreaLog(5,$IdAtto,0).'</div>
+							<div id="DatiLog3">'.$albopc_AP_OnLine->CreaLog(5,$IdAtto,0).'</div>
 						</div>
 						<div id="log-tab-4">
-							<div id="DatiLog4">'.$AP_OnLine->CreaLog(6,$IdAtto,0).'</div>
+							<div id="DatiLog4">'.$albopc_AP_OnLine->CreaLog(6,$IdAtto,0).'</div>
 						</div>
 					 </div>
 		</div>
