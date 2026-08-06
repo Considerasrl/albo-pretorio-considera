@@ -26,7 +26,7 @@ jQuery(document).ready(function($){
 	$('#GridFunzioni').appendGrid('load', [
 <?php
 	  foreach($TR as $Ruolo){
-	  	echo "{ 'ID': '".$Ruolo->ID."', 'funzione': '".$Ruolo->Funzione."','visualizza': ".($Ruolo->Display=="Si" ? "true" : "false").", 'staincert': ".($Ruolo->StaCert=="Si" ? "true" : "false")." },";
+	  	echo "{ 'ID': '".esc_js($Ruolo->ID)."', 'funzione': '".esc_js($Ruolo->Funzione)."','visualizza': ".($Ruolo->Display=="Si" ? "true" : "false").", 'staincert': ".($Ruolo->StaCert=="Si" ? "true" : "false")." },";
 		}
 ?>
         ]);	  
@@ -46,7 +46,7 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 load_Data_Funzioni();
 ?>
 <div id="ElaborazioneTabella" style="width: 200px;height: 200px;position: absolute;top: 50%;left: 50%; margin-top: -100px; margin-left: -100px;display:none;" >
-	<img src="<?php echo plugin_dir_url( __FILE__ ) . 'css/images/ElaborazioneInCorso.gif'?>" id="ElaborazioneTabella"/>
+	<img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) . 'css/images/ElaborazioneInCorso.gif' )?>" id="ElaborazioneTabella"/>
 </div>
 <div class="wrap nosubsub">
 	<div class="HeadPage">

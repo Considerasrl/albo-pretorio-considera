@@ -53,25 +53,25 @@ echo '<div class="wrap">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-groups" style="font-size:1em;"></span> Permessi Utente
 	</div>';
 if (isset($Msg)) {
-	echo '<div id="message" class="updated"><p>'.$Msg.'</p></div>';
+	echo '<div id="message" class="updated"><p>'.esc_html($Msg).'</p></div>';
 }
 echo '
 		<div class="postbox-container" style="margin-top:20px;">
 			<div class="widefat">
 			<form id="gestPermessi" method="post" action="?page=permessiAlboP"  >
 			<input type="hidden" name="action" value="memoPermessi"/>
-			<input type="hidden" name="permessi" value="'.wp_create_nonce("gestpermessi").'" />
+			<input type="hidden" name="permessi" value="'.esc_attr(wp_create_nonce("gestpermessi")).'" />
 				<table class="widefat" style="width:100%;">
 					<thead>
 					<tr>
-						<th>'.__("Utente","albo-pretorio-considera").'</th>
-						<th>'.__("Azzera Capacità Utente","albo-pretorio-considera").'</th>
-						<th>'.__("Capacità di Amministrare l'Albo","albo-pretorio-considera").'</th>
-						<th>'.__("Capacità di Editore dell'Albo","albo-pretorio-considera").'</th>
-						<th>'.__("Capacità di Gestire l'Albo","albo-pretorio-considera").'</th>
-						<th>'.__("Ruolo Amministratore","albo-pretorio-considera").'</th>
-						<th>'.__("Ruolo Editore","albo-pretorio-considera").'</th>
-						<th>'.__("Ruolo Gestore","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Utente","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Azzera Capacità Utente","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Capacità di Amministrare l'Albo","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Capacità di Editore dell'Albo","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Capacità di Gestire l'Albo","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Ruolo Amministratore","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Ruolo Editore","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Ruolo Gestore","albo-pretorio-considera").'</th>
 					</tr>
 					</thead>
 					<tbody>';
@@ -86,28 +86,28 @@ foreach($lista as $riga){
 		$StatoEditore='';
 		$StatoGestore='';
 		echo '<tr>
-		<td>'.$riga->user_login.'</td>';
+		<td>'.esc_html($riga->user_login).'</td>';
 	 	if (user_can( $riga->ID, 'gest_atti_albo')){
 			$Stato='';
 			$StatoEditore='';
-	 		$StatoGestore='checked="checked"';	
+	 		$StatoGestore='checked';	
 		}
 	 	if (user_can( $riga->ID, 'editore_atti_albo')){
 			$Stato='';
-			$StatoEditore='checked="checked"';
+			$StatoEditore='checked';
 	 		$StatoGestore='';	
 		}
 	 	if (user_can( $riga->ID, 'admin_albo')){
-			$Stato='checked="checked"';
+			$Stato='checked';
 			$StatoEditore='';
 	 		$StatoGestore='';	
 		}
 
 		if (!$Utente)
-			echo '				  <td><input type="radio" value="Nullo" '.$Stato.' name="U'.$riga->ID.'" /></td>
-				  <td><input type="radio" value="Amministratore" '.$Stato.' name="U'.$riga->ID.'" /></td>
-				  <td><input type="radio" value="Editore" '.$StatoEditore.' name="U'.$riga->ID.'" /></td>
-				  <td><input type="radio" value="Gestore" '.$StatoGestore.' name="U'.$riga->ID.'" /></td>';
+			echo '				  <td><input type="radio" value="Nullo" '.esc_attr($Stato).' name="U'.(int)$riga->ID.'" /></td>
+				  <td><input type="radio" value="Amministratore" '.esc_attr($Stato).' name="U'.(int)$riga->ID.'" /></td>
+				  <td><input type="radio" value="Editore" '.esc_attr($StatoEditore).' name="U'.(int)$riga->ID.'" /></td>
+				  <td><input type="radio" value="Gestore" '.esc_attr($StatoGestore).' name="U'.(int)$riga->ID.'" /></td>';
 		else
 			echo '				  <td>&nbsp;</td>
 			      <td>&nbsp;</td>
@@ -132,7 +132,7 @@ echo '					</tbody>
 				
 				<div style="margin-left:auto;width:140px;margin-right:auto;">
 					<p>
-					<input type="submit" name="memo" id="memo" class="button" value="'.__("Memorizza Permessi","albo-pretorio-considera").'" />
+					<input type="submit" name="memo" id="memo" class="button" value="'.esc_attr__("Memorizza Permessi","albo-pretorio-considera").'" />
 					</p>
 				</div>
 				</form>

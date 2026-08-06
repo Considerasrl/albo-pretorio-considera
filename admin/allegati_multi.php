@@ -10,33 +10,29 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 	echo "<h2>Allegati Multipli</h2>";
 	$TipiAmmessi=ap_tipiFileAmmessi(TRUE);
-//	$TipiAmmessi=implode(",",$TipiAmmessi);
-	$TEE="";
-	$TE="";
-	$AI="";
+	$ap_exts=array();       // ["pdf","doc"]  estensioni ammesse
+	$ap_accept=array();     // [".pdf",".doc"] per attributo accept
+	$ap_icone=array();      // {"pdf":"icona.png"} mappa estensione->icona
 	foreach ( $TipiAmmessi as $Tipo) {
-		$TE.='"'.$Tipo["."].'", ';
-		$TEE.='.'.$Tipo["."].', ';
-		$AI.='"'.$Tipo["."].'":"'.$Tipo["Icon"].'", ';
+		$ap_exts[]   = $Tipo["."];
+		$ap_accept[] = '.'.$Tipo["."];
+		$ap_icone[$Tipo["."]] = $Tipo["Icon"];
 	}
-//	$TA=substr($TA,0,-2);
-	$TE=substr($TE,0,-2);
-	$AI=substr($AI,0,-2);
 ?>
 <form action="?page=atti" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="operazione" value="upload" />
 	<input type="hidden" name="action" value="memo-allegati-atto" />
-	<input type="hidden" name="uploallegato" value="<?php echo wp_create_nonce('uploadallegati')?>" />
+	<input type="hidden" name="uploallegato" value="<?php echo esc_attr( wp_create_nonce('uploadallegati') )?>" />
 	<input type="hidden" name="id" value="<?php echo (int)$_REQUEST['id']; ?>" />
 <div>
-  <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo __("Seleziona gli allegati da caricare","albo-pretorio-considera");?></label>
-  <input type="file" id="files" name="files[]" accept="<?php echo $TEE;?>" multiple>
+  <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Seleziona gli allegati da caricare","albo-pretorio-considera");?></label>
+  <input type="file" id="files" name="files[]" accept="<?php echo esc_attr( implode(',', $ap_accept) );?>" multiple>
 </div>
 <div class="preview">
-  <p><?php echo __("Nessun file selezionato per il caricamento","albo-pretorio-considera");?></p>
+  <p><?php echo esc_html__("Nessun file selezionato per il caricamento","albo-pretorio-considera");?></p>
 </div>
 <div>
-  <button id="pulCar"><span class="dashicons dashicons-upload" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo __("Carica","albo-pretorio-considera");?></button>
+  <button id="pulCar"><span class="dashicons dashicons-upload" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Carica","albo-pretorio-considera");?></button>
 </div>
 </form>
      <script>
@@ -50,7 +46,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
           }
           var curFiles = input.files;
           var list = document.createElement('ol');
-          var icone = {<?Php echo $AI;?>};
+          var icone = <?php echo wp_json_encode($ap_icone);?>;
 	        preview.appendChild(list);
 	        for(var i = 0; i < curFiles.length; i++) {
 	          var icona=IconFileType(curFiles[i]);
@@ -89,7 +85,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		        listItem.appendChild(LBLintegrale);
 				listItem.appendChild(integrale);
 	          } else {
-	            para.textContent = 'File name ' + curFiles[i].name + ':<?php echo __("Tipo di file non permesso. Riprova selezionando un file con estensione diversa.","albo-pretorio-considera");?>';
+	            para.textContent = 'File name ' + curFiles[i].name + ':<?php echo esc_js(__("Tipo di file non permesso. Riprova selezionando un file con estensione diversa.","albo-pretorio-considera"));?>';
 	            listItem.appendChild(para);
 	          }
 	          list.appendChild(listItem);
@@ -99,7 +95,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 			var parti=filename.split(".");
 			return parti[(parti.length) - 1].toLowerCase();
 		}
-        var fileTypes = [ <?php echo $TE;?> ];
+        var fileTypes = <?php echo wp_json_encode($ap_exts);?>;
         function validFileType(file) {
           var estensione=getEstensione(file.name);
           for(var i = 0; i < fileTypes.length; i++) {
@@ -109,7 +105,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
           }
           return false;
         }
-       var icone = {<?Php echo $AI;?>};
+       var icone = <?php echo wp_json_encode($ap_icone);?>;
         function IconFileType(file) {
         	var estensione=getEstensione(file.name);
             for(var i = 0; i < fileTypes.length; i++) {

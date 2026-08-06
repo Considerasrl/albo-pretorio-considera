@@ -12,23 +12,23 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 <div class="wrap">
 	<div class="HeadPage" style="margin-bottom: 30px;">
 		<h2 class="wp-heading-inline">Atti</h2>
-		<a href="<?php echo site_url().'/wp-admin/admin.php?page=atti';?>" class="add-new-h2 tornaindietro"><?php echo __("Torna indietro","albo-pretorio-considera");?></a>
-		<h3><?php echo __("Associa nuovo Allegato con file precedentemente caricato","albo-pretorio-considera");?></h3>	
+		<a href="<?php echo esc_url( site_url().'/wp-admin/admin.php?page=atti' );?>" class="add-new-h2 tornaindietro"><?php echo esc_html__("Torna indietro","albo-pretorio-considera");?></a>
+		<h3><?php echo esc_html__("Associa nuovo Allegato con file precedentemente caricato","albo-pretorio-considera");?></h3>
 	</div>
 <div id="col-container">
 	<form id="allegato" method="post" action="?page=atti" class="validate">
 	<input type="hidden" name="operazione" value="associa_allegato" />
 	<input type="hidden" name="action" value="memo-allegato-atto-associato" />
-	<input type="hidden" name="secure" value="<?php echo wp_create_nonce('uploallegatoassociato')?>" />
+	<input type="hidden" name="secure" value="<?php echo esc_attr( wp_create_nonce('uploallegatoassociato') )?>" />
 	<input type="hidden" name="id" value="<?php echo (int)$_REQUEST['id']; ?>" />
 <?php 
 	if (isset($_REQUEST['ref']))
-		echo '<input type="hidden" name="ref" value="'.htmlentities($_REQUEST['ref']).'" />';
+		echo '<input type="hidden" name="ref" value="'.esc_attr( wp_unslash( $_REQUEST['ref'] ) ).'" />';
 ?>	
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th colspan="3" style="text-align:center;font-size:2em;"><?php echo __("Dati Allegato","albo-pretorio-considera");?></th>
+			<th colspan="3" style="text-align:center;font-size:2em;"><?php echo esc_html__("Dati Allegato","albo-pretorio-considera");?></th>
 		</tr>
 	    </thead>
 	    <tbody id="dati-allegato">
@@ -49,7 +49,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 		</tr>
 		<tr>
 			<th>File:</th>
-			<td><?php echo ap_get_allegati_file_scollegati("Select");?></td>
+			<td><?php echo ap_get_allegati_file_scollegati("Select"); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- helper restituisce markup <select> con opzioni già escapate ?></td>
 		</tr>
 		<tr>
 			<td colspan="2"><input type="submit" name="submit" id="submit" class="button" value="<?php esc_html_e("Collega Allegato","albo-pretorio-considera");?>"  />
