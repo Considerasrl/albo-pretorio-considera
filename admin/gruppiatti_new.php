@@ -34,11 +34,11 @@ function albopc_Lista_AttiGruppo($Parametri){
 	echo '	<div class="TabellaAtti">
 		<h3>'.esc_html($Parametri['titolo']).'</h3>
 		<table id="elenco-atti" class="Table Table--withBorder u-text-r-xs js-TableResponsive tablesaw tablesaw-stack" data-tablesaw-mode="stack">
-		    <caption class="u-hiddenVisually">'. esc_html__("Atti","albo-pretorio-considera").'</caption>
+		    <caption class="u-hiddenVisually">'. esc_html__("Atti","albo-pretorio-on-line").'</caption>
 		<thead>
 	    	<tr class="u-border-bottom-xs">
-				<th scope="col">'. esc_html__("Stato","albo-pretorio-considera").'</th>
-	        	<th scope="col">'. esc_html__("Prog.","albo-pretorio-considera").'</th>';
+				<th scope="col">'. esc_html__("Stato","albo-pretorio-on-line").'</th>
+	        	<th scope="col">'. esc_html__("Prog.","albo-pretorio-on-line").'</th>';
 	foreach($FEColsOption as $Opzione => $Valore){
 		if($Opzione=="Validita") $Opzione="Validità";
 		if($Opzione=="DataOblio") $Opzione="Data Oblio";
@@ -71,9 +71,9 @@ function albopc_Lista_AttiGruppo($Parametri){
 				$classe='style="background-color: '.esc_attr($coloreAnnullati).';"';
 				$CeAnnullato=true;
 			}
-			$Stato=__("Scaduto","albo-pretorio-considera");
+			$Stato=__("Scaduto","albo-pretorio-on-line");
 			if ($riga->DataFine>gmdate("Y-m-d")){
-				$Stato=__("Corrente","albo-pretorio-considera");
+				$Stato=__("Corrente","albo-pretorio-on-line");
 				$Link='<a href="'.esc_url($PaginaAttiCor.$sep.'action=visatto&id='.$riga->IdAtto).'"  style="text-decoration: underline;">';
 			}else{
 				$Link='<a href="'.esc_url($PaginaAttiSto.$sep.'action=visatto&id='.$riga->IdAtto).'"  style="text-decoration: underline;">';
@@ -127,7 +127,7 @@ function albopc_Lista_AttiGruppo($Parametri){
 			}
 	} else {
 			echo '<tr>
-					<td colspan="6">'. esc_html__("Nessun Atto Codificato","albo-pretorio-considera").'</td>
+					<td colspan="6">'. esc_html__("Nessun Atto Codificato","albo-pretorio-on-line").'</td>
 				  </tr>';
 	}
 	echo '
@@ -135,7 +135,7 @@ function albopc_Lista_AttiGruppo($Parametri){
     </table>';
 echo '</div>';
 	if ($CeAnnullato)
-		echo '<p>'. esc_html__('Le righe evidenziate con questo sfondo','albo-pretorio-considera').' <span style="background-color: '.esc_attr($coloreAnnullati).';">&nbsp;&nbsp;&nbsp;</span> '. esc_html__('indicano Atti Annullati','albo-pretorio-considera').'</p>';
+		echo '<p>'. esc_html__('Le righe evidenziate con questo sfondo','albo-pretorio-on-line').' <span style="background-color: '.esc_attr($coloreAnnullati).';">&nbsp;&nbsp;&nbsp;</span> '. esc_html__('indicano Atti Annullati','albo-pretorio-on-line').'</p>';
 	// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 return ob_get_clean();
 }

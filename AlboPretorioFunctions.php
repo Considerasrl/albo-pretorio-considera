@@ -32,12 +32,12 @@ function albopc_get_PathAllegati($IDAtto){
 	$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/'.$DataAtto[0];
 	if (!is_dir ( $destination_path)) {
 		if (!wp_mkdir_p($destination_path))
-			return __('Errore','albo-pretorio-considera');
+			return __('Errore','albo-pretorio-on-line');
 	}
 	$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/'.$DataAtto[0]."/".$DataAtto[1];
 	if (!is_dir ( $destination_path)) {
 		if (!wp_mkdir_p($destination_path))
-			return __('Errore','albo-pretorio-considera');
+			return __('Errore','albo-pretorio-on-line');
 	}
 	return $destination_path;
 }
@@ -49,17 +49,17 @@ function albopc_Move_Allegati_CartellaMeseAnno(){
 	$nomefileLog=$DirLog."/Backup_Sposta_Allegati_Cartella_Anno_Mese.log";
 	if (!is_dir ( $DirLog)){
 		if (!wp_mkdir_p($DirLog)){
-			sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog);
+			sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-on-line'),$DirLog);
 			return;
 		}
 	}
 	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 	if(($fplog = @fopen($nomefileLog, "ab"))===FALSE){
-		sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare il file %s Fine Operazione','albo-pretorio-considera'),$nomefileLog);
+		sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare il file %s Fine Operazione','albo-pretorio-on-line'),$nomefileLog);
 		return;
 	}
 	fwrite($fplog,"____________________________________________________________________________\n");
-	fwrite($fplog,__('Inizio spostamento file','albo-pretorio-considera')."\n");
+	fwrite($fplog,__('Inizio spostamento file','albo-pretorio-on-line')."\n");
 	$BaseCurDir=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
 	// Inizo Blocco che sposta gli allegati e sincronizza la tabella degli Allegati
 	foreach ( $allegati as $allegato) {
@@ -67,26 +67,26 @@ function albopc_Move_Allegati_CartellaMeseAnno(){
 		$NewAllegato=$NewPath."/".basename($allegato->Allegato);
 		if (is_file($allegato->Allegato)) {
 			if (!copy($allegato->Allegato, $NewAllegato)) {
-				echo '<spam style="color:red;">'.esc_html__('Errore','albo-pretorio-considera').'</spam> '.esc_html__("nello spostamento dell'Allegato ",'albo-pretorio-considera').esc_html($allegato->Allegato).' in '. esc_html($NewAllegato)."<br />";
-				fwrite($fplog, __('Non sono riuscito a copiare il file','albo-pretorio-considera')." ".$allegato->Allegato." ".__('in','albo-pretorio-considera')." ". $NewAllegato."\n");
+				echo '<spam style="color:red;">'.esc_html__('Errore','albo-pretorio-on-line').'</spam> '.esc_html__("nello spostamento dell'Allegato ",'albo-pretorio-on-line').esc_html($allegato->Allegato).' in '. esc_html($NewAllegato)."<br />";
+				fwrite($fplog, __('Non sono riuscito a copiare il file','albo-pretorio-on-line')." ".$allegato->Allegato." ".__('in','albo-pretorio-on-line')." ". $NewAllegato."\n");
 			} else {
 				if (!unlink($allegato->Allegato)) {
-		$msg.='<spam style="color:red;">'.__('Errore','albo-pretorio-considera').'</spam> '.__("errata cancellazione dell'Allegato",'albo-pretorio-considera').' </spam>'.$allegato->Allegato."<br />";
-	fwrite($fplog, __('Non sono riuscito a cancellare il file','albo-pretorio-considera').$allegato->Allegato."\n");
+		$msg.='<spam style="color:red;">'.__('Errore','albo-pretorio-on-line').'</spam> '.__("errata cancellazione dell'Allegato",'albo-pretorio-on-line').' </spam>'.$allegato->Allegato."<br />";
+	fwrite($fplog, __('Non sono riuscito a cancellare il file','albo-pretorio-on-line').$allegato->Allegato."\n");
 	}				
-				echo '<spam style="color:green;">File</spam> '.esc_html($allegato->Allegato).'<br /><spam style="color:green;">'.esc_html__('spostato in','albo-pretorio-considera').'</spam> '.esc_html($NewAllegato).'<br />';
-				fwrite($fplog,"File ".$allegato->Allegato." ".__('spostato in','albo-pretorio-considera')." ".$NewAllegato."\n");
+				echo '<spam style="color:green;">File</spam> '.esc_html($allegato->Allegato).'<br /><spam style="color:green;">'.esc_html__('spostato in','albo-pretorio-on-line').'</spam> '.esc_html($NewAllegato).'<br />';
+				fwrite($fplog,"File ".$allegato->Allegato." ".__('spostato in','albo-pretorio-on-line')." ".$NewAllegato."\n");
 				if ($wpdb->update($wpdb->table_name_Allegati,
 				array('Allegato' => $NewAllegato),
 				array('IdAllegato' => $allegato->IdAllegato ),
 				array('%s'),
 				array('%d'))>0) {
-					echo '<spam style="color:green;">'.esc_html__('Aggiornamento Link Allegato','albo-pretorio-considera').'</spam> '.esc_html($allegato->Allegato)."<br />";
-					fwrite($fplog, __('Aggiornato il link nel Data Base per','albo-pretorio-considera')." ".$allegato->Allegato." ".__('in','albo-pretorio-considera')." ".$NewAllegato."\n");
+					echo '<spam style="color:green;">'.esc_html__('Aggiornamento Link Allegato','albo-pretorio-on-line').'</spam> '.esc_html($allegato->Allegato)."<br />";
+					fwrite($fplog, __('Aggiornato il link nel Data Base per','albo-pretorio-on-line')." ".$allegato->Allegato." ".__('in','albo-pretorio-on-line')." ".$NewAllegato."\n");
 				}
 			}
 		} else {
-			echo '<spam style="color:red;">'.esc_html__('Errore','albo-pretorio-considera').'</spam> '.esc_html__('Allegato','albo-pretorio-considera').' '.esc_html($allegato->Allegato).' '.esc_html__('Inesistente','albo-pretorio-considera').' <br />';
+			echo '<spam style="color:red;">'.esc_html__('Errore','albo-pretorio-on-line').'</spam> '.esc_html__('Allegato','albo-pretorio-on-line').' '.esc_html($allegato->Allegato).' '.esc_html__('Inesistente','albo-pretorio-on-line').' <br />';
 		}
 		echo "<hr />";
 	}
@@ -180,9 +180,9 @@ function albopc_crearobots($Return=FALSE){
 		return($robot);
 	$id = fopen(APHomePath."/robots.txt", "wt");
 	if (!fwrite($id,$robot )){
-		$Stato.=__('Non riesco a Creare il file robots.txt in','albo-pretorio-considera')." ".APHomePath."%%br%%";
+		$Stato.=__('Non riesco a Creare il file robots.txt in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
 	}else{
-		$Stato.=__('File robots.txt creato con successo in','albo-pretorio-considera')." ".APHomePath."%%br%%";
+		$Stato.=__('File robots.txt creato con successo in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
 	}
 	fclose($id);
 	return $Stato;
@@ -236,9 +236,9 @@ if($Return){
 //Creazione \.\h\t\a\c\c\e\s\s
 	$id = fopen($dir."/".albopc_decodenamefile(), "wt");
 	if (!fwrite($id,$htaccess )){
-		$Stato.=__("Non riesco a Creare il file","albo-pretorio-considera")." ".albopc_decodenamefile()." ".__('in','albo-pretorio-considera')." ".$dir."%%br%%";
+		$Stato.=__("Non riesco a Creare il file","albo-pretorio-on-line")." ".albopc_decodenamefile()." ".__('in','albo-pretorio-on-line')." ".$dir."%%br%%";
 	}else{
-		$Stato.="File ".albopc_decodenamefile()." ".__('creato con successo in','albo-pretorio-considera')." ".$dir."%%br%%";
+		$Stato.="File ".albopc_decodenamefile()." ".__('creato con successo in','albo-pretorio-on-line')." ".$dir."%%br%%";
 	}
 	fclose($id);
 //Creazione robots.txt
@@ -246,9 +246,9 @@ if($Return){
 //Creazione index.php
 	$id = fopen($dir."/index.php", "wt");
 	if (!fwrite($id,$index )){
-		$Stato.=__("Non riesco a Creare il file index.php in","albo-pretorio-considera")." ".$dir;
+		$Stato.=__("Non riesco a Creare il file index.php in","albo-pretorio-on-line")." ".$dir;
 	}else{
-		$Stato.=__("File index.php creato con successo in","albo-pretorio-considera")." ".$dir;
+		$Stato.=__("File index.php creato con successo in","albo-pretorio-on-line")." ".$dir;
 	}
 	fclose($id);
 	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
@@ -298,21 +298,21 @@ function albopc_AP_CreaCategoriaBase($CatNome,$Des,$Durata){
 }
 
 function albopc_AP_CreaCategorieBase(){
-	$Risultato=albopc_AP_CreaCategoriaBase(__('Bandi e gare','albo-pretorio-considera'),__('Bandi e gare','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti - Personale ATA','albo-pretorio-considera'),__('Contratti - Personale ATA','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti - Personale Docente','albo-pretorio-considera'),__('Contratti - Personale Docente','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti e convenzioni','albo-pretorio-considera'),__('Contratti e convenzioni','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Convocazioni','albo-pretorio-considera'),__('Convocazioni','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Delibere Consiglio di Istituto','albo-pretorio-considera'),__('Delibere Consiglio di Istituto','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Documenti altre P.A.','albo-pretorio-considera'),__('Documenti altre P.A.','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Esiti esami','albo-pretorio-considera'),__('Esiti esami','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Graduatorie','albo-pretorio-considera'),__('Graduatorie','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Organi collegiali','albo-pretorio-considera'),__('Organi collegiali','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Organi collegiali - Elezioni','albo-pretorio-considera'),__('Organi collegiali - Elezioni','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Privacy','albo-pretorio-considera'),__('Privacy','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Programmi annuali e Consuntivi','albo-pretorio-considera'),__('Programmi annuali e Consuntivi','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Regolamenti','albo-pretorio-considera'),__('Regolamenti','albo-pretorio-considera'),15);
-	$Risultato.=albopc_AP_CreaCategoriaBase(__('Sicurezza','albo-pretorio-considera'),__('Sicurezza','albo-pretorio-considera'),15);
+	$Risultato=albopc_AP_CreaCategoriaBase(__('Bandi e gare','albo-pretorio-on-line'),__('Bandi e gare','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti - Personale ATA','albo-pretorio-on-line'),__('Contratti - Personale ATA','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti - Personale Docente','albo-pretorio-on-line'),__('Contratti - Personale Docente','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Contratti e convenzioni','albo-pretorio-on-line'),__('Contratti e convenzioni','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Convocazioni','albo-pretorio-on-line'),__('Convocazioni','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Delibere Consiglio di Istituto','albo-pretorio-on-line'),__('Delibere Consiglio di Istituto','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Documenti altre P.A.','albo-pretorio-on-line'),__('Documenti altre P.A.','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Esiti esami','albo-pretorio-on-line'),__('Esiti esami','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Graduatorie','albo-pretorio-on-line'),__('Graduatorie','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Organi collegiali','albo-pretorio-on-line'),__('Organi collegiali','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Organi collegiali - Elezioni','albo-pretorio-on-line'),__('Organi collegiali - Elezioni','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Privacy','albo-pretorio-on-line'),__('Privacy','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Programmi annuali e Consuntivi','albo-pretorio-on-line'),__('Programmi annuali e Consuntivi','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Regolamenti','albo-pretorio-on-line'),__('Regolamenti','albo-pretorio-on-line'),15);
+	$Risultato.=albopc_AP_CreaCategoriaBase(__('Sicurezza','albo-pretorio-on-line'),__('Sicurezza','albo-pretorio-on-line'),15);
 	return $Risultato;
 }
 
@@ -449,7 +449,7 @@ function albopc_existTable($Tabella){
 function albopc_AggiungiCampoTabella($Tabella, $Campo, $Parametri){
 	global $wpdb;
 	if ( false === $wpdb->query("ALTER TABLE $Tabella ADD $Campo $Parametri")){
-		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare il campo %1$s Nella Tabella %2$s Errore %3$s ','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
+		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare il campo %1$s Nella Tabella %2$s Errore %3$s ','albo-pretorio-on-line'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
 	} else{
 		return true;
 	}
@@ -490,7 +490,7 @@ function albopc_ModificaTipoCampo($Tabella, $Campo, $NuovoTipo){
 	global $wpdb;
 //	echo "ALTER TABLE $Tabella MODIFY $Campo $NuovoTipo <br />";
 	if ( false === $wpdb->query("ALTER TABLE $Tabella MODIFY $Campo $NuovoTipo")){
-		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a modificare il campo %1$s Nella Tabella %2$s Errore %3$s ','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
+		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a modificare il campo %1$s Nella Tabella %2$s Errore %3$s ','albo-pretorio-on-line'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
 	} else{
 		return true;
 	}
@@ -500,7 +500,7 @@ function albopc_ModificaParametriCampo($Tabella, $Campo, $Tipo, $Parametro){
 	global $wpdb;
 //	echo "ALTER TABLE $Tabella CHANGE $Campo $Campo $Tipo $Parametro";exit;
 	if ( false === $wpdb->query("ALTER TABLE $Tabella CHANGE $Campo $Campo $Tipo $Parametro")){
-		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a modificare il campo %1$s Nella Tabella %2$s Errore %3$s','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
+		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a modificare il campo %1$s Nella Tabella %2$s Errore %3$s','albo-pretorio-on-line'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
 	} else{
 		return true;
 	}
@@ -936,9 +936,9 @@ function albopc_get_elenco_attimeta($Output="Array",$ID="listaAttiMeta",$Name="L
 			foreach($Res as $Rec){
 				$Lista.="<div id=\"Meta[".$i."]\" class=\"meta\">
                     <blockquote>
-                    <label for=\"newMetaName[".$i."]\">".__("Nome Meta","albo-pretorio-considera").": </label><input name=\"newMetaName[".$i."]\" id=\"newMetaName[".$i."]\" value=\"".$Rec->Meta."\"/>
-                    <label for=\"newValue[".$i."]\">".__("Valore Meta","albo-pretorio-considera")."</label><input name=\"newValue[".$i."]\" id=\"newValue[".$i."]\" value=\"".$Rec->Value."\">
-                    <button type=\"button\" class=\"setta-def-data EliminaRiga\">".__("Elimina riga","albo-pretorio-considera")."</button>
+                    <label for=\"newMetaName[".$i."]\">".__("Nome Meta","albo-pretorio-on-line").": </label><input name=\"newMetaName[".$i."]\" id=\"newMetaName[".$i."]\" value=\"".$Rec->Meta."\"/>
+                    <label for=\"newValue[".$i."]\">".__("Valore Meta","albo-pretorio-on-line")."</label><input name=\"newValue[".$i."]\" id=\"newValue[".$i."]\" value=\"".$Rec->Value."\">
+                    <button type=\"button\" class=\"setta-def-data EliminaRiga\">".__("Elimina riga","albo-pretorio-on-line")."</button>
                     </blockquote>
                 </div>";
 				$i++;
@@ -1063,7 +1063,7 @@ function albopc_insert_categoria($cat_name,$cat_parente,$cat_descrizione,$cat_du
 															 	   '%d',
 															 	   '%s',
 															 	   '%d')))	
-        return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire la Nuova Categoria','albo-pretorio-considera').$wpdb->last_error, $wpdb->last_error);
+        return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire la Nuova Categoria','albo-pretorio-on-line').$wpdb->last_error, $wpdb->last_error);
     else{
     	$NomeCategoria=albopc_get_categoria($cat_parente);
     	if(is_array($NomeCategoria)and count($NomeCategoria)>0){
@@ -1073,11 +1073,11 @@ function albopc_insert_categoria($cat_name,$cat_parente,$cat_descrizione,$cat_du
 			$CatGenitore="Non Specificato";
 		}
 		albopc_insert_log(2,1,$wpdb->insert_id,"{IdCategoria}==> $wpdb->insert_id
-		                                    {".__("Nome","albo-pretorio-considera")."}==> $cat_name 
-		                                    {".__("Descrizione","albo-pretorio-considera")."}==> $cat_descrizione 
-											{".__("Durata","albo-pretorio-considera")."}==> $cat_durata
+		                                    {".__("Nome","albo-pretorio-on-line")."}==> $cat_name 
+		                                    {".__("Descrizione","albo-pretorio-on-line")."}==> $cat_descrizione 
+											{".__("Durata","albo-pretorio-on-line")."}==> $cat_durata
 											{IdGenitore}==> $cat_parente
-											{".__("Genitore","albo-pretorio-considera")."}==> $CatGenitore");
+											{".__("Genitore","albo-pretorio-on-line")."}==> $CatGenitore");
 	}
 }
 
@@ -1105,17 +1105,17 @@ function albopc_memo_categorie($id,$cat_name,$cat_parente,$cat_descrizione,$cat_
 	$Categoria=$Categoria[0];
 	$Log='{Id}==>'.$id .' ' ;
 	if ($Categoria->Nome!=$cat_name)
-		$Log.='{'.__("Nome","albo-pretorio-considera").'}==> '.$cat_name.' ';
+		$Log.='{'.__("Nome","albo-pretorio-on-line").'}==> '.$cat_name.' ';
 	if ($Categoria->Genitore!=$cat_parente){
 		$Log.='{IdGenitore}==> '.$cat_parente.' ';
 		$CategoriaPadre=albopc_get_categoria($cat_parente);
 		$CategoriaPadre=$CategoriaPadre[0];
-		$Log.='{'.__("Genitore","albo-pretorio-considera").'}==> '.$CategoriaPadre->Nome.' ';
+		$Log.='{'.__("Genitore","albo-pretorio-on-line").'}==> '.$CategoriaPadre->Nome.' ';
 	}
 	if ($Categoria->Descrizione!=$cat_descrizione)
-		$Log.='{'.__("Descrizione","albo-pretorio-considera").'}==> '.$cat_descrizione.' ';
+		$Log.='{'.__("Descrizione","albo-pretorio-on-line").'}==> '.$cat_descrizione.' ';
 	if ($Categoria->Giorni!=$cat_durata)
-		$Log.='{'.__("Giorni","albo-pretorio-considera").'}==> '.$cat_durata.' ';
+		$Log.='{'.__("Giorni","albo-pretorio-on-line").'}==> '.$cat_durata.' ';
 	if ( false === $wpdb->update($wpdb->table_name_Categorie,
 					array('Nome' => stripslashes($cat_name),
 						  'Genitore' => $cat_parente,
@@ -1128,7 +1128,7 @@ function albopc_memo_categorie($id,$cat_name,$cat_parente,$cat_descrizione,$cat_
 								'%d'),
 						  array('%d')		 
 						  ))
-    	return new WP_Error('db_update_error', __('Non sono riuscito a modifire la Categoria','albo-pretorio-considera').$wpdb->last_error, $wpdb->last_error);
+    	return new WP_Error('db_update_error', __('Non sono riuscito a modifire la Categoria','albo-pretorio-on-line').$wpdb->last_error, $wpdb->last_error);
     else
     	albopc_insert_log(2,2,$id,$Log);
 	
@@ -1142,10 +1142,10 @@ function albopc_get_dropdown_categorie($select_name,$id_name,$class,$tab_index_a
 	else
 		$categorie = $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_Categorie ORDER BY nome;");	
 	$output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute ".($SceltaMultipla?'multiple size="7"':"").">\n";
-	if ($default==__("Nessuno","albo-pretorio-considera")){
-		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-considera")."</option>\n";
+	if ($default==__("Nessuno","albo-pretorio-on-line")){
+		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}else{
-		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-considera")."</option>\n";
+		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}
 	if ( ! empty( $categorie ) ) {	
 		foreach ($categorie as $c) {
@@ -1195,10 +1195,10 @@ function albopc_get_dropdown_ricerca_categorie($select_name,$id_name,$class,$tab
 	global $wpdb;
 	$categorie = $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_Categorie ORDER BY nome;");	
 	$output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute>\n";
-	if ($default==__("Nessuno","albo-pretorio-considera")){
-		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-considera")."</option>\n";
+	if ($default==__("Nessuno","albo-pretorio-on-line")){
+		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}else{
-		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-considera")."</option>\n";
+		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}
 	if ( ! empty( $categorie ) ) {	
 		foreach ($categorie as $c) {
@@ -1231,7 +1231,7 @@ function albopc_get_nuvola_categorie($link,$Stato ) {
 			$numAtti=albopc_num_atti_categoria($c->IdCategoria,$Stato);
 			if ($numAtti){
 				$pix=(int) 1 + ($numAtti /$TotAtti);
-				$output .= "<a href='".$link."=".$c->IdCategoria."' title=".__("Ci sono","albo-pretorio-considera")." ".$numAtti." ".__("Atti nella Categoria","albo-pretorio-considera")." ".$c->Nome."'><span style='font-size:".$pix."em;'>".$c->Nome."</span></a><br />\n";	
+				$output .= "<a href='".$link."=".$c->IdCategoria."' title=".__("Ci sono","albo-pretorio-on-line")." ".$numAtti." ".__("Atti nella Categoria","albo-pretorio-on-line")." ".$c->Nome."'><span style='font-size:".$pix."em;'>".$c->Nome."</span></a><br />\n";	
 			}
 				
 		}
@@ -1283,7 +1283,7 @@ function albopc_del_categorie($id) {
 	}
 	else{
 	 	$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Categorie WHERE	IdCategoria=%d",$id));
-		albopc_insert_log(2,3,$id,__("Cancellazione Categoria","albo-pretorio-considera"));
+		albopc_insert_log(2,3,$id,__("Cancellazione Categoria","albo-pretorio-on-line"));
 
 		return True;
 	}
@@ -1450,7 +1450,7 @@ function albopc_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataF
 				'%d',
 				'%s')))	{
 // echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
-          return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Non sono riuscito ad inserire il nuovo Atto Sql==%1\$s Ultimo errore==%2\$s","albo-pretorio-considera"),$wpdb->last_query,$wpdb->last_error);
+          return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Non sono riuscito ad inserire il nuovo Atto Sql==%1\$s Ultimo errore==%2\$s","albo-pretorio-on-line"),$wpdb->last_query,$wpdb->last_error);
     }else{
 		$newIDAtto=$wpdb->insert_id;
 //    	echo "Sql==".$wpdb->last_query;exit;
@@ -1466,7 +1466,7 @@ function albopc_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataF
 		if (count($NomeResp)>0)
 			$NomeResp=$NomeResp[0]->Nome." ".$NomeResp[0]->Cognome;
 		else
-			$NomeResp=__("Non Definito","albo-pretorio-considera");
+			$NomeResp=__("Non Definito","albo-pretorio-on-line");
 		$Sogs=unserialize($Soggetti, array('allowed_classes'=>false));
 		foreach($Sogs as $Soggetto){
 			$NomeResponsabile=albopc_get_responsabile($Soggetto);
@@ -1474,22 +1474,22 @@ function albopc_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataF
 		}
 		albopc_insert_log(1,1,$wpdb->insert_id,"{IdAtto}==> $wpdb->insert_id
 											{IdEnte} $Ente
-											{".__("Ente","albo-pretorio-considera")."} $NomeEnte
-											{".__("Numero","albo-pretorio-considera")."} $Numero/$Anno 
-											{".__("Data di registrazione","albo-pretorio-considera")."}==> $Data 
-						                    {".__("Riferimento","albo-pretorio-considera")."}==> $Riferimento 
-											{".__("Oggetto","albo-pretorio-considera")."}==> $Oggetto 
+											{".__("Ente","albo-pretorio-on-line")."} $NomeEnte
+											{".__("Numero","albo-pretorio-on-line")."} $Numero/$Anno 
+											{".__("Data di registrazione","albo-pretorio-on-line")."}==> $Data 
+						                    {".__("Riferimento","albo-pretorio-on-line")."}==> $Riferimento 
+											{".__("Oggetto","albo-pretorio-on-line")."}==> $Oggetto 
 											{IdOggetto}==> $wpdb->insert_id
-											{".__("Data Inizio","albo-pretorio-considera")."}==> $DataInizio
-											{".__("Data Fine","albo-pretorio-considera")."}==> $DataFine
-											{".__("Data Oblio","albo-pretorio-considera")."}==> $DataOblio
-											{".__("Note","albo-pretorio-considera")."}=> $Note
-											{".__("Categoria","albo-pretorio-considera")."}==> $NomeCategoria->Nome
-											{".__("Unita Organizzativa Responsabile","albo-pretorio-considera")."}==> ($IdUI) $NomeUO->Nome 
-											{".__("Responsabile del procedimento amministrativo","albo-pretorio-considera")."}==> $NomeResp
+											{".__("Data Inizio","albo-pretorio-on-line")."}==> $DataInizio
+											{".__("Data Fine","albo-pretorio-on-line")."}==> $DataFine
+											{".__("Data Oblio","albo-pretorio-on-line")."}==> $DataOblio
+											{".__("Note","albo-pretorio-on-line")."}=> $Note
+											{".__("Categoria","albo-pretorio-on-line")."}==> $NomeCategoria->Nome
+											{".__("Unita Organizzativa Responsabile","albo-pretorio-on-line")."}==> ($IdUI) $NomeUO->Nome 
+											{".__("Responsabile del procedimento amministrativo","albo-pretorio-on-line")."}==> $NomeResp
 											{IdCategoria}==> $Categoria
-											{".__("Soggetti","albo-pretorio-considera")."}==> $Responsabili
-											{".__("Richiedente","albo-pretorio-considera")."}==>$Richiedente"
+											{".__("Soggetti","albo-pretorio-on-line")."}==> $Responsabili
+											{".__("Richiedente","albo-pretorio-on-line")."}==>$Richiedente"
 							  );
 		return $newIDAtto;
 	}
@@ -1502,7 +1502,7 @@ function albopc_del_atto($id) {
 	}
 	else{
 	 	$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Atti WHERE	IdAtto=%d",$id));
-		albopc_insert_log(1,3,$id,__("Cancellazione Atto","albo-pretorio-considera"),(int)$id);
+		albopc_insert_log(1,3,$id,__("Cancellazione Atto","albo-pretorio-on-line"),(int)$id);
 		return True;
 	}
 }
@@ -1522,27 +1522,27 @@ function albopc_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$Dat
 	if ($Atto->Ente!=$Ente){
     	$NEnte=albopc_get_ente($Ente);
 		$Log.='{IdEnte}==> '.$Ente.' ';
-		$Log.='{'.__("Ente","albo-pretorio-considera").'}==> '.$NEnte->Nome.' ';		
+		$Log.='{'.__("Ente","albo-pretorio-on-line").'}==> '.$NEnte->Nome.' ';		
 	}
 	if ($Atto->Data!=$Data)
-		$Log.='{'.__("Data di registrazione","albo-pretorio-considera").'}==> '.$Data.' ';
+		$Log.='{'.__("Data di registrazione","albo-pretorio-on-line").'}==> '.$Data.' ';
 	if ($Atto->Riferimento!=$Riferimento)
-		$Log.='{'.__("Riferimento","albo-pretorio-considera").'}==> '.$Riferimento.' ';
+		$Log.='{'.__("Riferimento","albo-pretorio-on-line").'}==> '.$Riferimento.' ';
 	if ($Atto->Oggetto!=$Oggetto)
-		$Log.='{'.__("Oggetto","albo-pretorio-considera").'}==> '.$Oggetto.' ';
+		$Log.='{'.__("Oggetto","albo-pretorio-on-line").'}==> '.$Oggetto.' ';
 	if ($Atto->DataInizio!=$DataInizio)
-		$Log.='{'.__("Data Inizio","albo-pretorio-considera").'}==> '.$DataInizio.' ';
+		$Log.='{'.__("Data Inizio","albo-pretorio-on-line").'}==> '.$DataInizio.' ';
 	if ($Atto->DataFine!=$DataFine)
-		$Log.='{'.__("Data Fine","albo-pretorio-considera").'}==> '.$DataFine.' ';
+		$Log.='{'.__("Data Fine","albo-pretorio-on-line").'}==> '.$DataFine.' ';
 	if ($Atto->DataOblio!=$DataOblio)
-		$Log.='{'.__("Data Oblio","albo-pretorio-considera").'}==> '.$DataOblio.' ';
+		$Log.='{'.__("Data Oblio","albo-pretorio-on-line").'}==> '.$DataOblio.' ';
 	if ($Atto->Informazioni!=$Note)
-		$Log.='{'.__("Informazioni","albo-pretorio-considera").'}==> '.$Note.' ';
+		$Log.='{'.__("Informazioni","albo-pretorio-on-line").'}==> '.$Note.' ';
 	if ($Atto->IdCategoria!=$Categoria){
     	$NomeCategoria=albopc_get_categoria($Categoria);
     	$NomeCategoria=$NomeCategoria[0];
 		$Log.='{IdCategoria}==> '.$Categoria.' ';
-		$Log.='{'.__("Categoria","albo-pretorio-considera").'}==> '.$NomeCategoria->Nome.' ';
+		$Log.='{'.__("Categoria","albo-pretorio-on-line").'}==> '.$NomeCategoria->Nome.' ';
 	}
 	if($Atto->Soggetti!=$Soggetti){
 		$Responsabili="";
@@ -1551,16 +1551,16 @@ function albopc_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$Dat
 			$NomeResponsabile=albopc_get_responsabile($Soggetto);
 			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".albopc_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
 		}
-		$Log.='{'.__("Soggetti","albo-pretorio-considera").'}==> '.$Responsabili.' ';
+		$Log.='{'.__("Soggetti","albo-pretorio-on-line").'}==> '.$Responsabili.' ';
 	}
 	if ($Atto->IdUnitaOrganizzativa!=$IdUI){
 		$NomeUO=albopc_get_unitaorganizzativa($IdUI);
-		$Log.='{'.__("Unita Organizzativa Responsabile","albo-pretorio-considera").'}==> ('.$IdUI.') '.$NomeUO->Nome;
+		$Log.='{'.__("Unita Organizzativa Responsabile","albo-pretorio-on-line").'}==> ('.$IdUI.') '.$NomeUO->Nome;
 	}
 	if ($Atto->RespProc!=$Responsabile){
 		$NomeResp=albopc_get_responsabile($Responsabile);
 		$NomeResp=$NomeResp[0];
-		$Log.='{'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'}==> '.$NomeResp->Nome." ".$NomeResp->Cognome;
+		$Log.='{'.__("Responsabile del procedimento amministrativo","albo-pretorio-on-line").'}==> '.$NomeResp->Nome." ".$NomeResp->Cognome;
 	}
 	if ($Atto->Richiedente!=$Richiedente)
 		$Log.='{Richiedente}==> '.$Richiedente.' ';
@@ -1593,7 +1593,7 @@ function albopc_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$Dat
 								'%d',
 								'%s'),
 						  array('%d')))
-    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Atto","albo-pretorio-considera").$wpdb->last_error, $wpdb->last_error);
+    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Atto","albo-pretorio-on-line").$wpdb->last_error, $wpdb->last_error);
     else
     	albopc_insert_log(1,2,$id,$Log);
 }
@@ -1601,10 +1601,10 @@ function albopc_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$Dat
 function albopc_update_selettivo_atto($id,$ArrayCampiValori,$ArrayTipi,$TestaMsg){
 	global $wpdb;
 	if ( false === $wpdb->update($wpdb->table_name_Atti,$ArrayCampiValori,array( 'IdAtto' => $id ),$ArrayTipi))
-    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Atto","albo-pretorio-considera") .$wpdb->last_error, $wpdb->last_error);
+    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Atto","albo-pretorio-on-line") .$wpdb->last_error, $wpdb->last_error);
     else{
 		albopc_insert_log(1,2,(int)$id,$TestaMsg.albopc_ListaElementiArray($ArrayCampiValori));
-		return __('Atto Aggiornato','albo-pretorio-considera').': %%br%%'.albopc_ListaElementiArray($ArrayCampiValori);	
+		return __('Atto Aggiornato','albo-pretorio-on-line').': %%br%%'.albopc_ListaElementiArray($ArrayCampiValori);	
 	}
 }
 
@@ -1616,9 +1616,9 @@ function albopc_approva_atto($IdAtto){
 	$risultato=$risultato[0];
 	$NumeroOpzione=get_option('opt_AP_NumeroProgressivo');
 	if($risultato->Numero!=0)
-		return __("Atto gia' PUBBLICATO con Numero Progressivo ","albo-pretorio-considera").$risultato->Numero;
+		return __("Atto gia' PUBBLICATO con Numero Progressivo ","albo-pretorio-on-line").$risultato->Numero;
 	if (($NumeroDaDb!=$NumeroOpzione) And albopc_get_all_atti(9,0,0,0,"",0,0,"",0,0,TRUE)>0){
-		return __("Atto non PUBBLICATO","albo-pretorio-considera").":%%br%%".__("Progressivo da ultima pubblicazione","albo-pretorio-considera")."=$NumeroDaDb%%br%% ".__("Progressivo da parametri","albo-pretorio-considera")."=$NumeroOpzione";
+		return __("Atto non PUBBLICATO","albo-pretorio-on-line").":%%br%%".__("Progressivo da ultima pubblicazione","albo-pretorio-on-line")."=$NumeroDaDb%%br%% ".__("Progressivo da parametri","albo-pretorio-on-line")."=$NumeroOpzione";
 	}else{
 		$x=$wpdb->update($wpdb->table_name_Atti,
 									 array('Numero' => $NumeroOpzione),
@@ -1627,14 +1627,14 @@ function albopc_approva_atto($IdAtto){
 									 array('%d'));
 	//  visualizza Sql Updateecho $wpdb->print_error();exit;
 	 	if ($x==0){
-	    	return __("Atto non PUBBLICATO","albo-pretorio-considera").':%%br%%'.__("Errore","albo-pretorio-considera").': '.$wpdb->last_error;
+	    	return __("Atto non PUBBLICATO","albo-pretorio-on-line").':%%br%%'.__("Errore","albo-pretorio-on-line").': '.$wpdb->last_error;
 	    }
 	    else{
-			albopc_insert_log( 1,4,$IdAtto,"{".__("Stato Atto","albo-pretorio-considera")."}==> ".__("Pubblicato","albo-pretorio-considera")." 
-			 							{".__("Numero Assegnato","albo-pretorio-considera")."}==> $NumeroOpzione ");	
+			albopc_insert_log( 1,4,$IdAtto,"{".__("Stato Atto","albo-pretorio-on-line")."}==> ".__("Pubblicato","albo-pretorio-on-line")." 
+			 							{".__("Numero Assegnato","albo-pretorio-on-line")."}==> $NumeroOpzione ");	
 			$NumeroOpzione+=1;
 			update_option('opt_AP_NumeroProgressivo',$NumeroOpzione );
-			return __("Atto PUBBLICATO","albo-pretorio-considera");
+			return __("Atto PUBBLICATO","albo-pretorio-on-line");
 		}
 	}
 }
@@ -1649,7 +1649,7 @@ function albopc_annulla_atto($IdAtto,$Motivo,$Allegati=array()){
 	$Result=$wpdb->query($Sql);
 //	echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
 	if($Result){
-		albopc_insert_log(1,6,$IdAtto,"{".__("Stato Atto","albo-pretorio-considera")."}==> ".__("Annullato","albo-pretorio-considera"));
+		albopc_insert_log(1,6,$IdAtto,"{".__("Stato Atto","albo-pretorio-on-line")."}==> ".__("Annullato","albo-pretorio-on-line"));
 		if (!empty($Allegati))
 			foreach($Allegati as $Allegato)
 				albopc_del_allegato_atto($Allegato,$IdAtto,"","S");
@@ -1667,7 +1667,7 @@ function albopc_get_dropdown_anni_atti($select_name,$id_name,$class,$tab_index_a
  	2 storici
 */
 	global $wpdb;
-	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-considera");
+	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-on-line");
 	switch ($Stato){
 		case 1:
 			$Sql="SELECT Anno FROM $wpdb->table_name_Atti WHERE Numero >0 AND DataFine >= '".albopc_oggi()."' AND DataInizio <= '".albopc_oggi()."' GROUP BY Anno;";
@@ -1681,10 +1681,10 @@ function albopc_get_dropdown_anni_atti($select_name,$id_name,$class,$tab_index_a
 	}
 	$anni = $wpdb->get_results($Sql);	
 	$output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute>\n";
-	if ($default==__("Nessuno","albo-pretorio-considera")){
-		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-considera")."</option>\n";
+	if ($default==__("Nessuno","albo-pretorio-on-line")){
+		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}else{
-		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-considera")."</option>\n";
+		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}
 	if ( ! empty( $anni ) ) {	
 		foreach ($anni as $c) {
@@ -1882,13 +1882,13 @@ function albopc_is_atto_corrente($id){
 }
 function albopc_get_lista_atti($select_name,$id_name,$class,$tab_index_attribute,$default="xxxx",$Stato=0,$Style="") {
 	global $wpdb;
-	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-considera");
+	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-on-line");
 	$atti =albopc_get_all_atti( $Stato,0,0,0,'',0,0,"Numero Desc");
 	$output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute style='$Style'>\n";
-	if ($default==__("Nessuno","albo-pretorio-considera")){
-		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-considera")."</option>\n";
+	if ($default==__("Nessuno","albo-pretorio-on-line")){
+		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}else{
-		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-considera")."</option>\n";
+		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}
 	if ( ! empty( $atti ) ) {	
 		foreach ($atti as $a) {
@@ -1904,13 +1904,13 @@ function albopc_get_lista_atti($select_name,$id_name,$class,$tab_index_attribute
 }
 function albopc_get_dropdown_atti($select_name,$id_name,$class,$tab_index_attribute,$default="xxxx") {
 	global $wpdb;
-	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-considera");
+	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-on-line");
 	$atti =albopc_get_all_atti( 0,0,0,0,'',0,0,"Numero Desc");
 	$output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute>\n";
-	if ($default==__("Nessuno","albo-pretorio-considera")){
-		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-considera")."</option>\n";
+	if ($default==__("Nessuno","albo-pretorio-on-line")){
+		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}else{
-		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-considera")."</option>\n";
+		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}
 	if ( ! empty( $atti ) ) {	
 		foreach ($atti as $a) {
@@ -1939,9 +1939,9 @@ function albopc_ripubblica_atti_correnti($ArrayAtti){
 		if(strlen($Atto->Informazioni)>0)
 			/* translators: 1: numero di giorni, 2: data originale, 3: data aggiornata */
 			$Informazioni=$Atto->Informazioni.sprintf(__('
-			Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-considera'),$Ngg,albopc_VisualizzaData($Atto->DataFine),albopc_VisualizzaData($DataFine));
+			Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-on-line'),$Ngg,albopc_VisualizzaData($Atto->DataFine),albopc_VisualizzaData($DataFine));
 		else
-			$Informazioni=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-considera'),$Ngg,albopc_VisualizzaData($Atto->DataFine),albopc_VisualizzaData($DataFine));
+			$Informazioni=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-on-line'),$Ngg,albopc_VisualizzaData($Atto->DataFine),albopc_VisualizzaData($DataFine));
 //		$SqlAttoDaProlungare='UPDATE '.$wpdb->table_name_Atti.' SET DataFine='.$DataFine.', Informazioni="'.$Informazioni.'" WHERE IdAtto='.$IDAtto.';';
 		
 		if ($num=$wpdb->update($wpdb->table_name_Atti,
@@ -1953,7 +1953,7 @@ function albopc_ripubblica_atti_correnti($ArrayAtti){
 			$NumAggiornamenti+=$num;
 //		echo $SqlAttoDaProlungare."<br />";
 		albopc_insert_log(1,1,$IDAtto,"{IdAtto}==> $IDAtto
-								   {".__("Informazioni","albo-pretorio-considera")."}==>$Informazioni");	
+								   {".__("Informazioni","albo-pretorio-on-line")."}==>$Informazioni");	
 	}
 	return $NumAggiornamenti;
 }
@@ -2098,12 +2098,12 @@ function albopc_memo_allegato($idAllegato,$Titolo,$idAtto,$Integrale=1,$Natura="
 						  array('%s','%d','%s'),
 						  array('%d'))){
 		albopc_insert_log(3,2,(isset($idAllegato)?$idAllegato:0),"
-							{".__("Titolo Allegato","albo-pretorio-considera")."}==> $Titolo
-							{".__("Integrale","albo-pretorio-considera")."}==> ".($Integrale==1?'Si':'No')."
-							{".__("Natura","albo-pretorio-considera")."}==> ".($Natura='A'?'Allegato':'Documento'),(int)$idAtto);
+							{".__("Titolo Allegato","albo-pretorio-on-line")."}==> $Titolo
+							{".__("Integrale","albo-pretorio-on-line")."}==> ".($Integrale==1?'Si':'No')."
+							{".__("Natura","albo-pretorio-on-line")."}==> ".($Natura='A'?'Allegato':'Documento'),(int)$idAtto);
 		return true;
 	}else{
-		return new WP_Error('db_update_error', __("Allegato non modificato","albo-pretorio-considera")." ".$wpdb->last_error, $wpdb->last_error);
+		return new WP_Error('db_update_error', __("Allegato non modificato","albo-pretorio-on-line")." ".$wpdb->last_error, $wpdb->last_error);
 	}
 }
 
@@ -2120,15 +2120,15 @@ global $wpdb;
 				'Impronta' 		=> $Impronta,
 				'Natura'		=> $Natura,
 				),array('%s','%s','%d','%d','%s','%s')))	
-        return __('Non sono riuscito ad inserire il nuovo allegato','albo-pretorio-considera')." ".$wpdb->last_error;
+        return __('Non sono riuscito ad inserire il nuovo allegato','albo-pretorio-on-line')." ".$wpdb->last_error;
     else
     	albopc_insert_log(3,1,$wpdb->insert_id,"{IdAllegato}==> $wpdb->insert_id
-											{".__("Titolo","albo-pretorio-considera")."}==> $TitoloAllegato 
-											{".__("Allegato","albo-pretorio-considera")."}==> $Allegato 
+											{".__("Titolo","albo-pretorio-on-line")."}==> $TitoloAllegato 
+											{".__("Allegato","albo-pretorio-on-line")."}==> $Allegato 
 											{IdAtto}==> $IdAtto
-											{".__("Integrale","albo-pretorio-considera")."}==> ".($Integrale==1?'Si':'No')."
-											{".__("Impronta","albo-pretorio-considera")."}==> $Impronta
-											{".__("Natura","albo-pretorio-considera")."}==> ".($Natura='A'?'Allegato':'Documento'), $IdAtto);
+											{".__("Integrale","albo-pretorio-on-line")."}==> ".($Integrale==1?'Si':'No')."
+											{".__("Impronta","albo-pretorio-on-line")."}==> $Impronta
+											{".__("Natura","albo-pretorio-on-line")."}==> ".($Natura='A'?'Allegato':'Documento'), $IdAtto);
 	return $Impronta;
 }
 
@@ -2142,9 +2142,9 @@ global $wpdb;
 		if (unlink($allegato[0]->Allegato)){
 			if($SoloFile=="N"){
 				$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Allegati WHERE IdAllegato=%d",$idAllegato));
-				albopc_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." ",$idAtto);
+				albopc_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-on-line")."}==> ".$allegato[0]->TitoloAllegato." ",$idAtto);
 			}else{
-				albopc_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." Cancellato solo il file per VIOLAZIONE di LEGGE",$idAtto);
+				albopc_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-on-line")."}==> ".$allegato[0]->TitoloAllegato." Cancellato solo il file per VIOLAZIONE di LEGGE",$idAtto);
 			}
 			return True;
 		}else{
@@ -2163,7 +2163,7 @@ global $wpdb;
 				$Del=TRUE;
 			}
 		if (FALSE!==$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Allegati WHERE IdAllegato=%d",$allegato->IdAllegato))){
-			albopc_insert_log(3,3,$allegato->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato->Allegato,$idAtto);
+			albopc_insert_log(3,3,$allegato->IdAllegato,"{".__("Nome Allegato","albo-pretorio-on-line")."}==> ".$allegato->Allegato,$idAtto);
 			$Del=TRUE;
 		}
 	}
@@ -2195,26 +2195,26 @@ function albopc_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 		$NewAllegato=$BaseCurDir."/".basename($allegato['Allegato']);
 		if (is_file($allegato['Allegato'])){
 			if (!copy($allegato['Allegato'], $NewAllegato)) {
-				albopc_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nello spostamento Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." => $NewAllegato",0);	
-				$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-considera").'</spam> '.__("nello spostamento dell'Allegato","albo-pretorio-considera").' '.$allegato['Allegato'].' in '. $NewAllegato."%%br%%";
-				fwrite($fplog,__("Non sono riuscito a copiare il file","albo-pretorio-considera")." ".$allegato['Allegato']." ".__("in","albo-pretorio-considera")." ". $NewAllegato."\n");
+				albopc_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nello spostamento Allegato","albo-pretorio-on-line")."}==> ".$allegato['Allegato']." => $NewAllegato",0);	
+				$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-on-line").'</spam> '.__("nello spostamento dell'Allegato","albo-pretorio-on-line").' '.$allegato['Allegato'].' in '. $NewAllegato."%%br%%";
+				fwrite($fplog,__("Non sono riuscito a copiare il file","albo-pretorio-on-line")." ".$allegato['Allegato']." ".__("in","albo-pretorio-on-line")." ". $NewAllegato."\n");
 			}
 			else{
 				if (!unlink($allegato['Allegato'])){
-					albopc_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nella cancellazione Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato'],0);
-					$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-considera").'</spam> '.__("errata cancellazione dell'Allegato","albo-pretorio-considera").' </spam>'.$allegato['Allegato']."%%br%%";
-					fwrite($fplog,__("Non sono riuscito a cancellare il file","albo-pretorio-considera")." ".$allegato['Allegato']."\n");
+					albopc_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nella cancellazione Allegato","albo-pretorio-on-line")."}==> ".$allegato['Allegato'],0);
+					$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-on-line").'</spam> '.__("errata cancellazione dell'Allegato","albo-pretorio-on-line").' </spam>'.$allegato['Allegato']."%%br%%";
+					fwrite($fplog,__("Non sono riuscito a cancellare il file","albo-pretorio-on-line")." ".$allegato['Allegato']."\n");
 			}
-			$msg.='<spam style="color:green;">File</spam> '.$allegato['Allegato'].' <spam style="color:green;">'.__("spostato in","albo-pretorio-considera").'</spam> '.$NewAllegato.'%%br%%';
-			fwrite($fplog,"File ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-considera")." ".$NewAllegato."\n");
+			$msg.='<spam style="color:green;">File</spam> '.$allegato['Allegato'].' <spam style="color:green;">'.__("spostato in","albo-pretorio-on-line").'</spam> '.$NewAllegato.'%%br%%';
+			fwrite($fplog,"File ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-on-line")." ".$NewAllegato."\n");
 			if ($wpdb->update($wpdb->table_name_Allegati,
 									array('Allegato' => $NewAllegato),
 									array('IdAllegato' => $allegato['IdAllegato'] ),
 									array('%s'),
 									array('%d'))>0){
-				albopc_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-considera")." $NewAllegato",0);
-				$msg.='<spam style="color:green;">'.__("Aggiornamento Link Allegato","albo-pretorio-considera").'</spam> '.$allegato['Allegato']."%%br%%";
-				fwrite($fplog,__("Aggiornato il link nel Data Base per","albo-pretorio-considera")." ".$allegato['Allegato']." in ".$NewAllegato."\n");
+				albopc_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-on-line")."}==> ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-on-line")." $NewAllegato",0);
+				$msg.='<spam style="color:green;">'.__("Aggiornamento Link Allegato","albo-pretorio-on-line").'</spam> '.$allegato['Allegato']."%%br%%";
+				fwrite($fplog,__("Aggiornato il link nel Data Base per","albo-pretorio-on-line")." ".$allegato['Allegato']." in ".$NewAllegato."\n");
 			}
 		}
 	}					
@@ -2231,43 +2231,43 @@ function albopc_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 			if (unlink($fName))
 				fwrite($fplog,"File ".$fName." Cancellato\n");
 			else
-				fwrite($fplog,__("Errore nella Cancellazione del file","albo-pretorio-considera")." ".$fName."\n");
+				fwrite($fplog,__("Errore nella Cancellazione del file","albo-pretorio-on-line")." ".$fName."\n");
 		else
 			fwrite($fplog,"File ".$fName." inesistente\n");
 		$fName=str_replace("\\","/",$OldPathAllegati)."/".albopc_decodenamefile();
 		if (is_file($fName))
 			if (unlink($fName))
-				fwrite($fplog,"File ".$fName." ".__("Cancellato","albo-pretorio-considera")."\n");
+				fwrite($fplog,"File ".$fName." ".__("Cancellato","albo-pretorio-on-line")."\n");
 			else
-				fwrite($fplog,__("Errore nella Cancellazione del file","albo-pretorio-considera")." ".$fName."\n");
+				fwrite($fplog,__("Errore nella Cancellazione del file","albo-pretorio-on-line")." ".$fName."\n");
 		else
 			fwrite($fplog,"File ".$fName." inesistente\n");
 		if($tmpdir==AP_BASE_DIR){
 			$msg.="Directory ".$tmpdir." non cancellata%%br%%";
-			fwrite($fplog,"Directory ".$tmpdir." ".__("non cancellata","albo-pretorio-considera")."\n");	
+			fwrite($fplog,"Directory ".$tmpdir." ".__("non cancellata","albo-pretorio-on-line")."\n");	
 		}else{
 			if (is_dir($tmpdir)){
 				if (!albopc_is_dir_empty($tmpdir)){
-					$msg.="La directory ".$tmpdir." ".__("non vuota","albo-pretorio-considera")."%%br%%";
-					fwrite($fplog,"La directory ".$tmpdir." ".__("non vuota","albo-pretorio-considera")." \n");					
+					$msg.="La directory ".$tmpdir." ".__("non vuota","albo-pretorio-on-line")."%%br%%";
+					fwrite($fplog,"La directory ".$tmpdir." ".__("non vuota","albo-pretorio-on-line")." \n");					
 				}else{
 					if (rmdir($tmpdir)){
 						$msg.="Directory ".$tmpdir." cancellata%%br%%";
-						fwrite($fplog,"Directory ".$tmpdir." ".__("cancellata","albo-pretorio-considera")." \n");	
+						fwrite($fplog,"Directory ".$tmpdir." ".__("cancellata","albo-pretorio-on-line")." \n");	
 					}else{
-						$msg.=__("La directory","albo-pretorio-considera")." ".$tmpdir." ".__("non e' stata cancellata","albo-pretorio-considera")."%%br%%";
-						fwrite($fplog,__("La directory","albo-pretorio-considera")." ".$tmpdir." ".__("non e' stata cancellata","albo-pretorio-considera")." \n");
+						$msg.=__("La directory","albo-pretorio-on-line")." ".$tmpdir." ".__("non e' stata cancellata","albo-pretorio-on-line")."%%br%%";
+						fwrite($fplog,__("La directory","albo-pretorio-on-line")." ".$tmpdir." ".__("non e' stata cancellata","albo-pretorio-on-line")." \n");
 					}
 				}
 			}else{
-					$msg.=__("La directory","albo-pretorio-considera")." ".$tmpdir." non esiste%%br%%";
-					fwrite($fplog,"La directory ".$tmpdir." ".__("non esiste","albo-pretorio-considera")." \n");		
+					$msg.=__("La directory","albo-pretorio-on-line")." ".$tmpdir." non esiste%%br%%";
+					fwrite($fplog,"La directory ".$tmpdir." ".__("non esiste","albo-pretorio-on-line")." \n");		
 			}			
 		}
 	}
 	if (!$eliminareOrigine){
-		$msg.=__("La directory","albo-pretorio-considera")." ".$tmpdir." ".__("non essendo una sottocartella della cartella Uploads di sistema, non deve essere cancellata","albo-pretorio-considera")."%%br%%";
-		fwrite($fplog,__("La directory","albo-pretorio-considera")." ".$tmpdir." ".__("non essendo una sottocartella della cartella Uploads di sistema, non deve essere cancellata","albo-pretorio-considera")." \n");	
+		$msg.=__("La directory","albo-pretorio-on-line")." ".$tmpdir." ".__("non essendo una sottocartella della cartella Uploads di sistema, non deve essere cancellata","albo-pretorio-on-line")."%%br%%";
+		fwrite($fplog,__("La directory","albo-pretorio-on-line")." ".$tmpdir." ".__("non essendo una sottocartella della cartella Uploads di sistema, non deve essere cancellata","albo-pretorio-on-line")." \n");	
 	}
 	fclose($fplog);
 	if (stripslashes(get_option('opt_AP_FolderUpload'))!="wp-content/uploads"){
@@ -2298,8 +2298,8 @@ function albopc_allinea_allegati(){
 									array('IdAllegato' => $allegato['IdAllegato'] ),
 									array('%s'),
 									array('%d'))){
-				albopc_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." spostato in $NewAllegato",0);
-				$msg.='<spam style="color:green;">'.__('Aggiornamento Link Allegato','albo-pretorio-considera').'</spam> '.$allegato['Allegato']."%%br%%";
+				albopc_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-on-line")."}==> ".$allegato['Allegato']." spostato in $NewAllegato",0);
+				$msg.='<spam style="color:green;">'.__('Aggiornamento Link Allegato','albo-pretorio-on-line').'</spam> '.$allegato['Allegato']."%%br%%";
 			}
 //	echo "<p>Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error."</p>";
 	}
@@ -2312,7 +2312,7 @@ function albopc_allinea_allegati(){
 ################################################################################
 function albopc_get_dropdown_responsabili($select_name,$id_name,$class,$tab_index_attribute="", $default="xxxx",$Funzione="") {
 	global $wpdb;
-	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-considera");
+	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-on-line");
 	$Where="";
 	if(($IA=is_array($Funzione)) or $Funzione!=""){
 		if($IA){
@@ -2323,10 +2323,10 @@ function albopc_get_dropdown_responsabili($select_name,$id_name,$class,$tab_inde
 	$responsabili = $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_RespProc $Where ORDER BY nome;");	
 //	echo "SELECT DISTINCT * FROM $wpdb->table_name_RespProc $Where ORDER BY nome;";wp_die();
 	$output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute>\n";
-	if ($default==__("Nessuno","albo-pretorio-considera") Or $default==0){
-		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-considera")."</option>\n";
+	if ($default==__("Nessuno","albo-pretorio-on-line") Or $default==0){
+		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-on-line")."</option>\n";
 	}else{
-		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-considera")." </option>\n";
+		$output .= "\t<option value='0' >".__("Nessuno","albo-pretorio-on-line")." </option>\n";
 	}
 	if ( ! empty( $responsabili ) ) {	
 		foreach ($responsabili as $c) {
@@ -2417,16 +2417,16 @@ function albopc_insert_responsabile($resp_cognome,$resp_nome,$resp_funzione,$res
 										  '%s',
 										  '%s',
 										  '%s')))	
-        return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire il Nuovo Responsabile','albo-pretorio-considera').' '.$wpdb->last_error, $wpdb->last_error);
+        return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire il Nuovo Responsabile','albo-pretorio-on-line').' '.$wpdb->last_error, $wpdb->last_error);
     else
     	albopc_insert_log(4,1,$wpdb->insert_id,"{IdResponsabile}==> $wpdb->insert_id
-		                                    {".__("Cognome","albo-pretorio-considera")."}==> $resp_cognome 
-		                                    {".__("Nome","albo-pretorio-considera")."}==> $resp_nome 
-											{".__("Funzione","albo-pretorio-considera")."}==> $resp_funzione
-											{".__("Email","albo-pretorio-considera")."}==> $resp_email
-											{".__("Telefono","albo-pretorio-considera")."}==> $resp_telefono
-											{".__("Orario","albo-pretorio-considera")."}==> $resp_orario
-											{".__("Note","albo-pretorio-considera")."}==> $resp_note");
+		                                    {".__("Cognome","albo-pretorio-on-line")."}==> $resp_cognome 
+		                                    {".__("Nome","albo-pretorio-on-line")."}==> $resp_nome 
+											{".__("Funzione","albo-pretorio-on-line")."}==> $resp_funzione
+											{".__("Email","albo-pretorio-on-line")."}==> $resp_email
+											{".__("Telefono","albo-pretorio-on-line")."}==> $resp_telefono
+											{".__("Orario","albo-pretorio-on-line")."}==> $resp_orario
+											{".__("Note","albo-pretorio-on-line")."}==> $resp_note");
 }
 function albopc_memo_responsabile($Id,$resp_cognome,$resp_nome,$resp_funzione,$resp_email,$resp_telefono,$resp_orario,$resp_note){
 	global $wpdb;
@@ -2435,19 +2435,19 @@ function albopc_memo_responsabile($Id,$resp_cognome,$resp_nome,$resp_funzione,$r
 	$Responsabile=$Responsabile[0];
 	$Log='{Id}==>'.$Id .' ' ;
 	if ($Responsabile->Cognome!=$resp_cognome)
-		$Log.='{'.__("Cognome","albo-pretorio-considera").'}==> '.$resp_cognome.' ';
+		$Log.='{'.__("Cognome","albo-pretorio-on-line").'}==> '.$resp_cognome.' ';
 	if ($Responsabile->Nome!=$resp_nome)
-		$Log.='{'.__("Nome","albo-pretorio-considera").'}==> '.$resp_nome.' ';
+		$Log.='{'.__("Nome","albo-pretorio-on-line").'}==> '.$resp_nome.' ';
 	if ($Responsabile->Funzione!=$resp_funzione)
-		$Log.='{'.__("Funzione","albo-pretorio-considera").'}==> '.$resp_funzione.' ';
+		$Log.='{'.__("Funzione","albo-pretorio-on-line").'}==> '.$resp_funzione.' ';
 	if ($Responsabile->Email!=$resp_email)
-		$Log.='{'.__("Email","albo-pretorio-considera").'}==> '.$resp_email.' ';
+		$Log.='{'.__("Email","albo-pretorio-on-line").'}==> '.$resp_email.' ';
 	if ($Responsabile->Telefono!=$resp_telefono)
-		$Log.='{'.__("Telefono","albo-pretorio-considera").'}==> '.$resp_telefono.' ';
+		$Log.='{'.__("Telefono","albo-pretorio-on-line").'}==> '.$resp_telefono.' ';
 	if ($Responsabile->Orario!=$resp_orario)
-		$Log.='{'.__("Orario","albo-pretorio-considera").'}==> '.$resp_orario.' ';
+		$Log.='{'.__("Orario","albo-pretorio-on-line").'}==> '.$resp_orario.' ';
 	if ($Responsabile->Note!=$resp_note)
-		$Log.='{'.__("Note","albo-pretorio-considera").'}==> '.$resp_note.' ';
+		$Log.='{'.__("Note","albo-pretorio-on-line").'}==> '.$resp_note.' ';
 	
 	if ( false === $wpdb->update($wpdb->table_name_RespProc,
 					array('Cognome' => stripslashes($resp_cognome),
@@ -2466,7 +2466,7 @@ function albopc_memo_responsabile($Id,$resp_cognome,$resp_nome,$resp_funzione,$r
 						   '%s',
 						   '%s'),
 					array('%d')))
-	    	return new WP_Error('db_update_error', __('Non sono riuscito a modifire il resposnabile del Trattamento','albo-pretorio-considera').' '.$wpdb->last_error, $wpdb->last_error);
+	    	return new WP_Error('db_update_error', __('Non sono riuscito a modifire il resposnabile del Trattamento','albo-pretorio-on-line').' '.$wpdb->last_error, $wpdb->last_error);
 	else 
 		albopc_insert_log(4,2,$Id,$Log);
 }
@@ -2476,10 +2476,10 @@ function albopc_del_responsabile($id) {
 	$id=(int)$id;
 	$resp=albopc_get_responsabile($id);
 	if(count($resp)==0){
-		return __("Cancellazione Soggetto Fallita, il soggetto non è presente in archivio ","albo-pretorio-considera");
+		return __("Cancellazione Soggetto Fallita, il soggetto non è presente in archivio ","albo-pretorio-on-line");
 	}
-	$responsabile= __("Cancellazione Responsabile","albo-pretorio-considera")." {IdResponsabile}==> $id {".__("Cognome","albo-pretorio-considera")."}==> ".$resp[0]->Cognome." {".__("Nome","albo-pretorio-considera")."}==> ".$resp[0]->Nome; 
-	$respdel=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Cancellazione Responsabile (%1\$d) %2\$s %3\$s Avvenuta con successo","albo-pretorio-considera"),$id, $resp[0]->Cognome,$resp[0]->Nome); 
+	$responsabile= __("Cancellazione Responsabile","albo-pretorio-on-line")." {IdResponsabile}==> $id {".__("Cognome","albo-pretorio-on-line")."}==> ".$resp[0]->Cognome." {".__("Nome","albo-pretorio-on-line")."}==> ".$resp[0]->Nome; 
+	$respdel=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Cancellazione Responsabile (%1\$d) %2\$s %3\$s Avvenuta con successo","albo-pretorio-on-line"),$id, $resp[0]->Cognome,$resp[0]->Nome); 
 	$N_atti=albopc_get_NumAttiSoggetto($id);
 	if ($N_atti>0){
 		return array("atti" => $N_atti);
@@ -2489,7 +2489,7 @@ function albopc_del_responsabile($id) {
 		if($result==1){
 			return $respdel;
 		}else{
-			return __("Si è verificato un errore nella cancellazione del soggetto","albo-pretorio-considera");
+			return __("Si è verificato un errore nella cancellazione del soggetto","albo-pretorio-on-line");
 		}
 	}
 }
@@ -2522,7 +2522,7 @@ $wpdb->table_name_Enti ORDER BY IdEnte;");
      if ( ! empty( $enti ) ) {
              /* mr modifica per cercare in tutti gli enti */
              $output .= "\t<option value=\"-1\" selected=\"selected\" 
- >".__('Tutti gli Enti', 'albo-pretorio-considera')."</option>\n";
+ >".__('Tutti gli Enti', 'albo-pretorio-on-line')."</option>\n";
          foreach ($enti as $c) {
              $output .= "\t<option value='$c->IdEnte'";
                          /* mr commento il select */
@@ -2580,7 +2580,7 @@ function albopc_set_ente_me($ente_nome){
 						array('Nome' => stripslashes($ente_nome)),
 						array('IdEnte' => 0),
 						array( '%s')))
-			albopc_insert_log(7,2,0,__("Aggiornamento Ente Sito","albo-pretorio-considera"));	
+			albopc_insert_log(7,2,0,__("Aggiornamento Ente Sito","albo-pretorio-on-line"));	
 //echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
 }
 function albopc_create_ente_me($nome="Ente non definito"){
@@ -2616,17 +2616,17 @@ function albopc_insert_ente($ente_nome,$ente_indirizzo,$ente_url,$ente_email,$en
 															  '%s',
 															  '%s'))){
 //		echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
-        return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire il Nuovo Ente','albo-pretorio-considera').' '.$wpdb->last_error, $wpdb->last_error);}
+        return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire il Nuovo Ente','albo-pretorio-on-line').' '.$wpdb->last_error, $wpdb->last_error);}
     else
     	albopc_insert_log(7,1,$wpdb->insert_id,"{IdEnte}==> $wpdb->insert_id
-		                                    {".__("Nome","albo-pretorio-considera")."}==> $ente_nome 
-											{".__("Indirizzo","albo-pretorio-considera")."}=> $ente_indirizzo
-											{".__("Url","albo-pretorio-considera")."}=> $ente_url
-											{".__("Email","albo-pretorio-considera")."}==> $ente_email
-											{".__("Pec","albo-pretorio-considera")."}==> $ente_pec
-											{".__("Telefono","albo-pretorio-considera")."}==> $ente_telefono
-											{".__("Fax","albo-pretorio-considera")."}==> $ente_fax
-											{".__("Note","albo-pretorio-considera")."}==> $ente_note");
+		                                    {".__("Nome","albo-pretorio-on-line")."}==> $ente_nome 
+											{".__("Indirizzo","albo-pretorio-on-line")."}=> $ente_indirizzo
+											{".__("Url","albo-pretorio-on-line")."}=> $ente_url
+											{".__("Email","albo-pretorio-on-line")."}==> $ente_email
+											{".__("Pec","albo-pretorio-on-line")."}==> $ente_pec
+											{".__("Telefono","albo-pretorio-on-line")."}==> $ente_telefono
+											{".__("Fax","albo-pretorio-on-line")."}==> $ente_fax
+											{".__("Note","albo-pretorio-on-line")."}==> $ente_note");
 }
 
 function albopc_memo_ente($Id,$ente_nome,$ente_indirizzo,$ente_url,$ente_email,$ente_pec,$ente_telefono,$ente_fax,$ente_note){
@@ -2635,21 +2635,21 @@ function albopc_memo_ente($Id,$ente_nome,$ente_indirizzo,$ente_url,$ente_email,$
 	$EnteL=albopc_get_ente($Id);
 	$Log='{Id}==>'.$Id .' ' ;
 	if ($EnteL->Nome!=$ente_nome)
-		$Log.='{'.__("Nome","albo-pretorio-considera").'}==> '.$ente_nome.' ';
+		$Log.='{'.__("Nome","albo-pretorio-on-line").'}==> '.$ente_nome.' ';
 	if ($EnteL->Indirizzo!=$ente_indirizzo)
-		$Log.='{'.__("Indirizzo","albo-pretorio-considera").'}==> '.$ente_indirizzo.' ';
+		$Log.='{'.__("Indirizzo","albo-pretorio-on-line").'}==> '.$ente_indirizzo.' ';
 	if ($EnteL->Url!=$ente_url)
-		$Log.='{'.__("Url","albo-pretorio-considera").'}==> '.$ente_url.' ';
+		$Log.='{'.__("Url","albo-pretorio-on-line").'}==> '.$ente_url.' ';
 	if ($EnteL->Email!=$ente_email)
-		$Log.='{'.__("Email","albo-pretorio-considera").'}==> '.$ente_email.' ';
+		$Log.='{'.__("Email","albo-pretorio-on-line").'}==> '.$ente_email.' ';
 	if ($EnteL->Pec!=$ente_pec)
-		$Log.='{'.__("Pec","albo-pretorio-considera").'}==> '.$ente_pec.' ';
+		$Log.='{'.__("Pec","albo-pretorio-on-line").'}==> '.$ente_pec.' ';
 	if ($EnteL->Telefono!=$ente_telefono)
-		$Log.='{'.__("Telefono","albo-pretorio-considera").'}==> '.$ente_telefono.' ';
+		$Log.='{'.__("Telefono","albo-pretorio-on-line").'}==> '.$ente_telefono.' ';
 	if ($EnteL->Fax!=$ente_fax)
-		$Log.='{'.__("Fax","albo-pretorio-considera").'}==> '.$ente_fax.' ';
+		$Log.='{'.__("Fax","albo-pretorio-on-line").'}==> '.$ente_fax.' ';
 	if ($EnteL->Note!=$ente_note)
-		$Log.='{'.__("Note","albo-pretorio-considera").'}==> '.$ente_note.' ';
+		$Log.='{'.__("Note","albo-pretorio-on-line").'}==> '.$ente_note.' ';
 	
 	if ( false === $wpdb->update($wpdb->table_name_Enti,
 					array('Nome' => stripslashes($ente_nome),
@@ -2668,7 +2668,7 @@ function albopc_memo_ente($Id,$ente_nome,$ente_indirizzo,$ente_url,$ente_email,$
 						   '%s',
 						   '%s'),
 					array( '%d' )))
-	    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Ente","albo-pretorio-considera").' '.$wpdb->last_error, $wpdb->last_error);
+	    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Ente","albo-pretorio-on-line").' '.$wpdb->last_error, $wpdb->last_error);
 	else 
 		albopc_insert_log(7,2,$Id,$Log);
 }
@@ -2681,7 +2681,7 @@ function albopc_del_ente($id) {
 		return array("atti" => $N_atti);
 	}else{
 	 	$result=$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Enti WHERE IdEnte=%d",$id));
-		albopc_insert_log(7,3,$id,__("Cancellazione Ente","albo-pretorio-considera")." {IdEnte}==> $id",$id);
+		albopc_insert_log(7,3,$id,__("Cancellazione Ente","albo-pretorio-on-line")." {IdEnte}==> $id",$id);
 		return $result;
 	}
 }
@@ -2711,7 +2711,7 @@ function albopc_get_dropdown_unitao($select_name,$id_name,$class,$tab_index_attr
      if ( ! empty( $unitao ) ) {
              /* mr modifica per cercare in tutte le unità organizzative */
              $output .= "\t<option value=\"-1\" selected=\"selected\" 
- >".__('Tutte le unità organizzative', 'albo-pretorio-considera')."</option>\n";
+ >".__('Tutte le unità organizzative', 'albo-pretorio-on-line')."</option>\n";
          foreach ($unitao as $c) {
              $output .= "\t<option value='$c->IdUO'";
                          /* mr commento il select */
@@ -2775,17 +2775,17 @@ function albopc_insert_unitao($nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$
 															  '%s',
 															  '%s'))){
 //		echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
-        return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire la Nuova Unità Organizzativa','albo-pretorio-considera').' '.$wpdb->last_error, $wpdb->last_error);}
+        return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire la Nuova Unità Organizzativa','albo-pretorio-on-line').' '.$wpdb->last_error, $wpdb->last_error);}
     else
     	albopc_insert_log(9,1,$wpdb->insert_id,"{IdUO}==> $wpdb->insert_id
-		                                    {".__("Nome","albo-pretorio-considera")."}==> $nome 
-											{".__("Indirizzo","albo-pretorio-considera")."}=> $indirizzo
-											{".__("Url","albo-pretorio-considera")."}=> $url
-											{".__("Email","albo-pretorio-considera")."}==> $email
-											{".__("Pec","albo-pretorio-considera")."}==> $pec
-											{".__("Telefono","albo-pretorio-considera")."}==> $telefono
-											{".__("Fax","albo-pretorio-considera")."}==> $fax
-											{".__("Note","albo-pretorio-considera")."}==> $note");
+		                                    {".__("Nome","albo-pretorio-on-line")."}==> $nome 
+											{".__("Indirizzo","albo-pretorio-on-line")."}=> $indirizzo
+											{".__("Url","albo-pretorio-on-line")."}=> $url
+											{".__("Email","albo-pretorio-on-line")."}==> $email
+											{".__("Pec","albo-pretorio-on-line")."}==> $pec
+											{".__("Telefono","albo-pretorio-on-line")."}==> $telefono
+											{".__("Fax","albo-pretorio-on-line")."}==> $fax
+											{".__("Note","albo-pretorio-on-line")."}==> $note");
 }
 
 function albopc_memo_unitao($Id,$nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$note){
@@ -2794,21 +2794,21 @@ function albopc_memo_unitao($Id,$nome,$indirizzo,$url,$email,$pec,$telefono,$fax
 	$UOL=albopc_get_unitaorganizzativa($Id);
 	$Log='{Id}==>'.$Id .' ' ;
 	if ($UOL->Nome!=$nome)
-		$Log.='{'.__("Nome","albo-pretorio-considera").'}==> '.$nome.' ';
+		$Log.='{'.__("Nome","albo-pretorio-on-line").'}==> '.$nome.' ';
 	if ($UOL->Indirizzo!=$indirizzo)
-		$Log.='{'.__("Indirizzo","albo-pretorio-considera").'}==> '.$indirizzo.' ';
+		$Log.='{'.__("Indirizzo","albo-pretorio-on-line").'}==> '.$indirizzo.' ';
 	if ($UOL->Url!=$url)
-		$Log.='{'.__("Url","albo-pretorio-considera").'}==> '.$url.' ';
+		$Log.='{'.__("Url","albo-pretorio-on-line").'}==> '.$url.' ';
 	if ($UOL->Email!=$email)
-		$Log.='{'.__("Email","albo-pretorio-considera").'}==> '.$email.' ';
+		$Log.='{'.__("Email","albo-pretorio-on-line").'}==> '.$email.' ';
 	if ($UOL->Pec!=$pec)
-		$Log.='{'.__("Pec","albo-pretorio-considera").'}==> '.$pec.' ';
+		$Log.='{'.__("Pec","albo-pretorio-on-line").'}==> '.$pec.' ';
 	if ($UOL->Telefono!=$telefono)
-		$Log.='{'.__("Telefono","albo-pretorio-considera").'}==> '.$telefono.' ';
+		$Log.='{'.__("Telefono","albo-pretorio-on-line").'}==> '.$telefono.' ';
 	if ($UOL->Fax!=$fax)
-		$Log.='{'.__("Fax","albo-pretorio-considera").'}==> '.$fax.' ';
+		$Log.='{'.__("Fax","albo-pretorio-on-line").'}==> '.$fax.' ';
 	if ($UOL->Note!=$note)
-		$Log.='{'.__("Note","albo-pretorio-considera").'}==> '.$note.' ';
+		$Log.='{'.__("Note","albo-pretorio-on-line").'}==> '.$note.' ';
 	if ( false === $wpdb->update($wpdb->table_name_UO,
 					array('Nome' => stripslashes($nome),
 						  'Indirizzo' => stripslashes($indirizzo),
@@ -2826,7 +2826,7 @@ function albopc_memo_unitao($Id,$nome,$indirizzo,$url,$email,$pec,$telefono,$fax
 						   '%s',
 						   '%s'),
 					array( '%d' )))
-	    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Unità Organizzativa","albo-pretorio-considera").' '.$wpdb->last_error, $wpdb->last_error);
+	    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Unità Organizzativa","albo-pretorio-on-line").' '.$wpdb->last_error, $wpdb->last_error);
 	else 
 		albopc_insert_log(9,2,$Id,$Log);
 }
@@ -2839,7 +2839,7 @@ function albopc_del_unitao($id) {
 		return array("unitao" => $N_unitao);
 	}else{
 	 	$result=$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_UO WHERE IdUO=%d",$id));
-		albopc_insert_log(9,3,$id,__("Cancellazione Unità Organizzativa","albo-pretorio-considera")." {IdUO}==> $id",$id);
+		albopc_insert_log(9,3,$id,__("Cancellazione Unità Organizzativa","albo-pretorio-on-line")." {IdUO}==> $id",$id);
 		return $result;
 	}
 }
@@ -2881,7 +2881,7 @@ function albopc_backup_table($table,$fp,$Filtro="",$Delete=TRUE) {
 	}
 	$table_structure = $wpdb->get_results("DESCRIBE $table");
 	if (! $table_structure) {
-		echo esc_html__("Errore nell.estrazione della struttura della tabella","albo-pretorio-considera")." : ".esc_html($table);
+		echo esc_html__("Errore nell.estrazione della struttura della tabella","albo-pretorio-on-line")." : ".esc_html($table);
 		return false;
 	}
 	// Table structure
@@ -2938,15 +2938,15 @@ function albopc_SvuotaDirectory($Dir,$fplog){
 	//Svuoto cartella tmp che contiene i files dati
 	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($Dir));
 	if(!is_null($fplog))	
-		fwrite($fplog,__("Svuotamento Directory","albo-pretorio-considera")." ".$Dir."\n");
+		fwrite($fplog,__("Svuotamento Directory","albo-pretorio-on-line")." ".$Dir."\n");
 	foreach ($iterator as $key=>$value) {
 		if (is_file(realpath($key)))
 			if (unlink(realpath($key))){
 				if(!is_null($fplog))
-					fwrite($fplog,"       File ".$key." ".__("cancellato","albo-pretorio-considera")."\n");			
+					fwrite($fplog,"       File ".$key." ".__("cancellato","albo-pretorio-on-line")."\n");			
 			}else{
 				if(!is_null($fplog))	
-					fwrite($fplog,"       File ".$key." ".__("non può essere cancellato","albo-pretorio-considera"). "\n");			
+					fwrite($fplog,"       File ".$key." ".__("non può essere cancellato","albo-pretorio-on-line"). "\n");			
 			}
 	}
 }
@@ -2971,10 +2971,10 @@ global $wpdb;
 			$nomefileZip=$Dir."/".$Tipo."_".$NomeFile.".zip";
 			$nomefileLog=$DirLog."/Backup_".$Tipo."_AlboPretorio_".$NomeFile.".log";
 	}	
-	$Risultato=__('Risultato del Backup','albo-pretorio-considera'). ":<br />";
+	$Risultato=__('Risultato del Backup','albo-pretorio-on-line'). ":<br />";
 	if ($Echo){
-		echo "<h2>".esc_html__('Risultato del Backup','albo-pretorio-considera'). ":</h2>";
-		echo "<h3>".esc_html__('Verifica struttura Directory destinazione','albo-pretorio-considera'). "</h3>"
+		echo "<h2>".esc_html__('Risultato del Backup','albo-pretorio-on-line'). ":</h2>";
+		echo "<h3>".esc_html__('Verifica struttura Directory destinazione','albo-pretorio-on-line'). "</h3>"
 		. "<ul>";
 	}
 	if (class_exists('ZipArchive')) {
@@ -2982,43 +2982,43 @@ global $wpdb;
 		if (!is_dir ( $Destinazione)){
 			if (!wp_mkdir_p($Destinazione)){
 				if ($Echo){
-					echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Destinazione))."</li>";
+					echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-on-line'),$Destinazione))."</li>";
 				}else{
-					 echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$Destinazione))."</li>";
+					 echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-on-line'),$Destinazione))."</li>";
 				}
-				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory  %s \n Fine Operazione','albo-pretorio-considera'),$Destinazione);
+				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory  %s \n Fine Operazione','albo-pretorio-on-line'),$Destinazione);
 			}
 		}
 		if (is_dir($Destinazione)){
 			if (!is_dir ( $Dir)){
 				if (!wp_mkdir_p($Dir)) {
 					if ($Echo){
-						echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$Dir))."</li>";
+						echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-on-line'),$Dir))."</li>";
 					}else{
-						echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$Dir))."</li>";
+						echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-on-line'),$Dir))."</li>";
 					}
-					$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$Dir);
+					$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-on-line'),$Dir);
 				}
 			}
 		}
 		if (!is_dir ( $DirTmp)){	
 			if (!wp_mkdir_p($DirTmp)){
 				if ($Echo){
-					echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirTmp))."</li>";
+					echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-on-line'),$DirTmp))."</li>";
 				}else{
-					echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$DirTmp))."</li>";
+					echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-on-line'),$DirTmp))."</li>";
 				}
-				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$DirTmp);
+				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-on-line'),$DirTmp);
 			}
 		}
 		if (!is_dir ( $DirLog)){							
 			if (!wp_mkdir_p($DirLog)){
 				if ($Echo){
-					 echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-considera'),$DirLog))."</li>";
+					 echo "<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s Fine Operazione','albo-pretorio-on-line'),$DirLog))."</li>";
 				}else{
-					echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-considera'),$DirLog))."</li>";
+					echo"<li>".esc_html(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Directory %s Verificata','albo-pretorio-on-line'),$DirLog))."</li>";
 				}
-				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-considera'),$DirLog);
+				$ControlloDir.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare la directory %s \n Fine Operazione','albo-pretorio-on-line'),$DirLog);
 			} 
 		}
 	if ($Echo) echo "</ul>";
@@ -3043,24 +3043,24 @@ global $wpdb;
 			$nomefileLog=$DirLog."/Backup_".$Tipo."_AlboPretorio_".$NomeFile.".log";
 		}*/	
 		$fplog = @fopen($nomefileLog, "wb");
-		fwrite($fplog,__("Avvio Backup Dati ed Allegati Albo Pretrorio \n effettuato in data","albo-pretorio-considera")." ".gmdate("Ymd_Hi")."\n");
+		fwrite($fplog,__("Avvio Backup Dati ed Allegati Albo Pretrorio \n effettuato in data","albo-pretorio-on-line")." ".gmdate("Ymd_Hi")."\n");
 		albopc_SvuotaDirectory($DirTmp,$fplog);
-		fwrite($fplog,__("Svuotamento tabella","albo-pretorio-considera")." ".$DirTmp."\n");
+		fwrite($fplog,__("Svuotamento tabella","albo-pretorio-on-line")." ".$DirTmp."\n");
 		$fp = @fopen($DirTmp."/AlboPretorio".gmdate("Ymd_Hi").".sql", "wb");
 		$Risultato="";
-		if ($Echo) echo "<h3>".esc_html__("Avvio Backup Dati (Tabelle del Data Base)","albo-pretorio-considera")."</h3>"
+		if ($Echo) echo "<h3>".esc_html__("Avvio Backup Dati (Tabelle del Data Base)","albo-pretorio-on-line")."</h3>"
 			. "</ul>";
 		foreach ($tables as $table) {
 			albopc_backup_table($table,$fp);
-			$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.albopc_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span> <br />';
-			if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-considera').' '.esc_html(albopc_backquote($table)).' '.esc_html__('Aggiunta','albo-pretorio-considera').'</span></li>';
-			fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-considera')." ".albopc_backquote($table)." ".__('Aggiunta','albo-pretorio-considera')."\n");
+			$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-on-line').' '.albopc_backquote($table).' '.__('Aggiunta','albo-pretorio-on-line').'</span> <br />';
+			if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-on-line').' '.esc_html(albopc_backquote($table)).' '.esc_html__('Aggiunta','albo-pretorio-on-line').'</span></li>';
+			fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-on-line')." ".albopc_backquote($table)." ".__('Aggiunta','albo-pretorio-on-line')."\n");
 		}
 		albopc_backup_table($wpdb->options,$fp,"option_name LIKE 'opt_%' ",False);
-		$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.albopc_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span> <br />';
-		if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-considera').' '.esc_html(albopc_backquote($wpdb->options)).' '.esc_html__('Aggiunta','albo-pretorio-considera').'</span></li>'
+		$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-on-line').' '.albopc_backquote($table).' '.__('Aggiunta','albo-pretorio-on-line').'</span> <br />';
+		if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-on-line').' '.esc_html(albopc_backquote($wpdb->options)).' '.esc_html__('Aggiunta','albo-pretorio-on-line').'</span></li>'
 		. '</ul>';
-		fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-considera')." ".albopc_backquote($wpdb->options)." ".__('Aggiunta','albo-pretorio-considera')."\n");
+		fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-on-line')." ".albopc_backquote($wpdb->options)." ".__('Aggiunta','albo-pretorio-on-line')."\n");
 		$UpdateProgressivo="UPDATE `".$wpdb->options."` SET `option_value` = '".get_option('opt_AP_AnnoProgressivo')."'	WHERE `option_name` ='opt_AP_AnnoProgressivo';\n";
 		$UpdateProgressivo.="UPDATE `".$wpdb->options."` SET `option_value` = '".get_option('opt_AP_NumeroProgressivo')."' WHERE `option_name` ='opt_AP_NumeroProgressivo';";
 		fwrite($fplog,"Sql Aggiornamento Tabella ".$wpdb->options." per Progressivo ed Anno Progressivo Aggiunti\n");
@@ -3079,12 +3079,12 @@ global $wpdb;
 			foreach ($iterator as $key=>$value) {
 				if (substr($key,-1)!="."){
 					albopc_zip_add($zip, $key, dirname($key));
-					$Risultato.='<span style="color:green;">'.__("Aggiunto all'archivio","albo-pretorio-considera").':</span> '.$key.'<br />';
-					fwrite($fplog,"File ".$key." ".__("Aggiunto all'archivio","albo-pretorio-considera")."\n");
+					$Risultato.='<span style="color:green;">'.__("Aggiunto all'archivio","albo-pretorio-on-line").':</span> '.$key.'<br />';
+					fwrite($fplog,"File ".$key." ".__("Aggiunto all'archivio","albo-pretorio-on-line")."\n");
 				}
 			}
 			$allegati=albopc_get_all_allegati();
-			if ($Echo) echo "<h3>".esc_html__("Avvio Backup Allegati","albo-pretorio-considera")."</h3>"
+			if ($Echo) echo "<h3>".esc_html__("Avvio Backup Allegati","albo-pretorio-on-line")."</h3>"
 				. "</ul>";
 			$BaseUploadAllegati=AP_BASE_DIR.get_option('opt_AP_FolderUpload');
 			foreach ($allegati as $allegato) {
@@ -3092,15 +3092,15 @@ global $wpdb;
 				if(is_file($allegato->Allegato)){
 					if (albopc_isAllowedExtension( $allegato->Allegato)) {
 						albopc_zip_add($zip, $allegato->Allegato, $BaseUploadAllegati);//dirname($allegato->Allegato));
-						$tmp_risultato='<span style="color:green;">'.__("Aggiunto all'allegato","albo-pretorio-considera").':</span> '.$allegato->Allegato;
-						fwrite($fplog,"File ".$allegato->Allegato." ".__("Aggiunto","albo-pretorio-considera")."\n");
+						$tmp_risultato='<span style="color:green;">'.__("Aggiunto all'allegato","albo-pretorio-on-line").':</span> '.$allegato->Allegato;
+						fwrite($fplog,"File ".$allegato->Allegato." ".__("Aggiunto","albo-pretorio-on-line")."\n");
 					}else{
-						$tmp_risultato='<span style="color:red;">'.__("Allegato NON Aggiunto, estensione non permessa","albo-pretorio-considera").':</span> '.$allegato->Allegato;
-						fwrite($fplog,"File ".$allegato->Allegato." ".__("NON Aggiunto, estensione non permessa","albo-pretorio-considera")."\n");						
+						$tmp_risultato='<span style="color:red;">'.__("Allegato NON Aggiunto, estensione non permessa","albo-pretorio-on-line").':</span> '.$allegato->Allegato;
+						fwrite($fplog,"File ".$allegato->Allegato." ".__("NON Aggiunto, estensione non permessa","albo-pretorio-on-line")."\n");						
 					} 
 				}else{
-					$tmp_risultato='<span style="color:red;">'.__("File Allegato non trovato","albo-pretorio-considera").':</span> '.$allegato->Allegato;
-					fwrite($fplog,"File ".$allegato->Allegato." ".__("NON Aggiunto, file inesistente","albo-pretorio-considera")."\n");
+					$tmp_risultato='<span style="color:red;">'.__("File Allegato non trovato","albo-pretorio-on-line").':</span> '.$allegato->Allegato;
+					fwrite($fplog,"File ".$allegato->Allegato." ".__("NON Aggiunto, file inesistente","albo-pretorio-on-line")."\n");
 				}
 				$Risultato.=$tmp_risultato.'<br />';
 				if ($Echo)	
@@ -3109,8 +3109,8 @@ global $wpdb;
 			}
 			// Chiusura e momorizzazione del del file
 			$zip->close();
-			$Risultato.= __("Archivio creato con successo","albo-pretorio-considera").": ";
-			fwrite($fplog,__("Archivio creato con successo","albo-pretorio-considera").": \n");
+			$Risultato.= __("Archivio creato con successo","albo-pretorio-on-line").": ";
+			fwrite($fplog,__("Archivio creato con successo","albo-pretorio-on-line").": \n");
 			if ($Echo) echo "</ul>"
 				. "<h3>Backup Completato</h3>";
 		}
@@ -3118,9 +3118,9 @@ global $wpdb;
 		$DirLog=str_replace("\\","/",$Destinazione);
 		$nomefileLog=$DirLog."/msg.txt";
 		$fplog = @fopen($nomefileLog, "wb");
-		$Risultato.=__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-considera")."<br />";
-		fwrite($fplog,__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-considera")."\n");
-		if ($Echo) echo "<h3>".esc_html__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-considera")."</h3>";
+		$Risultato.=__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-on-line")."<br />";
+		fwrite($fplog,__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-on-line")."\n");
+		if ($Echo) echo "<h3>".esc_html__("Non risulta Installata la libreria per Zippare i files indispensabile per la procedura","albo-pretorio-on-line")."</h3>";
 		return;	
 	}
 	//Svuoto cartella tmp che contiene i files dati
@@ -3274,7 +3274,7 @@ function albopc_oblio_atti($Atti){
 			  $ControlloDir=FALSE;
 	}
 	if(!$ControlloDir){
-		$Msg=" ".__("Non riesco a creare le cartelle necessarie all'operazione","albo-pretorio-considera");
+		$Msg=" ".__("Non riesco a creare le cartelle necessarie all'operazione","albo-pretorio-on-line");
 		return $Msg;
 	}
 // Protezione delle directory dell'oblio dall'accesso diretto via web
@@ -3301,36 +3301,36 @@ function albopc_oblio_atti($Atti){
 		if(is_array($riga) And count($riga)>0){
 			$riga=$riga[0];
 			$Msg.="Atto ".$riga->IdAtto;
-			$MsgAlle=" ".__("Allegati","albo-pretorio-considera");
+			$MsgAlle=" ".__("Allegati","albo-pretorio-on-line");
 			albopc_BackupFilesAllegatiOblio($riga->IdAtto);
 			if (albopc_cvdate($riga->DataOblio) <= albopc_cvdate(gmdate("Y-m-d"))){
 				if(albopc_del_allegati_atto((int)$Atto)){
 					$MessaggiRitorno["Message2"]=10;// Allegati all'Atto Cancellati
-					$MsgAlle.=" ".__("all'Atto Cancellati","albo-pretorio-considera");
+					$MsgAlle.=" ".__("all'Atto Cancellati","albo-pretorio-on-line");
 				}else{
 					$MessaggiRitorno["Message2"]=11;//Allegati all'Atto NON Cancellati
-					$MsgAlle.=" ".__("all'Atto NON Cancellati","albo-pretorio-considera");
+					$MsgAlle.=" ".__("all'Atto NON Cancellati","albo-pretorio-on-line");
 				}			
 				$res=albopc_del_atto((int)$Atto);
 				if (!is_array($res)){
 					$MessaggiRitorno["Message"]= 2;//Atto Cancellato
-					$Msg.=" ".__("Cancellato","albo-pretorio-considera");
+					$Msg.=" ".__("Cancellato","albo-pretorio-on-line");
 				}else{
 					if ($res['allegati']>0) {
 						$MessaggiRitorno["Message"]= 7;
-						$Msg.=" ".__("Impossibile cancellare un Atto che contiene Allegati %%br%%Cancellare prima gli Allegati e poi riprovare","albo-pretorio-considera");
+						$Msg.=" ".__("Impossibile cancellare un Atto che contiene Allegati %%br%%Cancellare prima gli Allegati e poi riprovare","albo-pretorio-on-line");
 					}else{
 						$MessaggiRitorno["Message"]= 6;//Atto non Cancellato
-						$Msg.=" ".__("NON Cancellato","albo-pretorio-considera");
+						$Msg.=" ".__("NON Cancellato","albo-pretorio-on-line");
 					}		
 				}
 			}else{
 				$MessaggiRitorno["Message2"]=99;//OPERAZIONE NON AMMESSA!<br />l'atto non � ancora da eliminare
-				$Msg.=" ".__("OPERAZIONE NON AMMESSA! %%br%%l'atto non è ancora da eliminare","albo-pretorio-considera");
+				$Msg.=" ".__("OPERAZIONE NON AMMESSA! %%br%%l'atto non è ancora da eliminare","albo-pretorio-on-line");
 			}
 			$Msg.=$MsgAlle." %%br%%";
 		}else{
-			$Msg.="Atto ".$Atto." ".__("OPERAZIONE NON ESEGUITA!","albo-pretorio-considera");;
+			$Msg.="Atto ".$Atto." ".__("OPERAZIONE NON ESEGUITA!","albo-pretorio-on-line");;
 		}
 	}
 	albopc_MakeZipOblio();
@@ -3362,21 +3362,21 @@ function albopc_oblio_atti($Atti){
 			'mp4'=>'video','avi'=>'video','mov'=>'video','mkv'=>'video','wmv'=>'video',
 		);
 		$descrizione=array(
-			'document'=>__('Documento','albo-pretorio-considera'),
-			'spreadsheet'=>__('Foglio di calcolo','albo-pretorio-considera'),
-			'presentation'=>__('Presentazione','albo-pretorio-considera'),
-			'image'=>__('Immagine','albo-pretorio-considera'),
-			'archive'=>__('Archivio compresso','albo-pretorio-considera'),
-			'text'=>__('Documento di testo','albo-pretorio-considera'),
-			'audio'=>__('File audio','albo-pretorio-considera'),
-			'video'=>__('File video','albo-pretorio-considera'),
+			'document'=>__('Documento','albo-pretorio-on-line'),
+			'spreadsheet'=>__('Foglio di calcolo','albo-pretorio-on-line'),
+			'presentation'=>__('Presentazione','albo-pretorio-on-line'),
+			'image'=>__('Immagine','albo-pretorio-on-line'),
+			'archive'=>__('Archivio compresso','albo-pretorio-on-line'),
+			'text'=>__('Documento di testo','albo-pretorio-on-line'),
+			'audio'=>__('File audio','albo-pretorio-on-line'),
+			'video'=>__('File video','albo-pretorio-on-line'),
 		);
 		$ext=strtolower($ext);
 		if(isset($famiglia[$ext])){
 			$f=$famiglia[$ext];
 			return array('Icona'=>Albo_URL.'img/tipifiles/'.$f.'.svg','Descrizione'=>$descrizione[$f]);
 		}
-		return array('Icona'=>Albo_URL.'img/notipofile.png','Descrizione'=>__('Tipo file non definito','albo-pretorio-considera'));
+		return array('Icona'=>Albo_URL.'img/notipofile.png','Descrizione'=>__('Tipo file non definito','albo-pretorio-on-line'));
 	}
 	function albopc_isAllowedExtension($fileName) {
 		$TipidiFiles=albopc_get_tipidifiles();
@@ -3448,7 +3448,7 @@ function albopc_oblio_atti($Atti){
 			}
 		}
 		if($Trovato){
-			albopc_insert_log(8,2,$ID,__("Cancellazione Tipo File","albo-pretorio-considera"));
+			albopc_insert_log(8,2,$ID,__("Cancellazione Tipo File","albo-pretorio-on-line"));
 			update_option('opt_AP_TipidiFiles', $NewTipidiFiles);
 		}
 		return $Trovato;
@@ -3466,9 +3466,9 @@ function albopc_oblio_atti($Atti){
 		if(!$Trovato){
 			$TipidiFiles[strtolower($ID)]=array("Descrizione"=>$Descrizione,"Icona"=>$Icona,"Verifica"=>htmlspecialchars($Verifica));
 			update_option('opt_AP_TipidiFiles', $TipidiFiles);
-			albopc_insert_log(8,1,$ID,"{".__("Descrizione","albo-pretorio-considera")."}==> $Descrizione 
-								  {".__("Icona","albo-pretorio-considera")."}==> $Icona
-								  {".__("Verifica","albo-pretorio-considera")."}==> $Verifica");
+			albopc_insert_log(8,1,$ID,"{".__("Descrizione","albo-pretorio-on-line")."}==> $Descrizione 
+								  {".__("Icona","albo-pretorio-on-line")."}==> $Icona
+								  {".__("Verifica","albo-pretorio-on-line")."}==> $Verifica");
 		}
 		return !$Trovato;
 	}
@@ -3476,9 +3476,9 @@ function albopc_oblio_atti($Atti){
 		$ID=trim($ID);
 		$TipidiFiles=albopc_get_tipidifiles();
 		$TipidiFiles[strtolower($ID)]=array("Descrizione"=>$Descrizione,"Icona"=>$Icona,"Verifica"=>htmlspecialchars($Verifica));
-		albopc_insert_log(8,2,$ID,"{".__("Descrizione","albo-pretorio-considera")."}==> $Descrizione 
-					  {".__("Icona","albo-pretorio-considera")."}==> $Icona
-					  {".__("Verifica","albo-pretorio-considera")."}==> $Verifica");
+		albopc_insert_log(8,2,$ID,"{".__("Descrizione","albo-pretorio-on-line")."}==> $Descrizione 
+					  {".__("Icona","albo-pretorio-on-line")."}==> $Icona
+					  {".__("Verifica","albo-pretorio-on-line")."}==> $Verifica");
 		return update_option('opt_AP_TipidiFiles', $TipidiFiles);
 	}
 /*
@@ -3550,7 +3550,7 @@ function albopc_MemoFunzioni(){
 //	print_r($_POST);wp_die();
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
-		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
+		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-on-line"),403);
 	$ValoriPost= explode("&", str_replace("%20"," ",filter_input(INPUT_POST, 'valori')));
 	$Valori=array();
 	$NumeroRighe=0;
@@ -3578,7 +3578,7 @@ function albopc_MemoFunzioni(){
 function albopc_dismiss_alboonline_notice(){
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
-		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
+		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-on-line"),403);
 	update_option("alboonline-notice-dismissed",TRUE);
 	wp_die();
 }
@@ -3586,7 +3586,7 @@ function albopc_rimuoviallegatoPP(){
 	global $wpdb;
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('editore_atti_albo'))
-		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
+		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-on-line"),403);
 	$IDAllegato= intval(filter_input(INPUT_POST, 'idAllegato'));
 	$IDAtto= intval(filter_input(INPUT_POST, 'idAtto'));
 	$Motivo= sanitize_text_field(filter_input(INPUT_POST, 'desmotivo'));
@@ -3600,7 +3600,7 @@ function albopc_rimuoviallegatoPP(){
 		 					array('IdAllegato' => $IDAllegato ),
 		 					array('%s','%s'),
 		 					array('%d'));
-			albopc_insert_log(3,3,$IDAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." Cancellato dopo scadenza",$IDAtto);
+			albopc_insert_log(3,3,$IDAllegato,"{".__("Nome Allegato","albo-pretorio-on-line")."}==> ".$allegato[0]->TitoloAllegato." Cancellato dopo scadenza",$IDAtto);
 			echo "\nCancellato correttamente";
 		}else{
 			echo "\nNon sono riuscito a Cancellarlo";
@@ -3610,10 +3610,10 @@ function albopc_rimuoviallegatoPP(){
 function albopc_LoadDefaultFunzioni(){
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
-		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
+		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-on-line"),403);
 	$Default='[{"ID":"RP","Funzione":"Responsabile Procedimento","Display":"Si","StaCert":"No"},{"ID":"OP","Funzione":"Gestore procedura","Display":"Si","StaCert":"No"},{"ID":"SC","Funzione":"Segretario Comunale","Display":"No","StaCert":"No"},{"ID":"RB","Funzione":"Responsabile Pubblicazione","Display":"No","StaCert":"No"},{"ID":"DR","Funzione":"Direttore dei Servizi Generali e Ammistrativi","Display":"No","StaCert":"No"}]';
 	update_option('opt_AP_TabResp',$Default ); 
-	echo esc_html__("Caricamento valori di default avvenuto con successo","albo-pretorio-considera");
+	echo esc_html__("Caricamento valori di default avvenuto con successo","albo-pretorio-on-line");
 	wp_die();
 }
 /*****************************************************

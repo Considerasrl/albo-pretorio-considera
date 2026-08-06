@@ -16,56 +16,56 @@ ob_start();
 
 if(isset($_REQUEST['id']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))){
 	$_REQUEST['id']=0;
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">ID</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">ID</span>'));
 }
 if(isset($_REQUEST['action']) And $_REQUEST['action']!=wp_strip_all_tags($_REQUEST['action'])){
 	unset($_REQUEST['action']);
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Action</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Action</span>'));
 	return;
 }
 if(isset($_REQUEST['categoria']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')))){
 	$_REQUEST['categoria']=0;
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Categoria</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Categoria</span>'));
 }
 if(isset($_REQUEST['numero']) And sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')) != "" AND !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')))){
 	$_REQUEST['numero']="";
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Numero</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Numero</span>'));
 }
 if(isset($_REQUEST['anno']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')))){
 	$_REQUEST['anno']=0;
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Anno</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Anno</span>'));
 }
 if(isset($_REQUEST['ente']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')))){
 	$_REQUEST['ente']="-1";
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Ente</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Ente</span>'));
 }
 if(isset($_REQUEST['Pag']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['Pag'] ?? '')))){
 	$_REQUEST['Pag']=1;
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Pag</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Pag</span>'));
 }
 if(isset($_REQUEST['oggetto']) And $_REQUEST['oggetto']!=wp_strip_all_tags($_REQUEST['oggetto'])){
 	$_REQUEST['oggetto']="";
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Oggetto</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Oggetto</span>'));
 }
 if(isset($_REQUEST['riferimento']) And $_REQUEST['riferimento']!=wp_strip_all_tags($_REQUEST['riferimento'])){
 	$_REQUEST['riferimento']="";
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Riferimento</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Riferimento</span>'));
 }
 if(isset($_REQUEST['DataInizio']) And $_REQUEST['DataInizio']!=wp_strip_all_tags($_REQUEST['DataInizio'])){
 	$_REQUEST['DataInizio']="";
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">Da Data</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">Da Data</span>'));
 }
 if(isset($_REQUEST['DataFine']) And $_REQUEST['DataFine']!=wp_strip_all_tags($_REQUEST['DataFine'])){
 	$_REQUEST['DataFine']="";
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">A Data</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">A Data</span>'));
 }
-if(isset($_REQUEST['filtra']) And ($_REQUEST['filtra']!=__("Filtra","albo-pretorio-considera") And $_REQUEST['filtra']!=__("Annulla Filtro","albo-pretorio-considera"))){
+if(isset($_REQUEST['filtra']) And ($_REQUEST['filtra']!=__("Filtra","albo-pretorio-on-line") And $_REQUEST['filtra']!=__("Annulla Filtro","albo-pretorio-on-line"))){
 	$_REQUEST['filtra']="Filtra";
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">filtra</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">filtra</span>'));
 }
 if(isset($_REQUEST['vf']) And (sanitize_text_field(wp_unslash($_REQUEST['vf'] ?? '')) != "s" And sanitize_text_field(wp_unslash($_REQUEST['vf'] ?? '')) != "h" And sanitize_text_field(wp_unslash($_REQUEST['vf'] ?? '')) != "undefined")){
 	$_REQUEST['vf']="undefined";
-	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">vf</span>'));
+	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">vf</span>'));
 }
 foreach($_REQUEST as $albopc_Key => $albopc_Val){
 	$_REQUEST[$albopc_Key]=htmlspecialchars(wp_strip_all_tags($_REQUEST[$albopc_Key]));
@@ -83,7 +83,7 @@ if(isset($_REQUEST['action'])){
                     $albopc_AttoStampa = $albopc_AttoStampa[0];
                     $albopc_Oggi = albopc_oggi();
                     if (($albopc_AttoStampa->DataInizio!="0000-00-00" And $albopc_AttoStampa->DataInizio>$albopc_Oggi) Or ($albopc_AttoStampa->DataOblio!="0000-00-00" And $albopc_AttoStampa->DataOblio<=$albopc_Oggi))
-                        wp_die(esc_html__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
+                        wp_die(esc_html__("Documento non disponibile","albo-pretorio-on-line"),"",array('response'=>404));
                 }
                 if (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'c') {
                     albopc_StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'c');
@@ -91,14 +91,14 @@ if(isset($_REQUEST['action'])){
                     albopc_StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'a');
                 }
             }else{
-				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
+				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 			}
             break;
 		case 'visatto':
 			if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))))
 				$albopc_ret=albopc_VisualizzaAtto($_REQUEST['id']);
 			else{
-				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
+				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 			}
 			break;
 		case 'addstatall':
@@ -111,15 +111,15 @@ if(isset($_REQUEST['action'])){
 				   !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? ''))) OR
 				   !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? ''))) OR
 				   !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')))){
-						echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
+						echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 						break;
 				}
 			if(isset($_REQUEST['oggetto']) And $_REQUEST['oggetto']!=wp_strip_all_tags($_REQUEST['oggetto'])){
-				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
+				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 				break;
 			}
 			if(isset($_REQUEST['riferimento']) And $_REQUEST['riferimento']!=wp_strip_all_tags($_REQUEST['riferimento'])){
-				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
+				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 				break;
 			}
 	 		$albopc_ret=albopc_Lista_Atti($Parametri,
@@ -151,15 +151,15 @@ if(isset($_REQUEST['action'])){
 			   (isset($_REQUEST['numero']) And sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')) != "" AND !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')))) OR
 			   (isset($_REQUEST['anno']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')))) OR
 			   (isset($_REQUEST['ente']) And !is_numeric(sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? ''))))){
-					echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
+					echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 					return;
 			}
 			if(isset($_REQUEST['oggetto']) And $_REQUEST['oggetto']!=wp_strip_all_tags($_REQUEST['oggetto'])){
-				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
+				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 				return;
 			}
 			if(isset($_REQUEST['riferimento']) And $_REQUEST['riferimento']!=wp_strip_all_tags($_REQUEST['riferimento'])){
-				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-considera"),"<br />"));
+				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 				return;
 			}
 			$albopc_ret=albopc_Lista_Atti($Parametri,
@@ -202,14 +202,14 @@ function albopc_VisualizzaAtto($id){
 	albopc_insert_log(5,5,$id,"Visualizzazione");
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
 	if($risultato->DataAnnullamento!='0000-00-00')
-		$Annullato='<p style="background-color: '.esc_attr($coloreAnnullati).';text-align:center;font-size:1.5em;">'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Atto Annullato dal Responsabile del Procedimento %1$s Motivo: %2$s','albo-pretorio-considera'),'<br /><br />','<span style="font-size:1;font-style: italic;">'.esc_html(stripslashes($risultato->MotivoAnnullamento)).'</span>');
+		$Annullato='<p style="background-color: '.esc_attr($coloreAnnullati).';text-align:center;font-size:1.5em;">'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Atto Annullato dal Responsabile del Procedimento %1$s Motivo: %2$s','albo-pretorio-on-line'),'<br /><br />','<span style="font-size:1;font-style: italic;">'.esc_html(stripslashes($risultato->MotivoAnnullamento)).'</span>');
 	else{
 		$Annullato='';
 	}
 ?>
 <section  id="DatiAtto">
 	<div class="container clearfix mb-3 pb-3">
-		<button class="btn btn-primary" onclick="window.location.href='<?php echo esc_url(wp_get_referer());?>'"><span class="fas fa-arrow-circle-left"></span> <?php esc_html_e("Torna alla Lista","albo-pretorio-considera");?></button>
+		<button class="btn btn-primary" onclick="window.location.href='<?php echo esc_url(wp_get_referer());?>'"><span class="fas fa-arrow-circle-left"></span> <?php esc_html_e("Torna alla Lista","albo-pretorio-on-line");?></button>
 		<h2 class="u-text-h2 pt-3 pl-2">Dati atto</h2>
 		<?php echo ($Annullato?"<h3>".$Annullato."</h3>":"");?>
 	   	<div class="row">
@@ -217,51 +217,51 @@ function albopc_VisualizzaAtto($id){
 				<table class="table table-striped table-hover table-responsive-md">
 				    <tbody id="dati-atto">
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Ente titolare dell'Atto","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Ente titolare dell'Atto","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo stripslashes(albopc_get_ente($risultato->Ente)->Nome);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Numero Albo","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Numero Albo","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo $risultato->Numero."/".$risultato->Anno;?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Codice di Riferimento","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Codice di Riferimento","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Riferimento));?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Oggetto","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Oggetto","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Oggetto));?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Data di registrazione","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Data di registrazione","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo albopc_VisualizzaData($risultato->Data);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Data inizio Pubblicazione","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Data inizio Pubblicazione","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo albopc_VisualizzaData($risultato->DataInizio);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Data fine Pubblicazione","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Data fine Pubblicazione","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo albopc_VisualizzaData($risultato->DataFine)?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Data oblio","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Data oblio","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo albopc_VisualizzaData($risultato->DataOblio);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Richiedente","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Richiedente","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo esc_html(stripslashes($risultato->Richiedente));?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Unità Organizzativa Responsabile","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Unità Organizzativa Responsabile","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo (isset($Unitao->Nome)?stripslashes($Unitao->Nome):"");?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Responsabile del procedimento amministrativo","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Responsabile del procedimento amministrativo","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo (is_object($NomeResp)?$NomeResp->Nome." ".$NomeResp->Cognome:$NomeResp);?></td>
 					</tr>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Categoria","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Categoria","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo stripslashes($risultatocategoria->Nome)?></td>
 					</tr>
 <?php
@@ -273,12 +273,12 @@ if($MetaDati!==FALSE){
 	}
 	$Meta=substr($Meta,0,-3);?>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Meta Dati","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Meta Dati","albo-pretorio-on-line");?></th>
 						<td style="vertical-align: middle;"><?php echo $Meta;?></td>
 					</tr>
 <?php }?>
 					<tr>
-						<th class="w-25 text-right"><?php esc_html_e("Note","albo-pretorio-considera");?></th>
+						<th class="w-25 text-right"><?php esc_html_e("Note","albo-pretorio-on-line");?></th>
 						<td class="align-middle"><?php echo wp_kses_post(stripslashes($risultato->Informazioni));?></td>
 					</tr>
 		 	    </tbody>
@@ -291,7 +291,7 @@ if(count($Soggetti)>0){
 	$Ruolo="";
 	if($Soggetti){
 				echo "<div class=\"col-8 ml-5 pl-5\">
-	<h3 class=\"u-text-h2 pt-3 pl-2\">". __("Soggetti","albo-pretorio-considera")."</h3>";
+	<h3 class=\"u-text-h2 pt-3 pl-2\">". __("Soggetti","albo-pretorio-on-line")."</h3>";
 	}
 	foreach($Soggetti as $Soggetto){
 		if(albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
@@ -305,13 +305,13 @@ if(count($Soggetti)>0){
 						<?php echo $Soggetto->Cognome." ".$Soggetto->Nome;?><br />
 	<?php	} 
 		if ($Soggetto->Email)
-			echo __("Email","albo-pretorio-considera").' <a href="'.esc_url('mailto:'.$Soggetto->Email).'">'.esc_html($Soggetto->Email).'</a><br />';
+			echo __("Email","albo-pretorio-on-line").' <a href="'.esc_url('mailto:'.$Soggetto->Email).'">'.esc_html($Soggetto->Email).'</a><br />';
 		if ($Soggetto->Telefono)
-			echo __("Telefono","albo-pretorio-considera")." ".$Soggetto->Telefono."<br />";
+			echo __("Telefono","albo-pretorio-on-line")." ".$Soggetto->Telefono."<br />";
 		if ($Soggetto->Orario)
-			echo 	__("Orario ricevimento","albo-pretorio-considera")." ".$Soggetto->Orario.'<br />';
+			echo 	__("Orario ricevimento","albo-pretorio-on-line")." ".$Soggetto->Orario.'<br />';
 		if ($Soggetto->Note)
-			echo __("Note","albo-pretorio-considera")." ".$Soggetto->Note;
+			echo __("Note","albo-pretorio-on-line")." ".$Soggetto->Note;
 	?>
 					</div>	
 			</div>
@@ -331,7 +331,7 @@ $StatoAllegati= get_option('opt_AP_Allegati');
 if(count($documenti)>0){?>
 	<div class="row">
 	   	<div class="col">
-			<h3 class="u-text-h2 pt-3 pb-2"><?php esc_html_e("Documenti firmati","albo-pretorio-considera");?></h3>
+			<h3 class="u-text-h2 pt-3 pb-2"><?php esc_html_e("Documenti firmati","albo-pretorio-on-line");?></h3>
 <?php
 foreach ($documenti as $allegato) {
 	$Estensione=albopc_ExtensionType($allegato->Allegato);?>
@@ -347,18 +347,18 @@ foreach ($documenti as $allegato) {
 				</div>
 				<div class="col-11 break-word">  				
 				<?php 
-				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-considera")).'</strong>: '.esc_html(wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato)))).'</strong><br />';
+				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-on-line")).'</strong>: '.esc_html(wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato)))).'</strong><br />';
 				if(!is_file($allegato->Allegato) And $allegato->Note!=""){
-					echo '<strong>'.esc_html(esc_html__("Documento rimosso","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Note).'<br /><strong><br />';
+					echo '<strong>'.esc_html(esc_html__("Documento rimosso","albo-pretorio-on-line")).'</strong>: '.esc_html($allegato->Note).'<br /><strong><br />';
 				}else{
-					echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Impronta).'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-considera")).'</strong>: '.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0))."<br />";
+					echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-on-line")).'</strong>: '.esc_html($allegato->Impronta).'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-on-line")).'</strong>: '.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0))."<br />";
 					if (is_file($allegato->Allegato)){
 						if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-							echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
+							echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-on-line").'" target="_blank">
 							<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg></a> ';
 						}
 						if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-							echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" class="noUnderLine" title="'.esc_html__("Scarica allegato","albo-pretorio-considera").'">
+							echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" class="noUnderLine" title="'.esc_html__("Scarica allegato","albo-pretorio-on-line").'">
 							<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>';
 								if($StatoAllegati=="dwn"){
 									echo " <strong>".esc_html(basename( $allegato->Allegato)).'</strong></a>';
@@ -367,7 +367,7 @@ foreach ($documenti as $allegato) {
 								}		
 						}
 					}else{
-						echo esc_html(basename( $allegato->Allegato)).' '.esc_html__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
+						echo esc_html(basename( $allegato->Allegato)).' '.esc_html__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-on-line");
 					}
 				}?>
 				</div>
@@ -380,7 +380,7 @@ $allegati=albopc_get_allegati_atto($id);
 if(count($allegati)>0) { ?>
 	<div class="row">
 	   	<div class="col">
-			<h3 class="u-text-h2 pt-3 pb-2"><?php esc_html_e("Allegati","albo-pretorio-considera");?></h3>
+			<h3 class="u-text-h2 pt-3 pb-2"><?php esc_html_e("Allegati","albo-pretorio-on-line");?></h3>
 <?php
 foreach ($allegati as $allegato) {
 	$Estensione=albopc_ExtensionType($allegato->Allegato);?>
@@ -396,18 +396,18 @@ foreach ($allegati as $allegato) {
 				</div>
 				<div class="col-11 break-word">  				
 				<?php 
-				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-considera")).'</strong>: '.esc_html(wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato)))).'</strong><br />';
+				echo ($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-on-line")).'</strong>: '.esc_html(wp_strip_all_tags(($allegato->TitoloAllegato?$allegato->TitoloAllegato:basename( $allegato->Allegato)))).'</strong><br />';
 				if(!is_file($allegato->Allegato) And $allegato->Note!=""){
-					echo '<strong>'.esc_html(esc_html__("Allegato rimosso","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Note).'<br /><strong>';
+					echo '<strong>'.esc_html(esc_html__("Allegato rimosso","albo-pretorio-on-line")).'</strong>: '.esc_html($allegato->Note).'<br /><strong>';
 				}else{
-					echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Impronta).'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-considera")).'</strong>: '.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0))."<br />";
+					echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-on-line")).'</strong>: '.esc_html($allegato->Impronta).'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-on-line")).'</strong>: '.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0))."<br />";
 					if (is_file($allegato->Allegato)){
 						if($StatoAllegati=="all" Or $StatoAllegati=="vis"){ 
-							echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
+							echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-on-line").'" target="_blank">
 							<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg></a> ';
 						}
 						if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-							echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" class="noUnderLine" title="'.esc_html__("Scarica allegato","albo-pretorio-considera").'">
+							echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" class="noUnderLine" title="'.esc_html__("Scarica allegato","albo-pretorio-on-line").'">
 							<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>';
 								if($StatoAllegati=="dwn"){
 									echo " <strong>".esc_html(basename( $allegato->Allegato)).'</strong> ('.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')</a>';
@@ -416,7 +416,7 @@ foreach ($allegati as $allegato) {
 								}		
 						}
 					}else{
-						echo esc_html(basename( $allegato->Allegato)).' '.esc_html__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
+						echo esc_html(basename( $allegato->Allegato)).' '.esc_html__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-on-line");
 					}
 				}?>
 				</div>
@@ -427,8 +427,8 @@ foreach ($allegati as $allegato) {
 <?php	}?>
 	</div>	
 	<div class="alert alert-info" role="alert">
-	    <h3 class="u-text-h3"><?php esc_html_e("Informazioni","albo-pretorio-considera");?></h3>
-	    <p class="u-text-p"><?php esc_html_e("L'impronta dei files è calcolata con algoritmo SHA256 al momento dell'upload","albo-pretorio-considera");?></p>
+	    <h3 class="u-text-h3"><?php esc_html_e("Informazioni","albo-pretorio-on-line");?></h3>
+	    <p class="u-text-p"><?php esc_html_e("L'impronta dei files è calcolata con algoritmo SHA256 al momento dell'upload","albo-pretorio-on-line");?></p>
 	</div>
 </section>
 <?php
@@ -438,16 +438,16 @@ function albopc_Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto=''
 	ob_start();
 	switch ($Parametri['stato']){
 			case 0:
-				$TitoloAtti=__("Tutti gli AttiTutti gli Atti", 'albo-pretorio-considera');
+				$TitoloAtti=__("Tutti gli AttiTutti gli Atti", 'albo-pretorio-on-line');
 				break;
 			case 1:
-				$TitoloAtti=__("Atti in corso di Validit&agrave;", 'albo-pretorio-considera');
+				$TitoloAtti=__("Atti in corso di Validit&agrave;", 'albo-pretorio-on-line');
 				break;
 			case 2:
-				$TitoloAtti=__("Atti scaduti", 'albo-pretorio-considera');
+				$TitoloAtti=__("Atti scaduti", 'albo-pretorio-on-line');
 				break;
 			case 3:
-				$TitoloAtti=__("Atti da Pubblicare", 'albo-pretorio-considera');
+				$TitoloAtti=__("Atti da Pubblicare", 'albo-pretorio-on-line');
 				break;
 	}
 	if (isset($Parametri['per_page'])){
@@ -520,12 +520,12 @@ function albopc_Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto=''
 			</script>
 	<section  id="FiltroAtti">
 		<div class="container shadow clearfix mb-3 pb-3">
-			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'albo-pretorio-considera');?></<?php echo $titFiltri;?>>
+			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'albo-pretorio-on-line');?></<?php echo $titFiltri;?>>
 			<div class="row">
 				<div class="col-12 col-lg-6">
 					<div id="FiltriParametri" class="ml-lg-2" role="tablist">
 						<div>
-							<button id="headingFP" aria-expanded="false" aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'albo-pretorio-considera');?></button>
+							<button id="headingFP" aria-expanded="false" aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'albo-pretorio-on-line');?></button>
 						</div>
 						<div id="Parametri" class="collapse" role="tabpanel" aria-labelledby="headingFP" data-parent="#FiltriParametri">
 							<div class="collapse-body border border-primary rounded-bottom pt-5">
@@ -537,7 +537,7 @@ function albopc_Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto=''
 				<div class="col-12 col-lg-6">
 					<div id="FiltriCategorie" class="mr-lg-2" role="tablist">
 						<div>
-							<button  id="headingC" aria-expanded="false" aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'albo-pretorio-considera');?></button>    	
+							<button  id="headingC" aria-expanded="false" aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'albo-pretorio-on-line');?></button>    	
 						</div>
 						<div id="Categorie" class="collapse" role="tabpanel" aria-labelledby="headingC" data-parent="#FiltriCategorie">
 							<div class="collapse-body border border-primary rounded-bottom">
@@ -552,11 +552,11 @@ function albopc_Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto=''
 	<?php	}else{?>
 	<section  id="FiltroAtti">
 		<div class="container shadow clearfix mb-3 pb-3">
-			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'albo-pretorio-considera');?></<?php echo $titFiltri;?>>
+			<<?php echo $titFiltri;?> class="u-text-h2 pt-3 pl-2"><?php esc_html_e("Filtri", 'albo-pretorio-on-line');?></<?php echo $titFiltri;?>>
 			<div class="row">
 				<div class="col-12 col-lg-6">
 				<div>
-						<button aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'albo-pretorio-considera');?></button>
+						<button aria-controls="Parametri" class="btn btn-primary w-100"><?php esc_html_e("Parametri", 'albo-pretorio-on-line');?></button>
 					</div>
 					<div class="collapse-body border border-primary rounded-bottom pt-5">
 						<?php echo albopc_get_FiltriParametri($Parametri['stato']);?>
@@ -564,7 +564,7 @@ function albopc_Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto=''
 				</div>
 				<div class="col-12 col-lg-6">
 				<div>
-						<button aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'albo-pretorio-considera');?></button>    	
+						<button aria-controls="Categorie" class="btn btn-primary w-100"><?php esc_html_e("Categorie", 'albo-pretorio-on-line');?></button>    	
 					</div>
 					<div class="collapse-body border border-primary rounded-bottom">
 						<?php echo albopc_get_FiltriCategorie($Parametri['stato']);?>
@@ -601,7 +601,7 @@ if ($TotAtti>$N_A_pp){
 			$Npag++;
 		}
 		$Nav.= '<div> 
-    		<strong>'.__("N. Atti", 'albo-pretorio-considera').' '.$TotAtti.'</strong>
+    		<strong>'.__("N. Atti", 'albo-pretorio-on-line').' '.$TotAtti.'</strong>
     		<nav class="pagination-wrapper" aria-label="Navigazione Pagine Albo">
   				<ul class="pagination">';
      	if (isset($_REQUEST['Pag']) And $_REQUEST['Pag']>1 ){
@@ -672,7 +672,7 @@ echo '	<div class="tabalbo">
 		<table class="table table-striped table-hover table-responsive-sm"> 
 		<thead>
 	    	<tr>
-	        	<th scope="col">'.__("Prog.", 'albo-pretorio-considera').'</th>';
+	        	<th scope="col">'.__("Prog.", 'albo-pretorio-on-line').'</th>';
 foreach($FEColsOption as $Opzione => $Valore){
 		if($Valore==1){
 			echo '			<th scope="col">'.$Opzione.'</th>';
@@ -696,7 +696,7 @@ echo '	</tr>
 	//		Bonifica_Url();
 			$ParCella='';
 			if($riga->DataAnnullamento!='0000-00-00'){
-				$ParCella='style="background-color: '.$coloreAnnullati.';" title="'.__("Atto Annullato. Motivo Annullamento", 'albo-pretorio-considera').': '.$riga->MotivoAnnullamento.'"';
+				$ParCella='style="background-color: '.$coloreAnnullati.';" title="'.__("Atto Annullato. Motivo Annullamento", 'albo-pretorio-on-line').': '.$riga->MotivoAnnullamento.'"';
 				$CeAnnullato=true;
 			}
 			echo '<tr >
@@ -758,7 +758,7 @@ echo '	</tr>
 			}
 	} else {
 			echo '<tr>
-					<td colspan="6">'.__("Nessun Atto Codificato", 'albo-pretorio-considera').'</td>
+					<td colspan="6">'.__("Nessun Atto Codificato", 'albo-pretorio-on-line').'</td>
 				  </tr>';
 	}
 	echo '
@@ -766,7 +766,7 @@ echo '	</tr>
     </table>';
 echo '</div>';
 	if ($CeAnnullato) 
-		echo '<p>'.__("Le righe evidenziate con questo sfondo", 'albo-pretorio-considera').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '.__("indicano Atti Annullati", 'albo-pretorio-considera').'</p>';
+		echo '<p>'.__("Le righe evidenziate con questo sfondo", 'albo-pretorio-on-line').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '.__("indicano Atti Annullati", 'albo-pretorio-on-line').'</p>';
 echo '</div><!-- /wrap -->	';
 echo $Nav;
 return ob_get_clean();

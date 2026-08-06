@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: albo-pretorio-considera\n"
+"Project-Id-Version: albo-pretorio-on-line\n"
 "POT-Creation-Date: 2020-06-09 16:06+0200\n"
 "PO-Revision-Date: 2020-06-09 16:06+0200\n"
 "Last-Translator: \n"

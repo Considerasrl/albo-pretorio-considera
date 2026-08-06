@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 function albopc_editor_dialog_head( $titolo ) {
 	if ( ! current_user_can( 'edit_posts' ) ) {
-		wp_die( esc_html__( 'Non hai i permessi per accedere a questa risorsa.', 'albo-pretorio-considera' ) );
+		wp_die( esc_html__( 'Non hai i permessi per accedere a questa risorsa.', 'albo-pretorio-on-line' ) );
 	}
 	$charset = get_option( 'blog_charset' );
 	@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . $charset );
@@ -36,10 +36,10 @@ function albopc_editor_dialog_head( $titolo ) {
 function albopc_editor_dialog_footer() {
 	?>
 		<div style="float: left">
-			<input type="submit" id="insert" name="insert" value="<?php esc_attr_e( 'Inserisci', 'albo-pretorio-considera' ); ?>" onclick="insertAlboShortCode();" />
+			<input type="submit" id="insert" name="insert" value="<?php esc_attr_e( 'Inserisci', 'albo-pretorio-on-line' ); ?>" onclick="insertAlboShortCode();" />
 		</div>
 		<div style="float: right">
-			<input type="button" id="cancel" name="cancel" value="<?php esc_attr_e( 'Annulla', 'albo-pretorio-considera' ); ?>" onclick="tinyMCEPopup.close();" />
+			<input type="button" id="cancel" name="cancel" value="<?php esc_attr_e( 'Annulla', 'albo-pretorio-on-line' ); ?>" onclick="tinyMCEPopup.close();" />
 		</div>
 	</body>
 	</html>
@@ -50,7 +50,7 @@ function albopc_editor_dialog_footer() {
  * Dialog shortcode [Albo].
  */
 function albopc_ajax_editor_dialog_albo() {
-	albopc_editor_dialog_head( __( 'Albo OnLine', 'albo-pretorio-considera' ) );
+	albopc_editor_dialog_head( __( 'Albo OnLine', 'albo-pretorio-on-line' ) );
 	?>
 	<script type="text/javascript">
 		function init() { tinyMCEPopup.resizeToInnerSize(); }
@@ -94,26 +94,26 @@ function albopc_ajax_editor_dialog_albo() {
 		<div class="mceActionPanel">
 			<form name="form" action="#" method="get" accept-charset="utf-8">
 				<p>
-					<label for="StatoAtti"><strong><?php esc_html_e( 'Stato Atti', 'albo-pretorio-considera' ); ?></strong></label>
+					<label for="StatoAtti"><strong><?php esc_html_e( 'Stato Atti', 'albo-pretorio-on-line' ); ?></strong></label>
 					<select id="StatoAtti" name="StatoAtti">
-						<option value="1"><?php esc_html_e( 'Atti Correnti', 'albo-pretorio-considera' ); ?></option>
-						<option value="2"><?php esc_html_e( 'Atti Scaduti, Storico', 'albo-pretorio-considera' ); ?></option>
+						<option value="1"><?php esc_html_e( 'Atti Correnti', 'albo-pretorio-on-line' ); ?></option>
+						<option value="2"><?php esc_html_e( 'Atti Scaduti, Storico', 'albo-pretorio-on-line' ); ?></option>
 					</select>
 				</p>
 				<p>
-					<label for="Categoria"><strong><?php esc_html_e( 'Categoria', 'albo-pretorio-considera' ); ?></strong></label>
+					<label for="Categoria"><strong><?php esc_html_e( 'Categoria', 'albo-pretorio-on-line' ); ?></strong></label>
 					<?php echo $Ele_Cate; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> generato internamente da albopc_get_dropdown_categorie ?>
 				</p>
 				<p>
-					<label for="Filtri"><strong><?php esc_html_e( 'Visualizza Filtri', 'albo-pretorio-considera' ); ?></strong></label>
+					<label for="Filtri"><strong><?php esc_html_e( 'Visualizza Filtri', 'albo-pretorio-on-line' ); ?></strong></label>
 					<input type="checkbox" name="Filtri" id="Filtri" value="si"/>
 				</p>
 				<p>
-					<label for="MinFiltri"><strong><?php esc_html_e( 'Finestra Filtri sempre visibile', 'albo-pretorio-considera' ); ?></strong></label>
+					<label for="MinFiltri"><strong><?php esc_html_e( 'Finestra Filtri sempre visibile', 'albo-pretorio-on-line' ); ?></strong></label>
 					<input type="checkbox" name="MinFiltri" id="MinFiltri" value="si"/>
 				</p>
 				<p>
-					<label for="Per_page"><strong><?php esc_html_e( 'Numero atti da visualizzare', 'albo-pretorio-considera' ); ?></strong></label>
+					<label for="Per_page"><strong><?php esc_html_e( 'Numero atti da visualizzare', 'albo-pretorio-on-line' ); ?></strong></label>
 					<input type="number" name="Per_page" id="Per_page" value="10" style="width:40px;" />
 				</p>
 			</form>
@@ -128,7 +128,7 @@ add_action( 'wp_ajax_ap_editor_albo', 'albopc_ajax_editor_dialog_albo' );
  * Dialog shortcode [AlboGruppiAtti].
  */
 function albopc_ajax_editor_dialog_gruppi() {
-	albopc_editor_dialog_head( __( 'Albo OnLine gruppo atti', 'albo-pretorio-considera' ) );
+	albopc_editor_dialog_head( __( 'Albo OnLine gruppo atti', 'albo-pretorio-on-line' ) );
 	?>
 	<script type="text/javascript">
 		function init() { tinyMCEPopup.resizeToInnerSize(); }
@@ -153,15 +153,15 @@ function albopc_ajax_editor_dialog_gruppi() {
 		<div class="mceActionPanel">
 			<form name="form" action="#" method="get" accept-charset="utf-8">
 				<p>
-					<label for="Titolo"><strong><?php esc_html_e( 'Intestazione Sezione', 'albo-pretorio-considera' ); ?></strong></label><br />
+					<label for="Titolo"><strong><?php esc_html_e( 'Intestazione Sezione', 'albo-pretorio-on-line' ); ?></strong></label><br />
 					<input type="text" name="Titolo" id="Titolo" size="45">
 				</p>
 				<p>
-					<label for="listaAttiMeta"><strong><?php esc_html_e( 'Meta Dati codificati', 'albo-pretorio-considera' ); ?></strong></label>
+					<label for="listaAttiMeta"><strong><?php esc_html_e( 'Meta Dati codificati', 'albo-pretorio-on-line' ); ?></strong></label>
 					<?php echo albopc_get_elenco_attimeta( "Select", "listaAttiMeta", "ListaAttiMeta", "Si" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> generato internamente da albopc_get_elenco_attimeta ?>
 				</p>
 				<p>
-					<label for="Value"><strong><?php esc_html_e( 'Valore Meta', 'albo-pretorio-considera' ); ?></strong></label><br />
+					<label for="Value"><strong><?php esc_html_e( 'Valore Meta', 'albo-pretorio-on-line' ); ?></strong></label><br />
 					<input type="text" name="Value" id="Value">
 				</p>
 			</form>
@@ -176,7 +176,7 @@ add_action( 'wp_ajax_ap_editor_gruppi', 'albopc_ajax_editor_dialog_gruppi' );
  * Dialog shortcode [AlboAtto].
  */
 function albopc_ajax_editor_dialog_visatto() {
-	albopc_editor_dialog_head( __( 'Albo OnLine visualizza atto', 'albo-pretorio-considera' ) );
+	albopc_editor_dialog_head( __( 'Albo OnLine visualizza atto', 'albo-pretorio-on-line' ) );
 	?>
 	<script type="text/javascript">
 		function init() { tinyMCEPopup.resizeToInnerSize(); }
@@ -204,11 +204,11 @@ function albopc_ajax_editor_dialog_visatto() {
 		<div class="mceActionPanel">
 			<form name="form" action="#" method="get" accept-charset="utf-8">
 				<p>
-					<label for="Titolo"><strong><?php esc_html_e( 'Titolo', 'albo-pretorio-considera' ); ?></strong></label><br />
+					<label for="Titolo"><strong><?php esc_html_e( 'Titolo', 'albo-pretorio-on-line' ); ?></strong></label><br />
 					<input type="text" name="Titolo" id="Titolo" size="45">
 				</p>
 				<p>
-					<label for="ListaAtti"><strong><?php esc_html_e( 'Atto', 'albo-pretorio-considera' ); ?></strong></label>
+					<label for="ListaAtti"><strong><?php esc_html_e( 'Atto', 'albo-pretorio-on-line' ); ?></strong></label>
 					<select id="ListaAtti" name="ListaAtti">
 					<?php foreach ( $Atti as $Atto ) : ?>
 						<option value="<?php echo esc_attr( $Atto->Numero . '/' . $Atto->Anno ); ?>"><?php echo esc_html( $Atto->Numero . '/' . $Atto->Anno . ' ' . $Atto->Riferimento ); ?></option>

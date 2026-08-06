@@ -26,14 +26,14 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 	<input type="hidden" name="uploallegato" value="<?php echo esc_attr( wp_create_nonce('uploadallegati') )?>" />
 	<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?(int)$_REQUEST['id']:0); ?>" />
 <div>
-  <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Seleziona gli allegati da caricare","albo-pretorio-considera");?></label>
+  <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Seleziona gli allegati da caricare","albo-pretorio-on-line");?></label>
   <input type="file" id="files" name="files[]" accept="<?php echo esc_attr( implode(',', $albopc_accept) );?>" multiple>
 </div>
 <div class="preview">
-  <p><?php echo esc_html__("Nessun file selezionato per il caricamento","albo-pretorio-considera");?></p>
+  <p><?php echo esc_html__("Nessun file selezionato per il caricamento","albo-pretorio-on-line");?></p>
 </div>
 <div>
-  <button id="pulCar"><span class="dashicons dashicons-upload" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Carica","albo-pretorio-considera");?></button>
+  <button id="pulCar"><span class="dashicons dashicons-upload" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Carica","albo-pretorio-on-line");?></button>
 </div>
 </form>
      <script>
@@ -61,12 +61,12 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 	          des.className="des";
 	          
 	          var LBLnatura=document.createElement('span');
-	          LBLnatura.textContent = '<?php esc_html_e("Documento firmato","albo-pretorio-considera");?>  ';
+	          LBLnatura.textContent = '<?php esc_html_e("Documento firmato","albo-pretorio-on-line");?>  ';
 	          var natura= document.createElement('input');
 	          natura.setAttribute("type", "checkbox");
 	          natura.setAttribute("name", "Natura["+ i.toString() +"]");
 	          var LBLintegrale=document.createElement('span');
-	          LBLintegrale.textContent = '<?php esc_html_e("Documento Integrale","albo-pretorio-considera");?>  ';
+	          LBLintegrale.textContent = '<?php esc_html_e("Documento Integrale","albo-pretorio-on-line");?>  ';
 	          var integrale= document.createElement('input');
 	          integrale.setAttribute("type", "checkbox");
 	          integrale.setAttribute("name", "Integrale["+ i.toString() +"]");
@@ -86,7 +86,7 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 		        listItem.appendChild(LBLintegrale);
 				listItem.appendChild(integrale);
 	          } else {
-	            para.textContent = 'File name ' + curFiles[i].name + ':<?php echo esc_js(__("Tipo di file non permesso. Riprova selezionando un file con estensione diversa.","albo-pretorio-considera"));?>';
+	            para.textContent = 'File name ' + curFiles[i].name + ':<?php echo esc_js(__("Tipo di file non permesso. Riprova selezionando un file con estensione diversa.","albo-pretorio-on-line"));?>';
 	            listItem.appendChild(para);
 	          }
 	          list.appendChild(listItem);

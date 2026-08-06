@@ -41,10 +41,10 @@ if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['act
 				}
 			}
 		}else{
-			$albopc_Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+			$albopc_Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line");
 		}
 	}else{
-		$albopc_Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+		$albopc_Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line");
 	}
 }
 
@@ -64,14 +64,14 @@ echo '
 				<table class="widefat" style="width:100%;">
 					<thead>
 					<tr>
-						<th>'.esc_html__("Utente","albo-pretorio-considera").'</th>
-						<th>'.esc_html__("Azzera Capacità Utente","albo-pretorio-considera").'</th>
-						<th>'.esc_html__("Capacità di Amministrare l'Albo","albo-pretorio-considera").'</th>
-						<th>'.esc_html__("Capacità di Editore dell'Albo","albo-pretorio-considera").'</th>
-						<th>'.esc_html__("Capacità di Gestire l'Albo","albo-pretorio-considera").'</th>
-						<th>'.esc_html__("Ruolo Amministratore","albo-pretorio-considera").'</th>
-						<th>'.esc_html__("Ruolo Editore","albo-pretorio-considera").'</th>
-						<th>'.esc_html__("Ruolo Gestore","albo-pretorio-considera").'</th>
+						<th>'.esc_html__("Utente","albo-pretorio-on-line").'</th>
+						<th>'.esc_html__("Azzera Capacità Utente","albo-pretorio-on-line").'</th>
+						<th>'.esc_html__("Capacità di Amministrare l'Albo","albo-pretorio-on-line").'</th>
+						<th>'.esc_html__("Capacità di Editore dell'Albo","albo-pretorio-on-line").'</th>
+						<th>'.esc_html__("Capacità di Gestire l'Albo","albo-pretorio-on-line").'</th>
+						<th>'.esc_html__("Ruolo Amministratore","albo-pretorio-on-line").'</th>
+						<th>'.esc_html__("Ruolo Editore","albo-pretorio-on-line").'</th>
+						<th>'.esc_html__("Ruolo Gestore","albo-pretorio-on-line").'</th>
 					</tr>
 					</thead>
 					<tbody>';
@@ -132,7 +132,7 @@ echo '					</tbody>
 				
 				<div style="margin-left:auto;width:140px;margin-right:auto;">
 					<p>
-					<input type="submit" name="memo" id="memo" class="button" value="'.esc_attr__("Memorizza Permessi","albo-pretorio-considera").'" />
+					<input type="submit" name="memo" id="memo" class="button" value="'.esc_attr__("Memorizza Permessi","albo-pretorio-on-line").'" />
 					</p>
 				</div>
 				</form>

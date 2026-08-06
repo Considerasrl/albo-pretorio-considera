@@ -13,8 +13,8 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 <div class="wrap">
 	<div class="HeadPage" style="margin-bottom: 30px;">
 		<h2 class="wp-heading-inline">Atti</h2>
-		<a href="<?php echo esc_url( site_url().'/wp-admin/admin.php?page=atti' );?>" class="add-new-h2 tornaindietro"><?php echo esc_html__("Torna indietro","albo-pretorio-considera");?></a>
-		<h3><?php echo esc_html__("Associa nuovo Allegato con file precedentemente caricato","albo-pretorio-considera");?></h3>
+		<a href="<?php echo esc_url( site_url().'/wp-admin/admin.php?page=atti' );?>" class="add-new-h2 tornaindietro"><?php echo esc_html__("Torna indietro","albo-pretorio-on-line");?></a>
+		<h3><?php echo esc_html__("Associa nuovo Allegato con file precedentemente caricato","albo-pretorio-on-line");?></h3>
 	</div>
 <div id="col-container">
 	<form id="allegato" method="post" action="?page=atti" class="validate">
@@ -29,23 +29,23 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 	<table class="widefat">
 	    <thead>
 		<tr>
-			<th colspan="3" style="text-align:center;font-size:2em;"><?php echo esc_html__("Dati Allegato","albo-pretorio-considera");?></th>
+			<th colspan="3" style="text-align:center;font-size:2em;"><?php echo esc_html__("Dati Allegato","albo-pretorio-on-line");?></th>
 		</tr>
 	    </thead>
 	    <tbody id="dati-allegato">
 		<tr>
-			<th><?php esc_html_e("Descrizione Allegato","albo-pretorio-considera");?></th>
+			<th><?php esc_html_e("Descrizione Allegato","albo-pretorio-on-line");?></th>
 			<td><textarea  name="Descrizione" rows="2" cols="100" wrap="ON" maxlength="255" required></textarea></td>
 		</tr>
 		<tr>
-			<th><?php esc_html_e("Natura File","albo-pretorio-considera");?></th>
+			<th><?php esc_html_e("Natura File","albo-pretorio-on-line");?></th>
 			<td><select name="Natura" id="Natura" wrap="ON" >
 				<option value="D">Documento firmato</option>
 				<option value="A">Allegato</option>
 			</select></td>
 		</tr>
 		<tr>
-			<th><?php esc_html_e("Documento Integrale?","albo-pretorio-considera");?></th>
+			<th><?php esc_html_e("Documento Integrale?","albo-pretorio-on-line");?></th>
 			<td><input type="checkbox" name="Integrale" value="1" id="Integrale" checked> </td>
 		</tr>
 		<tr>
@@ -53,8 +53,8 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 			<td><?php echo albopc_get_allegati_file_scollegati("Select"); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- helper restituisce markup <select> con opzioni già escapate ?></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit" name="submit" id="submit" class="button" value="<?php esc_html_e("Collega Allegato","albo-pretorio-considera");?>"  />
-			<input type="submit" name="annulla" id="annulla" class="button" value="<?php esc_html_e("Annulla Operazione","albo-pretorio-considera");?>" />
+			<td colspan="2"><input type="submit" name="submit" id="submit" class="button" value="<?php esc_html_e("Collega Allegato","albo-pretorio-on-line");?>"  />
+			<input type="submit" name="annulla" id="annulla" class="button" value="<?php esc_html_e("Annulla Operazione","albo-pretorio-on-line");?>" />
 			</td>
 		</tr>
 	    </tbody>

@@ -35,6 +35,11 @@ Il plugin supera ora il **Plugin Check ufficiale di WordPress.org con 0 rilievi*
   accettato da Plugin Check che ne richiede almeno 4). Shortcode, azioni/hook
   AJAX (`ap_editor_*`) e nomi delle opzioni (`opt_AP_*`) restano invariati:
   nessun impatto sul comportamento per l'utente.
+- Lo slug/cartella del plugin **resta `albo-pretorio-on-line`** e il text domain è
+  riallineato di conseguenza: le installazioni esistenti si aggiornano in-place,
+  senza il conflitto di due plugin attivi in cartelle diverse. La variante con
+  slug `albo-pretorio-considera` è mantenuta su un branch separato, da usare solo
+  in caso di nuova submit indipendente su wordpress.org.
 - Rimosso il bundle ridondante `js/jquery-ui.min.js` (si usa il jQuery UI del
   core di WordPress). Descrizione della `readme.txt` in inglese per wp.org.
 - Backup dati/allegati e oblio: sostituita la libreria di terze parti PclZip con

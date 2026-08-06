@@ -35,7 +35,7 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
         	</div>
         	<div class="row mb-2">
        			<div class="col-12 col-lg-4 etichetta_filtri">
-					<label for="numero" class="font-weight-bold">'.__("Atto", 'albo-pretorio-considera').'</label>
+					<label for="numero" class="font-weight-bold">'.__("Atto", 'albo-pretorio-on-line').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
 					<input class="w-50 d-inline" placeholder="N&deg; Atto" type="number" id="numero" name="numero" value="'.(isset($_REQUEST['numero'])?sanitize_text_field(wp_unslash($_REQUEST['numero'] ?? '')):"").'" />
@@ -44,7 +44,7 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 
         	<div class="row mb-2">
        			<div class="col-12 col-lg-4 etichetta_filtri">
-					<label for="anno" class="font-weight-bold">'.__("Anno", 'albo-pretorio-considera').'</label> 
+					<label for="anno" class="font-weight-bold">'.__("Anno", 'albo-pretorio-on-line').'</label> 
 				</div>
 				<div class="col-12 col-lg-8">				
 					'.$anni.'
@@ -53,7 +53,7 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 
        		<div class="row mb-2">
        			<div class="col-12 col-lg-4 etichetta_filtri">
-					<label for="riferimento" class="font-weight-bold">'.__("Riferimento", 'albo-pretorio-considera').'</label>
+					<label for="riferimento" class="font-weight-bold">'.__("Riferimento", 'albo-pretorio-on-line').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
 					<input type="text" size="40" name="riferimento" id ="riferimento" value="'.(isset($_REQUEST['riferimento'])?sanitize_text_field(wp_unslash($_REQUEST['riferimento'] ?? '')):"").'"/>
@@ -61,7 +61,7 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 			</div>
        		<div class="row mb-2">
        			<div class="col-12 col-lg-4 etichetta_filtri">
-					<label for="oggetto" class="font-weight-bold">'.__("Oggetto", 'albo-pretorio-considera').'</label>
+					<label for="oggetto" class="font-weight-bold">'.__("Oggetto", 'albo-pretorio-on-line').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
 					<input type="text" size="40" name="oggetto" id ="oggetto" value="'.(isset($_REQUEST['oggetto'])?sanitize_text_field(wp_unslash($_REQUEST['oggetto'] ?? '')):"").'"/>
@@ -69,7 +69,7 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 			</div>
        		<div class="row mb-2">
        			<div class="col-12 col-lg-4 etichetta_filtri">
-					<label for="DataInizio" class="font-weight-bold">'.__("da Data", 'albo-pretorio-considera').'</label>
+					<label for="DataInizio" class="font-weight-bold">'.__("da Data", 'albo-pretorio-on-line').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
 					<input name="DataInizio" id="DataInizio" type="date" value="'.htmlentities((isset($_REQUEST['DataInizio'])?sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? '')):"")).'" size="10"/>
@@ -77,7 +77,7 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 			</div>
        		<div class="row mb-2">
        			<div class="col-12 col-lg-4 etichetta_filtri">
-					<label for="DataFine" class="font-weight-bold">'.__("a Data", 'albo-pretorio-considera').'</label>
+					<label for="DataFine" class="font-weight-bold">'.__("a Data", 'albo-pretorio-on-line').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
 					<input name="DataFine" id="DataFine" type="date" value="'.htmlentities((isset($_REQUEST['DataFine'])?sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? '')):"")).'" size="10"/>
@@ -85,10 +85,10 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 			</div>
       		<div class="row mt-2">
        			<div class="col col-12 col-lg-6 d-flex justify-content-center">
-			      <button type="submit" class="btn btn-primary" name="filtra" id="filtra" value="Filtra">'.__("Filtra", 'albo-pretorio-considera').'</button>
+			      <button type="submit" class="btn btn-primary" name="filtra" id="filtra" value="Filtra">'.__("Filtra", 'albo-pretorio-on-line').'</button>
 			    </div>
        			<div class="col col-12 col-lg-6 d-flex justify-content-center">
-			      <button type="submit" class="btn btn-outline-primary" name="annullafiltro" id="annullafiltro" value="Annulla Filtro">'.__("Annulla Filtro", 'albo-pretorio-considera').'</button>
+			      <button type="submit" class="btn btn-outline-primary" name="annullafiltro" id="annullafiltro" value="Annulla Filtro">'.__("Annulla Filtro", 'albo-pretorio-on-line').'</button>
 			    </div>
 			</div>
  		</div>
@@ -112,7 +112,7 @@ function albopc_get_FiltriCategorie($Stato=1){
 	      		$HTMLL.='               <li style="text-align:left;padding-left:'.$shift.'px;font-weight: bold;"><a href="'.get_permalink().$sep.'filtra=Filtra&amp;categoria='.$riga[0].'"  >'.$riga[1].'</a> '.$numAtti.'</li>'; 
 		}
 	}else{
-		$HTMLL.= '                <li>'.__("Nessuna Categoria Codificata", 'albo-pretorio-considera').'</li>';
+		$HTMLL.= '                <li>'.__("Nessuna Categoria Codificata", 'albo-pretorio-on-line').'</li>';
 	}
 	$HTMLL.='             </ul>
 	</div>';
