@@ -31,12 +31,12 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 if ( (isset($_REQUEST['message']) && ( $msg = (isset($_REQUEST['message'])?intval($_REQUEST['message']):0)))) {
 	echo '<div id="message" class="updated"><p>'.esc_html($messages[$msg]);
 	if (isset($_REQUEST['errore']))
-		echo '<br />'.esc_html(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['errore']))));
+		echo '<br />'.esc_html(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['errore']))));
 	echo '</p></div>';
 	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 }
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
-	$risultato=ap_get_ente((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
+	$risultato=albopc_get_ente((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
 	$edit=True;
 }else{
 	$edit=False;
@@ -60,7 +60,7 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
     </thead>
     <tbody id="the-list">
 <?php 
-$lista=ap_get_enti(); 
+$lista=albopc_get_enti(); 
 echo '<tr>
         	<td>
 			<ul>';
@@ -69,17 +69,17 @@ if ($lista){
 	foreach($lista as $riga){
 		echo'<li style="text-align:left;padding-left:1px;">';
 	 	$Tab=0;
-		$Testo_da=__("Confermi la cancellazione dell'Ente","albo-pretorio-considera")." ".ap_sanifica_testo($riga->Nome). "?\n\n".__("Sei sicuro di voler proseguire con la CANCELLAZIONE?","albo-pretorio-considera");
-		if($riga->IdEnte>0 and ap_num_enti_atto($riga->IdEnte)==0)
+		$Testo_da=__("Confermi la cancellazione dell'Ente","albo-pretorio-considera")." ".albopc_sanifica_testo($riga->Nome). "?\n\n".__("Sei sicuro di voler proseguire con la CANCELLAZIONE?","albo-pretorio-considera");
+		if($riga->IdEnte>0 and albopc_num_enti_atto($riga->IdEnte)==0)
 			echo '<span class="cancella"><a href="?page=enti&amp;action=delete-ente&amp;id='.(int)$riga->IdEnte.'&amp;cancellaente='.esc_attr(wp_create_nonce('deleteente')).'" rel="'.esc_attr($Testo_da).'" class="confdel">
 					<span class="dashicons dashicons-trash" title="'.esc_attr__("Cancella ente","albo-pretorio-considera").'"></span>
 					</a></span>';
 		else
 			$Tab=23;
-		echo '					<a href="?page=enti&amp;action=edit-ente&amp;id='.(int)$riga->IdEnte.'&amp;modificaente='.esc_attr(wp_create_nonce('editente')).'" rel="'.esc_attr(ap_sanifica_testo($riga->Nome)).'">
+		echo '					<a href="?page=enti&amp;action=edit-ente&amp;id='.(int)$riga->IdEnte.'&amp;modificaente='.esc_attr(wp_create_nonce('editente')).'" rel="'.esc_attr(albopc_sanifica_testo($riga->Nome)).'">
 					<span class="dashicons dashicons-edit" title="'.esc_attr__("Modifica ente","albo-pretorio-considera").'" style="margin-left:'.(int)$Tab.'px;"></span>
 					</a>';
-		echo '<strong>'.esc_html(ap_sanifica_testo($riga->Nome)).'</strong> (n&ordm; atti '.(int)ap_num_enti_atto($riga->IdEnte).')';
+		echo '<strong>'.esc_html(albopc_sanifica_testo($riga->Nome)).'</strong> (n&ordm; atti '.(int)albopc_num_enti_atto($riga->IdEnte).')';
 		echo '</li>';
 	}
 } else {
@@ -93,7 +93,7 @@ echo '</td>
 </div>
 <div class="col-wrap">
 <h3>Log</h3>';
-$righe=ap_get_all_Oggetto_log(7);
+$righe=albopc_get_all_Oggetto_log(7);
 echo'
 	<table class="widefat">
 	    <thead>
@@ -136,41 +136,41 @@ echo '    </tbody>
 	<br />
 	<form id="addtag" method="post" action="?page=enti" class="<?php if($edit) echo "edit"; else echo "validate"; ?>"  >
 		<input type="hidden" name="action" value="<?php if($edit || (isset($_REQUEST['action']) And  $_REQUEST['action']=="edit_err")) echo "memo-ente"; else echo "add-ente"; ?>"/>
-		<input type="hidden" name="action2" value="<?php echo isset($_REQUEST['action'])?esc_attr(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['action'])))):"";?>"/>
+		<input type="hidden" name="action2" value="<?php echo isset($_REQUEST['action'])?esc_attr(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['action'])))):"";?>"/>
 		<input type="hidden" name="id" value="<?php echo isset($_REQUEST['id'])?intval($_REQUEST['id']):0; ?>" />
 		<input type="hidden" name="enti" value="<?php echo esc_attr(wp_create_nonce('enti'))?>" />
 
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="ente-nome"><?php esc_html_e("Nome Ente","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="ente-nome" id="<?php esc_html_e("Nome Ente","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato->Nome)?esc_attr(ap_sanifica_testo($risultato->Nome)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-nome'])?esc_attr(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-nome'])))):""; ?>" size="30" alt="Nome Ente" required/>
+			<input name="ente-nome" id="<?php esc_html_e("Nome Ente","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato->Nome)?esc_attr(albopc_sanifica_testo($risultato->Nome)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-nome'])?esc_attr(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-nome'])))):""; ?>" size="30" alt="Nome Ente" required/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="ente-indirizzo"><?php esc_html_e("Indirizzo","albo-pretorio-considera");?></label>
-			<input name="ente-indirizzo" id="ente-indirizzo" type="text" value="<?php if($edit) echo isset($risultato->Indirizzo)?esc_attr(ap_sanifica_testo($risultato->Indirizzo)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-indirizzo'])?esc_attr(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-indirizzo'])))):"";?>" size="150"/>
+			<input name="ente-indirizzo" id="ente-indirizzo" type="text" value="<?php if($edit) echo isset($risultato->Indirizzo)?esc_attr(albopc_sanifica_testo($risultato->Indirizzo)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-indirizzo'])?esc_attr(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-indirizzo'])))):"";?>" size="150"/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="ente-url"><?php esc_html_e("Url","albo-pretorio-considera");?></label>
-			<input name="ente-url" id="ente-url" type="url" value="<?php if($edit) echo isset($risultato->Url)?esc_attr(ap_sanifica_testo($risultato->Url)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-url'])?esc_attr(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-url'])))):"";?>" size="100"/>
+			<input name="ente-url" id="ente-url" type="url" value="<?php if($edit) echo isset($risultato->Url)?esc_attr(albopc_sanifica_testo($risultato->Url)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-url'])?esc_attr(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-url'])))):"";?>" size="100"/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="ente-email"><?php esc_html_e("Email","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="ente-email" id="<?php esc_html_e("Email","albo-pretorio-considera");?>" type="email" value="<?php if($edit) echo isset($risultato->Email)?esc_attr(ap_sanifica_testo($risultato->Email)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-email'])?esc_attr(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-email'])))):"";?>" size="100" alt="Email" required/>
+			<input name="ente-email" id="<?php esc_html_e("Email","albo-pretorio-considera");?>" type="email" value="<?php if($edit) echo isset($risultato->Email)?esc_attr(albopc_sanifica_testo($risultato->Email)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-email'])?esc_attr(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-email'])))):"";?>" size="100" alt="Email" required/>
 		</div>
 		<div class="form-field form-required"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="ente-pec"><?php esc_html_e("Pec","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-			<input name="ente-pec" id="<?php esc_html_e("Pec","albo-pretorio-considera");?>" type="email" value="<?php if($edit) echo isset($risultato->Pec)?esc_attr(ap_sanifica_testo($risultato->Pec)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-pec'])?esc_attr(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-pec'])))):"";?>" size="100" alt="Pec" required/>
+			<input name="ente-pec" id="<?php esc_html_e("Pec","albo-pretorio-considera");?>" type="email" value="<?php if($edit) echo isset($risultato->Pec)?esc_attr(albopc_sanifica_testo($risultato->Pec)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-pec'])?esc_attr(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-pec'])))):"";?>" size="100" alt="Pec" required/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="ente-telefono"><?php esc_html_e("Telefono","albo-pretorio-considera");?></label>
-			<input name="ente-telefono" id="ente-telefono" type="text" value="<?php if($edit) echo isset($risultato->Telefono)?esc_attr(ap_sanifica_testo($risultato->Telefono)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-telefono'])?esc_attr(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-telefono'])))):"";?>" size="30"/>
+			<input name="ente-telefono" id="ente-telefono" type="text" value="<?php if($edit) echo isset($risultato->Telefono)?esc_attr(albopc_sanifica_testo($risultato->Telefono)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-telefono'])?esc_attr(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-telefono'])))):"";?>" size="30"/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="ente-fax"><?php esc_html_e("Fax","albo-pretorio-considera");?></label>
-			<input name="ente-fax" id="ente-fax" type="text" value="<?php if($edit) echo isset($risultato->Fax)?esc_attr(ap_sanifica_testo($risultato->Fax)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-fax'])?esc_attr(ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-fax'])))):"";?>" size="30"/>
+			<input name="ente-fax" id="ente-fax" type="text" value="<?php if($edit) echo isset($risultato->Fax)?esc_attr(albopc_sanifica_testo($risultato->Fax)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-fax'])?esc_attr(albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['ente-fax'])))):"";?>" size="30"/>
 		</div>
 		<div class="form-field"  style="margin-bottom:0px;margin-top:0px;">
 			<label for="tag-description"><?php esc_html_e("Note","albo-pretorio-considera");?></label>
-			<textarea name="ente-note" id="ente-note" rows="5" cols="40"><?php if($edit) echo isset($risultato->Note)?esc_textarea(ap_sanifica_areatesto($risultato->Note)):esc_html__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-note'])?esc_textarea(ap_sanifica_areatesto(sanitize_textarea_field(wp_unslash($_REQUEST['ente-note'])))):"";?></textarea>
+			<textarea name="ente-note" id="ente-note" rows="5" cols="40"><?php if($edit) echo isset($risultato->Note)?esc_textarea(albopc_sanifica_areatesto($risultato->Note)):esc_html__("Non Definito","albo-pretorio-considera"); else echo isset($_REQUEST['ente-note'])?esc_textarea(albopc_sanifica_areatesto(sanitize_textarea_field(wp_unslash($_REQUEST['ente-note'])))):"";?></textarea>
 			<p><?php esc_html_e("inserire eventuali informazioni aggiuntive","albo-pretorio-considera");?></p>
 		</div>
 

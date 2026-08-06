@@ -47,12 +47,12 @@ class AdminTableAtti extends WP_List_Table
   }
 
   function __construct() {
-  	$this->Atti_DaPubblicare=ap_get_all_atti(3,0,0,0,'', 0,0,"",0,0,true);
-  	$this->Atti_Correnti=ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true); 
-  	$this->Atti_Scaduti=ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true); 
-  	$this->Atti_Eliminare=ap_get_all_atti(4,0,0,0,'', 0,0,"",0,0,true);
-  	$this->Atti_Tutti=ap_get_all_atti(0,0,0,0,'', 0,0,"",0,0,true);
-    $this->Atti_Cerca=ap_get_all_atti(5,0,0,0,(isset($_REQUEST['s'])?sanitize_text_field(wp_unslash($_REQUEST['s'] ?? '')):""), 0,0,"",0,0,true);
+  	$this->Atti_DaPubblicare=albopc_get_all_atti(3,0,0,0,'', 0,0,"",0,0,true);
+  	$this->Atti_Correnti=albopc_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true); 
+  	$this->Atti_Scaduti=albopc_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true); 
+  	$this->Atti_Eliminare=albopc_get_all_atti(4,0,0,0,'', 0,0,"",0,0,true);
+  	$this->Atti_Tutti=albopc_get_all_atti(0,0,0,0,'', 0,0,"",0,0,true);
+    $this->Atti_Cerca=albopc_get_all_atti(5,0,0,0,(isset($_REQUEST['s'])?sanitize_text_field(wp_unslash($_REQUEST['s'] ?? '')):""), 0,0,"",0,0,true);
     parent::__construct(array('singular'=>'Atto','plural'=>'Atti'));
   }
 
@@ -115,7 +115,7 @@ class AdminTableAtti extends WP_List_Table
     // e l'elenco dei record da visualizzare per una singola pagina
     // In stato "Cerca" i filtri (oggetto, riferimento, numero parziale,
     // categoria) vanno passati come parametri: lo stato 5 e' solo la base
-    // (WHERE 1) e i singoli filtri sono preparati a valle in ap_get_all_atti.
+    // (WHERE 1) e i singoli filtri sono preparati a valle in albopc_get_all_atti.
     $Termine = ''; $Rif = ''; $NumParz = ''; $Cat = 0;
     if ($this->stato_atti=="Cerca"){
     	$Termine = isset($_REQUEST['s'])            ? sanitize_text_field(wp_unslash($_REQUEST['s'] ?? ''))                 : '';
@@ -123,8 +123,8 @@ class AdminTableAtti extends WP_List_Table
     	$NumParz = isset($_REQUEST['f_numero'])     ? sanitize_text_field(wp_unslash($_REQUEST['f_numero'] ?? ''))          : '';
     	$Cat     = isset($_REQUEST['f_categoria'])  ? (isset($_REQUEST['f_categoria'])?(int)$_REQUEST['f_categoria']:0)  : 0;
     }
-    $total_items = ap_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,"",0,0,true,false,$Rif,-1,false,$NumParz);
-    $this->items = ap_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,$orderby." ".$order ,$paged,$per_page,false,false,$Rif,-1,false,$NumParz);
+    $total_items = albopc_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,"",0,0,true,false,$Rif,-1,false,$NumParz);
+    $this->items = albopc_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,$orderby." ".$order ,$paged,$per_page,false,false,$Rif,-1,false,$NumParz);
     $this->set_pagination_args(array(
     'total_items' => $total_items,
     'per_page'    => $per_page,
@@ -238,7 +238,7 @@ class AdminTableAtti extends WP_List_Table
 			$Annullato = false;
 		}
 
-		if ((ap_cvdate($item->DataInizio) <= ap_cvdate(gmdate("Y-m-d"))) and (ap_cvdate($item->DataFine) >= ap_cvdate(gmdate("Y-m-d"))))
+		if ((albopc_cvdate($item->DataInizio) <= albopc_cvdate(gmdate("Y-m-d"))) and (albopc_cvdate($item->DataFine) >= albopc_cvdate(gmdate("Y-m-d"))))
 			$Scaduto=False;
 		else	
 			$Scaduto=True;
@@ -346,7 +346,7 @@ class AdminTableAtti extends WP_List_Table
 	return sprintf('%1$s %2$s',$Msg,$this->row_actions($actions));
   }  
   function column_Ente($item) { 
-  	$Ente=ap_get_ente($item->Ente);
+  	$Ente=albopc_get_ente($item->Ente);
   	if($Ente===FALSE){
 		return "<spam style=\"color:red;\">".__('Ente non definito','albo-pretorio-considera')."</spam>";
 	}else{
@@ -354,7 +354,7 @@ class AdminTableAtti extends WP_List_Table
 	}
   }  
    function column_MetaDati($item) { 
-	$MetaDati=ap_get_meta_atto($item->IdAtto);
+	$MetaDati=albopc_get_meta_atto($item->IdAtto);
 	$Meta="";
 	if($MetaDati!==FALSE){
 		foreach($MetaDati as $Metadato){
@@ -368,7 +368,7 @@ class AdminTableAtti extends WP_List_Table
     return $this->AzioneDefault.$item->Numero."/".$item->Anno."</a>"; 
   }  
   function column_Data($item) { 
-    return ap_VisualizzaData($item->Data); 
+    return albopc_VisualizzaData($item->Data); 
   }  
   function column_Riferimento($item) { 
     return $this->AzioneDefault.stripslashes($item->Riferimento)."</a>"; 
@@ -381,18 +381,18 @@ class AdminTableAtti extends WP_List_Table
 	return $this->AzioneDefault.$Oggetto."</a>"; 
   }   
   function column_validita($item) { 
-    return ap_VisualizzaData($item->DataInizio)."<br />".ap_VisualizzaData($item->DataFine); 
+    return albopc_VisualizzaData($item->DataInizio)."<br />".albopc_VisualizzaData($item->DataFine); 
   }  
   function column_Idcategoria($item) {
 	if ($item->IdCategoria>0){
-		$Cate=ap_get_categoria($item->IdCategoria);
+		$Cate=albopc_get_categoria($item->IdCategoria);
 		return $Cate[0]->Nome;
 	}else{
 		return __('Non Definita','albo-pretorio-considera');
 	}
   }   
   function column_dataoblio($item) { 
-    return ap_VisualizzaData($item->DataOblio); 
+    return albopc_VisualizzaData($item->DataOblio); 
   }  
 
 // Definire la nuova funzione per indicare le
@@ -460,7 +460,7 @@ if(isset($_REQUEST['action'])){
 				Lista_Atti(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
-			Lista_Atti(ap_approva_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0)));
+			Lista_Atti(albopc_approva_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0)));
 			break;
 		case "setta-anno":
 			if ( ! isset( $_REQUEST['settaanno'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['settaanno'] ?? '')), 'settaanno-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
@@ -478,19 +478,19 @@ if(isset($_REQUEST['action'])){
 				break;
 			}
 			if (isset($_REQUEST['apa'])){
-				$ret=ap_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('Anno' => sanitize_text_field(wp_unslash($_REQUEST['apa'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");
+				$ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('Anno' => sanitize_text_field(wp_unslash($_REQUEST['apa'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");
 			}
 			if (isset($_REQUEST['pnp'])){
 				update_option( 'opt_AP_NumeroProgressivo', (isset($_REQUEST['pnp'])?(int)$_REQUEST['pnp']:0));
 			}
 			if (isset($_REQUEST['udi'])){
-				$ret=ap_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataInizio' => sanitize_text_field(wp_unslash($_REQUEST['udi'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
+				$ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataInizio' => sanitize_text_field(wp_unslash($_REQUEST['udi'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
 			}
 			if (isset($_REQUEST['udf'])){
-				$ret=ap_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataFine' => sanitize_text_field(wp_unslash($_REQUEST['udf'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
+				$ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataFine' => sanitize_text_field(wp_unslash($_REQUEST['udf'] ?? ''))),array('%s'),__('Modifica in Approvazione','albo-pretorio-considera')."\n");	
 			}
 			if (isset($_REQUEST['udo'])){
-				$ret=ap_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataOblio' => sanitize_text_field(wp_unslash($_REQUEST['udo'] ?? ''))),array('%s'),"Modifica in Approvazione\n");	
+				$ret=albopc_update_selettivo_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),array('DataOblio' => sanitize_text_field(wp_unslash($_REQUEST['udo'] ?? ''))),array('%s'),"Modifica in Approvazione\n");	
 			}
 			if(isset($_REQUEST['id']))
 				$id=(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0);
@@ -555,11 +555,11 @@ unset($_REQUEST['action']);
 
 function Gestione_Metadati($IdAtto){
 	global $AP_OnLine;
-	$risultato=ap_get_atto($IdAtto);
+	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
-	$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
+	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];
-	$NomeEnte=ap_get_ente($risultato->Ente);
+	$NomeEnte=albopc_get_ente($risultato->Ente);
 	$NomeEnte=stripslashes($NomeEnte->Nome);
 ?>
 <div class="wrap nosubsub">
@@ -580,12 +580,12 @@ function Gestione_Metadati($IdAtto){
 			<div class="col-wrap postbox" style="padding:0 10px 10px 10px;margin-left:10px;" id="MetaDati">
 			<h2 class="hndle"><span><?php esc_html_e("Meta Dati Personalizzati","albo-pretorio-considera");?></span> <button type="button" id="AddMeta" class="setta-def-data">Aggiungi Meta Valore</button></h2>
 				<div style="display:none;" id="newMeta">
-					<label for="listaAttiMeta"><?php esc_html_e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
+					<label for="listaAttiMeta"><?php esc_html_e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo albopc_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
 					<label for="newMetaName"><?php esc_html_e("Nome Meta","albo-pretorio-considera");?></label> <input name="newMetaName" id="newMetaName"/>
 					<label for="newValue"><?php esc_html_e("Valore Meta","albo-pretorio-considera");?></label> <input name="newValue" id="newValue">
 					<button type="button"class="setta-def-data" id="AddNewMeta">Aggiungi</button> <button type="button"class="setta-def-data" id="UndoNewMedia">Anulla</button>
 				</div>
-<?php				echo ap_get_elenco_attimeta("Div","","","",$IdAtto);			?>
+<?php				echo albopc_get_elenco_attimeta("Div","","","",$IdAtto);			?>
 			</div>
 			<div class="col-wrap postbox" style="padding:10px;margin-left:10px;">
 				<input type="submit" name="AggiornaMetaDati" id="AggiornaMetaDati" style="margin:auto;" class="button button-primary button-large" value="<?php esc_html_e("Memorizza Modifiche Meta Dati Atto","albo-pretorio-considera");?>" />
@@ -607,7 +607,7 @@ function Gestione_Metadati($IdAtto){
 		if($risultato->DataAnnullamento!='0000-00-00')		
 			echo '		<tr>
 				<th style="width:20%;">'.__("Data Annullamento","albo-pretorio-considera").'</th>
-				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataAnnullamento).'</td>
+				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataAnnullamento).'</td>
 			</tr>
 	    	<tr>
 				<th style="width:20%;">'.__("Motivo Annullamento","albo-pretorio-considera").'</th>
@@ -619,7 +619,7 @@ function Gestione_Metadati($IdAtto){
 			</tr>
 			<tr>
 				<th>'.__("Data","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->Data).'</td>
 			</tr>
 			<tr>
 				<th>'.__("Codice di Riferimento","albo-pretorio-considera").'</th>
@@ -631,15 +631,15 @@ function Gestione_Metadati($IdAtto){
 			</tr>
 			<tr>
 				<th>'.__("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataInizio).'</td>
 			</tr>
 			<tr>
 				<th>'.__("Data fine Pubblicazione","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataFine).'</td>
 			</tr>
 			<tr>
 				<th>'.__("Data Oblio","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataOblio).'</td>
 			</tr>
 			<tr>
 				<th>'.__("Note","albo-pretorio-considera").'</th>
@@ -654,10 +654,10 @@ function Gestione_Metadati($IdAtto){
 						<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">	
 					<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	foreach($Soggetti as $Soggetto){
 		echo "
-			<li><strong>".ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> ".$Soggetto->Nome." ".$Soggetto->Cognome." 
+			<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> ".$Soggetto->Nome." ".$Soggetto->Cognome." 
 			</li>";
 	}
 echo'				
@@ -670,10 +670,10 @@ echo'
 echo '<div class="postbox" style="padding:0 10px 10px 10px;margin-left:10px;">
 	<h3>'.__("Allegati","albo-pretorio-considera").'</h3>
 	<div class="Visalbo">';
-$allegati=ap_get_all_allegati_atto($IdAtto);
-$TipidiFiles=ap_get_tipidifiles();
+$allegati=albopc_get_all_allegati_atto($IdAtto);
+$TipidiFiles=albopc_get_tipidifiles();
 foreach ($allegati as $allegato) {
-	$Estensione=ap_ExtensionType($allegato->Allegato);	
+	$Estensione=albopc_ExtensionType($allegato->Allegato);	
 	echo '<div style="border: thin dashed;font-size: 1em;">
 			<div style="float: left;display: inline;width: 40px;height: 40px;padding-top:5px;padding-left:5px;">
 				<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30"allegato/>
@@ -681,7 +681,7 @@ foreach ($allegati as $allegato) {
 			<div style="margin-top:0;">
 				<p style="margin-top:0;">'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 			if (is_file($allegato->Allegato))
-				echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
+				echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
 			else
 				echo basename( $allegato->Allegato).__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
 echo'				</p>
@@ -704,12 +704,12 @@ if (!current_user_can('editore_atti_albo')){
 if ($ret!=""){
 	$ret=str_replace("%%br%%","<br />",$ret);
 }
-	$NumeroDaDb=ap_get_last_num_anno(gmdate("Y"));
-	$atto=ap_get_atto($id);
+	$NumeroDaDb=albopc_get_last_num_anno(gmdate("Y"));
+	$atto=albopc_get_atto($id);
 	$atto=$atto[0];
-	//$dif=ap_datediff("d",ap_cvdate($atto->DataInizio),ap_cvdate($atto->DataFine));
+	//$dif=albopc_datediff("d",albopc_cvdate($atto->DataInizio),albopc_cvdate($atto->DataFine));
 	$NumeroOpzione=get_option('opt_AP_NumeroProgressivo');
-	$NumAttiPubblicati=ap_get_all_atti(9,0,0,0,"",0,0,"",0,0,TRUE);
+	$NumAttiPubblicati=albopc_get_all_atti(9,0,0,0,"",0,0,"",0,0,TRUE);
 	if($NumAttiPubblicati==0) 
 		$AppPostMigrazione=" <span style='color:red;'>".__("Validato perchè primo atto dopo l'INSTALLAZIONE","albo-pretorio-considera")." </span>";
 	else
@@ -779,47 +779,47 @@ echo'<br />
 		if($Passato){
 			echo '<tr>
 					<td>'.__("Data Inizio Pubblicazione","albo-pretorio-considera").'</td>
-					<td>'.ap_VisualizzaData($atto->DataInizio).'</td>';
-			if($atto->DataInizio==ap_oggi()){
+					<td>'.albopc_VisualizzaData($atto->DataInizio).'</td>';
+			if($atto->DataInizio==albopc_oggi()){
 				$Passato=true;
 				echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 			}else{
 	 			$Passato=false;
 	   			echo '<td>'.__("Aggiornare la data di Inizio Pubblicazione","albo-pretorio-considera").'</td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udi='.ap_oggi().'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.ap_VisualizzaData(ap_oggi()).'</td>';
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udi='.albopc_oggi().'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.albopc_VisualizzaData(albopc_oggi()).'</td>';
 			}
 			echo "</tr>";
 		}
 		if($Passato){
- 			$categoria=ap_get_categoria($atto->IdCategoria);
+ 			$categoria=albopc_get_categoria($atto->IdCategoria);
  			$incrementoStandard=$categoria[0]->Giorni;
- 			$newDataFine=ap_DateAdd($atto->DataInizio,$incrementoStandard);
- 			$differenza=ap_datediff("d", $atto->DataInizio, $atto->DataFine);
+ 			$newDataFine=albopc_DateAdd($atto->DataInizio,$incrementoStandard);
+ 			$differenza=albopc_datediff("d", $atto->DataInizio, $atto->DataFine);
 			$differenza=($differenza==-1) ? 0 : $differenza;
  			$NggInc=0;
- 			while(ap_IsDataFestiva($atto->DataFine)){
+ 			while(albopc_IsDataFestiva($atto->DataFine)){
 					$NggInc++;					
-					$atto->DataFine=ap_DateAdd($atto->DataFine,1);
+					$atto->DataFine=albopc_DateAdd($atto->DataFine,1);
 				}
 			if($NggInc>0){
-				ap_update_selettivo_atto($id,array('DataFine' => $atto->DataFine),array('%s'),__('Modifica della data di fine pubblicazione perchè giorno festivo','albo-pretorio-considera')."\n");		
+				albopc_update_selettivo_atto($id,array('DataFine' => $atto->DataFine),array('%s'),__('Modifica della data di fine pubblicazione perchè giorno festivo','albo-pretorio-considera')."\n");		
 			}
 			echo '<tr>
 					<td>'.__("Data Fine Pubblicazione","albo-pretorio-considera").'</td>';
-			if(ap_SeDate(">=",$atto->DataFine,$atto->DataInizio)){
+			if(albopc_SeDate(">=",$atto->DataFine,$atto->DataInizio)){
 				$Passato=true;
-				echo '<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s GG Pubblicazione Atto %2\$s GG Pubblicazione standard Categoria %3\$s GG Incremento per scadenza in giorno Festivo %4\$s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataFine),$differenza,$categoria[0]->Giorni,$NggInc).'</td>';
-				if (ap_datediff("d", $atto->DataInizio, $atto->DataFine)== $categoria[0]->Giorni){
+				echo '<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s GG Pubblicazione Atto %2\$s GG Pubblicazione standard Categoria %3\$s GG Incremento per scadenza in giorno Festivo %4\$s","albo-pretorio-considera"),albopc_VisualizzaData($atto->DataFine),$differenza,$categoria[0]->Giorni,$NggInc).'</td>';
+				if (albopc_datediff("d", $atto->DataInizio, $atto->DataFine)== $categoria[0]->Giorni){
 					echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 				}else{
 					echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
-					echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">Aggiorna a '.ap_VisualizzaData($newDataFine).'</a></td>';
+					echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">Aggiorna a '.albopc_VisualizzaData($newDataFine).'</a></td>';
 				}
 			}else{
 	 			$Passato=false;
-	   			echo '<td><span style="color:red;">'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("La data di fine Pubblicazione %1\$s è antecedente della data di inizio pubblicazione %2\$s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataFine),ap_VisualizzaData($atto->DataInizio)).'</span></td>
+	   			echo '<td><span style="color:red;">'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("La data di fine Pubblicazione %1\$s è antecedente della data di inizio pubblicazione %2\$s","albo-pretorio-considera"),albopc_VisualizzaData($atto->DataFine),albopc_VisualizzaData($atto->DataInizio)).'</span></td>
 				   <td><span style="font-weight:bold;">'.__("Aggiornare la data di Fine Pubblicazione con i giorni della categoria o tornare indietro e modificare l'atto","albo-pretorio-considera").'</span></td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.ap_VisualizzaData($newDataFine).'</a></td>';
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.albopc_VisualizzaData($newDataFine).'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -829,19 +829,19 @@ echo'<br />
  			//echo $atto->DataInizio."   -  ".$incrementoStandard;
 			echo '<tr>
 					<td>'.__("Data Oblio","albo-pretorio-considera").'</td>
-					<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s - Data Oblio da Decreto n. 33/2013 art. 8 %2\$s","albo-pretorio-considera"),ap_VisualizzaData($atto->DataOblio),ap_VisualizzaData($DataOblioStandard)).'</td>';
+					<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s - Data Oblio da Decreto n. 33/2013 art. 8 %2\$s","albo-pretorio-considera"),albopc_VisualizzaData($atto->DataOblio),albopc_VisualizzaData($DataOblioStandard)).'</td>';
 				//	echo $atto->DataFine.' '.$atto->DataInizio. ' '.SeDate("<=",$atto->DataFine,$atto->DataInizio);
-			if(ap_SeDate("=",$atto->DataOblio,$DataOblioStandard)){
+			if(albopc_SeDate("=",$atto->DataOblio,$DataOblioStandard)){
 				$Passato=true;
 				echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
 			}else{
 				echo '<td>'.__("Ok","albo-pretorio-considera").'</td>';
-				echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udo='.$DataOblioStandard.'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.ap_VisualizzaData($DataOblioStandard).'</a></td>';
+				echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udo='.$DataOblioStandard.'" class="add-new-h2">'.__("Aggiorna a","albo-pretorio-considera").' '.albopc_VisualizzaData($DataOblioStandard).'</a></td>';
 			}
 		echo '</tr>';
 		}
 		if($Passato){
- 			$numAllegati=ap_get_num_allegati($id);
+ 			$numAllegati=albopc_get_num_allegati($id);
 			echo '<tr>
 					<td>'.__("Allegati","albo-pretorio-considera").'</td>
 					<td>'.__("N.","albo-pretorio-considera").' '.$numAllegati.'</td>';
@@ -906,10 +906,10 @@ echo'
 <div id="col-right">
 <div class="col-wrap">
 <h3>'.__("Documenti/Allegati","albo-pretorio-considera").'</h3>';
-$righe=ap_get_all_allegati_atto($id,array("Natura","IdAllegato"),array("DESC","ASC"));
-$Ente=ap_get_ente($atto->Ente);
-$Unitao=ap_get_unitaorganizzativa($atto->IdUnitaOrganizzativa);
-$NomeResp=ap_get_responsabile($atto->RespProc);
+$righe=albopc_get_all_allegati_atto($id,array("Natura","IdAllegato"),array("DESC","ASC"));
+$Ente=albopc_get_ente($atto->Ente);
+$Unitao=albopc_get_unitaorganizzativa($atto->IdUnitaOrganizzativa);
+$NomeResp=albopc_get_responsabile($atto->RespProc);
 $NomeResp=$NomeResp[0];
 echo'
 	<table class="widefat">
@@ -926,7 +926,7 @@ echo'
 foreach ($righe as $riga) {
 	echo '<tr>
 			<td>	
-					<a href="'.ap_DaPath_a_URL($riga->Allegato).'" target="_parent">
+					<a href="'.albopc_DaPath_a_URL($riga->Allegato).'" target="_parent">
 						<span class="dashicons dashicons-search" title="'.__("Visualizza dati atto","albo-pretorio-considera").'"></span>
 					</a>
 			</td>
@@ -1002,7 +1002,7 @@ echo '    </tbody>
 			<th>'.__("Note","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($atto->Informazioni).'</td>
 		</tr>';
-	$MetaDati=ap_get_meta_atto($id);
+	$MetaDati=albopc_get_meta_atto($id);
 	if($MetaDati!==FALSE){
 		$Meta="";
 		foreach($MetaDati as $Metadato){
@@ -1022,10 +1022,10 @@ echo '    </tbody>
 				<ul>';
 	$Soggetti=unserialize($atto->Soggetti, array('allowed_classes'=>false));
 	if ($Soggetti){
-		$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+		$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 		foreach($Soggetti as $Soggetto){
 			echo "
-				<li><strong>".ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> <br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
+				<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> <br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
 				</li>";
 		}
 	}
@@ -1046,7 +1046,7 @@ echo '</div>';
 
 
 function Nuovo_atto(){
-/*	$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
+/*	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];*/
 	if (isset($_REQUEST['Data']) And sanitize_text_field(wp_unslash($_REQUEST['Data'] ?? '')) != "")
 		$dataCorrente=sanitize_text_field(wp_unslash($_REQUEST['Data'] ?? ''));
@@ -1075,7 +1075,7 @@ function Nuovo_atto(){
 	if (isset($_REQUEST['DataOblio']))
 		$DataO=sanitize_text_field(wp_unslash($_REQUEST['DataOblio'] ?? ''));
 	else
-		$DataO=ap_VisualizzaData((gmdate("Y")+6)."-01-01");
+		$DataO=albopc_VisualizzaData((gmdate("Y")+6)."-01-01");
 	if (isset($_REQUEST['Note']))
 		$Note=sanitize_textarea_field(wp_unslash($_REQUEST['Note'] ?? ''));
 	else	
@@ -1091,14 +1091,14 @@ function Nuovo_atto(){
 	if (isset($_REQUEST['Responsabile']))
 		$Responsabile=(isset($_REQUEST['Responsabile'])?intval($_REQUEST['Responsabile']):0);
 	else{
-		$Resp=ap_get_responsabili();
+		$Resp=albopc_get_responsabili();
 		if (count($Resp)>0)
 			$Responsabile=$Resp[0]->IdResponsabile;
 		else
 			$Responsabile=0;	
 	}
 	if (isset($_REQUEST['Richiedente']))
-		$Richiedente=ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['Richiedente'] ?? '')));
+		$Richiedente=albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['Richiedente'] ?? '')));
 	else	
 		$Richiedente="";
 	$DefaultSoggetti=get_option('opt_AP_DefaultSoggetti',
@@ -1165,12 +1165,12 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 				<div class="notewrap postbox" id="MetaDati">
 				<h2 class='hndle'><span><?php esc_html_e("Meta Dati Personalizzati","albo-pretorio-considera");?></span> <button type="button" id="AddMeta" class="setta-def-data"><?php esc_html_e("Aggiungi Meta Valore","albo-pretorio-considera");?></button></h2>
 					<div style="display:none;" id="newMeta">
-						<label for="listaAttiMeta"><?php esc_html_e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
+						<label for="listaAttiMeta"><?php esc_html_e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo albopc_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
 						<label for="newMetaName"><?php esc_html_e("Nome Meta","albo-pretorio-considera");?></label> <input name="newMetaName" id="newMetaName"/>
 						<label for="newValue"><?php esc_html_e("Valore Meta","albo-pretorio-considera");?></label> <input name="newValue" id="newValue">
 						<button type="button"class="setta-def-data" id="AddNewMeta"><?php esc_html_e("Aggiungi","albo-pretorio-considera");?></button> <button type="button"class="setta-def-data" id="UndoNewMedia"><?php esc_html_e("Anulla","albo-pretorio-considera");?></button>
 					</div>
-<?php				//echo ap_get_elenco_attimeta("Div");			?>
+<?php				//echo albopc_get_elenco_attimeta("Div");			?>
 				</div>
 			</div><!-- /post-body-content -->
 
@@ -1190,7 +1190,7 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 				<h2 class='hndle'><span><?php esc_html_e("Date","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
 					<p><?php esc_html_e("Data di registrazione","albo-pretorio-considera");?>:
-						<input name="Data" type="text" id="CalendarioMO" value="<?php echo ap_VisualizzaData($dataCorrente);?>" maxlength="10" size="10" />					
+						<input name="Data" type="text" id="CalendarioMO" value="<?php echo albopc_VisualizzaData($dataCorrente);?>" maxlength="10" size="10" />					
 					</p>
 					<p><abbr title="<?php esc_html_e("Data in cui inizia a validità legale dell'atto. Viene impostata automaticamente in fase di pubblicazione","albo-pretorio-considera");?>"><?php esc_html_e("Data inizio Pubblicazione","albo-pretorio-considera");?></abbr>:
 						<input name="DataInizio" type="hidden" value="<?php echo $DataI;?>" />
@@ -1203,7 +1203,7 @@ da cui decorre l'obbligo di pubblicazione, e comunque fino a che gli atti pubbli
 fatti salvi i diversi termini previsti dalla normativa in materia di trattamento dei dati personali e quanto
 previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?>"><?php esc_html_e("Data Oblio","albo-pretorio-considera");?></abbr>:
 						<input name="DataOblio" id="Calendario4" type="text" value="<?php echo $DataO;?>" maxlength="10" size="10" />
-						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo ap_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php esc_html_e("Aggiorna a","albo-pretorio-considera");?> <?php echo ap_VisualizzaData($DataOblioStandard);?></button>	
+						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo albopc_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php esc_html_e("Aggiorna a","albo-pretorio-considera");?> <?php echo albopc_VisualizzaData($DataOblioStandard);?></button>	
 					</p>				
 				</div>
 			</div>
@@ -1211,16 +1211,16 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 				<h2 class='hndle'><span><?php esc_html_e("Meta dati","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
 					<p><abbr title="<?php esc_html_e("Ente che pubblica l'atto; potrebbe essere diverso dall'ente titolare del sito web se la pubblicazione avviene per conto di altro ente","albo-pretorio-considera");?>"><?php esc_html_e("Ente","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>: 
-						<?php echo ap_get_dropdown_enti('Ente',__('Ente','albo-pretorio-considera'),'postform maxdime richiesto ValValue(>-1)','',$defEnte);?>
+						<?php echo albopc_get_dropdown_enti('Ente',__('Ente','albo-pretorio-considera'),'postform maxdime richiesto ValValue(>-1)','',$defEnte);?>
 					</p>
 					<p><abbr title="<?php esc_html_e("Categoria in cui viene collocato l'atto, questo sistema permette di raggruppare gli oggetti in base alla lor natura","albo-pretorio-considera");?>"><?php esc_html_e("Categoria","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>:
-						<?php echo ap_get_dropdown_categorie('Categoria',__('Categoria','albo-pretorio-considera'),'postform maxdime richiesto ValValue(>0)','',$Categoria);?>					
+						<?php echo albopc_get_dropdown_categorie('Categoria',__('Categoria','albo-pretorio-considera'),'postform maxdime richiesto ValValue(>0)','',$Categoria);?>					
 					</p>
 					<p><abbr title="<?php esc_html_e("Unità Organizzativa responsabile del procedimento amministrativo","albo-pretorio-considera");?>"><?php esc_html_e("Unità Organizzativa Responsabile","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>:
-						<?php echo ap_get_dropdown_unitao('Unitao',__("Unità Organizzativa Responsabile","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$Unitao);?>					
+						<?php echo albopc_get_dropdown_unitao('Unitao',__("Unità Organizzativa Responsabile","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$Unitao);?>					
 					</p>		
 					<p><?php esc_html_e("Responsabile del procedimento amministrativo","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span>:
-						<?php echo ap_get_dropdown_responsabili("Responsabile",__("Responsabile del procedimento amministrativo","albo-pretorio-considera"),"postform maxdime richiesto ValValue(>0)","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP");?>					
+						<?php echo albopc_get_dropdown_responsabili("Responsabile",__("Responsabile del procedimento amministrativo","albo-pretorio-considera"),"postform maxdime richiesto ValValue(>0)","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP");?>					
 					</p>							
 				</div>
 			</div>
@@ -1231,7 +1231,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 					</p>
 					<ul>
 <?php
-		$Ana_Soggetti=ap_get_responsabili();
+		$Ana_Soggetti=albopc_get_responsabili();
 		foreach($Ana_Soggetti as $Soggetto){
 			if($Soggetto->Funzione!="RP"){
 				$Sel="";
@@ -1240,7 +1240,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 				}
 				echo "
 				<li>
-					<input type=\"checkbox\" name=\"Soggetto[]\" value=\"$Soggetto->IdResponsabile\"  $Sel/>".$Soggetto->Cognome." ".$Soggetto->Nome." <strong><em>".ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</em></strong>
+					<input type=\"checkbox\" name=\"Soggetto[]\" value=\"$Soggetto->IdResponsabile\"  $Sel/>".$Soggetto->Cognome." ".$Soggetto->Nome." <strong><em>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</em></strong>
 				</li>";				
 			}
 
@@ -1259,7 +1259,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 
 
 function Edit_atto($id){
-$atto=ap_get_atto($id);
+$atto=albopc_get_atto($id);
 $atto=$atto[0];
 $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 ?>
@@ -1318,12 +1318,12 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 				<div class="notewrap postbox" id="MetaDati">
 				<h2 class='hndle'><span><?php esc_html_e("Meta Dati Personalizzati","albo-pretorio-considera");?></span> <button type="button" id="AddMeta" class="setta-def-data"><?php esc_html_e("Aggiungi Meta Valore","albo-pretorio-considera");?></button></h2>
 					<div style="display:none;" id="newMeta">
-						<label for="listaAttiMeta"><?php esc_html_e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo ap_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
+						<label for="listaAttiMeta"><?php esc_html_e("Meta già codificati","albo-pretorio-considera");?></label> <?php echo albopc_get_elenco_attimeta("Select","listaAttiMeta","ListaAttiMeta","Si");?>
 						<label for="newMetaName"><?php esc_html_e("Nome Meta","albo-pretorio-considera");?></label> <input name="newMetaName" id="newMetaName"/>
 						<label for="newValue"><?php esc_html_e("Valore Meta","albo-pretorio-considera");?></label> <input name="newValue" id="newValue">
 						<button type="button"class="setta-def-data" id="AddNewMeta"><?php esc_html_e("Aggiungi","albo-pretorio-considera");?></button> <button type="button"class="setta-def-data" id="UndoNewMedia"><?php esc_html_e("Anulla","albo-pretorio-considera");?></button>
 					</div>
-<?php				echo ap_get_elenco_attimeta("Div","","","",$id);			?>
+<?php				echo albopc_get_elenco_attimeta("Div","","","",$id);			?>
 				</div>
 			</div><!-- /post-body-content -->
 
@@ -1343,21 +1343,21 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 				<h2 class='hndle'><span><?php esc_html_e("Date","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
 					<p><abbr title="<?php esc_html_e("viene inserita automaticamente nel momento in cui viene creato","albo-pretorio-considera");?>."><?php esc_html_e("Data di registrazione","albo-pretorio-considera");?></abbr>: 
-						<input name="Data" type="text" id="CalendarioMO" value="<?php echo ap_VisualizzaData($atto->Data);?>" maxlength="10" size="10" />
+						<input name="Data" type="text" id="CalendarioMO" value="<?php echo albopc_VisualizzaData($atto->Data);?>" maxlength="10" size="10" />
 					</p>
 					<p><abbr title="<?php esc_html_e("Data in cui inizia a validità legale dell'atto. Viene impostata automaticamente in fase di pubblicazione","albo-pretorio-considera");?>"><?php esc_html_e("Data inizio Pubblicazione","albo-pretorio-considera");?></abbr>:
-						<input name="DataInizio" type="hidden" value="<?php echo ap_VisualizzaData($atto->DataInizio);?>" />
-						<em><strong><?php echo ap_VisualizzaData($atto->DataInizio);?></strong></em>					
+						<input name="DataInizio" type="hidden" value="<?php echo albopc_VisualizzaData($atto->DataInizio);?>" />
+						<em><strong><?php echo albopc_VisualizzaData($atto->DataInizio);?></strong></em>					
 					</p>
 					<p><abbr title="<?php esc_html_e("Data fine validità legale dell'atto","albo-pretorio-considera");?>"><?php esc_html_e("Data fine Pubblicazione","albo-pretorio-considera");?></abbr>:
-						<input name="DataFine" id="Calendario3" type="text" value="<?php echo ap_VisualizzaData($atto->DataFine);?>" maxlength="10" size="10" />		
+						<input name="DataFine" id="Calendario3" type="text" value="<?php echo albopc_VisualizzaData($atto->DataFine);?>" maxlength="10" size="10" />		
 					</p>		
 					<p><abbr title="<?php esc_html_e("Data in cui l'atto viene eliminato dall'archivio, in base al Decreto n. 33/2013 art.8:<br />5 anni, decorrenti dal 1° gennaio dell'anno successivo a quello
 da cui decorre l'obbligo di pubblicazione, e comunque fino a che gli atti pubblicati producono i loro effetti,
 fatti salvi i diversi termini previsti dalla normativa in materia di trattamento dei dati personali e quanto
 previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?>"><?php esc_html_e("Data Oblio","albo-pretorio-considera");?></abbr>:
-						<input name="DataOblio" id="Calendario4" type="text" value="<?php echo ap_VisualizzaData($atto->DataOblio);?>" maxlength="10" size="10" />
-						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo ap_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php esc_html_e("Aggiorna a","albo-pretorio-considera");?> <?php echo ap_VisualizzaData($DataOblioStandard);?></button>	
+						<input name="DataOblio" id="Calendario4" type="text" value="<?php echo albopc_VisualizzaData($atto->DataOblio);?>" maxlength="10" size="10" />
+						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo albopc_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php esc_html_e("Aggiorna a","albo-pretorio-considera");?> <?php echo albopc_VisualizzaData($DataOblioStandard);?></button>	
 					</p>				
 				</div>
 			</div>
@@ -1365,16 +1365,16 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 				<h2 class='hndle'><span><?php esc_html_e("Meta dati","albo-pretorio-considera");?></span></h2>
 				<div class="inside">
 					<p><abbr title="<?php esc_html_e("Ente che pubblica l'atto; potrebbe essere diverso dall'ente titolare del sito web se la pubblicazione avviene per conto di altro ente","albo-pretorio-considera");?>"><?php esc_html_e("Ente","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>: 
-						<?php echo ap_get_dropdown_enti('Ente',__("Ente","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>-1)','',$atto->Ente);?>
+						<?php echo albopc_get_dropdown_enti('Ente',__("Ente","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>-1)','',$atto->Ente);?>
 					</p>
 					<p><abbr title="<?php esc_html_e("Categoria in cui viene collocato l'atto, questo sistema permette di raggruppare gli oggetti in base alla lor natura","albo-pretorio-considera");?>"><?php esc_html_e("Categoria","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>:
-						<?php echo ap_get_dropdown_categorie('Categoria',__("Categoria","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$atto->IdCategoria);?>					
+						<?php echo albopc_get_dropdown_categorie('Categoria',__("Categoria","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$atto->IdCategoria);?>					
 					</p>
 					<p><abbr title="<?php esc_html_e("Unità Organizzativa responsabile del procedimento amministrativo","albo-pretorio-considera");?>"><?php esc_html_e("Unità Organizzativa Responsabile","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></abbr>:
-						<?php echo ap_get_dropdown_unitao('Unitao',__("Unità Organizzativa Responsabile","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$atto->IdUnitaOrganizzativa);?>					
+						<?php echo albopc_get_dropdown_unitao('Unitao',__("Unità Organizzativa Responsabile","albo-pretorio-considera"),'postform maxdime richiesto ValValue(>0)','',$atto->IdUnitaOrganizzativa);?>					
 					</p>
 					<p><?php esc_html_e("Responsabile del procedimento amministrativo","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span>:
-						<?php echo ap_get_dropdown_responsabili("Responsabile",__("Responsabile del procedimento amministrativo","albo-pretorio-considera"),"postform maxdime richiesto ValValue(>0)","",$atto->RespProc,"RP");?>					
+						<?php echo albopc_get_dropdown_responsabili("Responsabile",__("Responsabile del procedimento amministrativo","albo-pretorio-considera"),"postform maxdime richiesto ValValue(>0)","",$atto->RespProc,"RP");?>					
 					</p>	
 				</div>
 			</div>
@@ -1386,7 +1386,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 					<ul>
 <?php
 		$Soggetti=unserialize($atto->Soggetti, array('allowed_classes'=>false));
-		$Ana_Soggetti=ap_get_responsabili();
+		$Ana_Soggetti=albopc_get_responsabili();
 		foreach($Ana_Soggetti as $Soggetto){
 			if($Soggetto->Funzione!="RP"){
 				$Selected="";
@@ -1395,7 +1395,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 				}
 				echo "
 				<li>
-					<input type=\"checkbox\" name=\"Soggetto[]\" value=\"$Soggetto->IdResponsabile\"  $Selected/>".$Soggetto->Cognome." ".$Soggetto->Nome." <strong><em>".ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</em></strong>
+					<input type=\"checkbox\" name=\"Soggetto[]\" value=\"$Soggetto->IdResponsabile\"  $Selected/>".$Soggetto->Cognome." ".$Soggetto->Nome." <strong><em>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</em></strong>
 				</li>";				
 			}
 		}
@@ -1412,9 +1412,9 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-considera");?
 }
 
 function Allegati_atto($IdAtto,$messaggio="",$IdAllegato=0){
-	$risultato=ap_get_atto($IdAtto);
+	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
-	$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
+	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];
 	$dirUpload =  get_option('opt_AP_FolderUpload').'/';
 	echo '
@@ -1435,7 +1435,7 @@ echo'
 <div id="col-right">
 <div class="col-wrap">';
 if ($IdAllegato!=0){
- 	$allegato=ap_get_allegato_atto($IdAllegato);
+ 	$allegato=albopc_get_allegato_atto($IdAllegato);
  	$allegato=$allegato[0];
 	echo '<h3>'. __("Modifica Allegato","albo-pretorio-considera").'</h3>
 	<form id="allegato"  method="post" action="?page=atti" class="validate">
@@ -1481,7 +1481,7 @@ if ($IdAllegato!=0){
 }else{
 	echo'
 	<h3 style="margin-top:50px;">Allegati <a href="'.site_url().'/wp-admin/admin.php?page=atti&amp;id='.$IdAtto.'&amp;action=UpAllegati" class="add-new-h2">'. __("Aggiungi nuovo","albo-pretorio-considera").'</a> <a href="'.site_url().'/wp-admin/admin.php?page=atti&amp;id='.$IdAtto.'&amp;action=AssAllegati" class="add-new-h2">'. __("Associa file","albo-pretorio-considera").'</a></h3>';
-	$righe=ap_get_all_allegati_atto($IdAtto);
+	$righe=albopc_get_all_allegati_atto($IdAtto);
 	echo'
 	<div  style="overflow: scroll;">
 		<table class="widefat">
@@ -1506,7 +1506,7 @@ if ($IdAllegato!=0){
 					<a href="?page=atti&amp;action=edit-allegato-atto&amp;id='.$IdAtto.'&amp;idAlle='.$riga->IdAllegato.'&amp;modificaallegatoatto='.wp_create_nonce('editallegatoatto').'" >
 						 <span class="dashicons dashicons-edit" title="'. __("Modifica allegato","albo-pretorio-considera").'"></span>
 					</a>
-					<a href="'.ap_DaPath_a_URL($riga->Allegato).'" target="_blank">
+					<a href="'.albopc_DaPath_a_URL($riga->Allegato).'" target="_blank">
 							<span class="dashicons dashicons-search" title="'. __("Visualizza dati allegato","albo-pretorio-considera").'"></span>
 					</a>
 				</td>
@@ -1521,9 +1521,9 @@ if ($IdAllegato!=0){
 		</table>
 	</div>';
 }
-$Ente=ap_get_ente($risultato->Ente);
-$Unitao=ap_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
-$NomeResp=ap_get_responsabile($risultato->RespProc);
+$Ente=albopc_get_ente($risultato->Ente);
+$Unitao=albopc_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
+$NomeResp=albopc_get_responsabile($risultato->RespProc);
 $NomeResp=$NomeResp[0];
 echo'</div>
 </div>
@@ -1555,19 +1555,19 @@ echo'</div>
 		</tr>
 		<tr>
 			<th>'. __("Data di registrazione","albo-pretorio-considera").'</th>
-			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
+			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->Data).'</td>
 		</tr>
 		<tr>
 			<th>'. __("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
-			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
+			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataInizio).'</td>
 		</tr>
 		<tr>
 			<th>'. __("Data fine Pubblicazione","albo-pretorio-considera").'</th>
-			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
+			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataFine).'</td>
 		</tr>
 		<tr>
 			<th>'. __("Data oblio","albo-pretorio-considera").'</th>
-			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
+			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataOblio).'</td>
 		</tr>
 		<tr>
 			<th>'.__("Richiedente","albo-pretorio-considera").'</th>
@@ -1589,7 +1589,7 @@ echo'</div>
 			<th>'. __("Note","albo-pretorio-considera").'</th>
 			<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Informazioni).'</td>
 		</tr>';
-$MetaDati=ap_get_meta_atto($IdAtto);
+$MetaDati=albopc_get_meta_atto($IdAtto);
 if($MetaDati!==FALSE){
 	$Meta="";
 	foreach($MetaDati as $Metadato){
@@ -1607,10 +1607,10 @@ if($MetaDati!==FALSE){
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	foreach($Soggetti as $Soggetto){
 		echo "
-			<li><strong>".ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> <br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
+			<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> <br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
 			</li>";
 	}
 echo'				
@@ -1629,15 +1629,15 @@ if (isset($_REQUEST['stato_atti']))
 	$Prov=sanitize_text_field(wp_unslash($_REQUEST['stato_atti'] ?? ''));
 else
 	$Prov="DaPubblicare";
-$risultato=ap_get_atto($IdAtto);
+$risultato=albopc_get_atto($IdAtto);
 $risultato=$risultato[0];
-$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
+$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 $risultatocategoria=$risultatocategoria[0];
-$NomeEnte=ap_get_ente($risultato->Ente);
+$NomeEnte=albopc_get_ente($risultato->Ente);
 $NomeEnte=stripslashes($NomeEnte->Nome);
-$Ente=ap_get_ente($risultato->Ente);
-$Unitao=ap_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
-$NomeResp=ap_get_responsabile($risultato->RespProc);
+$Ente=albopc_get_ente($risultato->Ente);
+$Unitao=albopc_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
+$NomeResp=albopc_get_responsabile($risultato->RespProc);
 if(isset($NomeResp[0]))
 	$NomeResp=$NomeResp[0];
 else
@@ -1685,7 +1685,7 @@ echo '
 		    <tbody id="dati-atto">
 			<tr>
 				<th style="width:50%;">'. __("Ente emittente","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_removeCaratteriSpeciali($NomeEnte).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_removeCaratteriSpeciali($NomeEnte).'</td>
 			</tr>
 			<tr>
 				<th style="width:20%;">'. __("Numero Albo","albo-pretorio-considera").'</th>
@@ -1693,60 +1693,60 @@ echo '
 			</tr>
 			<tr>
 				<th>'. __("Codice di Riferimento","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->Riferimento)).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(albopc_removeCaratteriSpeciali($risultato->Riferimento)).'</td>
 			</tr>
 			<tr>
 				<th>'. __("Oggetto","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->Oggetto)).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(albopc_removeCaratteriSpeciali($risultato->Oggetto)).'</td>
 			</tr>';
 		if($risultato->DataAnnullamento!='0000-00-00')		
 			echo '		<tr>
 				<th style="width:20%;">'. __("Data Annullamento","albo-pretorio-considera").'</th>
-				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataAnnullamento).'</td>
+				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataAnnullamento).'</td>
 			</tr>
 	    	<tr>
 				<th style="width:20%;">'. __("Motivo Annullamento","albo-pretorio-considera").'</th>
-				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:top;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->MotivoAnnullamento)).'</td>
+				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:top;">'.stripslashes(albopc_removeCaratteriSpeciali($risultato->MotivoAnnullamento)).'</td>
 			</tr>';
 		echo '		
 			<tr>
 				<th>'. __("Data di registrazione","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->Data).'</td>
 			</tr>
 
 			<tr>
 				<th>'. __("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataInizio).'</td>
 			</tr>
 			<tr>
 				<th>'. __("Data fine Pubblicazione","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataFine).'</td>
 			</tr>
 			<tr>
 				<th>'. __("Data Oblio","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataOblio).'</td>
 			</tr>
 			<tr>
 				<th>'.__("Richiedente","albo-pretorio-considera").'</th>
-				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->Richiedente)).'</td>
+				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(albopc_removeCaratteriSpeciali($risultato->Richiedente)).'</td>
 			</tr>
 			<tr>
 				<th>'.__("Unità Organizzativa Responsabile","albo-pretorio-considera").'</th>
-				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(isset($Unitao->Nome)?stripslashes(ap_removeCaratteriSpeciali($Unitao->Nome)):"").'</td>
+				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(isset($Unitao->Nome)?stripslashes(albopc_removeCaratteriSpeciali($Unitao->Nome)):"").'</td>
 			</tr>
 			<tr>
 				<th>'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'</th>
-				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(is_object($NomeResp))?stripslashes(ap_removeCaratteriSpeciali($NomeResp->Nome))." ".stripslashes(ap_removeCaratteriSpeciali($NomeResp->Cognome)):stripslashes(ap_removeCaratteriSpeciali($NomeResp)).'</td>
+				<td style="font-size:14px;font-style: italic;color: Blue;vertical-align:middle;">'.(is_object($NomeResp))?stripslashes(albopc_removeCaratteriSpeciali($NomeResp->Nome))." ".stripslashes(albopc_removeCaratteriSpeciali($NomeResp->Cognome)):stripslashes(albopc_removeCaratteriSpeciali($NomeResp)).'</td>
 			</tr>
 			<tr>
 				<th>'. __("Categoria","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultatocategoria->Nome)).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(albopc_removeCaratteriSpeciali($risultatocategoria->Nome)).'</td>
 			</tr>
 			<tr>
 				<th>'. __("Note","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(ap_removeCaratteriSpeciali($risultato->Informazioni)).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes(albopc_removeCaratteriSpeciali($risultato->Informazioni)).'</td>
 			</tr>';
-$MetaDati=ap_get_meta_atto($IdAtto);
+$MetaDati=albopc_get_meta_atto($IdAtto);
 if($MetaDati!==FALSE){
 	$Meta="";
 	foreach($MetaDati as $Metadato){
@@ -1766,10 +1766,10 @@ echo'
 				<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 	if ($Soggetti){
-		$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+		$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 		foreach($Soggetti as $Soggetto){
 			echo "
-				<li><strong>".ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong><br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
+				<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong><br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
 				</li>";
 		}
 	}
@@ -1780,14 +1780,14 @@ echo'
 				</tbody>
 			</table>
 		</div>';	
-		$documenti=ap_get_documenti_atto($IdAtto);
+		$documenti=albopc_get_documenti_atto($IdAtto);
 		if(count($documenti)>0){
 			echo '<div class="postbox" style="padding:0 10px 10px 10px;">
 				<h3>'. __("Documenti firmati","albo-pretorio-considera").'</h3>
 				<div class="Visalbo">';
-			$TipidiFiles=ap_get_tipidifiles();
+			$TipidiFiles=albopc_get_tipidifiles();
 			foreach ($documenti as $allegato) {
-				$Estensione=ap_ExtensionType($allegato->Allegato);	
+				$Estensione=albopc_ExtensionType($allegato->Allegato);	
 				echo '<div style="border: thin dashed;font-size: 1em;">
 						<div style="float: left;display: inline;width: 40px;height: 40px;padding-top:5px;padding-left:5px;">
 							<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30" />
@@ -1797,7 +1797,7 @@ echo'
 							'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'
 							'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
-							echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
+							echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
 						else{
 							echo basename( $allegato->Allegato)."<br />";
 							if( $allegato->Note=="")
@@ -1812,14 +1812,14 @@ echo'
 			echo '</div>
 	</div>';
 		}
-		$allegati=ap_get_allegati_atto($IdAtto);
+		$allegati=albopc_get_allegati_atto($IdAtto);
 		if(count($allegati)>0){
 			echo '<div class="postbox" style="padding:0 10px 10px 10px;">
 				<h3>'. __("Allegati","albo-pretorio-considera").'</h3>
 				<div class="Visalbo">';
-			$TipidiFiles=ap_get_tipidifiles();
+			$TipidiFiles=albopc_get_tipidifiles();
 			foreach ($allegati as $allegato) {
-				$Estensione=ap_ExtensionType($allegato->Allegato);	
+				$Estensione=albopc_ExtensionType($allegato->Allegato);	
 				echo '<div style="border: thin dashed;font-size: 1em;">
 						<div style="float: left;display: inline;width: 40px;height: 40px;padding-top:5px;padding-left:5px;">
 							<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30" />		
@@ -1829,7 +1829,7 @@ echo'
 								'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'
 								'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
-							echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
+							echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
 						else{
 							echo basename( $allegato->Allegato)."<br />";
 							if( $allegato->Note=="")
@@ -1852,15 +1852,15 @@ echo '</div>
 
 function CancellaAllegatiAtto($IdAtto){
 	global $AP_OnLine;
-	$risultato=ap_get_atto($IdAtto);
+	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
-	$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
+	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];
-	$NomeEnte=ap_get_ente($risultato->Ente);
+	$NomeEnte=albopc_get_ente($risultato->Ente);
 	$NomeEnte=stripslashes($NomeEnte->Nome);
-	$Ente=ap_get_ente($risultato->Ente);
-	$Unitao=ap_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
-	$NomeResp=ap_get_responsabile($risultato->RespProc);
+	$Ente=albopc_get_ente($risultato->Ente);
+	$Unitao=albopc_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
+	$NomeResp=albopc_get_responsabile($risultato->RespProc);
 	if(isset($NomeResp[0]))
 		$NomeResp=$NomeResp[0];
 	else
@@ -1879,14 +1879,14 @@ function CancellaAllegatiAtto($IdAtto){
 				<div class="col-wrap postbox" style="padding:0 10px 10px 10px;margin-left:10px;">
 				<h3>Documenti</h3>
 				<hr />';
-		$documenti=ap_get_documenti_atto($IdAtto);
+		$documenti=albopc_get_documenti_atto($IdAtto);
 		if(count($documenti)>0){
 			echo '<div class="postbox" style="padding:0 10px 10px 10px;">
 				<h3>'. __("Documenti firmati","albo-pretorio-considera").'</h3>
 				<div class="Visalbo">';
-			$TipidiFiles=ap_get_tipidifiles();
+			$TipidiFiles=albopc_get_tipidifiles();
 			foreach ($documenti as $allegato) {
-				$Estensione=ap_ExtensionType($allegato->Allegato);	
+				$Estensione=albopc_ExtensionType($allegato->Allegato);	
 				echo '<div style="border: thin dashed;font-size: 1em;">
 						<div style="float: left;display: inline;width: 40px;height: 40px;padding-top:5px;padding-left:5px;">
 							<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30" />
@@ -1896,7 +1896,7 @@ function CancellaAllegatiAtto($IdAtto){
 							'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'
 							'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
-							echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).'</p>
+							echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).'</p>
 						<p>
 							<label for="motivo'.$allegato->IdAllegato.'" style="vertical-align: text-top;" id="LblIDA'.$allegato->IdAllegato.'">Indicare il motivo della rimozione del Documento Firmato</label>
 							<input type="text" id="motivo'.$allegato->IdAllegato.'" name="motivo'.$allegato->IdAllegato.'" size="50" style="border: 1px solid #d63638;"/>
@@ -1912,14 +1912,14 @@ function CancellaAllegatiAtto($IdAtto){
 			echo '</div>
 	</div>';
 		}
-		$allegati=ap_get_allegati_atto($IdAtto);
+		$allegati=albopc_get_allegati_atto($IdAtto);
 		if(count($allegati)>0){
 			echo '<div class="postbox" style="padding:0 10px 10px 10px;">
 				<h3>'. __("Allegati","albo-pretorio-considera").'</h3>
 				<div class="Visalbo">';
-			$TipidiFiles=ap_get_tipidifiles();
+			$TipidiFiles=albopc_get_tipidifiles();
 			foreach ($allegati as $allegato) {
-				$Estensione=ap_ExtensionType($allegato->Allegato);	
+				$Estensione=albopc_ExtensionType($allegato->Allegato);	
 				echo '<div style="border: thin dashed;font-size: 1em;">
 						<div style="float: left;display: inline;width: 40px;height: 40px;padding-top:5px;padding-left:5px;">
 							<img src="'.$TipidiFiles[strtolower($Estensione)]['Icona'].'" alt="'.$TipidiFiles[strtolower($Estensione)]['Descrizione'].'" height="30" width="30" />		
@@ -1929,7 +1929,7 @@ function CancellaAllegatiAtto($IdAtto){
 								'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'
 								'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
-							echo '        <a id="file'.$allegato->IdAllegato.'" href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')</p>
+							echo '        <a id="file'.$allegato->IdAllegato.'" href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')</p>
 						<p>
 							<label for="motivo'.$allegato->IdAllegato.'" style="vertical-align: text-top;" id="LblIDA'.$allegato->IdAllegato.'">Indicare il motivo della rimozione dell\'allegato</label>
 							<input type="text" id="motivo'.$allegato->IdAllegato.'" name="motivo'.$allegato->IdAllegato.'" size="50" style="border: 1px solid #d63638;"/>
@@ -1972,7 +1972,7 @@ function CancellaAllegatiAtto($IdAtto){
 		if($risultato->DataAnnullamento!='0000-00-00')		
 			echo '		<tr>
 				<th style="width:20%;">'. __("Data Annullamento","albo-pretorio-considera").'</th>
-				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataAnnullamento).'</td>
+				<td style="font-size:14px;font-weight: bold;color: Red;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataAnnullamento).'</td>
 			</tr>
 	    	<tr>
 				<th style="width:20%;">'. __("Motivo Annullamento","albo-pretorio-considera").'</th>
@@ -1981,20 +1981,20 @@ function CancellaAllegatiAtto($IdAtto){
 		echo '		
 			<tr>
 				<th>'. __("Data di registrazione","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->Data).'</td>
 			</tr>
 
 			<tr>
 				<th>'. __("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataInizio).'</td>
 			</tr>
 			<tr>
 				<th>'. __("Data fine Pubblicazione","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataFine).'</td>
 			</tr>
 			<tr>
 				<th>'. __("Data Oblio","albo-pretorio-considera").'</th>
-				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
+				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataOblio).'</td>
 			</tr>
 			<tr>
 				<th>'.__("Richiedente","albo-pretorio-considera").'</th>
@@ -2016,7 +2016,7 @@ function CancellaAllegatiAtto($IdAtto){
 				<th>'. __("Note","albo-pretorio-considera").'</th>
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.stripslashes($risultato->Informazioni).'</td>
 			</tr>';
-$MetaDati=ap_get_meta_atto($IdAtto);
+$MetaDati=albopc_get_meta_atto($IdAtto);
 if($MetaDati!==FALSE){
 	$Meta="";
 	foreach($MetaDati as $Metadato){
@@ -2036,10 +2036,10 @@ echo'
 				<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 	if ($Soggetti){
-		$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+		$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 		foreach($Soggetti as $Soggetto){
 			echo "
-				<li><strong>".ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong><br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
+				<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong><br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
 				</li>";
 		}
 	}
@@ -2057,11 +2057,11 @@ echo '</div>
 }
 function Annulla_Atto($IdAtto){
 	global $AP_OnLine;
-	$risultato=ap_get_atto($IdAtto);
+	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
-	$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
+	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];
-	$NomeEnte=ap_get_ente($risultato->Ente);
+	$NomeEnte=albopc_get_ente($risultato->Ente);
 	$NomeEnte=stripslashes($NomeEnte->Nome);
 	echo '
 <div class="wrap">
@@ -2097,7 +2097,7 @@ function Annulla_Atto($IdAtto){
 				</tr>
 				<tr>
 					<th>'. __("Data","albo-pretorio-considera").'</th>
-					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->Data).'</td>
+					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->Data).'</td>
 				</tr>
 				<tr>
 					<th>'. __("Codice di Riferimento","albo-pretorio-considera").'</th>
@@ -2109,15 +2109,15 @@ function Annulla_Atto($IdAtto){
 				</tr>
 				<tr>
 					<th>'. __("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
-					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataInizio).'</td>
+					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataInizio).'</td>
 				</tr>
 				<tr>
 					<th>'. __("Data fine Pubblicazione","albo-pretorio-considera").'</th>
-					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataFine).'</td>
+					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataFine).'</td>
 				</tr>
 				<tr>
 					<th>'. __("Data Oblio","albo-pretorio-considera").'</th>
-					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.ap_VisualizzaData($risultato->DataOblio).'</td>
+					<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">'.albopc_VisualizzaData($risultato->DataOblio).'</td>
 				</tr>
 				<tr>
 					<th>'. __("Note","albo-pretorio-considera").'</th>
@@ -2132,10 +2132,10 @@ function Annulla_Atto($IdAtto){
 						<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">	
 					<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	foreach($Soggetti as $Soggetto){
 		echo "
-			<li><strong>".ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> ".$Soggetto->Nome." ".$Soggetto->Cognome." 
+			<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> ".$Soggetto->Nome." ".$Soggetto->Cognome." 
 			</li>";
 	}
 echo'				
@@ -2146,10 +2146,10 @@ echo'
 			</td>
 			<td>
 			<p style="color:red;font-weight: bold;">'. __("Selezionare gli allegati che devono essere cancellati per violazione di legge<br />NB: verrà cancellato solo il file, mentre sarà mantenuto il nome del file nell'elenco degli allegati","albo-pretorio-considera").'</p>';
-$allegati=ap_get_all_allegati_atto($IdAtto);
-$TipidiFiles=ap_get_tipidifiles();
+$allegati=albopc_get_all_allegati_atto($IdAtto);
+$TipidiFiles=albopc_get_tipidifiles();
 foreach ($allegati as $allegato) {
-	$Estensione=ap_ExtensionType($allegato->Allegato);	
+	$Estensione=albopc_ExtensionType($allegato->Allegato);	
 	echo '<div style="float: left;display: inline;width: 40px;height: 40px;padding-top:5px;padding-left:5px;">
 			<input type="checkbox" name="Alle:'.$allegato->IdAllegato.'" value="'.esc_attr($allegato->IdAllegato).'">
 		  </div>
@@ -2159,7 +2159,7 @@ foreach ($allegati as $allegato) {
 			<div style="margin-top:0;">
 				<p style="margin-top:0;">'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 			if (is_file($allegato->Allegato))
-				echo '        <a href="'.ap_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.ap_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
+				echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
 			else
 				echo basename( $allegato->Allegato)." ".__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-considera");
 echo'				</p>
@@ -2255,7 +2255,7 @@ echo' <div class="wrap">
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-portfolio"></span> '. __("Atti","albo-pretorio-considera");
 $HtmlNP="";
-if (ap_get_num_categorie()==0){
+if (albopc_get_num_categorie()==0){
 	$HtmlNP.='<p> </p>
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
@@ -2263,7 +2263,7 @@ if (ap_get_num_categorie()==0){
 				</p>
 			</div>';
 }
-if (ap_num_responsabili()==0){
+if (albopc_num_responsabili()==0){
 	$HtmlNP.='<p> </p>
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
@@ -2271,7 +2271,7 @@ if (ap_num_responsabili()==0){
 				</p>
 			</div>';
 }
-if (ap_num_unitao()==0){
+if (albopc_num_unitao()==0){
 	$HtmlNP.='<p> </p>
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
@@ -2346,7 +2346,7 @@ echo'
 	  		<div class="ap-filtri-cerca" style="margin:8px 0;display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
 	  			<label>'.__("Riferimento","albo-pretorio-considera").' <input type="search" name="f_riferimento" value="'.esc_attr($f_rif).'"/></label>
 	  			<label>'.__("Numero","albo-pretorio-considera").' <input type="search" name="f_numero" size="10" value="'.esc_attr($f_num).'" placeholder="'.esc_attr__("anche parziale","albo-pretorio-considera").'"/></label>
-	  			<label>'.__("Categoria","albo-pretorio-considera").' '.ap_get_dropdown_ricerca_categorie("f_categoria","f_categoria","","",$f_cat).'</label>
+	  			<label>'.__("Categoria","albo-pretorio-considera").' '.albopc_get_dropdown_ricerca_categorie("f_categoria","f_categoria","","",$f_cat).'</label>
 	  		</div>'; /* mr */
 	    	$tablenew->search_box(__("Cerca in Oggetto","albo-pretorio-considera"),'search_id'); /* mr  */
 	    	$tablenew->views();

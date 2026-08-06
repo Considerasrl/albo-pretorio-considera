@@ -32,7 +32,7 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 		<a href="?page=tipifiles" class="add-new-h2"><?php esc_html_e("Aggiungi nuovo","albo-pretorio-considera");?></a></h2>
 	</div>
 <?php
-$lista=ap_get_tipidifiles(); 
+$lista=albopc_get_tipidifiles(); 
 $NC="";
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-tipidifiles"){
 	if (!isset($_REQUEST['canctipfil'])) {
@@ -41,7 +41,7 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-tipidifiles"){
 		if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['canctipfil'])),'deletetipidifiles')){
 			$NC=$messages[80];
 		}else{
-			$risultato=ap_del_tipidifiles((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
+			$risultato=albopc_del_tipidifiles((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
 			if(is_array($risultato)){
 				/* translators: %s: numero di atti che utilizzano il tipo di file */
 				$NC=sprintf(__("Il Tipo di File non può essere cancellato perchè ci sono %s atti che lo utilizzano","albo-pretorio-considera"),$risultato["atti"]);
@@ -79,7 +79,7 @@ echo '<tr>
         	<td>
 			<ul>';
 if ($lista){
-	$Tipi=ap_num_tipidifiles_atti();
+	$Tipi=albopc_num_tipidifiles_atti();
 	foreach($lista as $TipoFile =>$riga){
 		echo'<li style="text-align:left;padding-left:1px;">';
 		$Tab=0;
@@ -106,7 +106,7 @@ echo '</td>
 </div>
 <div class="col-wrap">
 <h3>Log</h3>';
-$righe=ap_get_all_Oggetto_log(8);
+$righe=albopc_get_all_Oggetto_log(8);
 echo'
 	<table class="widefat">
 	    <thead>
@@ -138,7 +138,7 @@ foreach ($righe as $riga) {
 echo '    </tbody>
 	</table>
 </div>';
-$IDTipo=isset($_REQUEST['id'])?ap_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['id']))):"";
+$IDTipo=isset($_REQUEST['id'])?albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['id']))):"";
 ?>
 </div><!-- /col-right -->
 

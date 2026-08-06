@@ -24,8 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 
 if ( ! defined( 'AP_VERSION' ) ) {
-	$ap_plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
-	define( 'AP_VERSION', $ap_plugin_data['Version'] );
+	$albopc_plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
+	define( 'AP_VERSION', $albopc_plugin_data['Version'] );
 }
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- il plugin opera su tabelle custom proprie: nessuna API core equivalente, il caching non si applica alle query amministrative e di scrittura.
@@ -53,9 +53,9 @@ if (isset($_REQUEST['action'])){
 				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				break;
 			} 			
-			ap_crearobots();
+			albopc_crearobots();
 			$newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
-			ap_NoIndexNoDirectLink($newPathAllegati);
+			albopc_NoIndexNoDirectLink($newPathAllegati);
 			wp_safe_redirect("?page=Albo_Pretorio");
 			break;
 	}
@@ -98,10 +98,10 @@ if (!class_exists('AlboPretorio')) {
 		add_action('template_redirect', array($this, 'Gestione_Link'));
 		add_filter('set-screen-option', array($this, 'atti_set_option'), 10, 3);
 		add_filter( 'the_content', array($this, 'VisualizzaTabellaInAVCP'),10,1);
-		add_action( 'wp_ajax_MemoFunzioni','ap_MemoFunzioni' );
-		add_action( 'wp_ajax_LoadDefaultFunzioni','ap_LoadDefaultFunzioni' );
-		add_action( 'wp_ajax_dismiss_alboonline_notice','ap_dismiss_alboonline_notice' );
-		add_action( 'wp_ajax_rimuoviAllegato','ap_rimuoviallegatoPP' );
+		add_action( 'wp_ajax_MemoFunzioni','albopc_MemoFunzioni' );
+		add_action( 'wp_ajax_LoadDefaultFunzioni','albopc_LoadDefaultFunzioni' );
+		add_action( 'wp_ajax_dismiss_alboonline_notice','albopc_dismiss_alboonline_notice' );
+		add_action( 'wp_ajax_rimuoviAllegato','albopc_rimuoviallegatoPP' );
 
 		add_filter( 'post_link',array($this,'permalinkSearchAlbo'), 10, 3);
 		$RestApi=get_option('opt_AP_RestApi');
@@ -256,7 +256,7 @@ function admin_notice(){
 	function rest_api_atto_get_byID($request){
 		$Atto=array();
 		$IDAtto=$request->get_param("id");
-		$risultato=ap_get_atto($IDAtto);
+		$risultato=albopc_get_atto($IDAtto);
 		if(count($risultato)==0){
 			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-considera'), array( 'status' => 404 ) );
   		}
@@ -266,7 +266,7 @@ function admin_notice(){
 		$Atto=array();
 		$NumeroAtto=$request->get_param("num");
 		$AnnoAtto=$request->get_param("anno");
-		$risultato=ap_get_all_atti(0,$NumeroAtto,$AnnoAtto);
+		$risultato=albopc_get_all_atti(0,$NumeroAtto,$AnnoAtto);
 		if(count($risultato)==0){
 			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-considera'), array( 'status' => 404 ) );
   		}
@@ -276,7 +276,7 @@ function admin_notice(){
 	function REST_API_get_atto($risultato){
 		$risultato=$risultato[0];
 		$IdAtto=$risultato->IdAtto;
-		$DatiAtto=ap_get_atto($IdAtto);
+		$DatiAtto=albopc_get_atto($IdAtto);
 		$DatiCategoria=array();
 		$DatiEnte=array();
 		$DatiSoggetti=array();
@@ -284,13 +284,13 @@ function admin_notice(){
 		$Meta="";
 		foreach($DatiAtto as $D_Atto){
 //Categoria Atto
-			$D_Catergoria=ap_get_categoria($D_Atto->IdCategoria);
+			$D_Catergoria=albopc_get_categoria($D_Atto->IdCategoria);
 			$D_Catergoria=$D_Catergoria[0];
 			$DatiCategoria["Nome"]          =$D_Catergoria->Nome;
 			$DatiCategoria["Descrizione"]	=$D_Catergoria->Descrizione;
 //Fine Categoria Atto
 //Ente Atto
-			$D_Ente=ap_get_ente($D_Atto->Ente);
+			$D_Ente=albopc_get_ente($D_Atto->Ente);
 			$DatiEnte["Nome"]       =$D_Ente->Nome;
 			$DatiEnte["Indirizzo"]	=$D_Ente->Indirizzo;
 			$DatiEnte["Url"]		=$D_Ente->Url;
@@ -303,10 +303,10 @@ function admin_notice(){
 // Soggetti
 			$Soggetti=unserialize($D_Atto->Soggetti, array('allowed_classes'=>false));
 			if($Soggetti){
-				$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+				$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 				$Ruolo="";
 				foreach($Soggetti as $Soggetto){
-					if(ap_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
+					if(albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
 						continue;
 					}
 					$DatiSoggetti[$Soggetto->IdResponsabile]=array(
@@ -317,15 +317,15 @@ function admin_notice(){
 						"Orario" 	=>$Soggetto->Orario,
 						"Note" 		=>$Soggetto->Note,
 						"CodFun" 	=>$Soggetto->Funzione,
-						"Funzione"	=>ap_get_Funzione_Responsabile($Soggetto->Funzione,__('Descrizione','albo-pretorio-considera')));
+						"Funzione"	=>albopc_get_Funzione_Responsabile($Soggetto->Funzione,__('Descrizione','albo-pretorio-considera')));
 				}				
 			}
 
 
 // Fine Soggetti
 // Allegati
-			$allegatiatto=ap_get_all_allegati_atto($IdAtto);
-			$TipidiFiles=ap_get_tipidifiles();
+			$allegatiatto=albopc_get_all_allegati_atto($IdAtto);
+			$TipidiFiles=albopc_get_tipidifiles();
 			$sep="?";
 			$PagAlboCor=get_option('opt_AP_PAttiCor');
 			$PagAlboSto=get_option('opt_AP_PAttiSto');
@@ -333,20 +333,20 @@ function admin_notice(){
 				if (strpos($PagAlboCor,"?")>0)
 					$sep="&amp;";
 			foreach ($allegatiatto as $allegato) {
-				$Estensione=ap_ExtensionType($allegato->Allegato);
+				$Estensione=albopc_ExtensionType($allegato->Allegato);
 				if($Estensione!="ndf" && isset($TipidiFiles[$Estensione])){
 					$Icona=$TipidiFiles[$Estensione]['Icona'];
 					$TipoFile=$TipidiFiles[$Estensione]['Descrizione'];
 				}else{
 					// tipo non registrato: icona di ripiego per estensione nota
-					$Fallback=ap_icona_fallback_tipo(pathinfo($allegato->Allegato, PATHINFO_EXTENSION));
+					$Fallback=albopc_icona_fallback_tipo(pathinfo($allegato->Allegato, PATHINFO_EXTENSION));
 					$Icona=$Fallback['Icona'];
 					$TipoFile=$Fallback['Descrizione'];
 				}
 				if (is_file($allegato->Allegato)){
-					$Link=ap_DaPath_a_URL($allegato->Allegato);
-					$Rel=(ap_is_atto_corrente($IdAtto)?$PagAlboCor:$PagAlboSto).$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$IdAtto;
-					$Dimensione=ap_Formato_Dimensione_File(filesize($allegato->Allegato));
+					$Link=albopc_DaPath_a_URL($allegato->Allegato);
+					$Rel=(albopc_is_atto_corrente($IdAtto)?$PagAlboCor:$PagAlboSto).$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$IdAtto;
+					$Dimensione=albopc_Formato_Dimensione_File(filesize($allegato->Allegato));
 					
 				}
 				$Allegati[]=array("Titolo"		=>$allegato->TitoloAllegato,
@@ -359,7 +359,7 @@ function admin_notice(){
 								  "Rel"			=>$Rel);
 			}
 // Fine Allegati
-			$MetaDati=ap_get_meta_atto($IdAtto);	
+			$MetaDati=albopc_get_meta_atto($IdAtto);	
 			if($MetaDati!==FALSE){
 				foreach($MetaDati as $Metadato){
 					$Meta.=$Metadato->Meta."=".$Metadato->Value."<br />";
@@ -390,22 +390,22 @@ function admin_notice(){
 	function rest_api_statistiche_get($request){
 		global $wpdb;
 		$Statistiche=array();
-	  	$n_atti_attivi =ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true);	
-	  	$n_atti_storico=ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true);
-	  	$n_atti_attivi_ANN =ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true,true);	
-	  	$n_atti_storico_ANN=ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true,true);
+	  	$n_atti_attivi =albopc_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true);	
+	  	$n_atti_storico=albopc_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true);
+	  	$n_atti_attivi_ANN =albopc_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true,true);	
+	  	$n_atti_storico_ANN=albopc_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true,true);
 		$Statistiche=array(
-					"num_Categorie"				=>ap_num_categorie(),
+					"num_Categorie"				=>albopc_num_categorie(),
 					"num_AttiCorrenti"	 		=>$n_atti_attivi,
 					"num_AttiStorico"			=>$n_atti_storico,
 					"num_AttiCorrenti_Annullati"=>$n_atti_attivi_ANN,
 					"num_AttiStorico_Annullati"	=>$n_atti_storico_ANN,
-					"num_Allegati"				=>ap_num_allegati());
+					"num_Allegati"				=>albopc_num_allegati());
 		return new WP_REST_Response($Statistiche, 200 );
 	}
 	function rest_api_categorie_get($request){
 		$Categorie=array();
-		$ArrCategorie=ap_get_categorie();
+		$ArrCategorie=albopc_get_categorie();
 		foreach($ArrCategorie as $Categoria){
 			$Categorie[$Categoria->IdCategoria]=array(
 					"Nome"			=>$Categoria->Nome,
@@ -416,7 +416,7 @@ function admin_notice(){
 	}
 	function rest_api_enti_get($request){
 		$Enti=array();
-		$ArrEnti=ap_get_enti();
+		$ArrEnti=albopc_get_enti();
 		foreach($ArrEnti as $Ente){
 			$Enti[$Ente->IdEnte]=array(
 					"Nome"			=>$Ente->Nome,
@@ -459,8 +459,8 @@ function admin_notice(){
 		$Da=($Pag-1)*$N_A_pp;
 		$A=$N_A_pp;
 	}
-	$TotAtti=ap_get_all_atti($Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'',0,0,true,false,$Riferimento,$Ente);
-	$ListaAtti=ap_get_all_atti($Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 			
+	$TotAtti=albopc_get_all_atti($Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'',0,0,true,false,$Riferimento,$Ente);
+	$ListaAtti=albopc_get_all_atti($Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 			
 			
 	if($N_A_pp>0){
 		$Npag=(int)($TotAtti/$N_A_pp);
@@ -478,7 +478,7 @@ function admin_notice(){
 			$sep="?";
 		$Atti=array();
 		foreach($ListaAtti as $riga){
-			$MetaDati=ap_get_meta_atto($riga->IdAtto);
+			$MetaDati=albopc_get_meta_atto($riga->IdAtto);
 			$Meta="";
 			if($MetaDati!==FALSE){
 				foreach($MetaDati as $Metadato){
@@ -493,11 +493,11 @@ function admin_notice(){
 			$Atti[$riga->IdAtto]["DataInizio"]=$riga->DataInizio;
 			$Atti[$riga->IdAtto]["DataFine"]=$riga->DataFine;
 			$Atti[$riga->IdAtto]["Informazioni"]=$riga->Informazioni;
-			$Categoria=ap_get_categoria($riga->IdCategoria);
+			$Categoria=albopc_get_categoria($riga->IdCategoria);
 			$Atti[$riga->IdAtto]["Categoria"]=$Categoria[0]->Nome;
 			$Atti[$riga->IdAtto]["DataAnnullamento"]=$riga->DataAnnullamento;
 			$Atti[$riga->IdAtto]["MotivoAnnullamento"]=$riga->MotivoAnnullamento;
-			$Atti[$riga->IdAtto]["Ente"]=ap_get_ente($riga->Ente);
+			$Atti[$riga->IdAtto]["Ente"]=albopc_get_ente($riga->Ente);
 			$Atti[$riga->IdAtto]["Metadati"]=stripslashes($Meta);
 			$Atti[$riga->IdAtto]["DataOblio"]=$riga->DataOblio;
 			$Atti[$riga->IdAtto]["Link"]=$PagAlbo.$sep.'numero='.$riga->Numero.'&anno='.$riga->Anno.'&titolo=';
@@ -530,7 +530,7 @@ function admin_notice(){
 					        Non puoi accedere a questo file direttamente.','albo-pretorio-considera')));
 					break;
 				}
-				$Allegato	= ap_get_allegato_atto(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')));
+				$Allegato	= albopc_get_allegato_atto(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')));
 				if (empty($Allegato))
 					wp_die(esc_html__("Allegato non trovato","albo-pretorio-considera"));
 				$file_path	=$Allegato[0]->Allegato;
@@ -544,10 +544,10 @@ function admin_notice(){
 				   DataOblio>oggi. Il valore '0000-00-00' significa "non impostato"
 				   e non deve bloccare. Gli atti annullati restano scaricabili,
 				   coerentemente con il fatto che il front-end li mostra ancora. */
-				$Atto = ap_get_atto((int)$Allegato[0]->IdAtto);
+				$Atto = albopc_get_atto((int)$Allegato[0]->IdAtto);
 				if (!empty($Atto)) {
 					$Atto = $Atto[0];
-					$Oggi = ap_oggi();
+					$Oggi = albopc_oggi();
 					$NonPubblicato = ($Atto->DataInizio!="0000-00-00" And $Atto->DataInizio>$Oggi);
 					$OltreOblio    = ($Atto->DataOblio !="0000-00-00" And $Atto->DataOblio <=$Oggi);
 					if ($NonPubblicato Or $OltreOblio)
@@ -559,7 +559,7 @@ function admin_notice(){
 				/* Il log va scritto PRIMA di inviare il file: dopo l'invio del corpo
 				   qualsiasi output aggiuntivo corromperebbe il download. */
 				if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))) and isset($_REQUEST['idAtto']) and is_numeric(sanitize_text_field(wp_unslash($_REQUEST['idAtto'] ?? ''))))
-					ap_insert_log(6,5,(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),"Download",(isset($_REQUEST['idAtto'])?(int)$_REQUEST['idAtto']:0));
+					albopc_insert_log(6,5,(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),"Download",(isset($_REQUEST['idAtto'])?(int)$_REQUEST['idAtto']:0));
 				/* Scarta tutto l'output gia' prodotto da tema o altri plugin (righe vuote
 				   dopo il ?>, BOM, avvisi PHP): finirebbe in testa al file scaricato e,
 				   sommandosi al Content-Length dichiarato, lo troncherebbe in coda. */
@@ -679,14 +679,14 @@ function admin_notice(){
 	function CreaStatistiche($IdAtto,$Oggetto){
 		switch($Oggetto){
 			case 5: 
-					$righe=ap_get_Stat_Visite($IdAtto);
-					$righeTot=ap_get_Stat_VisiteRagg($IdAtto);
+					$righe=albopc_get_Stat_Visite($IdAtto);
+					$righeTot=albopc_get_Stat_VisiteRagg($IdAtto);
 					$righe=array_merge($righeTot,$righe);
 					break;
-			case 6: $righe=ap_get_Stat_Download($IdAtto);break;
+			case 6: $righe=albopc_get_Stat_Download($IdAtto);break;
 		}
 		$HtmlTesto='
-				<h3>Totale '.($Oggetto==5?"Visualizzazioni":"Download").' Allegati '.ap_get_Stat_Num_log($IdAtto,$Oggetto).'</h3>
+				<h3>Totale '.($Oggetto==5?"Visualizzazioni":"Download").' Allegati '.albopc_get_Stat_Num_log($IdAtto,$Oggetto).'</h3>
 				<table class="widefat striped">
 				    <thead>
 					<tr>
@@ -707,7 +707,7 @@ function admin_notice(){
 				else
 					$Allegato="";
 				$HtmlTesto.= '<tr >
-							<td >'.ap_VisualizzaData($riga->Data).'</td>
+							<td >'.albopc_VisualizzaData($riga->Data).'</td>
 							<td >'.$TitoloAllegato.'</td>
 							<td width="30%">'.$Allegato.'</td>
 							<td >'.$riga->Accessi.'</td>
@@ -803,10 +803,10 @@ static function add_albo_plugin_visatto($plugin_array) {
 		$HtmlTesto='';
 		switch ($Tipo){
 			case 1:
-				$righe=ap_get_all_Oggetto_log($Tipo,$IdOggetto);
+				$righe=albopc_get_all_Oggetto_log($Tipo,$IdOggetto);
 				break;
 			case 3:
-				$righe=ap_get_all_Oggetto_log($Tipo,0,$IdOggetto);
+				$righe=albopc_get_all_Oggetto_log($Tipo,0,$IdOggetto);
 				break;
 			case 5:
 			case 6:
@@ -843,9 +843,9 @@ static function add_albo_plugin_visatto($plugin_array) {
 					break;
 			}
 			$HtmlTesto.= '<tr  title="'.$riga->Utente.' da '.$riga->IPAddress.'">
-						<td >'.ap_VisualizzaData($riga->Data)." ".ap_VisualizzaOra($riga->Data).'</td>
+						<td >'.albopc_VisualizzaData($riga->Data)." ".albopc_VisualizzaOra($riga->Data).'</td>
 						<td >'.$Operazione.'</td>
-						<td >'.stripslashes(ap_removeCaratteriSpeciali($riga->Operazione)).'</td>
+						<td >'.stripslashes(albopc_removeCaratteriSpeciali($riga->Operazione)).'</td>
 					</tr>';
 		}
 		$HtmlTesto.= '    </tbody>
@@ -865,7 +865,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 		$parametri_page=add_submenu_page( 'Albo_Pretorio', 'Generale', __('Parametri','albo-pretorio-considera'), 'admin_albo', 'configAlboP', array( 'AlboPretorio','show_menu'));
 		$permessi=add_submenu_page( 'Albo_Pretorio', 'Permessi', __('Permessi','albo-pretorio-considera'), 'admin_albo', 'permessiAlboP', array('AlboPretorio', 'show_menu'));
 		$utility=add_submenu_page( 'Albo_Pretorio', 'Utility', __('Utility','albo-pretorio-considera'), 'admin_albo', 'utilityAlboP', array('AlboPretorio', 'show_menu'));
-		add_action( 'admin_head-'. $atti_page, array( 'AlboPretorio','ap_head' ));
+		add_action( 'admin_head-'. $atti_page, array( 'AlboPretorio','albopc_head' ));
 		add_action( "load-$atti_page", array('AlboPretorio', 'screen_option'));
 
 }
@@ -946,7 +946,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 ################################################################################
 
 
-	static function ap_head() {
+	static function albopc_head() {
 /*		global $wp_db_version, $wp_dlm_root;
 		?>
 <script language="JavaScript">
@@ -1127,24 +1127,24 @@ static function add_albo_plugin_visatto($plugin_array) {
 		if(!is_file(APHomePath."/robots.txt"))
 			$oblio=FALSE;	
 		$Cartella=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
-		//$permessi=ap_get_fileperm($Cartella);		
-		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+		//$permessi=albopc_get_fileperm($Cartella);		
+		$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 		$StatoCartella="";
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
 		$Cartella=AlboBCK;
-		//$permessi=ap_get_fileperm($Cartella);		
-		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+		//$permessi=albopc_get_fileperm($Cartella);		
+		$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
 		$Cartella=AlboBCK.'/BackupDatiAlbo';
-		//$permessi=ap_get_fileperm($Cartella);		
-		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+		//$permessi=albopc_get_fileperm($Cartella);		
+		$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
 		$Cartella=AlboBCK.'/OblioDatiAlbo';
-		//$permessi=ap_get_fileperm($Cartella);		
-		$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+		//$permessi=albopc_get_fileperm($Cartella);		
+		$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 		if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
 			$StatoCartella=$Cartella."<br />";
 		echo ' <div class="my-welcome-panel">
@@ -1217,7 +1217,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 	echo '</tr>
 			<tr>
 				<th scope="row">'.__("Diritto all'oblio",'albo-pretorio-considera').'</th>';
-	if ($oblio And ap_VerificaRobots() And ap_VerificaOblio()){
+	if ($oblio And albopc_VerificaRobots() And albopc_VerificaOblio()){
  		echo'<td><span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span></td>
 		     <td></td>
 			 <td></td>';
@@ -1246,7 +1246,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 		</table>
 		<p><em>'.__('per maggiori dettagli eseguire la verifica della procedura presente nel menu Utility','albo-pretorio-considera').'</em></p>
 	</div>';
-if (ap_get_num_categorie()==0) {
+if (albopc_get_num_categorie()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
@@ -1254,7 +1254,7 @@ if (ap_get_num_categorie()==0) {
 				</div>
 			</div>';
 }
-if (ap_num_responsabili()==0) {
+if (albopc_num_responsabili()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 					<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
@@ -1262,7 +1262,7 @@ if (ap_num_responsabili()==0) {
 				</div>
 			</div>';
 }
-if (ap_num_unitao()==0) {
+if (albopc_num_unitao()==0) {
 	echo'<div class="my-welcome-panel" >
 			<div class="widefat" >
 				<p style="text-align:center;font-size:1.2em;font-weight: bold;color: green;">
@@ -1300,7 +1300,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			$stato="<div id='setting-error-settings_updated' class='updated settings-error'> 
 				<p><strong>".__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera")."</strong></p></div>";
 	  $current_user 		= wp_get_current_user();
-	  $ente   				= stripslashes(ap_get_ente_me());
+	  $ente   				= stripslashes(albopc_get_ente_me());
 	  $entedefault			= get_option('opt_AP_DefaultEnte');
 	  $nprog  				= get_option('opt_AP_NumeroProgressivo');
 	  $nanno				= get_option('opt_AP_AnnoProgressivo');
@@ -1441,7 +1441,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			</tr>
 			<tr>
 				<th scope="row"><label for="defEnte">'.__('Ente di default','albo-pretorio-considera').'</label></th>
-				<td>'.ap_get_dropdown_enti('defEnte',__('Ente','albo-pretorio-considera'),'postform','',$entedefault).'</td>
+				<td>'.albopc_get_dropdown_enti('defEnte',__('Ente','albo-pretorio-considera'),'postform','',$entedefault).'</td>
 			</tr>
 			<tr>
 				<th scope="row"><label for="visente">'.__('Visualizza Nome Ente','albo-pretorio-considera').'</label></th>
@@ -1486,7 +1486,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			<tr>
 				<th scope="row"><label>'.__('Numero Progressivo','albo-pretorio-considera').'</label></th>
 				<td><strong> ';
-				if(ap_get_all_atti(0,0,0,0,'',0,0,"",0,0,TRUE,FALSE)==0)
+				if(albopc_get_all_atti(0,0,0,0,'',0,0,"",0,0,TRUE,FALSE)==0)
 					echo '<input type="text" id="progressivo" name="progressivo" value="'.esc_attr($nprog).'" size="5"/>';
 				else
 					echo $nprog;
@@ -1765,20 +1765,20 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 				<tr>
 					<th scope="row"><label>'.__('Responsabile Giudirico Amministrativo','albo-pretorio-considera').'</label></th>
 					<td>'.
-					ap_get_dropdown_responsabili("resp_giu_am","resp_giu_am","ElencoSoggetti","",(isset($DefaultSoggetti["AM"])?$DefaultSoggetti["AM"]:0),array("SC","DR"))
+					albopc_get_dropdown_responsabili("resp_giu_am","resp_giu_am","ElencoSoggetti","",(isset($DefaultSoggetti["AM"])?$DefaultSoggetti["AM"]:0),array("SC","DR"))
 					.'</td>
 				</tr>	
 				<tr>
 					<th scope="row"><label>'.__('Responsabile Procedimento','albo-pretorio-considera').'</label></th>
 					<td>'.
-					ap_get_dropdown_responsabili("resp_giu_rp","resp_giu_rp","ElencoSoggetti","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP")
+					albopc_get_dropdown_responsabili("resp_giu_rp","resp_giu_rp","ElencoSoggetti","",(isset($DefaultSoggetti["RP"])?$DefaultSoggetti["RP"]:0),"RP")
 					.'	
 					</td>
 				</tr>	
 				<tr>
 					<th scope="row"><label>'.__('Responsabile Pubblicazione','albo-pretorio-considera').'</label></th>
 					<td>'.
-					ap_get_dropdown_responsabili("resp_giu_rb","resp_giu_rb","ElencoSoggetti","",(isset($DefaultSoggetti["RB"])?$DefaultSoggetti["RB"]:0),"RB")
+					albopc_get_dropdown_responsabili("resp_giu_rb","resp_giu_rb","ElencoSoggetti","",(isset($DefaultSoggetti["RB"])?$DefaultSoggetti["RB"]:0),"RB")
 					.'	
 						
 					</td>
@@ -2134,7 +2134,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 		if (get_option('opt_AP_FolderUpload')!='AllegatiAttiAlboPretorio')
 			update_option('opt_AP_FolderUpload', 'AllegatiAttiAlboPretorio');
 	}
-	ap_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');	
+	albopc_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');	
 	if(get_option('opt_AP_VisualizzaEnte') == '' || !get_option('opt_AP_VisualizzaEnte')){
 		add_option('opt_AP_VisualizzaEnte', 'Si');
 	}
@@ -2207,88 +2207,88 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 		delete_option('opt_AP_EffettiCSS3');
 		delete_option( 'opt_AP_stileTableFE' );  
 
-		ap_CreaTabella($wpdb->table_name_Atti);
-		ap_CreaTabella($wpdb->table_name_Categorie);
-		ap_CreaTabella($wpdb->table_name_Allegati);
-		ap_CreaTabella($wpdb->table_name_Log);
-		ap_CreaTabella($wpdb->table_name_RespProc);
-		ap_CreaTabella($wpdb->table_name_Enti);		
-		ap_CreaTabella($wpdb->table_name_Attimeta);
-		ap_CreaTabella($wpdb->table_name_UO);
+		albopc_CreaTabella($wpdb->table_name_Atti);
+		albopc_CreaTabella($wpdb->table_name_Categorie);
+		albopc_CreaTabella($wpdb->table_name_Allegati);
+		albopc_CreaTabella($wpdb->table_name_Log);
+		albopc_CreaTabella($wpdb->table_name_RespProc);
+		albopc_CreaTabella($wpdb->table_name_Enti);		
+		albopc_CreaTabella($wpdb->table_name_Attimeta);
+		albopc_CreaTabella($wpdb->table_name_UO);
 /*************************************************************************************
 ** Area riservata per l'aggiunta di nuovi campi in una delle tabelle dell' albo ******
 *************************************************************************************/
- 		if(ap_get_ente_me() == '' || !ap_get_ente(0)){
-			ap_create_ente_me();
+ 		if(albopc_get_ente_me() == '' || !albopc_get_ente(0)){
+			albopc_create_ente_me();
 		}         
-		if (!ap_existFieldInTable($wpdb->table_name_RespProc, "Funzione")){
-			ap_AggiungiCampoTabella($wpdb->table_name_RespProc, "Funzione", " CHAR(8) DEFAULT 'RP'");		
+		if (!albopc_existFieldInTable($wpdb->table_name_RespProc, "Funzione")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_RespProc, "Funzione", " CHAR(8) DEFAULT 'RP'");		
 		}		
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "TipoFile")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "TipoFile", " VARCHAR(6) DEFAULT ''");
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "TipoFile")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "TipoFile", " VARCHAR(6) DEFAULT ''");
 		}	
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "Soggetti")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "Soggetti", " VARCHAR(100) NOT NULL");			
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "Soggetti")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "Soggetti", " VARCHAR(100) NOT NULL");			
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "RespProc")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "RespProc", " INT NOT NULL");				
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "RespProc")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "RespProc", " INT NOT NULL");				
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "DataOblio")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "DataOblio", " date NOT NULL DEFAULT '0000-00-00'");
-			ap_SetDefaultDataScadenza();
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "DataOblio")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "DataOblio", " date NOT NULL DEFAULT '0000-00-00'");
+			albopc_SetDefaultDataScadenza();
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "MotivoAnnullamento")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "MotivoAnnullamento", " varchar(100) default ''");
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "MotivoAnnullamento")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "MotivoAnnullamento", " varchar(100) default ''");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "Ente")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "Ente", " INT NOT NULL default 0");
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "Ente")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "Ente", " INT NOT NULL default 0");
 		}
 
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "IdUnitaOrganizzativa")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "IdUnitaOrganizzativa", " INT NOT NULL default 0");
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "IdUnitaOrganizzativa")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "IdUnitaOrganizzativa", " INT NOT NULL default 0");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Atti, "Richiedente")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Atti, "Richiedente", " varchar(100) NOT NULL default ''");
+		if (!albopc_existFieldInTable($wpdb->table_name_Atti, "Richiedente")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Atti, "Richiedente", " varchar(100) NOT NULL default ''");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "DocIntegrale")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "DocIntegrale", " tinyint(1) NOT NULL DEFAULT '1'");
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "DocIntegrale")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "DocIntegrale", " tinyint(1) NOT NULL DEFAULT '1'");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "Impronta")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "Impronta", " CHAR(64) NOT NULL");
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "Impronta")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "Impronta", " CHAR(64) NOT NULL");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "Natura")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "Natura", " CHAR(1) NOT NULL default 'A'");
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "Natura")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "Natura", " CHAR(1) NOT NULL default 'A'");
 		}
-		if (!ap_existFieldInTable($wpdb->table_name_Allegati, "Note")){
-			ap_AggiungiCampoTabella($wpdb->table_name_Allegati, "Note", " varchar(255) default ''");		
+		if (!albopc_existFieldInTable($wpdb->table_name_Allegati, "Note")){
+			albopc_AggiungiCampoTabella($wpdb->table_name_Allegati, "Note", " varchar(255) default ''");		
 		}		
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"Riferimento"))!="varchar(255)"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "Riferimento", "varchar(255)");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"Riferimento"))!="varchar(255)"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "Riferimento", "varchar(255)");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"Oggetto"))!="text"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "Oggetto", "TEXT");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"Oggetto"))!="text"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "Oggetto", "TEXT");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"MotivoAnnullamento"))!="varchar(255)"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "MotivoAnnullamento", "varchar(255)");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"MotivoAnnullamento"))!="varchar(255)"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "MotivoAnnullamento", "varchar(255)");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"Informazioni"))!="text"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "Informazioni", "TEXT");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"Informazioni"))!="text"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "Informazioni", "TEXT");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"Riferimento"))!="text"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "Riferimento", "TEXT");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"Riferimento"))!="text"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "Riferimento", "TEXT");
 		}
-		if (strtolower(ap_typeFieldInTable($wpdb->table_name_Atti,"MotivoAnnullamento"))!="text"){
-			ap_ModificaTipoCampo($wpdb->table_name_Atti, "MotivoAnnullamento", "TEXT");
+		if (strtolower(albopc_typeFieldInTable($wpdb->table_name_Atti,"MotivoAnnullamento"))!="text"){
+			albopc_ModificaTipoCampo($wpdb->table_name_Atti, "MotivoAnnullamento", "TEXT");
 		}
 
-//		ap_ModificaParametriCampo($Tabella, $Campo, $Tipo $Parametro)
-		$par=ap_EstraiParametriCampo($wpdb->table_name_Atti,"Riferimento");
+//		albopc_ModificaParametriCampo($Tabella, $Campo, $Tipo $Parametro)
+		$par=albopc_EstraiParametriCampo($wpdb->table_name_Atti,"Riferimento");
 		if(strtolower($par["Null"])=="yes")
-			ap_ModificaParametriCampo($wpdb->table_name_Atti, "Riferimento",$par["Type"] ,"NOT NULL");
-		$par=ap_EstraiParametriCampo($wpdb->table_name_Atti,"Oggetto");
+			albopc_ModificaParametriCampo($wpdb->table_name_Atti, "Riferimento",$par["Type"] ,"NOT NULL");
+		$par=albopc_EstraiParametriCampo($wpdb->table_name_Atti,"Oggetto");
 		if(strtolower($par["Null"])=="yes")
-			ap_ModificaParametriCampo($wpdb->table_name_Atti, "Oggetto",$par["Type"] ,"NOT NULL");    
-		ap_manutenzioneLogVisualizzazione();
+			albopc_ModificaParametriCampo($wpdb->table_name_Atti, "Oggetto",$par["Type"] ,"NOT NULL");    
+		albopc_manutenzioneLogVisualizzazione();
 	}  	 
 	
 	
@@ -2312,7 +2312,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['confAP'] ?? '')),'configurazionealbo')){
 				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 			}
-		    ap_set_ente_me(sanitize_text_field(wp_unslash($_POST['c_Ente'] ?? '')));
+		    albopc_set_ente_me(sanitize_text_field(wp_unslash($_POST['c_Ente'] ?? '')));
 			if (isset($_POST['c_VEnte']) And sanitize_text_field(wp_unslash($_POST['c_VEnte'] ?? '')) == 'Si')
 			    update_option('opt_AP_VisualizzaEnte','Si' );
 			else
@@ -2384,7 +2384,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 				update_option('opt_AP_RestApi_UrlEst', sanitize_text_field(wp_unslash($_POST['rest_api_urlest'] ?? '')));
 		  		if(sanitize_text_field(wp_unslash($_POST['rest_api_urlest'] ?? ''))!=$OldUrlEstRestApi ||
 		  		   sanitize_text_field(wp_unslash($_POST['rest_api'] ?? ''))!=$OldRestApi){
-		  			ap_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
+		  			albopc_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 		  		}
 		  	}else{
 		  		update_option('opt_AP_RestApi', ""); 

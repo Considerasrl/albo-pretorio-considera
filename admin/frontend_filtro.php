@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package    Albo On Line
  */
 function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
-	$anni=ap_get_dropdown_anni_atti('anno','anno','postform','',(isset($_REQUEST['anno'])?sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')):0),$Stato); 
-	$categorie=ap_get_dropdown_ricerca_categorie('categoria','categoria','postform','',(isset($_REQUEST['categoria'])?sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')):0),$Stato); 
-	ap_Bonifica_Url();
+	$anni=albopc_get_dropdown_anni_atti('anno','anno','postform','',(isset($_REQUEST['anno'])?sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')):0),$Stato); 
+	$categorie=albopc_get_dropdown_ricerca_categorie('categoria','categoria','postform','',(isset($_REQUEST['categoria'])?sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')):0),$Stato); 
+	albopc_Bonifica_Url();
 	if (strpos(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')),"?")>0)
 		$sep="&amp;";
 	else
@@ -22,13 +22,13 @@ function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
 	$HTML='		<form id="filtro-atti" action="'.htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))).'" method="post">
 	';
 			if (strpos(htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))),'page_id')>0){
-				$HTML.= '<input type="hidden" name="page_id" value="'.ap_Estrai_PageID_Url().'" />';
+				$HTML.= '<input type="hidden" name="page_id" value="'.albopc_Estrai_PageID_Url().'" />';
 			}	
 	$HTML.= '<input type="hidden" name="categoria" value="'.$cat.'" />
 				<table id="tabella-filtro-atti" class="tabella-dati-albo" >
 					<tr>
 						<th scope="row"><label for="ente">'.__("Ente","albo-pretorio-considera").'</label></th>
-						<td>'.ap_get_dropdown_enti("ente","ente","","",wp_strip_all_tags((isset($_REQUEST['ente'])?sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')):""))).'</td>
+						<td>'.albopc_get_dropdown_enti("ente","ente","","",wp_strip_all_tags((isset($_REQUEST['ente'])?sanitize_text_field(wp_unslash($_REQUEST['ente'] ?? '')):""))).'</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="numero">'.__("Atto N./Anno","albo-pretorio-considera").'</label></th>
@@ -69,14 +69,14 @@ function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
 					</ul>
 					<div id="fe-tab-1">';
 	$HTMLC.=$HTML;
-	$lista=ap_get_categorie_gerarchica();
+	$lista=albopc_get_categorie_gerarchica();
 	$HTMLL='
 	          <div class="ricercaCategoria">
 	              <ul style="list-style-type: none;">';
 	if ($lista){
 		foreach($lista as $riga){
 		 	$shift=(((int)$riga[2])*15);
-	   		$numAtti=ap_num_atti_categoria($riga[0],$Stato);
+	   		$numAtti=albopc_num_atti_categoria($riga[0],$Stato);
 		 	if (strpos(get_permalink(),"?")>0)
 		  		$sep="&amp;";
 	   		else

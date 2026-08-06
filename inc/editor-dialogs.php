@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * I due script del popup TinyMCE fanno parte del core e vanno inclusi nel
  * documento dell'iframe: non sono accodabili con wp_enqueue_script.
  */
-function ap_editor_dialog_head( $titolo ) {
+function albopc_editor_dialog_head( $titolo ) {
 	if ( ! current_user_can( 'edit_posts' ) ) {
 		wp_die( esc_html__( 'Non hai i permessi per accedere a questa risorsa.', 'albo-pretorio-considera' ) );
 	}
@@ -33,7 +33,7 @@ function ap_editor_dialog_head( $titolo ) {
 /**
  * Bottoni comuni Inserisci/Annulla a fondo dialog.
  */
-function ap_editor_dialog_footer() {
+function albopc_editor_dialog_footer() {
 	?>
 		<div style="float: left">
 			<input type="submit" id="insert" name="insert" value="<?php esc_attr_e( 'Inserisci', 'albo-pretorio-considera' ); ?>" onclick="insertAlboShortCode();" />
@@ -49,8 +49,8 @@ function ap_editor_dialog_footer() {
 /**
  * Dialog shortcode [Albo].
  */
-function ap_ajax_editor_dialog_albo() {
-	ap_editor_dialog_head( __( 'Albo OnLine', 'albo-pretorio-considera' ) );
+function albopc_ajax_editor_dialog_albo() {
+	albopc_editor_dialog_head( __( 'Albo OnLine', 'albo-pretorio-considera' ) );
 	?>
 	<script type="text/javascript">
 		function init() { tinyMCEPopup.resizeToInnerSize(); }
@@ -90,7 +90,7 @@ function ap_ajax_editor_dialog_albo() {
 	</script>
 	</head>
 	<body onload="tinyMCEPopup.executeOnLoad('init();');">
-	<?php $Ele_Cate = ap_get_dropdown_categorie( "Categoria", "Categoria", "", "", "Nessuna", TRUE, FALSE, TRUE ); ?>
+	<?php $Ele_Cate = albopc_get_dropdown_categorie( "Categoria", "Categoria", "", "", "Nessuna", TRUE, FALSE, TRUE ); ?>
 		<div class="mceActionPanel">
 			<form name="form" action="#" method="get" accept-charset="utf-8">
 				<p>
@@ -102,7 +102,7 @@ function ap_ajax_editor_dialog_albo() {
 				</p>
 				<p>
 					<label for="Categoria"><strong><?php esc_html_e( 'Categoria', 'albo-pretorio-considera' ); ?></strong></label>
-					<?php echo $Ele_Cate; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> generato internamente da ap_get_dropdown_categorie ?>
+					<?php echo $Ele_Cate; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> generato internamente da albopc_get_dropdown_categorie ?>
 				</p>
 				<p>
 					<label for="Filtri"><strong><?php esc_html_e( 'Visualizza Filtri', 'albo-pretorio-considera' ); ?></strong></label>
@@ -119,16 +119,16 @@ function ap_ajax_editor_dialog_albo() {
 			</form>
 		</div>
 	<?php
-	ap_editor_dialog_footer();
+	albopc_editor_dialog_footer();
 	exit;
 }
-add_action( 'wp_ajax_ap_editor_albo', 'ap_ajax_editor_dialog_albo' );
+add_action( 'wp_ajax_ap_editor_albo', 'albopc_ajax_editor_dialog_albo' );
 
 /**
  * Dialog shortcode [AlboGruppiAtti].
  */
-function ap_ajax_editor_dialog_gruppi() {
-	ap_editor_dialog_head( __( 'Albo OnLine gruppo atti', 'albo-pretorio-considera' ) );
+function albopc_ajax_editor_dialog_gruppi() {
+	albopc_editor_dialog_head( __( 'Albo OnLine gruppo atti', 'albo-pretorio-considera' ) );
 	?>
 	<script type="text/javascript">
 		function init() { tinyMCEPopup.resizeToInnerSize(); }
@@ -158,7 +158,7 @@ function ap_ajax_editor_dialog_gruppi() {
 				</p>
 				<p>
 					<label for="listaAttiMeta"><strong><?php esc_html_e( 'Meta Dati codificati', 'albo-pretorio-considera' ); ?></strong></label>
-					<?php echo ap_get_elenco_attimeta( "Select", "listaAttiMeta", "ListaAttiMeta", "Si" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> generato internamente da ap_get_elenco_attimeta ?>
+					<?php echo albopc_get_elenco_attimeta( "Select", "listaAttiMeta", "ListaAttiMeta", "Si" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> generato internamente da albopc_get_elenco_attimeta ?>
 				</p>
 				<p>
 					<label for="Value"><strong><?php esc_html_e( 'Valore Meta', 'albo-pretorio-considera' ); ?></strong></label><br />
@@ -167,16 +167,16 @@ function ap_ajax_editor_dialog_gruppi() {
 			</form>
 		</div>
 	<?php
-	ap_editor_dialog_footer();
+	albopc_editor_dialog_footer();
 	exit;
 }
-add_action( 'wp_ajax_ap_editor_gruppi', 'ap_ajax_editor_dialog_gruppi' );
+add_action( 'wp_ajax_ap_editor_gruppi', 'albopc_ajax_editor_dialog_gruppi' );
 
 /**
  * Dialog shortcode [AlboAtto].
  */
-function ap_ajax_editor_dialog_visatto() {
-	ap_editor_dialog_head( __( 'Albo OnLine visualizza atto', 'albo-pretorio-considera' ) );
+function albopc_ajax_editor_dialog_visatto() {
+	albopc_editor_dialog_head( __( 'Albo OnLine visualizza atto', 'albo-pretorio-considera' ) );
 	?>
 	<script type="text/javascript">
 		function init() { tinyMCEPopup.resizeToInnerSize(); }
@@ -199,7 +199,7 @@ function ap_ajax_editor_dialog_visatto() {
 	</head>
 	<body onload="tinyMCEPopup.executeOnLoad('init();');">
 	<?php
-	$Atti = ap_get_all_atti( 9, 0, 0, 0, '', 0, 0, $OrderBy = " Anno DESC, Numero DESC", 0, 0 );
+	$Atti = albopc_get_all_atti( 9, 0, 0, 0, '', 0, 0, $OrderBy = " Anno DESC, Numero DESC", 0, 0 );
 	?>
 		<div class="mceActionPanel">
 			<form name="form" action="#" method="get" accept-charset="utf-8">
@@ -218,7 +218,7 @@ function ap_ajax_editor_dialog_visatto() {
 			</form>
 		</div>
 	<?php
-	ap_editor_dialog_footer();
+	albopc_editor_dialog_footer();
 	exit;
 }
-add_action( 'wp_ajax_ap_editor_visatto', 'ap_ajax_editor_dialog_visatto' );
+add_action( 'wp_ajax_ap_editor_visatto', 'albopc_ajax_editor_dialog_visatto' );

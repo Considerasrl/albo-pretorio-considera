@@ -77,10 +77,10 @@ if(isset($_REQUEST['action'])){
         case 'printatto':
             if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
                 include_once(dirname (__FILE__) .'/stampe.php');
-                $AttoStampa = ap_get_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+                $AttoStampa = albopc_get_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
                 if (!empty($AttoStampa)) {
                     $AttoStampa = $AttoStampa[0];
-                    $Oggi = ap_oggi();
+                    $Oggi = albopc_oggi();
                     if (($AttoStampa->DataInizio!="0000-00-00" And $AttoStampa->DataInizio>$Oggi) Or ($AttoStampa->DataOblio!="0000-00-00" And $AttoStampa->DataOblio<=$Oggi))
                         wp_die(esc_html__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
                 }
@@ -102,7 +102,7 @@ if(isset($_REQUEST['action'])){
 			break;
 		case 'addstatall':
 			if(is_numeric(sanitize_text_field(wp_unslash($_GET['id'] ?? ''))) and is_numeric(sanitize_text_field(wp_unslash($_GET['idAtto'] ?? ''))))
-				ap_insert_log(5,5,(isset($_GET['id'])?(int)$_GET['id']:0),"Visualizzazione",(isset($_GET['idAtto'])?(int)$_GET['idAtto']:0));
+				albopc_insert_log(5,5,(isset($_GET['id'])?(int)$_GET['id']:0),"Visualizzazione",(isset($_GET['idAtto'])?(int)$_GET['idAtto']:0));
 			break;
 		default: 
 			if (isset($_REQUEST['filtra'])){
@@ -188,23 +188,23 @@ if(isset($_REQUEST['action'])){
 
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- template di rendering front-end [Albo]: markup fisso + label i18n del plugin, con i valori DB/utente escapati singolarmente (esc_html/esc_url/esc_attr) e input gia sanitizzato a monte; le variabili $Link/$classe contengono solo markup fisso + dati gia escapati.
 function VisualizzaAtto($id){
-	$risultato=ap_get_atto($id);
+	$risultato=albopc_get_atto($id);
 	$risultato=$risultato[0];
-	$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
+	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];
-	$Unitao=ap_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
+	$Unitao=albopc_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
 	if (isset($Unitao))
 		$UnitaoNome=$Unitao->Nome;
 	else
 		$UnitaoNome="";
-	$NomeResp=ap_get_responsabile($risultato->RespProc);
+	$NomeResp=albopc_get_responsabile($risultato->RespProc);
 	if (count($NomeResp)>0) {
 		$NomeResp=$NomeResp[0];
 		$NomeResp=stripslashes($NomeResp->Nome." ".$NomeResp->Cognome);
 	}
 	else
 		$NomeResp="";
-	ap_insert_log(5,5,$id,"Visualizzazione");
+	albopc_insert_log(5,5,$id,"Visualizzazione");
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
 echo '
 <div class="Visalbo">
@@ -221,7 +221,7 @@ echo '
 	    <tbody id="dati-atto">
 		<tr>
 			<th>'.esc_html__("Ente titolare dell'Atto","albo-pretorio-considera").'</th>
-			<td style="font-style: italic;font-size: 1.5em;vertical-align: middle;">'.esc_html(stripslashes(ap_get_ente($risultato->Ente)->Nome)).'</td>
+			<td style="font-style: italic;font-size: 1.5em;vertical-align: middle;">'.esc_html(stripslashes(albopc_get_ente($risultato->Ente)->Nome)).'</td>
 		</tr>
 		<tr>
 			<th>'.esc_html__("Numero Albo","albo-pretorio-considera").'</th>
@@ -237,19 +237,19 @@ echo '
 		</tr>
 		<tr>
 			<th>'.esc_html__("Data di registrazione","albo-pretorio-considera").'</th>
-			<td style="vertical-align: middle;">'.esc_html(ap_VisualizzaData($risultato->Data)).'</td>
+			<td style="vertical-align: middle;">'.esc_html(albopc_VisualizzaData($risultato->Data)).'</td>
 		</tr>
 		<tr>
 			<th>'.esc_html__("Data inizio Pubblicazione","albo-pretorio-considera").'</th>
-			<td style="vertical-align: middle;">'.esc_html(ap_VisualizzaData($risultato->DataInizio)).'</td>
+			<td style="vertical-align: middle;">'.esc_html(albopc_VisualizzaData($risultato->DataInizio)).'</td>
 		</tr>
 		<tr>
 			<th>'.esc_html__("Data fine Pubblicazione","albo-pretorio-considera").'</th>
-			<td style="vertical-align: middle;">'.esc_html(ap_VisualizzaData($risultato->DataFine)).'</td>
+			<td style="vertical-align: middle;">'.esc_html(albopc_VisualizzaData($risultato->DataFine)).'</td>
 		</tr>
 		<tr>
 			<th>'.esc_html__("Data oblio","albo-pretorio-considera").'</th>
-			<td style="vertical-align: middle;">'.esc_html(ap_VisualizzaData($risultato->DataOblio)).'</td>
+			<td style="vertical-align: middle;">'.esc_html(albopc_VisualizzaData($risultato->DataOblio)).'</td>
 		</tr>
 		<tr>
 			<th>'.esc_html__("Richiedente","albo-pretorio-considera").'</th>
@@ -267,7 +267,7 @@ echo '
 			<th>'.esc_html__("Categoria","albo-pretorio-considera").'</th>
 			<td style="vertical-align: middle;">'.esc_html(stripslashes($risultatocategoria->Nome)).'</td>
 		</tr>';
-$MetaDati=ap_get_meta_atto($id);
+$MetaDati=albopc_get_meta_atto($id);
 if($MetaDati!==FALSE){
 	$Meta="";
 	foreach($MetaDati as $Metadato){
@@ -289,20 +289,20 @@ echo'		<tr>
 $Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 $Ruolo="";
 if($Soggetti){
-	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	echo "		<h3 style=\"text-align:center;\">".__("Soggetti","albo-pretorio-considera")."</h3>";
 }else{
 	$Soggetti=array();
 }
 foreach($Soggetti as $Soggetto){
-	if(ap_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
+	if(albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
 		continue;
 	}
 	if($Soggetto->Funzione!=$Ruolo And $Ruolo!=""){
 		echo '</div>';
 	}
 	if($Soggetto->Funzione!=$Ruolo){
-		echo '<h4>'.esc_html(ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")).'</h4>
+		echo '<h4>'.esc_html(albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")).'</h4>
 	<div class="Visallegato">';
 	}
 	$Ruolo=$Soggetto->Funzione;
@@ -344,19 +344,19 @@ echo'
 if($Ruolo!=""){
 	echo '</div>';
 }
-$TipidiFiles=ap_get_tipidifiles();
+$TipidiFiles=albopc_get_tipidifiles();
 if (strpos(get_permalink(),"?")>0){
 	$sep="&";
 }else{
 	$sep="?";
 }
-$documenti=ap_get_documenti_atto($id);
+$documenti=albopc_get_documenti_atto($id);
 $StatoAllegati= get_option('opt_AP_Allegati');
 if(count($documenti)>0){
 	echo '<div class="postbox break-word" style="padding:0 10px 10px 10px;">
 		<h3>'. __("Documenti firmati","albo-pretorio-considera").'</h3>';
 	foreach ($documenti as $allegato) {
-		$Estensione=ap_ExtensionType($allegato->Allegato);
+		$Estensione=albopc_ExtensionType($allegato->Allegato);
 		echo '<div class="Visallegato">
 				<div class="Allegato">
 					<img src="'.esc_url($TipidiFiles[strtolower($Estensione)]['Icona']).'" alt="'.esc_attr($TipidiFiles[strtolower($Estensione)]['Descrizione']).'" height="30" width="30"allegato/>
@@ -368,9 +368,9 @@ if(count($documenti)>0){
 			echo' <p class="secondaColonna">'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-considera")).'</strong>: '.esc_html(wp_strip_all_tags($allegato->TitoloAllegato)).'<br /><strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Impronta).'<br />';
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.esc_url(ap_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" target="_blank" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'">
+						echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" target="_blank" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> '.
-						basename( $allegato->Allegato).'</a> ('.esc_html(ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')<br />';
+						basename( $allegato->Allegato).'</a> ('.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')<br />';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
 						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" >'.
@@ -392,12 +392,12 @@ if(count($documenti)>0){
 		}
 	echo '</div>';
 }	
-$allegati=ap_get_allegati_atto($id);
+$allegati=albopc_get_allegati_atto($id);
 if(count($allegati)>0){
 	echo '<div class="postbox break-word" style="padding:0 10px 10px 10px;">
 		<h3>'. __("Allegati","albo-pretorio-considera").'</h3>';
 	foreach ($allegati as $allegato) {
-		$Estensione=ap_ExtensionType($allegato->Allegato);
+		$Estensione=albopc_ExtensionType($allegato->Allegato);
 		echo '<div class="Visallegato">
 				<div class="Allegato">
 					<img src="'.esc_url($TipidiFiles[strtolower($Estensione)]['Icona']).'" alt="'.esc_attr($TipidiFiles[strtolower($Estensione)]['Descrizione']).'" height="30" width="30"allegato/>
@@ -409,8 +409,8 @@ if(count($allegati)>0){
 			echo '<p class="secondaColonna">'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-considera")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-considera")).'</strong>: '.esc_html(wp_strip_all_tags($allegato->TitoloAllegato)).'<br /><strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Impronta).'<br />';
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.esc_url(ap_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" target="_blank" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'">
-						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> '.esc_html(basename( $allegato->Allegato)).'</a> ('.esc_html(ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')<br />';
+						echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" target="_blank" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'">
+						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> '.esc_html(basename( $allegato->Allegato)).'</a> ('.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')<br />';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
 						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" >'.
@@ -464,7 +464,7 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 		$Categoria="";
 		$Categorie=explode(",",$Parametri['cat']);
 		foreach($Categorie as $Cate){
-			$DesCat=ap_get_categoria($Cate);
+			$DesCat=albopc_get_categoria($Cate);
 			$DesCategorie.=$DesCat[0]->Nome.",";
 			$Categoria.=$Cate.",";
 		}
@@ -494,8 +494,8 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
         $Ente = $_REQUEST['ente'];
 	}
 	//var_dump(intval($Dadata),intval($Adata));
-	$TotAtti=ap_get_all_atti($Parametri['stato'],intval($Numero),intval($Anno),$Categorie,$Oggetto,intval($Dadata),intval($Adata),'',0,0,true,false,$Riferimento,$Ente);
-	$lista=ap_get_all_atti($Parametri['stato'],intval($Numero),intval($Anno),$Categorie,$Oggetto,intval($Dadata),intval($Adata),'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 
+	$TotAtti=albopc_get_all_atti($Parametri['stato'],intval($Numero),intval($Anno),$Categorie,$Oggetto,intval($Dadata),intval($Adata),'',0,0,true,false,$Riferimento,$Ente);
+	$lista=albopc_get_all_atti($Parametri['stato'],intval($Numero),intval($Anno),$Categorie,$Oggetto,intval($Dadata),intval($Adata),'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 
 	$titEnte=get_option('opt_AP_LivelloTitoloEnte');
 	if ($titEnte=='')
 		$titEnte="h2";
@@ -609,7 +609,7 @@ echo '	</tr>
 			$sep="?";
 		foreach($lista as $riga){
 			$Link='<a href="'.esc_url(get_permalink().$sep.'action=visatto&id='.$riga->IdAtto).'"  style="text-decoration: underline;">';
-			$categoria=ap_get_categoria($riga->IdCategoria);
+			$categoria=albopc_get_categoria($riga->IdCategoria);
 			$cat=$categoria[0]->Nome;
 			$NumeroAtto=$riga->Numero;
 			$classe='';
@@ -628,12 +628,12 @@ echo '	</tr>
 			if ($FEColsOption['Data']==1)
 				echo '
 					<td '.$classe.'>
-						'.$Link.esc_html(ap_VisualizzaData($riga->Data)) .'</a>
+						'.$Link.esc_html(albopc_VisualizzaData($riga->Data)) .'</a>
 					</td>';
 			if ($FEColsOption['Ente']==1)
 				echo '
 					<td '.$classe.'>
-						'.$Link.$Link.esc_html(stripslashes(ap_get_ente($riga->Ente)->Nome)) .'</a>
+						'.$Link.$Link.esc_html(stripslashes(albopc_get_ente($riga->Ente)->Nome)) .'</a>
 					</td>';
 			if ($FEColsOption['Riferimento']==1)
 				echo '
@@ -648,7 +648,7 @@ echo '	</tr>
 			if ($FEColsOption['Validita']==1)
 				echo '								
 					<td '.$classe.'>
-						'.$Link.esc_html(ap_VisualizzaData($riga->DataInizio)) .'<br />'.esc_html(ap_VisualizzaData($riga->DataFine)) .'</a>  
+						'.$Link.esc_html(albopc_VisualizzaData($riga->DataInizio)) .'<br />'.esc_html(albopc_VisualizzaData($riga->DataFine)) .'</a>  
 					</td>';
 			if ($FEColsOption['Categoria']==1)
 				echo '								
@@ -663,7 +663,7 @@ echo '	</tr>
 			if ($FEColsOption['DataOblio']==1)
 				echo '
 					<td '.$classe.'>
-						'.$Link.esc_html(ap_VisualizzaData($riga->DataOblio)) .'</a>
+						'.$Link.esc_html(albopc_VisualizzaData($riga->DataOblio)) .'</a>
 					</td>';
 		echo '	
 				</tr>'; 

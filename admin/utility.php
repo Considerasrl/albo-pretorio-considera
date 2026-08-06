@@ -38,8 +38,8 @@ if (isset($_REQUEST['action'])){
 				menu($Stato);
 				break;
 			}
-			ap_set_ente_orfani(sanitize_text_field(wp_unslash($_REQUEST["Ente"] ?? '')));
-			$NewEnte=ap_get_ente(sanitize_text_field(wp_unslash($_REQUEST["Ente"] ?? '')));
+			albopc_set_ente_orfani(sanitize_text_field(wp_unslash($_REQUEST["Ente"] ?? '')));
+			$NewEnte=albopc_get_ente(sanitize_text_field(wp_unslash($_REQUEST["Ente"] ?? '')));
 			$Stato=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Tutti gli atti con %1\$s Ente non definito sono stati assegnati all'ente %2\$s %3\$s %4\$s ","albo-pretorio-considera"),'<span style="color:red;">',"</span>","<strong>",$NewEnte->Nome,"</strong>");
 			menu($Stato);
 			break;	
@@ -54,7 +54,7 @@ if (isset($_REQUEST['action'])){
 				menu($Stato);
 				break;
 			} 			
-			ap_crearobots();
+			albopc_crearobots();
 			menu();
 			break;
 		case "rip":
@@ -68,7 +68,7 @@ if (isset($_REQUEST['action'])){
 				break;
 			}
 //			echo "<pre>";var_dump($AttiDaAggiornare);echo "</pre>";
-			$AttiAggiornati=ap_ripubblica_atti_correnti($AttiDaAggiornare);
+			$AttiAggiornati=albopc_ripubblica_atti_correnti($AttiDaAggiornare);
 			if(count($AttiDaAggiornare)==$AttiAggiornati)
 				$Stato="Tutti gli Atti(".$AttiAggiornati.") sono stati agiornati";
 			else
@@ -80,7 +80,7 @@ if (isset($_REQUEST['action'])){
 			unset($_GET['action']);
 			break;
 		case "creafsic":
-			menu(ap_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload')));
+			menu(albopc_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload')));
 			unset($_POST['action']);
 			break;
 		case "posttrasf":
@@ -94,8 +94,8 @@ if (isset($_REQUEST['action'])){
 				menu($Stato);
 				break;
 			} 			
-			$Msg=ap_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload'))."<br />";
-			$Msg.=ap_allinea_allegati();
+			$Msg=albopc_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload'))."<br />";
+			$Msg.=albopc_allinea_allegati();
 			unset($_POST['action']);
 			menu($Msg);
 			break;
@@ -111,7 +111,7 @@ if (isset($_REQUEST['action'])){
 				break;
 			} 			
 			$Data=gmdate('Ymd_H_i_s');
-			$nf=ap_BackupDatiFiles($Data,"",AlboBCK,TRUE);
+			$nf=albopc_BackupDatiFiles($Data,"",AlboBCK,TRUE);
 /*			$filename=WP_CONTENT_DIR."/AlboOnLine/BackupDatiAlbo/tmp/msg.txt";
 			$fpmsg = @fopen($filename, "rb");
 				$Stato=fread($fpmsg,filesize($filename));
@@ -190,7 +190,7 @@ if (isset($_REQUEST['action'])){
 				menu($Stato);
 				break;
 			}
-			$Ris=ap_del_ip_log();
+			$Ris=albopc_del_ip_log();
 			if(is_numeric($Ris)){
 				menu(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("N° %s IP nel file di log CANCELLATI","albo-pretorio-considera"),$Ris));		
 			}else{
@@ -255,12 +255,12 @@ if (isset($_REQUEST['action'])){
 function ArchivioAllegati(){
 	if (isset($_POST["esBackup"]) And sanitize_text_field(wp_unslash($_POST["esBackup"] ?? '')) == "Si") {
 		echo "<h3>".__("Creazione Backup Albo OnLine","albo-pretorio-considera")."</h3>";
-		ap_BackupDatiFiles("Organizza_Archivio_Allegati_Mese_Anno",__("Modifica sistema archiviazione Allegati","albo-pretorio-considera"),AlboBCK,TRUE);
+		albopc_BackupDatiFiles("Organizza_Archivio_Allegati_Mese_Anno",__("Modifica sistema archiviazione Allegati","albo-pretorio-considera"),AlboBCK,TRUE);
 		echo "<h3>".__("Fine creazione Backup Albo OnLine","albo-pretorio-considera")."</h3>
 		<p>".__("Il backup si trova nella cartella","albo-pretorio-considera").": <strong>".AlboBCK."</strong></p>";
 	}
 	echo "<h3>".__("Spostamento Allegati Albo OnLine","albo-pretorio-considera")."</h3>";
-	ap_Move_Allegati_CartellaMeseAnno();
+	albopc_Move_Allegati_CartellaMeseAnno();
 	echo "<h3>".__("Operazione eseguita","albo-pretorio-considera")."</h3>";
 	update_option('opt_AP_FolderUploadMeseAnno',"Si" );
 }
@@ -285,7 +285,7 @@ echo AP_CreaCategorieBase().'
 		</div>';
 }
 function SvuotaLog($Tipo){
-	$NumRow=ap_svuota_log($Tipo);
+	$NumRow=albopc_svuota_log($Tipo);
 	if ($NumRow==0)
 		return (__("Non sono state cancellate righe dal file di Log","albo-pretorio-considera"));
 	else
@@ -293,7 +293,7 @@ function SvuotaLog($Tipo){
 }
 function ImplementaNINF(){
 	$newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
-	ap_NoIndexNoDirectLink($newPathAllegati);
+	albopc_NoIndexNoDirectLink($newPathAllegati);
 	echo'<div id="message" class="updated"> 
 				<p><strong>'.__("File .htaccess e index.php necessari per il diritto all'oblio sono stati ricreati.","albo-pretorio-considera").'</strong></p>
 				<p>'.__("Operazione terminata","albo-pretorio-considera").'&nbsp;&nbsp;
@@ -360,10 +360,10 @@ switch ($passo){
 				';
 		break;
 	case 1:
-		$AData=ap_DateAdd($Data,$GG);
-		$TotAtti=ap_get_all_atti(10,0,0,0,'',$Data,$AData,'',0,0,true,false,'',-1,true);
-		echo'<p><span style="font-style: italic;color:green;"><strong>'.esc_html($TotAtti).'</strong> '.__("Atti in pubblicazione da data","albo-pretorio-considera").' '.esc_html(ap_VisualizzaData($Data)).' '.__("a data","albo-pretorio-considera").' '.esc_html(ap_VisualizzaData($AData)).'</span></p>';
-		$atti =ap_get_all_atti(10,0,0,0,'',$Data,$AData,"Numero Desc");
+		$AData=albopc_DateAdd($Data,$GG);
+		$TotAtti=albopc_get_all_atti(10,0,0,0,'',$Data,$AData,'',0,0,true,false,'',-1,true);
+		echo'<p><span style="font-style: italic;color:green;"><strong>'.esc_html($TotAtti).'</strong> '.__("Atti in pubblicazione da data","albo-pretorio-considera").' '.esc_html(albopc_VisualizzaData($Data)).' '.__("a data","albo-pretorio-considera").' '.esc_html(albopc_VisualizzaData($AData)).'</span></p>';
+		$atti =albopc_get_all_atti(10,0,0,0,'',$Data,$AData,"Numero Desc");
 		$ArrAggSca=array();
 		if ( ! empty( $atti ) ) {	
 			echo "<ul>";
@@ -380,15 +380,15 @@ switch ($passo){
 				}else{
 					$AttoAData=$a->DataFine;
 				}
-				$NggInc=ap_datediff("d",$AttoDaData,$AttoAData);
+				$NggInc=albopc_datediff("d",$AttoDaData,$AttoAData);
 				if($NggInc==0)
 						$NggInc=1;
-				$NuovaScadenza=ap_DateAdd($a->DataFine,$NggInc);
-				while(ap_IsDataFestiva($NuovaScadenza)){
-					$NuovaScadenza=ap_DateAdd($NuovaScadenza,1);
+				$NuovaScadenza=albopc_DateAdd($a->DataFine,$NggInc);
+				while(albopc_IsDataFestiva($NuovaScadenza)){
+					$NuovaScadenza=albopc_DateAdd($NuovaScadenza,1);
 					$NggInc++;
 				}				
-				echo " (".$a->DataInizio." - ".$a->DataFine.") gg >> ".$NggInc." Nuova scadenza ".ap_DateAdd($a->DataFine,$NggInc);
+				echo " (".$a->DataInizio." - ".$a->DataFine.") gg >> ".$NggInc." Nuova scadenza ".albopc_DateAdd($a->DataFine,$NggInc);
 				echo "</li>";
 				$ArrAggSca[$a->IdAtto]=(int)$NggInc;
 			}
@@ -475,7 +475,7 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 		$AnnoRepertorio=(isset($_GET['Anno'])?intval($_GET['Anno']):0);
 	else
 		$AnnoRepertorio=gmdate("Y");
-		if (($Anni=ap_AnniAtti())!=FALSE){
+		if (($Anni=albopc_AnniAtti())!=FALSE){
 			echo '<div style="display:inline">
 			'.__("Repertorio","albo-pretorio-considera").' <select id="Anno" onchange="document.location.href=this.options[this.selectedIndex].value;">
 				<option value="">'.__("Anno","albo-pretorio-considera").'</option>';
@@ -510,7 +510,7 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 						<th>'.__("Note","albo-pretorio-considera").'</th>
 					</thead>
 					<tbody>';
-					echo ap_Repertorio($AnnoRepertorio);
+					echo albopc_Repertorio($AnnoRepertorio);
 					echo '</tbody>
 				</table>
 			</div>';
@@ -535,9 +535,9 @@ echo'
 					'.__("Imposta Ente","albo-pretorio-considera").':  
 					<input type="hidden" name="ImpostaEnteND" value="'.wp_create_nonce( 'securimpostaentend' ).'" />
 					<input type="hidden" name="action" value="ImpostaEnteND" />
-					'.ap_get_dropdown_enti('Ente','Ente','postform richiesto ValValue(>-1)','',0).'
+					'.albopc_get_dropdown_enti('Ente','Ente','postform richiesto ValValue(>-1)','',0).'
 					<input type="submit" name="ImpEnte" id="ImpEnte" class="button" value="Imposta"  />
-					<p>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Questa procedura imposta %1\$s in tutti gli atti in cui l'Ente risulta come %2\$sEnte non definito","albo-pretorio-considera"),'<strong>'.ap_get_ente_me().'</strong>','<span style="color:red;">').'</span></p>
+					<p>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Questa procedura imposta %1\$s in tutti gli atti in cui l'Ente risulta come %2\$sEnte non definito","albo-pretorio-considera"),'<strong>'.albopc_get_ente_me().'</strong>','<span style="color:red;">').'</span></p>
 					</form>
 				</p>				
 	</div>';
@@ -943,27 +943,27 @@ function TestCongruitaDati($Tabella){
 	$Analisi="";	
 	switch ($Tabella){
 		case $wpdb->table_name_Atti:
-		  	$Analisi.='<em>'.__("Atti","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(0,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
-			$Analisi.='<em>'.__("Atti da Pubblicare","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(3,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
-			$Analisi.='<em>'.__("Atti In corso di Validità","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true).'</strong> ';
-			$Analisi.='<em> '.__("di cui Annullati","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true,true).'</strong><br />';
-			$Analisi.='<em>'.__("Atti Scaduti","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true).'</strong> ';
-			$Analisi.='<em> '.__("di cui Annullati","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true,true).'</strong><br />';
-			$Analisi.='<em>'.__("Atti Oblio (da Cancellare)","albo-pretorio-considera").':</em><strong>'.ap_get_all_atti(4,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
+		  	$Analisi.='<em>'.__("Atti","albo-pretorio-considera").':</em><strong>'.albopc_get_all_atti(0,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
+			$Analisi.='<em>'.__("Atti da Pubblicare","albo-pretorio-considera").':</em><strong>'.albopc_get_all_atti(3,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
+			$Analisi.='<em>'.__("Atti In corso di Validità","albo-pretorio-considera").':</em><strong>'.albopc_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true).'</strong> ';
+			$Analisi.='<em> '.__("di cui Annullati","albo-pretorio-considera").':</em><strong>'.albopc_get_all_atti(1,0,0,0,'', 0,0,"",0,0,true,true).'</strong><br />';
+			$Analisi.='<em>'.__("Atti Scaduti","albo-pretorio-considera").':</em><strong>'.albopc_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true).'</strong> ';
+			$Analisi.='<em> '.__("di cui Annullati","albo-pretorio-considera").':</em><strong>'.albopc_get_all_atti(2,0,0,0,'', 0,0,"",0,0,true,true).'</strong><br />';
+			$Analisi.='<em>'.__("Atti Oblio (da Cancellare)","albo-pretorio-considera").':</em><strong>'.albopc_get_all_atti(4,0,0,0,'', 0,0,"",0,0,true).'</strong><br />';
 			// Verifica Atti con Categorie Orfane
-			$CategorieOrfane=ap_categorie_orfane();
+			$CategorieOrfane=albopc_categorie_orfane();
 			if ($CategorieOrfane){
 				foreach ($CategorieOrfane as $CategoriaOrfana){
 					$Analisi.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sAtto N. %2\$s/%3\$sriporta la Categoria con Codice %4\$sNON TROVATA nella tabella Categorie %5\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$CategoriaOrfana->Numero,$CategoriaOrfana->Anno.'</strong> <em>','</em><strong>'.$CategoriaOrfana->IdCategoria.'</strong> <em>','<br />');
 				}
 			}
-			$EntiOrfani=ap_enti_orfani();
+			$EntiOrfani=albopc_enti_orfani();
 			if ($EntiOrfani){
 				foreach ($EntiOrfani as $EnteOrfano){
 					$Analisi.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sAtto N. %2\$s/%3\$sriporta l'ente con Codice %4\$sNON TROVATA nella tabella Enti %5\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$EnteOrfano->Numero,$EnteOrfano->Anno.'</strong> <em>','</em><strong>'.$EnteOrfano->Ente.'</strong> <em>','<br />');
 				}
 			}
-			$ResponsabiliOrfani=ap_responsabili_orfani();
+			$ResponsabiliOrfani=albopc_responsabili_orfani();
 			if ($ResponsabiliOrfani){
 				foreach ($ResponsabiliOrfani as $ResponsabileOrfano) {
 					$Analisi.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sAtto N. %2\$s/%3\$sriporta il responsabile con Codice %4\$sNON TROVATA nella tabella Responsabili %5\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$ResponsabileOrfano->Numero,$ResponsabileOrfano->Anno.'</strong> <em>','</em><strong>'.$ResponsabileOrfano->RespProc.'</strong> <em>','<br />');
@@ -972,8 +972,8 @@ function TestCongruitaDati($Tabella){
 			return $Analisi;
 			break;
 		case $wpdb->table_name_Allegati:
-			$NumAllegati=ap_num_allegati();
-			$AllegatiOrfani=ap_allegati_orfani();
+			$NumAllegati=albopc_num_allegati();
+			$AllegatiOrfani=albopc_allegati_orfani();
 			$Analisi= sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sN. Allegati %2\$s di cui orfani %3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumAllegati.'</strong> <em>','</em><strong> '.count($AllegatiOrfani).'</strong> <br />');
 			if (count($AllegatiOrfani)>0)
 				$Analisi.="<br /><strong>".__("Allegati Orfani","albo-pretorio-considera")."</strong><br />";
@@ -983,24 +983,24 @@ function TestCongruitaDati($Tabella){
 			return $Analisi;
 			break;
 		case $wpdb->table_name_Categorie:
-			$NumCategorie=ap_num_categorie();
-			$NumCategorieInutilizzate=ap_num_categorie_inutilizzate();
-			$Categorie=ap_get_categorie();
+			$NumCategorie=albopc_num_categorie();
+			$NumCategorieInutilizzate=albopc_num_categorie_inutilizzate();
+			$Categorie=albopc_get_categorie();
 			$UsoCategorie="";
 			foreach ($Categorie as $Categoria){
-				$NCategorie=ap_num_categoria_atto($Categoria->IdCategoria);
+				$NCategorie=albopc_num_categoria_atto($Categoria->IdCategoria);
 				$NCategorie=$NCategorie ? $NCategorie : 0;
 				$UsoCategorie.=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s Presente in %2\$s Associato all'Atto con id n.%3\$s Presente in Atti%4\$s","albo-pretorio-considera"),'<em>','<em>'.$Categoria->Nome,'</em><strong>'.$NCategorie .'</strong> <em>', '</em><br />');
 			}
 			return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sCategorie codificate %2\$s di cui inutilizzate%3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumCategorie.'</strong> <em>','</em><strong> '.$NumCategorieInutilizzate.'</strong> <br />'.$UsoCategorie);
 			break;
 		case $wpdb->table_name_Log:
-			$LogPerOggetti=ap_get_Stat_Log("Oggetto");
+			$LogPerOggetti=albopc_get_Stat_Log("Oggetto");
 			$Statistiche="<strong>".__("Numero record per Oggetto","albo-pretorio-considera")."</strong><br />";
 			foreach ($LogPerOggetti as $LogPerOggetto){
 				$Statistiche.="<em>".$LogPerOggetto->NomeOggetto." => </em><strong>".$LogPerOggetto->Numero ."</strong><br />";	
 			}
-			$LogPerTipoOperazioni=ap_get_Stat_Log("TipoOperazione");
+			$LogPerTipoOperazioni=albopc_get_Stat_Log("TipoOperazione");
 			$Statistiche.="<strong>".__("Numero record per Tipo Operazione","albo-pretorio-considera")."</strong><br />";
 			foreach ($LogPerTipoOperazioni as $LogPerTipoOperazione){
 				$Statistiche.="<em>".$LogPerTipoOperazione->NomeTipoOperazione." => </em><strong>".$LogPerTipoOperazione->Numero ."</strong><br />";	
@@ -1008,36 +1008,36 @@ function TestCongruitaDati($Tabella){
 			return $Statistiche;
 			break;
 		case $wpdb->table_name_RespProc:
-			$NumResp=ap_num_responsabili();
-			$NumResponsabiliInutilizzate=ap_num_responsabili_inutilizzati();
-			$Responsabili=ap_get_responsabili();
+			$NumResp=albopc_num_responsabili();
+			$NumResponsabiliInutilizzate=albopc_num_responsabili_inutilizzati();
+			$Responsabili=albopc_get_responsabili();
 			$UsoResponsabili="";
 			foreach ($Responsabili as $Responsabile){
-				$NResponsabile=ap_get_NumAttiSoggetto($Responsabile->IdResponsabile);
+				$NResponsabile=albopc_get_NumAttiSoggetto($Responsabile->IdResponsabile);
 				$NResponsabile=$NResponsabile ? $NResponsabile : 0;
 				$UsoResponsabili.="<em>".$Responsabile->Cognome." ".$Responsabile->Nome." ".__("Presente in","albo-pretorio-considera")." </em><strong>".$NResponsabile ."</strong> <em>".__("Atti","albo-pretorio-considera")."</em><br />";	
 			}
 			return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s Responsabili codificati %2\$s di cui inutilizzati%3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumResp.'</strong> <em>','</em><strong> '.$NumResponsabiliInutilizzate.'</strong><br />'.$UsoResponsabili);
 			break;
 		case $wpdb->table_name_Enti:
-			$NumEnti=ap_num_enti();
-			$NumEntiInutilizzati=ap_num_enti_Inutilizzati();
-			$Enti=ap_get_enti();
+			$NumEnti=albopc_num_enti();
+			$NumEntiInutilizzati=albopc_num_enti_Inutilizzati();
+			$Enti=albopc_get_enti();
 			$UsoEnti="";
 			foreach ($Enti as $Ente){
-				$NAtti=ap_num_enti_atto($Ente->IdEnte);
+				$NAtti=albopc_num_enti_atto($Ente->IdEnte);
 				$NAtti=$NAtti ? $NAtti : 0;
 				$UsoEnti.="<em>".$Ente->Nome." ".__("Presente in","albo-pretorio-considera")." </em><strong>".$NAtti ."</strong> <em>".__("Atti","albo-pretorio-considera")."</em><br />";	
 			}
 			return sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s Enti codificati %2\$s di cui inutilizzati%3\$s","albo-pretorio-considera"),'<em>','</em><strong>'.$NumEnti,'</em><strong>'.$NumEntiInutilizzati.'</strong><br />'.$UsoEnti);
 			break;
 		case $wpdb->table_name_Attimeta:
-			$MetaDati=ap_get_elenco_attimeta("Array","listaAttiMeta","ListaAttiMeta","Si",0,TRUE);
+			$MetaDati=albopc_get_elenco_attimeta("Array","listaAttiMeta","ListaAttiMeta","Si",0,TRUE);
 			$MetaRighe="";
 			foreach ($MetaDati as $MetaDato){
 				$MetaRighe.="<strong>".$MetaDato->Meta."</strong> => <strong> ".$MetaDato->Value."</strong> ".__("Presente in","albo-pretorio-considera")." </em><br />";
 				$Atti="";
-				$AttiEstratti=ap_get_GruppiAtti($MetaDato->Meta,$MetaDato->Value);
+				$AttiEstratti=albopc_get_GruppiAtti($MetaDato->Meta,$MetaDato->Value);
 				foreach($AttiEstratti as $AttiEstratto){
 					$MetaRighe.="   (<a href='".get_admin_url()."admin.php?page=atti&action=view-atto&id=".$AttiEstratto->IdAtto."&stato_atti=Tutti'>".$AttiEstratto->IdAtto."</a>) ".$AttiEstratto->Oggetto."<br />";
 				}
@@ -1160,8 +1160,8 @@ echo '
 					</thead>
 					<tbody>';
 $CartellaUp=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
-$permessi=ap_get_fileperm($CartellaUp);		
-$permProp=ap_get_fileperm_Gruppo($CartellaUp,"Proprietario");
+$permessi=albopc_get_fileperm($CartellaUp);		
+$permProp=albopc_get_fileperm_Gruppo($CartellaUp,"Proprietario");
 if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
  		$StatoCartella='<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span>';
 	else
@@ -1187,8 +1187,8 @@ echo '				<tr>
 					</thead>
 					<tbody>';
 $Cartella=AlboBCK;
-$permessi=ap_get_fileperm($Cartella);		
-$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+$permessi=albopc_get_fileperm($Cartella);		
+$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
  		$StatoCartella='<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span>';
 	else
@@ -1200,8 +1200,8 @@ echo '				<tr>
 						<td>'.$StatoCartella.'</td>
 					</tr>';
 $Cartella=AlboBCK.'/BackupDatiAlbo';
-$permessi=ap_get_fileperm($Cartella);		
-$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+$permessi=albopc_get_fileperm($Cartella);		
+$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
  		$StatoCartella='<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span>';
 	else
@@ -1213,8 +1213,8 @@ echo '				<tr>
 						<td>'.$StatoCartella.'</td>
 					</tr>';
 $Cartella=AlboBCK.'/OblioDatiAlbo';
-$permessi=ap_get_fileperm($Cartella);		
-$permProp=ap_get_fileperm_Gruppo($Cartella,"Proprietario");
+$permessi=albopc_get_fileperm($Cartella);		
+$permProp=albopc_get_fileperm_Gruppo($Cartella,"Proprietario");
 if($permProp==7 Or $permProp==6 Or $permProp==3 Or $permProp==2)
  		$StatoCartella='<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span>';
 	else
@@ -1244,7 +1244,7 @@ echo '				<tr>
 ';
 foreach($Tabelle as $Tabella){
 	$TestCampi="";
-	if (ap_existTable($Tabella)) 
+	if (albopc_existTable($Tabella)) 
  		$EsisteTabella='<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span>';
 	else
 		$EsisteTabella='<a href="admin.php?page=utilityAlboP&action=creaTabella&Tabella='.$Tabella.'">'.__("Crea Tabella","albo-pretorio-considera").'</a>';

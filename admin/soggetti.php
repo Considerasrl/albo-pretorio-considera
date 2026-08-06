@@ -31,7 +31,7 @@ $messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informat
 		<a href="?page=soggetti" class="add-new-h2"><?php esc_html_e("Aggiungi nuovo","albo-pretorio-considera");?></a></h2>
 	</div>
 <?php
-$SoggettiAtti=ap_get_NumAttiSoggetti();
+$SoggettiAtti=albopc_get_NumAttiSoggetti();
 $NC="";
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-responsabile"){
 	if (!isset($_REQUEST['cancresp'])) {
@@ -43,7 +43,7 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="delete-responsabile"){
 			if(isset($SoggettiAtti[(isset($_REQUEST['id'])?intval($_REQUEST['id']):0)]) And $SoggettiAtti[(isset($_REQUEST['id'])?intval($_REQUEST['id']):0)]>0){
 				$NC=__('Impossibile cancellare Soggetti che sono collegati ad Atti','albo-pretorio-considera');
 			}else{
-				$NC=ap_del_responsabile((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
+				$NC=albopc_del_responsabile((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
 			}
 		}
 	}	
@@ -56,7 +56,7 @@ if ( (isset($_REQUEST['message']) && ( $msg = (isset($_REQUEST['message'])?intva
 	$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 }
 if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
-	$risultato=ap_get_responsabile((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
+	$risultato=albopc_get_responsabile((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
 	$edit=True;
 }else{
 	$edit=False;
@@ -76,16 +76,16 @@ if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit"){
     </thead>
     <tbody id="the-list">
 <?php 
-$lista=ap_get_responsabili(); 
+$lista=albopc_get_responsabili(); 
 echo '<tr>
         	<td>
 			<ul>';
 if ($lista){
 	foreach($lista as $riga){
-		$Funzione=ap_get_Funzione_Responsabile($riga->Funzione,"Descrizione");
+		$Funzione=albopc_get_Funzione_Responsabile($riga->Funzione,"Descrizione");
 		echo'<li style="text-align:left;padding-left:1px;">';
 		$Tab=0;
-		if(ap_get_NumAttiSoggetto($riga->IdResponsabile)==0)
+		if(albopc_get_NumAttiSoggetto($riga->IdResponsabile)==0)
 			echo '<span class="cancella"><a href="?page=soggetti&amp;action=delete-responsabile&amp;id='.(int)$riga->IdResponsabile.'&amp;cancresp='.esc_attr(wp_create_nonce('deleteresponsabile')).'" rel="'.esc_attr($riga->Cognome).'" class="dr">
 			<span class="dashicons dashicons-trash" title="'.esc_attr__("Cancella soggetto","albo-pretorio-considera").'"></span>
 			</a></span>';
@@ -109,7 +109,7 @@ echo '</td>
 </div>
 <div class="col-wrap">
 <h3>Log</h3>';
-$righe=ap_get_all_Oggetto_log(4);
+$righe=albopc_get_all_Oggetto_log(4);
 echo'
 	<table class="widefat">
 	    <thead>
@@ -157,41 +157,41 @@ echo '    </tbody>
 
 <div class="form-field form-required">
 	<label for="resp-cognome"><?php esc_html_e("Cognome","albo-pretorio-considera");?><span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-cognome" id="<?php esc_html_e("Cognome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Cognome)?esc_attr(ap_sanifica_testo($risultato[0]->Cognome)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo esc_attr(ap_sanifica_testo(isset($_GET['resp-cognome'])?sanitize_text_field(wp_unslash($_GET['resp-cognome'])):"")); ?>" size="20" required />
+	<input name="resp-cognome" id="<?php esc_html_e("Cognome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Cognome)?esc_attr(albopc_sanifica_testo($risultato[0]->Cognome)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo esc_attr(albopc_sanifica_testo(isset($_GET['resp-cognome'])?sanitize_text_field(wp_unslash($_GET['resp-cognome'])):"")); ?>" size="20" required />
 </div>
 <div class="form-field form-required">
 	<label for="resp-nome"><?php esc_html_e("Nome","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-nome" id="<?php esc_html_e("Nome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Nome)?esc_attr(ap_sanifica_testo($risultato[0]->Nome)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo esc_attr(ap_sanifica_testo(isset($_GET['resp-nome'])?sanitize_text_field(wp_unslash($_GET['resp-nome'])):"")); ?>" size="20" required />
+	<input name="resp-nome" id="<?php esc_html_e("Nome","albo-pretorio-considera");?>" type="text" value="<?php if($edit) echo isset($risultato[0]->Nome)?esc_attr(albopc_sanifica_testo($risultato[0]->Nome)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo esc_attr(albopc_sanifica_testo(isset($_GET['resp-nome'])?sanitize_text_field(wp_unslash($_GET['resp-nome'])):"")); ?>" size="20" required />
 </div>
 <div class="form-field form-required">
 	<label for="resp-funzione"><?php esc_html_e("Funzione","albo-pretorio-considera");?></label>
-	<?php /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> generato internamente da ap_get_Funzioni_Responsabili */ echo ap_get_Funzioni_Responsabili($Output="Select",$ID="resp-funzione",$Name="resp-funzione",$Selezionato=($edit)?(isset($risultato[0]->Funzione)?$risultato[0]->Funzione:""):"");?>
+	<?php /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <select> generato internamente da albopc_get_Funzioni_Responsabili */ echo albopc_get_Funzioni_Responsabili($Output="Select",$ID="resp-funzione",$Name="resp-funzione",$Selezionato=($edit)?(isset($risultato[0]->Funzione)?$risultato[0]->Funzione:""):"");?>
 <div class="form-field form-required">
 	<label for="resp-email"><?php esc_html_e("Email","albo-pretorio-considera");?> <span style="color:red;font-weight: bold;">*</span></label>
-	<input name="resp-email" id="<?php esc_html_e("Email","albo-pretorio-considera");?>" type="email" value="<?php if($edit) echo isset($risultato[0]->Email)?esc_attr(ap_sanifica_testo($risultato[0]->Email)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo esc_attr(sanitize_text_field(isset($_GET['resp-email'])?wp_unslash($_GET['resp-email']):""));?>" size="100" required />
+	<input name="resp-email" id="<?php esc_html_e("Email","albo-pretorio-considera");?>" type="email" value="<?php if($edit) echo isset($risultato[0]->Email)?esc_attr(albopc_sanifica_testo($risultato[0]->Email)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo esc_attr(sanitize_text_field(isset($_GET['resp-email'])?wp_unslash($_GET['resp-email']):""));?>" size="100" required />
 </div>
 <div class="form-field form-required">
 	<label for="resp-telefono"><?php esc_html_e("Telefono","albo-pretorio-considera");?></label>
-	<input name="resp-telefono" id="resp-telefono" type="text" value="<?php if($edit) echo isset($risultato[0]->Telefono)?esc_attr(ap_sanifica_testo($risultato[0]->Telefono)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo esc_attr(ap_sanifica_testo(isset($_GET['resp-telefono'])?sanitize_text_field(wp_unslash($_GET['resp-telefono'])):"")); ?>" size="30" aria-required="true" />
+	<input name="resp-telefono" id="resp-telefono" type="text" value="<?php if($edit) echo isset($risultato[0]->Telefono)?esc_attr(albopc_sanifica_testo($risultato[0]->Telefono)):esc_attr__("Non Definito","albo-pretorio-considera"); else echo esc_attr(albopc_sanifica_testo(isset($_GET['resp-telefono'])?sanitize_text_field(wp_unslash($_GET['resp-telefono'])):"")); ?>" size="30" aria-required="true" />
 </div>
 <div class="form-field form-required">
 	<label for="resp-orario"><?php esc_html_e("Orario ricevimento","albo-pretorio-considera");?></label>
-	<input name="resp-orario" id="resp-orario" type="text" value="<?php if($edit) echo isset($risultato[0]->Orario)?esc_attr(ap_sanifica_testo($risultato[0]->Orario)):esc_attr__("Non Definito","albo-pretorio-considera");  else echo esc_attr(ap_sanifica_testo(isset($_GET['resp-orario'])?sanitize_text_field(wp_unslash($_GET['resp-orario'])):""));?>" size="60" aria-required="true" />
+	<input name="resp-orario" id="resp-orario" type="text" value="<?php if($edit) echo isset($risultato[0]->Orario)?esc_attr(albopc_sanifica_testo($risultato[0]->Orario)):esc_attr__("Non Definito","albo-pretorio-considera");  else echo esc_attr(albopc_sanifica_testo(isset($_GET['resp-orario'])?sanitize_text_field(wp_unslash($_GET['resp-orario'])):""));?>" size="60" aria-required="true" />
 </div>
 <div class="form-field">
 	<label for="resp-description"><?php esc_html_e("Note","albo-pretorio-considera");?></label>
-	<textarea name="resp-note" id="resp-note" rows="5" cols="40"><?php if($edit) echo isset($risultato[0]->Note)?esc_textarea(ap_sanifica_areatesto($risultato[0]->Note)):esc_html__("Non Definito","albo-pretorio-considera"); else echo esc_textarea(ap_sanifica_areatesto(isset($_GET['resp-note'])?sanitize_textarea_field(wp_unslash($_GET['resp-note'])):"")); ?></textarea>
+	<textarea name="resp-note" id="resp-note" rows="5" cols="40"><?php if($edit) echo isset($risultato[0]->Note)?esc_textarea(albopc_sanifica_areatesto($risultato[0]->Note)):esc_html__("Non Definito","albo-pretorio-considera"); else echo esc_textarea(albopc_sanifica_areatesto(isset($_GET['resp-note'])?sanitize_textarea_field(wp_unslash($_GET['resp-note'])):"")); ?></textarea>
 	<p><?php esc_html_e("inserire eventuali informazioni aggiuntive","albo-pretorio-considera");?></p>
 </div>
 
 <?php
 if($edit) {
 	if(isset($risultato[0]->Cognome)){
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Soggetto","albo-pretorio-considera").' '.(isset($risultato[0]->Cognome)?ap_sanifica_testo($risultato[0]->Cognome):"")).'" rel="'.esc_attr(isset($risultato[0]->Cognome)?ap_sanifica_testo($risultato[0]->Cognome):"").'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Modifiche Soggetto","albo-pretorio-considera").' '.(isset($risultato[0]->Cognome)?albopc_sanifica_testo($risultato[0]->Cognome):"")).'" rel="'.esc_attr(isset($risultato[0]->Cognome)?albopc_sanifica_testo($risultato[0]->Cognome):"").'" />';
 	}
 }else{
  	if (isset($_REQUEST['action']) And $_REQUEST['action']=="edit_err")
-		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Dati Soggetto","albo-pretorio-considera").' '.(isset($_GET['resp-cognome'])?ap_sanifica_testo(sanitize_text_field(wp_unslash($_GET['resp-cognome']))):"")).'" rel="'.esc_attr(isset($_GET['resp-cognome'])?ap_sanifica_testo(sanitize_text_field(wp_unslash($_GET['resp-cognome']))):"").'" />';
+		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr(__("Memorizza Dati Soggetto","albo-pretorio-considera").' '.(isset($_GET['resp-cognome'])?albopc_sanifica_testo(sanitize_text_field(wp_unslash($_GET['resp-cognome']))):"")).'" rel="'.esc_attr(isset($_GET['resp-cognome'])?albopc_sanifica_testo(sanitize_text_field(wp_unslash($_GET['resp-cognome']))):"").'" />';
 	else
 		echo '<input type="submit" name="SaveData" id="SaveData" class="button" value="'. esc_attr__("Aggiungi nuovo Soggetto","albo-pretorio-considera").'"  />';
 }

@@ -15,13 +15,13 @@ function LinkStampaAtto($id) {/* mr */
 }
 
 function StampaAtto($id, $tipo) {
-    $risultato = ap_get_atto($id);
-    $resp_pub = ap_get_all_Oggetto_log(1, $id);
+    $risultato = albopc_get_atto($id);
+    $resp_pub = albopc_get_all_Oggetto_log(1, $id);
     $risultato = $risultato[0];
-    $risultatocategoria = ap_get_categoria($risultato->IdCategoria);
+    $risultatocategoria = albopc_get_categoria($risultato->IdCategoria);
     $risultatocategoria = $risultatocategoria[0];
-    $allegati = ap_get_all_allegati_atto($id);
-    ap_insert_log(5, 5, $id, "Visualizzazione");
+    $allegati = albopc_get_all_allegati_atto($id);
+    albopc_insert_log(5, 5, $id, "Visualizzazione");
     $coloreAnnullati = get_option('opt_AP_ColoreAnnullati');
     $IconaDocumenti=get_option('opt_AP_IconaDocumenti');
     if ($risultato->DataAnnullamento != '0000-00-00')
@@ -51,8 +51,8 @@ function StampaAtto($id, $tipo) {
         }
         // ]]>
     </script><?php
-    $rigadata = '<tr><td style="background: #fff; border: none; width: 50%; "><h4 style="background: #fff; border: none; font-size: 120%;">'.esc_html__("Data di inizio affissione","albo-pretorio-considera").': <span style="font-weight:normal">' . esc_html(ap_VisualizzaData($risultato->DataInizio)) . '</span></h4></td>'
-            . '<td style="background: #fff; border: none; width: 50%;"><h4 style="background: #fff; border: none; font-size: 120%;">'.esc_html__("Data di fine affissione","albo-pretorio-considera").': <span style="font-weight:normal">' . esc_html(ap_VisualizzaData($risultato->DataFine)) . '</span></h4></td></tr>'
+    $rigadata = '<tr><td style="background: #fff; border: none; width: 50%; "><h4 style="background: #fff; border: none; font-size: 120%;">'.esc_html__("Data di inizio affissione","albo-pretorio-considera").': <span style="font-weight:normal">' . esc_html(albopc_VisualizzaData($risultato->DataInizio)) . '</span></h4></td>'
+            . '<td style="background: #fff; border: none; width: 50%;"><h4 style="background: #fff; border: none; font-size: 120%;">'.esc_html__("Data di fine affissione","albo-pretorio-considera").': <span style="font-weight:normal">' . esc_html(albopc_VisualizzaData($risultato->DataFine)) . '</span></h4></td></tr>'
             . '<tr><td colspan="2"style="background: #fff; border: none; margin:0;padding:0;"><p style="border-top: 3px solid #808080;margin:0;"></p></td></tr>';
 //    $user = get_user_by('login', $resp_pub[0]->Utente);
      if ($tipo == 'c') {
@@ -65,18 +65,18 @@ function StampaAtto($id, $tipo) {
     }
     echo '<button class="h" onclick="printContent(\'' . esc_js($idtipo) . '\')"><span class="dashicons dashicons-migrate"></span> '.esc_html__("Stampa","albo-pretorio-considera"). '</button>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
-	$DatiSeg=ap_get_Funzione_StampaCertificatoSX();
+	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+	$DatiSeg=albopc_get_Funzione_StampaCertificatoSX();
 	$Segretario="";
 	$ResponsabilePub="";
 	$PaginaAttiCor=get_option('opt_AP_PAttiCor');
 	if($PaginaAttiCor===FALSE){
 		$PaginaAttiCor="";		
 	}
-	$NomeResp=ap_get_responsabile($risultato->RespProc);
+	$NomeResp=albopc_get_responsabile($risultato->RespProc);
 	$Soggetto=$NomeResp[0];
 	$Responsabile=$Soggetto->Cognome." ".$Soggetto->Nome;
-	$Unitao=ap_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
+	$Unitao=albopc_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
 	foreach($Soggetti as $Soggetto){
 		if($Soggetto->Funzione==$DatiSeg[0]){
 			$Segretario=$Soggetto->Cognome." ".$Soggetto->Nome;
@@ -99,7 +99,7 @@ function StampaAtto($id, $tipo) {
     <div class="printalbo" id="<?php echo esc_attr($idtipo); ?>" style="width: 90%;">
         <table style="text-align:center; width:100%; background: #fff; border: none; font-family: Times New Roman">
             <caption style="text-align:center; font-size: 120%; border-bottom: 3px solid #808080; font-weight: bold;">
-                <?php echo esc_html($riga_tipo) . " n. reg. " . esc_html($risultato->Numero) . "/" . esc_html($risultato->Anno) . " del " . esc_html(ap_VisualizzaData($risultato->DataInizio)); ?>
+                <?php echo esc_html($riga_tipo) . " n. reg. " . esc_html($risultato->Numero) . "/" . esc_html($risultato->Anno) . " del " . esc_html(albopc_VisualizzaData($risultato->DataInizio)); ?>
             </caption>
             <thead>
                 <tr><td colspan="2" style="background: #fff; border: none">
@@ -149,7 +149,7 @@ function StampaAtto($id, $tipo) {
                             <?php endif; ?>
                             <tr>
                                 <td style="font-weight: bold; text-align: right; width: 35%; padding: 5px; background: #efefef; border: none"><?php  esc_html_e("Ente titolare dell'Atto","albo-pretorio-considera");?></td>
-                                <td style="text-align: left; width: 65%; padding: 5px; vertical-align: middle; background: #efefef; border: none"><?php echo esc_html(stripslashes(ap_get_ente($risultato->Ente)->Nome)); ?></td>
+                                <td style="text-align: left; width: 65%; padding: 5px; vertical-align: middle; background: #efefef; border: none"><?php echo esc_html(stripslashes(albopc_get_ente($risultato->Ente)->Nome)); ?></td>
                             </tr>
                             <tr>
                                 <td style="font-weight: bold; text-align: right; padding: 5px; background: #f6f6f6; border: none"><?php  esc_html_e("Numero Albo","albo-pretorio-considera");?></td>
@@ -161,7 +161,7 @@ function StampaAtto($id, $tipo) {
                             </tr>
                             <tr>
                                 <td style="font-weight: bold; text-align: right; padding: 5px; background: #efefef; border: none"><?php  esc_html_e("Data atto","albo-pretorio-considera");?></td>
-                                <td style="text-align: left; padding: 5px; vertical-align: middle;background: #efefef; border: none"><?php echo esc_html(ap_VisualizzaData($risultato->Data)); ?></td>
+                                <td style="text-align: left; padding: 5px; vertical-align: middle;background: #efefef; border: none"><?php echo esc_html(albopc_VisualizzaData($risultato->Data)); ?></td>
                             </tr>
                             <tr>
                                 <td style="font-weight: bold; text-align: right; padding: 5px; background: #f6f6f6; border: none"><?php  esc_html_e("Oggetto","albo-pretorio-considera");?></td>

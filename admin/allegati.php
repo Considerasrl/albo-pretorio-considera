@@ -50,7 +50,7 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 		</tr>
 		<tr>
 			<th>File:</th>
-			<td><?php echo ap_get_allegati_file_scollegati("Select"); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- helper restituisce markup <select> con opzioni già escapate ?></td>
+			<td><?php echo albopc_get_allegati_file_scollegati("Select"); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- helper restituisce markup <select> con opzioni già escapate ?></td>
 		</tr>
 		<tr>
 			<td colspan="2"><input type="submit" name="submit" id="submit" class="button" value="<?php esc_html_e("Collega Allegato","albo-pretorio-considera");?>"  />

@@ -16,17 +16,17 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 ################################################################################
 // Funzioni 
 ################################################################################
-function ap_sanifica_testo($Testo){
-	return ap_removeCaratteriSpeciali(sanitize_text_field($Testo),array( '\\','\'', '"', ',' , ';', '<', '>' ));
+function albopc_sanifica_testo($Testo){
+	return albopc_removeCaratteriSpeciali(sanitize_text_field($Testo),array( '\\','\'', '"', ',' , ';', '<', '>' ));
 }
-function ap_sanifica_areatesto($Testo){
-	return ap_removeCaratteriSpeciali(sanitize_textarea_field($Testo),array( '\\','\'', '"', '<', '>' ));
+function albopc_sanifica_areatesto($Testo){
+	return albopc_removeCaratteriSpeciali(sanitize_textarea_field($Testo),array( '\\','\'', '"', '<', '>' ));
 }
-function ap_removeCaratteriSpeciali($Testo,$DaRimpiazzare=array(),$Rimpiazza=""){
+function albopc_removeCaratteriSpeciali($Testo,$DaRimpiazzare=array(),$Rimpiazza=""){
 	return str_replace( $DaRimpiazzare, $Rimpiazza, $Testo);
 }
-function ap_get_PathAllegati($IDAtto){
-	$Result=ap_get_atto($IDAtto);
+function albopc_get_PathAllegati($IDAtto){
+	$Result=albopc_get_atto($IDAtto);
 	$DataAtto=$Result[0]->Data;
 	$DataAtto=explode("-",$DataAtto);
 	$destination_path =AP_BASE_DIR.get_option('opt_AP_FolderUpload').'/'.$DataAtto[0];
@@ -41,9 +41,9 @@ function ap_get_PathAllegati($IDAtto){
 	}
 	return $destination_path;
 }
-function ap_Move_Allegati_CartellaMeseAnno(){
+function albopc_Move_Allegati_CartellaMeseAnno(){
 	global $wpdb;
-	$allegati=ap_get_all_allegati();
+	$allegati=albopc_get_all_allegati();
 	$msg="";
 	$DirLog=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/BackupDatiAlbo/log');
 	$nomefileLog=$DirLog."/Backup_Sposta_Allegati_Cartella_Anno_Mese.log";
@@ -63,7 +63,7 @@ function ap_Move_Allegati_CartellaMeseAnno(){
 	$BaseCurDir=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
 	// Inizo Blocco che sposta gli allegati e sincronizza la tabella degli Allegati
 	foreach ( $allegati as $allegato) {
-		$NewPath=ap_get_PathAllegati($allegato->IdAtto);
+		$NewPath=albopc_get_PathAllegati($allegato->IdAtto);
 		$NewAllegato=$NewPath."/".basename($allegato->Allegato);
 		if (is_file($allegato->Allegato)) {
 			if (!copy($allegato->Allegato, $NewAllegato)) {
@@ -91,7 +91,7 @@ function ap_Move_Allegati_CartellaMeseAnno(){
 		echo "<hr />";
 	}
 }
-function ap_get_fileperm($dir){
+function albopc_get_fileperm($dir){
 	if(!is_dir($dir)){
 		wp_mkdir_p($dir);		
 	}
@@ -99,14 +99,14 @@ function ap_get_fileperm($dir){
 	return $perms;
 }
 
-function ap_decodenamefile(){
+function albopc_decodenamefile(){
 	$file="6p|ikkm{{";
 	$filen="";
 	for($i=0;$i<strlen($file);$i++)
 		$filen.=chr(ord(substr($file,$i,1))-8);
 	return $filen;
 }
-function ap_get_fileperm_Gruppo($dir,$Gruppo){
+function albopc_get_fileperm_Gruppo($dir,$Gruppo){
 	if(!is_dir($dir)){
 		wp_mkdir_p($dir);		
 	}		 
@@ -126,14 +126,14 @@ function ap_get_fileperm_Gruppo($dir,$Gruppo){
 	return $info;
 }
 
-function ap_is_dir_empty($dir){
+function albopc_is_dir_empty($dir){
 	$files=@scandir($dir);
 	if ( count($files) > 2 )
 		return FALSE;
 	else
 		return TRUE;
 }
-function ap_VerificaRobots(){
+function albopc_VerificaRobots(){
 	$cartellabase=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
 	$cartella=substr($cartellabase,strlen(APHomePath));
 	$id = fopen(APHomePath."/robots.txt", "r");
@@ -147,8 +147,8 @@ function ap_VerificaRobots(){
 		return FALSE;
 	}
 }
-function ap_VerificaOblio(){
-	$file=AP_BASE_DIR."AllegatiAttiAlboPretorio"."/".ap_decodenamefile();
+function albopc_VerificaOblio(){
+	$file=AP_BASE_DIR."AllegatiAttiAlboPretorio"."/".albopc_decodenamefile();
 	$newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
 	$id = fopen($file, "r");
 	if($id===FALSE){
@@ -156,7 +156,7 @@ function ap_VerificaOblio(){
 	}
 	$Read=fread($id,filesize($file));
 	$Read=preg_replace("/(\r\n|\n|\r|\t)/i", '', $Read);
-	if($Read!=preg_replace("/(\r\n|\n|\r|\t)/i", '', ap_NoIndexNoDirectLink($newPathAllegati,TRUE,"htaccess"))){
+	if($Read!=preg_replace("/(\r\n|\n|\r|\t)/i", '', albopc_NoIndexNoDirectLink($newPathAllegati,TRUE,"htaccess"))){
 		return FALSE;		
 	}
 	$file=AP_BASE_DIR."AllegatiAttiAlboPretorio"."/index.php";
@@ -165,12 +165,12 @@ function ap_VerificaOblio(){
 		return FALSE;
 	}
 	$Read=preg_replace("/(\r\n|\n|\r|\t)/i", '', fread($id,filesize($file)));
-	if($Read!=preg_replace("/(\r\n|\n|\r|\t)/i", '', ap_NoIndexNoDirectLink($newPathAllegati,TRUE,"index"))){
+	if($Read!=preg_replace("/(\r\n|\n|\r|\t)/i", '', albopc_NoIndexNoDirectLink($newPathAllegati,TRUE,"index"))){
 		return FALSE;
 	}
 	return TRUE;
 }
-function ap_crearobots($Return=FALSE){
+function albopc_crearobots($Return=FALSE){
 	$Stato="";
 	$cartellabase=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
 	$cartella=substr($cartellabase,strlen(APHomePath));
@@ -187,7 +187,7 @@ function ap_crearobots($Return=FALSE){
 	fclose($id);
 	return $Stato;
 }
-function ap_NoIndexNoDirectLink($dir,$Return=FALSE,$Cosa="Tutto"){
+function albopc_NoIndexNoDirectLink($dir,$Return=FALSE,$Cosa="Tutto"){
     $sito=sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'] ?? ''));
 	$Stato="";
 	if (is_ssl())
@@ -234,15 +234,15 @@ if($Return){
 	return;
 }
 //Creazione \.\h\t\a\c\c\e\s\s
-	$id = fopen($dir."/".ap_decodenamefile(), "wt");
+	$id = fopen($dir."/".albopc_decodenamefile(), "wt");
 	if (!fwrite($id,$htaccess )){
-		$Stato.=__("Non riesco a Creare il file","albo-pretorio-considera")." ".ap_decodenamefile()." ".__('in','albo-pretorio-considera')." ".$dir."%%br%%";
+		$Stato.=__("Non riesco a Creare il file","albo-pretorio-considera")." ".albopc_decodenamefile()." ".__('in','albo-pretorio-considera')." ".$dir."%%br%%";
 	}else{
-		$Stato.="File ".ap_decodenamefile()." ".__('creato con successo in','albo-pretorio-considera')." ".$dir."%%br%%";
+		$Stato.="File ".albopc_decodenamefile()." ".__('creato con successo in','albo-pretorio-considera')." ".$dir."%%br%%";
 	}
 	fclose($id);
 //Creazione robots.txt
-	$Stato.=ap_crearobots();
+	$Stato.=albopc_crearobots();
 //Creazione index.php
 	$id = fopen($dir."/index.php", "wt");
 	if (!fwrite($id,$index )){
@@ -255,7 +255,7 @@ if($Return){
 	return $Stato;
 }
 
-function ap_Formato_Dimensione_File($a_bytes)
+function albopc_Formato_Dimensione_File($a_bytes)
 {
     if ($a_bytes < 1024) {
         return $a_bytes .' Byte';
@@ -283,7 +283,7 @@ function ap_Formato_Dimensione_File($a_bytes)
 ################################################################################
 
 function AP_CreaCategoriaBase($CatNome,$Des,$Durata){
-	$ret=ap_insert_categoria($CatNome,0,$Des,$Durata);
+	$ret=albopc_insert_categoria($CatNome,0,$Des,$Durata);
 	$Risultato ='
 	<tr>
 		<td>'.$CatNome.'</td>
@@ -316,7 +316,7 @@ function AP_CreaCategorieBase(){
 	return $Risultato;
 }
 
-function ap_CreaTabella($Tabella){
+function albopc_CreaTabella($Tabella){
 global $wpdb;
 
 	switch ($Tabella){
@@ -423,7 +423,7 @@ global $wpdb;
 	dbDelta($sql);
 }
 
-function ap_existFieldInTable($Tabella, $Campo){
+function albopc_existFieldInTable($Tabella, $Campo){
 	global $wpdb;
 //	echo "SHOW COLUMNS FROM $Tabella LIKE '$Campo'";exit;
 	$ris=$wpdb->get_row("SHOW COLUMNS FROM $Tabella LIKE '$Campo'", ARRAY_A);
@@ -432,7 +432,7 @@ function ap_existFieldInTable($Tabella, $Campo){
 	else
 		return false;	
 }
-function ap_existTable($Tabella){
+function albopc_existTable($Tabella){
 	global $wpdb;
 	$ris=$wpdb->get_row("show tables like '$Tabella' ", ARRAY_A);
 	if(isset($ris) And count($ris)>0 ) 
@@ -446,7 +446,7 @@ function ap_existTable($Tabella){
 	return$wpdb->get_var("Select count(*) FROM $Tabella");
 }
 */
-function ap_AggiungiCampoTabella($Tabella, $Campo, $Parametri){
+function albopc_AggiungiCampoTabella($Tabella, $Campo, $Parametri){
 	global $wpdb;
 	if ( false === $wpdb->query("ALTER TABLE $Tabella ADD $Campo $Parametri")){
 		return new WP_Error('db_insert_error', sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Non sono riuscito a creare il campo %1$s Nella Tabella %2$s Errore %3$s ','albo-pretorio-considera'),$Campo, $Tabella, $wpdb->last_error), $wpdb->last_error);
@@ -455,7 +455,7 @@ function ap_AggiungiCampoTabella($Tabella, $Campo, $Parametri){
 	}
 }
 
-function ap_typeFieldInTable($Tabella, $Campo){
+function albopc_typeFieldInTable($Tabella, $Campo){
 	global $wpdb;
 //	echo "SHOW COLUMNS FROM $Tabella LIKE '$Campo'";exit;
 	$ris=$wpdb->get_row("SHOW COLUMNS FROM $Tabella LIKE '$Campo'", ARRAY_A);
@@ -465,7 +465,7 @@ function ap_typeFieldInTable($Tabella, $Campo){
 		return false;	
 }
 
-function ap_EstraiParametriCampo($Tabella,$Campo){
+function albopc_EstraiParametriCampo($Tabella,$Campo){
 	global $wpdb;
 //	echo "SHOW COLUMNS FROM $Tabella LIKE $Campo <br />";
 /*
@@ -486,7 +486,7 @@ function ap_EstraiParametriCampo($Tabella,$Campo){
 		return FALSE;
 }
 
-function ap_ModificaTipoCampo($Tabella, $Campo, $NuovoTipo){
+function albopc_ModificaTipoCampo($Tabella, $Campo, $NuovoTipo){
 	global $wpdb;
 //	echo "ALTER TABLE $Tabella MODIFY $Campo $NuovoTipo <br />";
 	if ( false === $wpdb->query("ALTER TABLE $Tabella MODIFY $Campo $NuovoTipo")){
@@ -496,7 +496,7 @@ function ap_ModificaTipoCampo($Tabella, $Campo, $NuovoTipo){
 	}
 }
 
-function ap_ModificaParametriCampo($Tabella, $Campo, $Tipo, $Parametro){
+function albopc_ModificaParametriCampo($Tabella, $Campo, $Tipo, $Parametro){
 	global $wpdb;
 //	echo "ALTER TABLE $Tabella CHANGE $Campo $Campo $Tipo $Parametro";exit;
 	if ( false === $wpdb->query("ALTER TABLE $Tabella CHANGE $Campo $Campo $Tipo $Parametro")){
@@ -506,7 +506,7 @@ function ap_ModificaParametriCampo($Tabella, $Campo, $Tipo, $Parametro){
 	}
 }
 
-function ap_DaPath_a_URL($File){
+function albopc_DaPath_a_URL($File){
 //	$base=substr(WP_PLUGIN_URL,0,strpos(WP_PLUGIN_URL,"wp-content", 0));
 //	$allegato=$base.strstr($File, "wp-content");
 //  $Url=$base.stripslashes(get_option('opt_AP_FolderUpload')).'/'.basename($File);
@@ -516,7 +516,7 @@ function ap_DaPath_a_URL($File){
 	
 }
 
-function ap_UniqueFileName($filename,$inc=0){
+function albopc_UniqueFileName($filename,$inc=0){
 	$baseName=$filename;
 	while (file_exists($filename)){
 		$inc++;
@@ -525,7 +525,7 @@ function ap_UniqueFileName($filename,$inc=0){
 	return $filename;	
 }
 
-function ap_Bonifica_Url(){
+function albopc_Bonifica_Url(){
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- helper read-only di costruzione/pulizia URL (nessuna mutazione)
 	foreach( $_REQUEST as $key => $value){
 		if ($key!="page_id")	
@@ -537,7 +537,7 @@ function ap_Bonifica_Url(){
 		$url.=$key."=".$value;
 	return $url;
 }
-function ap_Estrai_PageID_Url(){
+function albopc_Estrai_PageID_Url(){
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- helper read-only di costruzione/pulizia URL (nessuna mutazione)
 	foreach( $_REQUEST as $key => $value){
 		if (strpos( $key,"page_id")!== false)		
@@ -545,7 +545,7 @@ function ap_Estrai_PageID_Url(){
 	}
 	return 0;
 }
-function ap_ListaElementiArray($var) {
+function albopc_ListaElementiArray($var) {
 	 $output ="";
      foreach($var as $key => $value) {
             $output .= $key . "==>".$value . "\n";
@@ -553,7 +553,7 @@ function ap_ListaElementiArray($var) {
      return $output;
 }
 
-function ap_cvdate($data){
+function albopc_cvdate($data){
 //	echo $data." - <br />";
 	$rsl = explode ('-',$data);
 //print("mm=".$rsl[1]." gg=". $rsl[2]."  aaaa=".$rsl[0]);
@@ -564,18 +564,18 @@ function ap_cvdate($data){
 	}
 }
 
-function ap_oggi(){
+function albopc_oggi(){
 	return gmdate('Y-m-d');
 }
 
-function ap_DateAdd($data,$incremento){
-	$secondi=ap_cvdate($data)+($incremento*86400);
+function albopc_DateAdd($data,$incremento){
+	$secondi=albopc_cvdate($data)+($incremento*86400);
 	return gmdate("Y-m-d",$secondi);
 }
 
-function ap_SeDate($test,$data1,$data2){
-	$data1=ap_cvdate($data1);
-	$data2=ap_cvdate($data2);
+function albopc_SeDate($test,$data1,$data2){
+	$data1=albopc_cvdate($data1);
+	$data2=albopc_cvdate($data2);
 	switch ($test){
 		case "=": 
 			if ($data1==$data2)
@@ -624,10 +624,10 @@ function daGiorniaAnniMesiGiorni($nGiorni){
 	}
 	return "Anni: ".$nAnni." Mesi: ".$nMesi." Giorni: ".$nGiorni;
 }
-function ap_datediff($interval, $date1, $date2) {
+function albopc_datediff($interval, $date1, $date2) {
     if(($date2==0) Or ($date2<$date1))
     	return -1;
-	$seconds = ap_cvdate($date2) - ap_cvdate($date1);
+	$seconds = albopc_cvdate($date2) - albopc_cvdate($date1);
     switch ($interval) {
         case "y":    // years
             list($year1, $month1, $day1) = split('-', gmdate('Y-m-d', $date1));
@@ -681,24 +681,24 @@ function ap_datediff($interval, $date1, $date2) {
     return $diff;
 }
 
-function ap_convertiData($dataEur){
+function albopc_convertiData($dataEur){
 $rsl = explode ('/',$dataEur);
 $rsl = array_reverse($rsl);
 return implode('-',$rsl);
 }
-function ap_VisualizzaData($dataDB){
+function albopc_VisualizzaData($dataDB){
 	$dataDB=substr($dataDB,0,10);
 	$rsl = explode ('-',$dataDB);
 	$rsl = array_reverse($rsl);
 	return implode('/',$rsl);
 }
-function ap_VisualizzaOra($dataDB){
+function albopc_VisualizzaOra($dataDB){
 return substr($dataDB,10);
 }
 /**
  * Funzione che calcola se la data in formato TimeStampa YYY-MM-DD è una data festiva Festa/Domenica
  */
-function ap_IsDataFestiva($Data){
+function albopc_IsDataFestiva($Data){
 	$d_ex=explode("-", $Data);
 	$anno=$d_ex[0];
 	// creo un vettore con le festività  italiane
@@ -761,7 +761,7 @@ TipoOperazione int(1)
 	5=> Incremento (solo per le statistiche)
 	6=> Annullamento
 */
-function ap_manutenzioneLogVisualizzazione(){
+function albopc_manutenzioneLogVisualizzazione(){
 global $wpdb;
 	$NumAnomalie=(int)($wpdb->get_var(
 		"SELECT count(*) 
@@ -777,7 +777,7 @@ global $wpdb;
 			        $wpdb->table_name_Log.IdAtto=0 ;");	
 }		
 		  
-function ap_insert_log($Oggetto,$TipoOperazione,$IdOggetto,$Operazione,$IdAtto=0){
+function albopc_insert_log($Oggetto,$TipoOperazione,$IdOggetto,$Operazione,$IdAtto=0){
 global $wpdb;
 	if(get_option('opt_AP_LogOp')=="No" And ($Oggetto!=5 And $Oggetto!=6)){
 	  		return;
@@ -802,7 +802,7 @@ global $wpdb;
 											  '%s'));	
 }
 
-function ap_svuota_log($Tipo=0){
+function albopc_svuota_log($Tipo=0){
 global $wpdb;
 	if ($Tipo==0)
 		$nr=$wpdb->query("DELETE FROM $wpdb->table_name_Log");
@@ -810,7 +810,7 @@ global $wpdb;
 		$nr=$wpdb->query("Delete FROM $wpdb->table_name_Log WHERE Oggetto<>5 and Oggetto<>6");
 	return $nr;
 }
-function ap_get_all_Oggetto_log($Oggetto,$IdOggetto=0,$IdAtto=0){
+function albopc_get_all_Oggetto_log($Oggetto,$IdOggetto=0,$IdAtto=0){
 global $wpdb;
 	$condizione="WHERE Oggetto=". (int)$Oggetto;
 	if ($IdOggetto!=0)
@@ -823,7 +823,7 @@ global $wpdb;
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_Log ".$condizione." order by Data DESC;");	
 }
 
-function ap_get_Stat_Visite($IdAtto){
+function albopc_get_Stat_Visite($IdAtto){
 global $wpdb;			
 	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
@@ -834,7 +834,7 @@ global $wpdb;
 							   GROUP BY gmdate( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
-function ap_get_Stat_VisiteRagg($IdAtto){
+function albopc_get_Stat_VisiteRagg($IdAtto){
 global $wpdb;		
 	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, \" \", \" \", count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
@@ -844,12 +844,12 @@ global $wpdb;
 							   GROUP BY gmdate( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
-function ap_get_Stat_Num_log($IdAtto,$Oggetto){
+function albopc_get_Stat_Num_log($IdAtto,$Oggetto){
 global $wpdb;
 	return (int)($wpdb->get_var( $wpdb->prepare( "SELECT COUNT(IdOggetto) FROM $wpdb->table_name_Log WHERE Oggetto = %d AND IdAtto = %d",(int) $Oggetto,(int)$IdAtto)));	
 }
 
-function ap_get_Stat_Download($IdAtto){
+function albopc_get_Stat_Download($IdAtto){
 global $wpdb;
 	return $wpdb->get_results("SELECT gmdate( `Data` ) AS Data, TitoloAllegato, Allegato, count( `Data` ) AS Accessi
 							   FROM $wpdb->table_name_Log
@@ -860,7 +860,7 @@ global $wpdb;
 							   GROUP BY gmdate( `Data` ) , IdOggetto
 							   ORDER BY Data DESC");	
 }
-function ap_get_Stat_Log($TipoInformazione){
+function albopc_get_Stat_Log($TipoInformazione){
 global $wpdb;
 
 switch ($TipoInformazione){
@@ -906,7 +906,7 @@ switch ($TipoInformazione){
 ################################################################################
 // Funzioni Meta Dati Atti
 ################################################################################
-function ap_get_elenco_attimeta($Output="Array",$ID="listaAttiMeta",$Name="ListaAttiMeta",$ValUnici="No",$IDAtto=0,$ValUniciXValori=False){
+function albopc_get_elenco_attimeta($Output="Array",$ID="listaAttiMeta",$Name="ListaAttiMeta",$ValUnici="No",$IDAtto=0,$ValUniciXValori=False){
 	global $wpdb;
 	$Rag="";
 	if($ValUnici=="Si"){
@@ -948,7 +948,7 @@ function ap_get_elenco_attimeta($Output="Array",$ID="listaAttiMeta",$Name="Lista
 	}
 }
 
-function ap_get_GruppiAtti($meta,$value){
+function albopc_get_GruppiAtti($meta,$value){
 	global $wpdb;
 	$Sql="SELECT $wpdb->table_name_Atti.IdAtto,LPAD($wpdb->table_name_Atti.Numero,7,0) as Numero,$wpdb->table_name_Atti.Anno,$wpdb->table_name_Atti.Data,$wpdb->table_name_Atti.Riferimento,$wpdb->table_name_Atti.Oggetto,$wpdb->table_name_Atti.DataInizio,$wpdb->table_name_Atti.DataFine,$wpdb->table_name_Atti.Informazioni,$wpdb->table_name_Atti.IdCategoria,$wpdb->table_name_Atti.RespProc,$wpdb->table_name_Atti.DataAnnullamento,$wpdb->table_name_Atti.MotivoAnnullamento,$wpdb->table_name_Atti.Ente,$wpdb->table_name_Atti.DataOblio,$wpdb->table_name_Atti.Soggetti FROM $wpdb->table_name_Atti INNER JOIN $wpdb->table_name_Attimeta ON"
 	    . " $wpdb->table_name_Atti.IdAtto=$wpdb->table_name_Attimeta.IdAtto WHERE"
@@ -957,12 +957,12 @@ function ap_get_GruppiAtti($meta,$value){
 	$Res=$wpdb->get_results($Sql);
 	return $Res;
 }
-function ap_get_meta_atto($IDAtto=0){
+function albopc_get_meta_atto($IDAtto=0){
 	global $wpdb;
 	$Res=$wpdb->get_results("SELECT Meta,Value FROM $wpdb->table_name_Attimeta WHERE IdAtto=$IDAtto;");
 	return $Res;
 }
-function ap_add_attimeta($IDAtto,$MetaName,$MetaValue){
+function albopc_add_attimeta($IDAtto,$MetaName,$MetaValue){
 	global $wpdb;
 	$Sql="SELECT Value FROM $wpdb->table_name_Attimeta WHERE IdAtto=%d And Meta=%s;";
 	$Res=$wpdb->get_results($wpdb->prepare($Sql,$IDAtto,$MetaName));
@@ -987,7 +987,7 @@ function ap_add_attimeta($IDAtto,$MetaName,$MetaValue){
 				return FALSE;
 	}
 }
-function ap_update_attimeta($IDAtto,$MetaName,$MetaValue){
+function albopc_update_attimeta($IDAtto,$MetaName,$MetaValue){
 	global $wpdb;
 	$Sql="SELECT Value FROM $wpdb->table_name_Attimeta WHERE IdAtto=%d And Meta=%s;";
 	$Res=$wpdb->get_results($wpdb->prepare($Sql,$IDAtto,$MetaName));
@@ -1011,7 +1011,7 @@ function ap_update_attimeta($IDAtto,$MetaName,$MetaValue){
 	else
 		return FALSE;
 	}
-function ap_remove_metasatto($IDAtto,$MetaDati=""){
+function albopc_remove_metasatto($IDAtto,$MetaDati=""){
 	global $wpdb;
 	$IDAtto=(int)$IDAtto;
 	if( is_array( $MetaDati )){
@@ -1019,7 +1019,7 @@ function ap_remove_metasatto($IDAtto,$MetaDati=""){
 		$Res=$wpdb->get_results($wpdb->prepare("SELECT Meta FROM $wpdb->table_name_Attimeta WHERE IdAtto=%d And Meta not in($Placeholders);",array_merge(array($IDAtto),$MetaDati)));
 		if($Res){
 			foreach($Res as $Rs){
-				$StatoRes=ap_delete_metaatto($IDAtto,$Rs->Meta);
+				$StatoRes=albopc_delete_metaatto($IDAtto,$Rs->Meta);
 			}
 			return $StatoRes;
 		}
@@ -1034,7 +1034,7 @@ function ap_remove_metasatto($IDAtto,$MetaDati=""){
 		}
 	}
 }
-function ap_delete_metaatto($IDAtto,$MetaName){
+function albopc_delete_metaatto($IDAtto,$MetaName){
 	global $wpdb;
 	$Sql="DELETE FROM $wpdb->table_name_Attimeta WHERE	IdAtto=%d And Meta=%s";
 	$Sql=$wpdb->prepare( $Sql,$IDAtto,$MetaName);
@@ -1048,12 +1048,12 @@ function ap_delete_metaatto($IDAtto,$MetaName){
 ################################################################################
 // Funzioni Categorie
 ################################################################################
-function ap_get_num_categorie(){
+function albopc_get_num_categorie(){
 	global $wpdb;
 	return (int)($wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->table_name_Categorie"));
 }
 
-function ap_insert_categoria($cat_name,$cat_parente,$cat_descrizione,$cat_durata){
+function albopc_insert_categoria($cat_name,$cat_parente,$cat_descrizione,$cat_durata){
 	global $wpdb;
 	if ( false === $wpdb->insert($wpdb->table_name_Categorie,array('Nome' => stripslashes($cat_name),
 																   'Genitore' => $cat_parente,
@@ -1065,14 +1065,14 @@ function ap_insert_categoria($cat_name,$cat_parente,$cat_descrizione,$cat_durata
 															 	   '%d')))	
         return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire la Nuova Categoria','albo-pretorio-considera').$wpdb->last_error, $wpdb->last_error);
     else{
-    	$NomeCategoria=ap_get_categoria($cat_parente);
+    	$NomeCategoria=albopc_get_categoria($cat_parente);
     	if(is_array($NomeCategoria)and count($NomeCategoria)>0){
 			$NomeCategoria=$NomeCategoria[0];
 			$CatGenitore=$NomeCategoria->Nome;
 		}else{
 			$CatGenitore="Non Specificato";
 		}
-		ap_insert_log(2,1,$wpdb->insert_id,"{IdCategoria}==> $wpdb->insert_id
+		albopc_insert_log(2,1,$wpdb->insert_id,"{IdCategoria}==> $wpdb->insert_id
 		                                    {".__("Nome","albo-pretorio-considera")."}==> $cat_name 
 		                                    {".__("Descrizione","albo-pretorio-considera")."}==> $cat_descrizione 
 											{".__("Durata","albo-pretorio-considera")."}==> $cat_durata
@@ -1085,7 +1085,7 @@ function is_array_di_categorie($Categorie){
 	$ArrCategorie=explode(",",$Categorie);
 	$Esito=false;
 	foreach($ArrCategorie as $Cate){
-		if(count(ap_get_categoria($Cate))){
+		if(count(albopc_get_categoria($Cate))){
 			$Esito=True;
 		}else{
 			return FALSE;
@@ -1093,22 +1093,22 @@ function is_array_di_categorie($Categorie){
 	}
 	return $Esito;
 }
-function ap_get_categorie(){
+function albopc_get_categorie(){
 	global $wpdb;
 	return $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_Categorie;");
 }
-function ap_memo_categorie($id,$cat_name,$cat_parente,$cat_descrizione,$cat_durata){
+function albopc_memo_categorie($id,$cat_name,$cat_parente,$cat_descrizione,$cat_durata){
 	global $wpdb;
 	$id=(int)$id;
 	$cat_parente=(int)$cat_parente;
-	$Categoria=ap_get_categoria($id);
+	$Categoria=albopc_get_categoria($id);
 	$Categoria=$Categoria[0];
 	$Log='{Id}==>'.$id .' ' ;
 	if ($Categoria->Nome!=$cat_name)
 		$Log.='{'.__("Nome","albo-pretorio-considera").'}==> '.$cat_name.' ';
 	if ($Categoria->Genitore!=$cat_parente){
 		$Log.='{IdGenitore}==> '.$cat_parente.' ';
-		$CategoriaPadre=ap_get_categoria($cat_parente);
+		$CategoriaPadre=albopc_get_categoria($cat_parente);
 		$CategoriaPadre=$CategoriaPadre[0];
 		$Log.='{'.__("Genitore","albo-pretorio-considera").'}==> '.$CategoriaPadre->Nome.' ';
 	}
@@ -1130,12 +1130,12 @@ function ap_memo_categorie($id,$cat_name,$cat_parente,$cat_descrizione,$cat_dura
 						  ))
     	return new WP_Error('db_update_error', __('Non sono riuscito a modifire la Categoria','albo-pretorio-considera').$wpdb->last_error, $wpdb->last_error);
     else
-    	ap_insert_log(2,2,$id,$Log);
+    	albopc_insert_log(2,2,$id,$Log);
 	
 }
 
 
-function ap_get_dropdown_categorie($select_name,$id_name,$class,$tab_index_attribute, $default="Nessuna", $DefVisId=true, $ConAtti=false,$SceltaMultipla=FALSE  ) {
+function albopc_get_dropdown_categorie($select_name,$id_name,$class,$tab_index_attribute, $default="Nessuna", $DefVisId=true, $ConAtti=false,$SceltaMultipla=FALSE  ) {
 	global $wpdb;
 	if ($ConAtti)
 		$categorie = $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_Categorie WHERE IdCategoria in (SELECT IdCategoria FROM wp_albopretorio_atti) GROUP BY `IdCategoria`ORDER BY nome;");	
@@ -1163,7 +1163,7 @@ function ap_get_dropdown_categorie($select_name,$id_name,$class,$tab_index_attri
 	return $output;
 }
 
-function ap_num_atti_categoria($IdCategoria,$Stato=0){
+function albopc_num_atti_categoria($IdCategoria,$Stato=0){
 /*
  $Stato 
  	0 tutti
@@ -1175,17 +1175,17 @@ function ap_num_atti_categoria($IdCategoria,$Stato=0){
 	$Sql=$Sql="SELECT COUNT(*) FROM $wpdb->table_name_Atti WHERE IdCategoria=$IdCategoria";
 	switch ($Stato){
 		case 1:
-			$Sql.=" And Numero >0 AND DataFine >= '".ap_oggi()."' AND DataInizio <= '".ap_oggi()."'";
+			$Sql.=" And Numero >0 AND DataFine >= '".albopc_oggi()."' AND DataInizio <= '".albopc_oggi()."'";
 			break;
 		case 2:
-			$Sql.=" And Numero >0 AND DataFine <= '".ap_oggi()."' And DataOblio> '".ap_oggi()."'";
+			$Sql.=" And Numero >0 AND DataFine <= '".albopc_oggi()."' And DataOblio> '".albopc_oggi()."'";
 			break;
 	}
 	$Sql.=";";
 	return $wpdb->get_var($Sql);
 	
 }
-function ap_get_dropdown_ricerca_categorie($select_name,$id_name,$class,$tab_index_attribute,$default="Nessuna",$Stato=0 ) {
+function albopc_get_dropdown_ricerca_categorie($select_name,$id_name,$class,$tab_index_attribute,$default="Nessuna",$Stato=0 ) {
 /*
  $Stato 
  	0 tutti
@@ -1202,7 +1202,7 @@ function ap_get_dropdown_ricerca_categorie($select_name,$id_name,$class,$tab_ind
 	}
 	if ( ! empty( $categorie ) ) {	
 		foreach ($categorie as $c) {
-			$numAtti=ap_num_atti_categoria($c->IdCategoria,$Stato);
+			$numAtti=albopc_num_atti_categoria($c->IdCategoria,$Stato);
 			if ($numAtti){
 				$output .= "\t<option value='$c->IdCategoria' ";
 				if ($c->IdCategoria==$default){
@@ -1216,7 +1216,7 @@ function ap_get_dropdown_ricerca_categorie($select_name,$id_name,$class,$tab_ind
 	return $output;
 }
 
-function ap_get_nuvola_categorie($link,$Stato ) {
+function albopc_get_nuvola_categorie($link,$Stato ) {
 /*
  $Stato 
  	0 tutti
@@ -1226,9 +1226,9 @@ function ap_get_nuvola_categorie($link,$Stato ) {
 	global $wpdb;
 	$categorie = $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_Categorie ORDER BY nome;");	
 	if ( ! empty( $categorie ) ) {	
-		$TotAtti=count(ap_get_all_atti($Stato));
+		$TotAtti=count(albopc_get_all_atti($Stato));
 		foreach ($categorie as $c) {
-			$numAtti=ap_num_atti_categoria($c->IdCategoria,$Stato);
+			$numAtti=albopc_num_atti_categoria($c->IdCategoria,$Stato);
 			if ($numAtti){
 				$pix=(int) 1 + ($numAtti /$TotAtti);
 				$output .= "<a href='".$link."=".$c->IdCategoria."' title=".__("Ci sono","albo-pretorio-considera")." ".$numAtti." ".__("Atti nella Categoria","albo-pretorio-considera")." ".$c->Nome."'><span style='font-size:".$pix."em;'>".$c->Nome."</span></a><br />\n";	
@@ -1239,11 +1239,11 @@ function ap_get_nuvola_categorie($link,$Stato ) {
 	return $output;
 }
 
-function ap_get_categoria($id){
+function albopc_get_categoria($id){
  	global $wpdb;
 	return $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_Categorie WHERE IdCategoria=".(int)$id.";");
 }	
-function ap_get_categorie_figlio($id, &$elenco, $livello){
+function albopc_get_categorie_figlio($id, &$elenco, $livello){
 	global $wpdb;
 	$categorie_figlio = $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_Categorie WHERE genitore=".(int)$id."  ORDER BY nome;");	
 //		echo "SELECT DISTINCT * FROM $wpdb->table_name_Categorie WHERE IdCategoria=$id  ORDER BY nome;";
@@ -1254,14 +1254,14 @@ foreach ( $categorie_figlio as $cf )
 		array_push($elenco,array($cf->IdCategoria,$cf->Nome,$livello));
 		if ($cf->Genitore>0){
 		 	$livello+=1;
-			ap_get_categorie_figlio($cf->IdCategoria,$elenco, $livello);
+			albopc_get_categorie_figlio($cf->IdCategoria,$elenco, $livello);
 			$livello-=1;
 		}
 	}
 }
 }
 
-function ap_get_categorie_gerarchica() {
+function albopc_get_categorie_gerarchica() {
 	global $wpdb;
 	$elenco = array();
 	$categorie_primarie = $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_Categorie WHERE genitore<1  ORDER BY Nome;");	
@@ -1269,36 +1269,36 @@ function ap_get_categorie_gerarchica() {
 //		echo "Ci passo";
 //		echo "Id ".$cp->IdCategoria ."  Nome ". $cp->Nome. " <br />";
 		array_push($elenco,array($cp->IdCategoria,$cp->Nome,0));
-		ap_get_categorie_figlio($cp->IdCategoria,$elenco, 1);
+		albopc_get_categorie_figlio($cp->IdCategoria,$elenco, 1);
 	}
 	return $elenco;
 }
 
-function ap_del_categorie($id) {
+function albopc_del_categorie($id) {
 	global $wpdb;
 	$id=(int)$id;
-	if ((ap_num_atti_categoria($id)>0) or (ap_num_figli_categorie($id)>0)){
-		return array("atti" => ap_num_atti_categoria($id),
-		             "figli" => ap_num_figli_categorie($id));
+	if ((albopc_num_atti_categoria($id)>0) or (albopc_num_figli_categorie($id)>0)){
+		return array("atti" => albopc_num_atti_categoria($id),
+		             "figli" => albopc_num_figli_categorie($id));
 	}
 	else{
 	 	$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Categorie WHERE	IdCategoria=%d",$id));
-		ap_insert_log(2,3,$id,__("Cancellazione Categoria","albo-pretorio-considera"));
+		albopc_insert_log(2,3,$id,__("Cancellazione Categoria","albo-pretorio-considera"));
 
 		return True;
 	}
 }
-function ap_num_figli_categorie($id){
+function albopc_num_figli_categorie($id){
 	global $wpdb;
 	return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->table_name_Categorie WHERE Genitore=%d",$id));
 	
 }
-function ap_num_categorie(){
+function albopc_num_categorie(){
 	global $wpdb;
 	return $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Categorie");
 	
 }
-function ap_num_categorie_inutilizzate(){
+function albopc_num_categorie_inutilizzate(){
 	global $wpdb;
 	$Sql="SELECT count(*) 
 	      FROM $wpdb->table_name_Categorie left join  $wpdb->table_name_Atti on 
@@ -1306,7 +1306,7 @@ function ap_num_categorie_inutilizzate(){
 		  WHERE $wpdb->table_name_Atti.IdAtto is null";
 	return $wpdb->get_var($Sql);
 }
-function ap_num_categoria_atto($id){
+function albopc_num_categoria_atto($id){
 	global $wpdb;
 	$id=(int)$id;
 	$Sql="SELECT count(*) 
@@ -1314,7 +1314,7 @@ function ap_num_categoria_atto($id){
 		  WHERE $wpdb->table_name_Atti.IdCategoria =%d;";
 	return $wpdb->get_var($wpdb->prepare($Sql,$id));
 }
-function ap_categorie_orfane(){
+function albopc_categorie_orfane(){
 	global $wpdb;
 	$Sql="SELECT LPAD($wpdb->table_name_Atti.Numero,7,0),$wpdb->table_name_Atti.Anno, $wpdb->table_name_Atti.IdCategoria 
 	      FROM $wpdb->table_name_Atti left join  $wpdb->table_name_Categorie on 
@@ -1326,7 +1326,7 @@ function ap_categorie_orfane(){
 // Funzioni Atti
 ################################################################################
 
-function ap_setOblioOggi($IdAtto){
+function albopc_setOblioOggi($IdAtto){
 	global $wpdb;
 	$DataOblio=gmdate('Y-m-d');
 	if ( $wpdb->update($wpdb->table_name_Atti,
@@ -1334,12 +1334,12 @@ function ap_setOblioOggi($IdAtto){
 			array( 'IdAtto' => $IdAtto),
 			array( '%s'),
 			array( '%d'))){						
-	ap_insert_log(1,2,$IdAtto,"{Data Oblio}==> ".$DataOblio);
-	$atto=ap_get_atto($IdAtto);
+	albopc_insert_log(1,2,$IdAtto,"{Data Oblio}==> ".$DataOblio);
+	$atto=albopc_get_atto($IdAtto);
 	$atto=$atto[0];
 	return "Data Oblio dell'Atto:".$atto->Numero."/".$atto->Anno." Impostata ad oggi:".gmdate('d/m/Y');	}
 }
-function ap_AnniAtti(){
+function albopc_AnniAtti(){
 	global $wpdb;
 	$Sql="SELECT Anno FROM $wpdb->table_name_Atti where Numero<>0 Group by Anno;";
 	$Anni = $wpdb->get_results($Sql);
@@ -1349,7 +1349,7 @@ function ap_AnniAtti(){
 		return $Anni;
 }
 
-function ap_Repertorio($Anno,$Echo=TRUE){
+function albopc_Repertorio($Anno,$Echo=TRUE){
 	global $wpdb;
 	$Anno=(int)$Anno;
 	$Docu="";
@@ -1361,25 +1361,25 @@ function ap_Repertorio($Anno,$Echo=TRUE){
 	if (count($Atti)!=0){
 		if($Echo){
 			foreach($Atti as $Atto){
-				if(ap_sanifica_testo($Atto->DataAnnullamento)!='0000-00-00')
+				if(albopc_sanifica_testo($Atto->DataAnnullamento)!='0000-00-00')
 					$Annullato='style="background-color: '.get_option('opt_AP_ColoreAnnullati').';"';
 				else
 					$Annullato='';
 				$Docu.= "
 				<tr>
-					<td>".ap_sanifica_testo($Atto->NomeEnte)."</td>
-					<td>".ap_sanifica_testo($Atto->Numero)."</td>
-					<td>".ap_sanifica_testo( $Atto->Riferimento)."</td>
-					<td>".ap_sanifica_testo($Atto->Oggetto)."</td>
-					<td>".ap_sanifica_testo($Atto->DataInizio)."</td>
-					<td>".ap_sanifica_testo($Atto->DataFine)."</td>
-					<td $Annullato>".ap_sanifica_testo($Atto->DataAnnullamento)."</td>
-					<td $Annullato>".ap_sanifica_testo($Atto->MotivoAnnullamento)."</td>
-					<td>".ap_sanifica_testo($Atto->Richiedente)."</td>
-					<td>".ap_sanifica_testo($Atto->UnitaOrganizzativa)."</td>
-					<td>".ap_sanifica_testo($Atto->ResponsabileProcedimento)."</td>
-					<td>".ap_sanifica_testo($Atto->Categoria)."</td>
-					<td>".ap_sanifica_testo($Atto->Informazioni)."</td>
+					<td>".albopc_sanifica_testo($Atto->NomeEnte)."</td>
+					<td>".albopc_sanifica_testo($Atto->Numero)."</td>
+					<td>".albopc_sanifica_testo( $Atto->Riferimento)."</td>
+					<td>".albopc_sanifica_testo($Atto->Oggetto)."</td>
+					<td>".albopc_sanifica_testo($Atto->DataInizio)."</td>
+					<td>".albopc_sanifica_testo($Atto->DataFine)."</td>
+					<td $Annullato>".albopc_sanifica_testo($Atto->DataAnnullamento)."</td>
+					<td $Annullato>".albopc_sanifica_testo($Atto->MotivoAnnullamento)."</td>
+					<td>".albopc_sanifica_testo($Atto->Richiedente)."</td>
+					<td>".albopc_sanifica_testo($Atto->UnitaOrganizzativa)."</td>
+					<td>".albopc_sanifica_testo($Atto->ResponsabileProcedimento)."</td>
+					<td>".albopc_sanifica_testo($Atto->Categoria)."</td>
+					<td>".albopc_sanifica_testo($Atto->Informazioni)."</td>
 				</tr>";
 			}			
 		}else{
@@ -1388,31 +1388,31 @@ function ap_Repertorio($Anno,$Echo=TRUE){
 	}
 return $Docu;
 }
-function ap_SetDefaultDataScadenza(){
+function albopc_SetDefaultDataScadenza(){
 	global $wpdb;
 	$Sql="SELECT IdAtto, DataOblio,DataFine FROM $wpdb->table_name_Atti;";
 	$Atti = $wpdb->get_results($Sql);
 	foreach ($Atti as $Atto){
 		if ($Atto->DataOblio=="0000-00-00"){
-			$DataOblio=ap_DateAdd($Atto->DataFine ,1825);
+			$DataOblio=albopc_DateAdd($Atto->DataFine ,1825);
 			if ( $wpdb->update($wpdb->table_name_Atti,
 						array('DataOblio' => $DataOblio),
 						array( 'IdAtto' => $Atto->IdAtto),
 						array( '%s'),
 						array( '%d'))){						
-				ap_insert_log(1,2,$Atto->IdAtto,"{Data Oblio}==> ".$DataOblio);
+				albopc_insert_log(1,2,$Atto->IdAtto,"{Data Oblio}==> ".$DataOblio);
 			}		
 		}			
 	}
 }
-function ap_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,$DataOblio,$Note,$Categoria,$Responsabile,$Soggetti,$IdUI,$Richiedente){
+function albopc_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,$DataOblio,$Note,$Categoria,$Responsabile,$Soggetti,$IdUI,$Richiedente){
 	global $wpdb;
 	$Anno=gmdate("Y");
 	$Numero=0;
-	$Data=ap_convertiData($Data);
-	$DataInizio=ap_convertiData($DataInizio);
-	$DataFine=ap_convertiData($DataFine);
-	$DataOblio=ap_convertiData($DataOblio);
+	$Data=albopc_convertiData($Data);
+	$DataInizio=albopc_convertiData($DataInizio);
+	$DataFine=albopc_convertiData($DataFine);
+	$DataOblio=albopc_convertiData($DataOblio);
 	if(!$Responsabile){
 		$Responsabile=0;
 	}
@@ -1454,25 +1454,25 @@ function ap_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,
     }else{
 		$newIDAtto=$wpdb->insert_id;
 //    	echo "Sql==".$wpdb->last_query;exit;
-	  	$NomeCategoria=ap_get_categoria($Categoria);
+	  	$NomeCategoria=albopc_get_categoria($Categoria);
     	$NomeCategoria=$NomeCategoria[0];
-		$NomeResponsabile=ap_get_responsabile($Responsabile);
+		$NomeResponsabile=albopc_get_responsabile($Responsabile);
 		$NomeResponsabile=$NomeResponsabile[0];
-		$NomeEnte=ap_get_ente($Ente);
+		$NomeEnte=albopc_get_ente($Ente);
 		$NomeEnte=$NomeEnte->Nome;
 		$Responsabili="";
-		$NomeUO=ap_get_unitaorganizzativa($IdUI);
-		$NomeResp=ap_get_responsabile($Responsabile);
+		$NomeUO=albopc_get_unitaorganizzativa($IdUI);
+		$NomeResp=albopc_get_responsabile($Responsabile);
 		if (count($NomeResp)>0)
 			$NomeResp=$NomeResp[0]->Nome." ".$NomeResp[0]->Cognome;
 		else
 			$NomeResp=__("Non Definito","albo-pretorio-considera");
 		$Sogs=unserialize($Soggetti, array('allowed_classes'=>false));
 		foreach($Sogs as $Soggetto){
-			$NomeResponsabile=ap_get_responsabile($Soggetto);
-			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".ap_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
+			$NomeResponsabile=albopc_get_responsabile($Soggetto);
+			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".albopc_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
 		}
-		ap_insert_log(1,1,$wpdb->insert_id,"{IdAtto}==> $wpdb->insert_id
+		albopc_insert_log(1,1,$wpdb->insert_id,"{IdAtto}==> $wpdb->insert_id
 											{IdEnte} $Ente
 											{".__("Ente","albo-pretorio-considera")."} $NomeEnte
 											{".__("Numero","albo-pretorio-considera")."} $Numero/$Anno 
@@ -1494,33 +1494,33 @@ function ap_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,
 		return $newIDAtto;
 	}
 }
-function ap_del_atto($id) {
+function albopc_del_atto($id) {
 	global $wpdb;
-	$N_allegati=ap_num_allegati_atto($id);
+	$N_allegati=albopc_num_allegati_atto($id);
 	if ($N_allegati>0){
 		return array("allegati" => $N_allegati);
 	}
 	else{
 	 	$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Atti WHERE	IdAtto=%d",$id));
-		ap_insert_log(1,3,$id,__("Cancellazione Atto","albo-pretorio-considera"),(int)$id);
+		albopc_insert_log(1,3,$id,__("Cancellazione Atto","albo-pretorio-considera"),(int)$id);
 		return True;
 	}
 }
 
-function ap_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,$DataOblio,$Note,$Categoria,$Responsabile,$Soggetti,$IdUI,$Richiedente){
+function albopc_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,$DataOblio,$Note,$Categoria,$Responsabile,$Soggetti,$IdUI,$Richiedente){
 	global $wpdb;
-	$Atto=ap_get_atto($id);
+	$Atto=albopc_get_atto($id);
 	$Atto=$Atto[0];
 //	$Soggetti=serialize($Soggetti);
-	$Data=ap_convertiData($Data);
-	$DataInizio=ap_convertiData($DataInizio);
-	$DataFine=ap_convertiData($DataFine);
-	$DataOblio=ap_convertiData($DataOblio);
+	$Data=albopc_convertiData($Data);
+	$DataInizio=albopc_convertiData($DataInizio);
+	$DataFine=albopc_convertiData($DataFine);
+	$DataOblio=albopc_convertiData($DataOblio);
 	$Oggetto=stripslashes($Oggetto);
 	$Riferimento=stripslashes($Riferimento);
 	$Log='' ;
 	if ($Atto->Ente!=$Ente){
-    	$NEnte=ap_get_ente($Ente);
+    	$NEnte=albopc_get_ente($Ente);
 		$Log.='{IdEnte}==> '.$Ente.' ';
 		$Log.='{'.__("Ente","albo-pretorio-considera").'}==> '.$NEnte->Nome.' ';		
 	}
@@ -1539,7 +1539,7 @@ function ap_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFin
 	if ($Atto->Informazioni!=$Note)
 		$Log.='{'.__("Informazioni","albo-pretorio-considera").'}==> '.$Note.' ';
 	if ($Atto->IdCategoria!=$Categoria){
-    	$NomeCategoria=ap_get_categoria($Categoria);
+    	$NomeCategoria=albopc_get_categoria($Categoria);
     	$NomeCategoria=$NomeCategoria[0];
 		$Log.='{IdCategoria}==> '.$Categoria.' ';
 		$Log.='{'.__("Categoria","albo-pretorio-considera").'}==> '.$NomeCategoria->Nome.' ';
@@ -1548,17 +1548,17 @@ function ap_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFin
 		$Responsabili="";
 		$Sogs=unserialize($Soggetti, array('allowed_classes'=>false));
 		foreach($Sogs as $Soggetto){
-			$NomeResponsabile=ap_get_responsabile($Soggetto);
-			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".ap_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
+			$NomeResponsabile=albopc_get_responsabile($Soggetto);
+			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".albopc_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
 		}
 		$Log.='{'.__("Soggetti","albo-pretorio-considera").'}==> '.$Responsabili.' ';
 	}
 	if ($Atto->IdUnitaOrganizzativa!=$IdUI){
-		$NomeUO=ap_get_unitaorganizzativa($IdUI);
+		$NomeUO=albopc_get_unitaorganizzativa($IdUI);
 		$Log.='{'.__("Unita Organizzativa Responsabile","albo-pretorio-considera").'}==> ('.$IdUI.') '.$NomeUO->Nome;
 	}
 	if ($Atto->RespProc!=$Responsabile){
-		$NomeResp=ap_get_responsabile($Responsabile);
+		$NomeResp=albopc_get_responsabile($Responsabile);
 		$NomeResp=$NomeResp[0];
 		$Log.='{'.__("Responsabile del procedimento amministrativo","albo-pretorio-considera").'}==> '.$NomeResp->Nome." ".$NomeResp->Cognome;
 	}
@@ -1595,29 +1595,29 @@ function ap_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFin
 						  array('%d')))
     	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Atto","albo-pretorio-considera").$wpdb->last_error, $wpdb->last_error);
     else
-    	ap_insert_log(1,2,$id,$Log);
+    	albopc_insert_log(1,2,$id,$Log);
 }
 
-function ap_update_selettivo_atto($id,$ArrayCampiValori,$ArrayTipi,$TestaMsg){
+function albopc_update_selettivo_atto($id,$ArrayCampiValori,$ArrayTipi,$TestaMsg){
 	global $wpdb;
 	if ( false === $wpdb->update($wpdb->table_name_Atti,$ArrayCampiValori,array( 'IdAtto' => $id ),$ArrayTipi))
     	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Atto","albo-pretorio-considera") .$wpdb->last_error, $wpdb->last_error);
     else{
-		ap_insert_log(1,2,(int)$id,$TestaMsg.ap_ListaElementiArray($ArrayCampiValori));
-		return __('Atto Aggiornato','albo-pretorio-considera').': %%br%%'.ap_ListaElementiArray($ArrayCampiValori);	
+		albopc_insert_log(1,2,(int)$id,$TestaMsg.albopc_ListaElementiArray($ArrayCampiValori));
+		return __('Atto Aggiornato','albo-pretorio-considera').': %%br%%'.albopc_ListaElementiArray($ArrayCampiValori);	
 	}
 }
 
-function ap_approva_atto($IdAtto){
+function albopc_approva_atto($IdAtto){
 	global $wpdb;
 	$IdAtto=(int)$IdAtto;
-	$NumeroDaDb=ap_get_last_num_anno(gmdate("Y"));
-	$risultato=ap_get_atto($IdAtto);
+	$NumeroDaDb=albopc_get_last_num_anno(gmdate("Y"));
+	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
 	$NumeroOpzione=get_option('opt_AP_NumeroProgressivo');
 	if($risultato->Numero!=0)
 		return __("Atto gia' PUBBLICATO con Numero Progressivo ","albo-pretorio-considera").$risultato->Numero;
-	if (($NumeroDaDb!=$NumeroOpzione) And ap_get_all_atti(9,0,0,0,"",0,0,"",0,0,TRUE)>0){
+	if (($NumeroDaDb!=$NumeroOpzione) And albopc_get_all_atti(9,0,0,0,"",0,0,"",0,0,TRUE)>0){
 		return __("Atto non PUBBLICATO","albo-pretorio-considera").":%%br%%".__("Progressivo da ultima pubblicazione","albo-pretorio-considera")."=$NumeroDaDb%%br%% ".__("Progressivo da parametri","albo-pretorio-considera")."=$NumeroOpzione";
 	}else{
 		$x=$wpdb->update($wpdb->table_name_Atti,
@@ -1630,7 +1630,7 @@ function ap_approva_atto($IdAtto){
 	    	return __("Atto non PUBBLICATO","albo-pretorio-considera").':%%br%%'.__("Errore","albo-pretorio-considera").': '.$wpdb->last_error;
 	    }
 	    else{
-			ap_insert_log( 1,4,$IdAtto,"{".__("Stato Atto","albo-pretorio-considera")."}==> ".__("Pubblicato","albo-pretorio-considera")." 
+			albopc_insert_log( 1,4,$IdAtto,"{".__("Stato Atto","albo-pretorio-considera")."}==> ".__("Pubblicato","albo-pretorio-considera")." 
 			 							{".__("Numero Assegnato","albo-pretorio-considera")."}==> $NumeroOpzione ");	
 			$NumeroOpzione+=1;
 			update_option('opt_AP_NumeroProgressivo',$NumeroOpzione );
@@ -1639,27 +1639,27 @@ function ap_approva_atto($IdAtto){
 	}
 }
 
-function ap_annulla_atto($IdAtto,$Motivo,$Allegati=array()){
+function albopc_annulla_atto($IdAtto,$Motivo,$Allegati=array()){
 	global $wpdb;
 	$IdAtto=(int)$IdAtto;
-//	$risultato=ap_get_atto($IdAtto);
+//	$risultato=albopc_get_atto($IdAtto);
 //	$risultato=$risultato[0];
 	$Sql = "UPDATE `$wpdb->table_name_Atti` SET DataAnnullamento='".gmdate('Y-m-d')."', MotivoAnnullamento=%s  WHERE IdAtto=%d";
 	$Sql=$wpdb->prepare($Sql,array($Motivo,$IdAtto));
 	$Result=$wpdb->query($Sql);
 //	echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
 	if($Result){
-		ap_insert_log(1,6,$IdAtto,"{".__("Stato Atto","albo-pretorio-considera")."}==> ".__("Annullato","albo-pretorio-considera"));
+		albopc_insert_log(1,6,$IdAtto,"{".__("Stato Atto","albo-pretorio-considera")."}==> ".__("Annullato","albo-pretorio-considera"));
 		if (!empty($Allegati))
 			foreach($Allegati as $Allegato)
-				ap_del_allegato_atto($Allegato,$IdAtto,"","S");
+				albopc_del_allegato_atto($Allegato,$IdAtto,"","S");
 		return 9;
 	}else{
 	return 8;				
 	}
 }
 
-function ap_get_dropdown_anni_atti($select_name,$id_name,$class,$tab_index_attribute, $default="xxxx",$Stato=0) {
+function albopc_get_dropdown_anni_atti($select_name,$id_name,$class,$tab_index_attribute, $default="xxxx",$Stato=0) {
 /*
  $Stato 
  	0 tutti
@@ -1670,10 +1670,10 @@ function ap_get_dropdown_anni_atti($select_name,$id_name,$class,$tab_index_attri
 	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-considera");
 	switch ($Stato){
 		case 1:
-			$Sql="SELECT Anno FROM $wpdb->table_name_Atti WHERE Numero >0 AND DataFine >= '".ap_oggi()."' AND DataInizio <= '".ap_oggi()."' GROUP BY Anno;";
+			$Sql="SELECT Anno FROM $wpdb->table_name_Atti WHERE Numero >0 AND DataFine >= '".albopc_oggi()."' AND DataInizio <= '".albopc_oggi()."' GROUP BY Anno;";
 			break;
 		case 2:
-			$Sql="SELECT Anno FROM $wpdb->table_name_Atti WHERE Numero >0 AND DataFine < '".ap_oggi()."' GROUP BY Anno;";
+			$Sql="SELECT Anno FROM $wpdb->table_name_Atti WHERE Numero >0 AND DataFine < '".albopc_oggi()."' GROUP BY Anno;";
 			break;
 		default:
 			$Sql="SELECT Anno FROM $wpdb->table_name_Atti GROUP BY Anno;";
@@ -1699,16 +1699,16 @@ function ap_get_dropdown_anni_atti($select_name,$id_name,$class,$tab_index_attri
 	return $output;
 }
 
-function ap_get_last_num_anno($Anno){
+function albopc_get_last_num_anno($Anno){
 	global $wpdb;
 	return (int)($wpdb->get_var( $wpdb->prepare( "SELECT MAX(Numero) FROM $wpdb->table_name_Atti WHERE Anno=%d",(int)$Anno)))+1;
 }
-function ap_get_num_anno($IdAtto){
+function albopc_get_num_anno($IdAtto){
 	global $wpdb;
 	return ($wpdb->get_var( $wpdb->prepare( "SELECT LPAD(Numero,7,0) as Numero FROM $wpdb->table_name_Atti WHERE IdAtto=%d",$IdAtto)));
 }
 
-function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Dadata=0,$Adata=0,$OrderBy="",$DaRiga=0,$ARiga=20,$Conteggio=false,$Annullati=false,$Riferimento='',$Ente=-1,$SenzaAnnullati=FALSE,$NumeroParziale=''){
+function albopc_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Dadata=0,$Adata=0,$OrderBy="",$DaRiga=0,$ARiga=20,$Conteggio=false,$Annullati=false,$Riferimento='',$Ente=-1,$SenzaAnnullati=FALSE,$NumeroParziale=''){
 //var_dump($Dadata,$Adata);
 /* Stato:
 		 0 - tutti
@@ -1727,10 +1727,10 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 	$Selezione="";
 	$OrderBySql="";
 // Le date devono essere nel formato europeo gg/mm/aaaa: qualunque altro
-// valore viene azzerato per impedire SQL injection tramite ap_convertiData()
+// valore viene azzerato per impedire SQL injection tramite albopc_convertiData()
 	foreach(array('Dadata','Adata') as $ParData){
 		if ($$ParData!=0){
-			$DataConv=ap_convertiData($$ParData);
+			$DataConv=albopc_convertiData($$ParData);
 			if (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$DataConv))
 				$$ParData=0;
 		}
@@ -1759,38 +1759,38 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 			break;
 		case 10:
 				if ($Adata!=0 )
-					$Selezione.=' WHERE DataInizio<="'.ap_convertiData($Adata).'" ';
+					$Selezione.=' WHERE DataInizio<="'.albopc_convertiData($Adata).'" ';
 				if ($Dadata!=0 )
-					$Selezione.=' AND DataFine>="'.ap_convertiData($Dadata);
+					$Selezione.=' AND DataFine>="'.albopc_convertiData($Dadata);
 				$Selezione.='" AND Numero<>0 '; 
 				break;
 		case 1:
-			if ($Dadata!=0 and ap_SeDate("<",ap_convertiData($Dadata),ap_oggi()))
-				$Selezione.=' WHERE DataInizio>="'.ap_convertiData($Dadata).'" ';
+			if ($Dadata!=0 and albopc_SeDate("<",albopc_convertiData($Dadata),albopc_oggi()))
+				$Selezione.=' WHERE DataInizio>="'.albopc_convertiData($Dadata).'" ';
 			else
-				$Selezione.=' WHERE DataInizio<="'.ap_oggi().'" ';
-			if ($Adata!=0  and ap_SeDate(">",ap_convertiData($Adata),ap_oggi()))
-				$Selezione.=' AND DataFine<="'.ap_convertiData($Adata).'" And DataFine>="'.ap_oggi();
+				$Selezione.=' WHERE DataInizio<="'.albopc_oggi().'" ';
+			if ($Adata!=0  and albopc_SeDate(">",albopc_convertiData($Adata),albopc_oggi()))
+				$Selezione.=' AND DataFine<="'.albopc_convertiData($Adata).'" And DataFine>="'.albopc_oggi();
 			else
-				$Selezione.=' AND DataFine>="'.ap_oggi();
+				$Selezione.=' AND DataFine>="'.albopc_oggi();
 			$Selezione.='" AND Numero>0'; 
 			break;
 		case 2:
-			if ($Dadata!=0  and ap_SeDate("<",ap_convertiData($Dadata),ap_oggi()))
-				$Selezione.=' WHERE DataInizio>="'.ap_convertiData($Dadata).'" ';
+			if ($Dadata!=0  and albopc_SeDate("<",albopc_convertiData($Dadata),albopc_oggi()))
+				$Selezione.=' WHERE DataInizio>="'.albopc_convertiData($Dadata).'" ';
 			else
-				$Selezione.=' WHERE DataInizio<="'.ap_oggi().'" ';
-			if ($Adata!=0   and ap_SeDate("<",ap_convertiData($Adata),ap_oggi()))
-				$Selezione.=' AND DataFine<"'.ap_convertiData($Adata);
+				$Selezione.=' WHERE DataInizio<="'.albopc_oggi().'" ';
+			if ($Adata!=0   and albopc_SeDate("<",albopc_convertiData($Adata),albopc_oggi()))
+				$Selezione.=' AND DataFine<"'.albopc_convertiData($Adata);
 			else
-				$Selezione.=' AND DataFine<"'.ap_oggi();
-			$Selezione.='" AND Numero>0 And DataOblio>"'.ap_oggi().'" '; 
+				$Selezione.=' AND DataFine<"'.albopc_oggi();
+			$Selezione.='" AND Numero>0 And DataOblio>"'.albopc_oggi().'" '; 
 			break;
 		case 3:
 			$Selezione=' WHERE Numero=0'; 
 			break;
 		case 4:
-			$Selezione.=' WHERE DataOblio<="'.ap_oggi().'" ';
+			$Selezione.=' WHERE DataOblio<="'.albopc_oggi().'" ';
 			$Selezione.=' AND Numero>0'; 
 			break;	
 		case 5:
@@ -1847,7 +1847,7 @@ function ap_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto='',$Da
 	}
 	
 }	
-function ap_searchAtti($Search,$OrderBy="",$DaRiga=0,$ARiga=20){
+function albopc_searchAtti($Search,$OrderBy="",$DaRiga=0,$ARiga=20){
 	global $wpdb;
 	$OrderBySql="";
 	if ($OrderBy!=""){
@@ -1868,25 +1868,25 @@ function ap_searchAtti($Search,$OrderBy="",$DaRiga=0,$ARiga=20){
 	$Selezione=$wpdb->prepare(" WHERE Numero<>0 And (Oggetto LIKE %s Or Riferimento LIKE %s)", $Like, $Like);
 	return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa,Richiedente FROM $wpdb->table_name_Atti $Selezione $OrderBySql $Limite;");
 }
-function ap_get_atto($id){
+function albopc_get_atto($id){
 	global $wpdb;
 	$id=(int)$id;
 	return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa, Richiedente FROM $wpdb->table_name_Atti Where IdAtto=$id;");
 }	
 
-function ap_is_atto_corrente($id){
-	$atto=ap_get_atto($id);
+function albopc_is_atto_corrente($id){
+	$atto=albopc_get_atto($id);
 	$atto=$atto[0];
-	if(ap_sedate(">",$atto->DataFine,ap_oggi())){
+	if(albopc_sedate(">",$atto->DataFine,albopc_oggi())){
 		return FALSE;
 	}else{
 		return TRUE;
 	}
 }
-function ap_get_lista_atti($select_name,$id_name,$class,$tab_index_attribute,$default="xxxx",$Stato=0,$Style="") {
+function albopc_get_lista_atti($select_name,$id_name,$class,$tab_index_attribute,$default="xxxx",$Stato=0,$Style="") {
 	global $wpdb;
 	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-considera");
-	$atti =ap_get_all_atti( $Stato,0,0,0,'',0,0,"Numero Desc");
+	$atti =albopc_get_all_atti( $Stato,0,0,0,'',0,0,"Numero Desc");
 	$output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute style='$Style'>\n";
 	if ($default==__("Nessuno","albo-pretorio-considera")){
 		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-considera")."</option>\n";
@@ -1905,10 +1905,10 @@ function ap_get_lista_atti($select_name,$id_name,$class,$tab_index_attribute,$de
 	$output .= "</select>\n";
 	return $output;
 }
-function ap_get_dropdown_atti($select_name,$id_name,$class,$tab_index_attribute,$default="xxxx") {
+function albopc_get_dropdown_atti($select_name,$id_name,$class,$tab_index_attribute,$default="xxxx") {
 	global $wpdb;
 	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-considera");
-	$atti =ap_get_all_atti( 0,0,0,0,'',0,0,"Numero Desc");
+	$atti =albopc_get_all_atti( 0,0,0,0,'',0,0,"Numero Desc");
 	$output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute>\n";
 	if ($default==__("Nessuno","albo-pretorio-considera")){
 		$output .= "\t<option value='0' selected='selected'>".__("Nessuno","albo-pretorio-considera")."</option>\n";
@@ -1928,7 +1928,7 @@ function ap_get_dropdown_atti($select_name,$id_name,$class,$tab_index_attribute,
 	return $output;
 }
 
-function ap_ripubblica_atti_correnti($ArrayAtti){
+function albopc_ripubblica_atti_correnti($ArrayAtti){
 	global $wpdb;
 	$NumAggiornamenti=0;
 /*	echo "<pre>";
@@ -1936,15 +1936,15 @@ function ap_ripubblica_atti_correnti($ArrayAtti){
 	echo "</pre>";
 	wp_die();
 */	foreach($ArrayAtti as $IDAtto => $Ngg){
-		$Atto=ap_get_atto($IDAtto);
+		$Atto=albopc_get_atto($IDAtto);
 		$Atto=$Atto[0];
-		$DataFine=ap_DateAdd($Atto->DataFine,$Ngg);
+		$DataFine=albopc_DateAdd($Atto->DataFine,$Ngg);
 		if(strlen($Atto->Informazioni)>0)
 			/* translators: 1: numero di giorni, 2: data originale, 3: data aggiornata */
 			$Informazioni=$Atto->Informazioni.sprintf(__('
-			Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-considera'),$Ngg,ap_VisualizzaData($Atto->DataFine),ap_VisualizzaData($DataFine));
+			Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-considera'),$Ngg,albopc_VisualizzaData($Atto->DataFine),albopc_VisualizzaData($DataFine));
 		else
-			$Informazioni=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-considera'),$Ngg,ap_VisualizzaData($Atto->DataFine),ap_VisualizzaData($DataFine));
+			$Informazioni=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Data Scadenza Atto prolungata di %1$d giorni a causa di una interruzione del servizio di pubblicazione. Data Originale:%2$s - Data Aggiornata:%3$s','albo-pretorio-considera'),$Ngg,albopc_VisualizzaData($Atto->DataFine),albopc_VisualizzaData($DataFine));
 //		$SqlAttoDaProlungare='UPDATE '.$wpdb->table_name_Atti.' SET DataFine='.$DataFine.', Informazioni="'.$Informazioni.'" WHERE IdAtto='.$IDAtto.';';
 		
 		if ($num=$wpdb->update($wpdb->table_name_Atti,
@@ -1955,7 +1955,7 @@ function ap_ripubblica_atti_correnti($ArrayAtti){
 						  array('%d')))
 			$NumAggiornamenti+=$num;
 //		echo $SqlAttoDaProlungare."<br />";
-		ap_insert_log(1,1,$IDAtto,"{IdAtto}==> $IDAtto
+		albopc_insert_log(1,1,$IDAtto,"{IdAtto}==> $IDAtto
 								   {".__("Informazioni","albo-pretorio-considera")."}==>$Informazioni");	
 	}
 	return $NumAggiornamenti;
@@ -1965,7 +1965,7 @@ function ap_ripubblica_atti_correnti($ArrayAtti){
 // Funzioni Allegati
 ################################################################################
 
-function ap_get_allegati_file_scollegati($TipoRet="Array",$select_name="AllegatiSpuri",$id_name="AllegatiSpuri",$class=""){
+function albopc_get_allegati_file_scollegati($TipoRet="Array",$select_name="AllegatiSpuri",$id_name="AllegatiSpuri",$class=""){
 	global $wpdb;
 	$Sql="SELECT $wpdb->table_name_Allegati.Allegato
 		  FROM $wpdb->table_name_Allegati";
@@ -1975,7 +1975,7 @@ function ap_get_allegati_file_scollegati($TipoRet="Array",$select_name="Allegati
 			    new RecursiveDirectoryIterator($Dir));
 			// Ciclo tutti gli elementi dell'iteratore, i files estratti dall'iteratore
 	$AllegatiF=array();
-	$TipiAmmessi=ap_tipiFileAmmessi();
+	$TipiAmmessi=albopc_tipiFileAmmessi();
 	foreach ($iterator as $key=>$value) {
 		$File = pathinfo($key);
 		$name = $File['filename'];
@@ -2001,9 +2001,9 @@ function ap_get_allegati_file_scollegati($TipoRet="Array",$select_name="Allegati
 	return $output; 
 }
 
-function ap_CalcImpronta($IDAllegato=0,$FileName=""){
+function albopc_CalcImpronta($IDAllegato=0,$FileName=""){
 	if ($IDAllegato!=0){
-		$Allegato=ap_get_allegato_atto($IDAllegato);
+		$Allegato=albopc_get_allegato_atto($IDAllegato);
 		$FileName=$Allegato[0]->Allegato;
 	}
 	if (is_file($FileName)) {
@@ -2012,12 +2012,12 @@ function ap_CalcImpronta($IDAllegato=0,$FileName=""){
 	return FALSE;
 }
 
-function ap_get_num_allegati($id){
+function albopc_get_num_allegati($id){
 	global $wpdb;
 	return (int)($wpdb->get_var( $wpdb->prepare( "SELECT COUNT(IdAllegato) FROM $wpdb->table_name_Allegati WHERE IdAtto=%d",(int)$id)));
 }
 
-function ap_allegati_orfani(){
+function albopc_allegati_orfani(){
 	global $wpdb;
 	$Sql="SELECT $wpdb->table_name_Allegati.IdAllegato, $wpdb->table_name_Allegati.TitoloAllegato, $wpdb->table_name_Allegati.IdAtto
 		  FROM $wpdb->table_name_Allegati
@@ -2026,17 +2026,17 @@ function ap_allegati_orfani(){
 		  ORDER BY $wpdb->table_name_Allegati.IdAtto";
 	return $wpdb->get_results($Sql);
 }
-function ap_num_allegati(){
+function albopc_num_allegati(){
 	global $wpdb;
 	return $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Allegati");
 	
 }
-function ap_num_allegati_atto($id){
+function albopc_num_allegati_atto($id){
 	global $wpdb;
 	return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->table_name_Allegati WHERE IdAtto=%d",$id));
 	
 }
-function ap_get_all_allegati_atto($idAtto,$OrderBy=array(),$OrderOrd=array()){
+function albopc_get_all_allegati_atto($idAtto,$OrderBy=array(),$OrderOrd=array()){
 	global $wpdb;
 	$Sort="";
 	if(count($OrderBy)>0) {
@@ -2051,19 +2051,19 @@ function ap_get_all_allegati_atto($idAtto,$OrderBy=array(),$OrderOrd=array()){
 	}
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati WHERE IdAtto=". (int)$idAtto.$Sort.";");
 }
-function ap_get_allegati_atto($idAtto){
+function albopc_get_allegati_atto($idAtto){
 	global $wpdb;
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati WHERE IdAtto=". (int)$idAtto." And Natura='A' Order By TitoloAllegato;");
 }
-function ap_get_documenti_atto($idAtto){
+function albopc_get_documenti_atto($idAtto){
 	global $wpdb;
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati WHERE IdAtto=". (int)$idAtto." And Natura='D' Order By TitoloAllegato;");
 }
 
-function ap_get_SQL_Oggetto($table,$CampoFiltro,$CondizioneFiltro,$CodiceFiltro) {
+function albopc_get_SQL_Oggetto($table,$CampoFiltro,$CondizioneFiltro,$CodiceFiltro) {
 	global $wpdb;
 	$table_data = $wpdb->get_results("SELECT * FROM $table WHERE $CampoFiltro $CondizioneFiltro $CodiceFiltro", ARRAY_A);
-	$entries = 'INSERT INTO ' . ap_backquote($table) . ' VALUES (';	
+	$entries = 'INSERT INTO ' . albopc_backquote($table) . ' VALUES (';	
 	//    \x08\\x09, not required
 	$search = array("\x00", "\x0a", "\x0d", "\x1a");
 	$replace = array('\0', '\n', '\r', '\Z');
@@ -2075,7 +2075,7 @@ function ap_get_SQL_Oggetto($table,$CampoFiltro,$CondizioneFiltro,$CodiceFiltro)
 //				echo "<pre>";var_dump($row);echo "</pre>";
 //				echo $key." ".$value." <br />";
 				if(!is_null($value))
-					$values[] = "'" . str_replace($search, $replace, ap_sql_addslashes($value)) . "'";
+					$values[] = "'" . str_replace($search, $replace, albopc_sql_addslashes($value)) . "'";
 				else
 					$values[] = "''";
 			}
@@ -2085,12 +2085,12 @@ function ap_get_SQL_Oggetto($table,$CampoFiltro,$CondizioneFiltro,$CodiceFiltro)
 	return $Codice;
 } // end export data of Allegati Atto into a string
 
-function ap_get_allegato_atto($idAllegato){
+function albopc_get_allegato_atto($idAllegato){
 	global $wpdb;
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati WHERE IdAllegato=". (int)$idAllegato.";");
 }
 
-function ap_memo_allegato($idAllegato,$Titolo,$idAtto,$Integrale=1,$Natura="A"){
+function albopc_memo_allegato($idAllegato,$Titolo,$idAtto,$Integrale=1,$Natura="A"){
 	global $wpdb;
 //	echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;wp_die();
 	if ($num=$wpdb->update($wpdb->table_name_Allegati,
@@ -2100,7 +2100,7 @@ function ap_memo_allegato($idAllegato,$Titolo,$idAtto,$Integrale=1,$Natura="A"){
 						  array( 'IdAllegato' 	=> $idAllegato),
 						  array('%s','%d','%s'),
 						  array('%d'))){
-		ap_insert_log(3,2,(isset($idAllegato)?$idAllegato:0),"
+		albopc_insert_log(3,2,(isset($idAllegato)?$idAllegato:0),"
 							{".__("Titolo Allegato","albo-pretorio-considera")."}==> $Titolo
 							{".__("Integrale","albo-pretorio-considera")."}==> ".($Integrale==1?'Si':'No')."
 							{".__("Natura","albo-pretorio-considera")."}==> ".($Natura='A'?'Allegato':'Documento'),(int)$idAtto);
@@ -2110,10 +2110,10 @@ function ap_memo_allegato($idAllegato,$Titolo,$idAtto,$Integrale=1,$Natura="A"){
 	}
 }
 
-function ap_insert_allegato($TitoloAllegato,$Allegato,$IdAtto,$Integrale=1,$Natura="A"){
+function albopc_insert_allegato($TitoloAllegato,$Allegato,$IdAtto,$Integrale=1,$Natura="A"){
 global $wpdb;
 	$IdAtto=(int)$IdAtto;
-	$Impronta=ap_CalcImpronta(0,$Allegato);
+	$Impronta=albopc_CalcImpronta(0,$Allegato);
 	if ( false === $wpdb->insert(
 		$wpdb->table_name_Allegati,array(
 				'TitoloAllegato'=> $TitoloAllegato,
@@ -2125,7 +2125,7 @@ global $wpdb;
 				),array('%s','%s','%d','%d','%s','%s')))	
         return __('Non sono riuscito ad inserire il nuovo allegato','albo-pretorio-considera')." ".$wpdb->last_error;
     else
-    	ap_insert_log(3,1,$wpdb->insert_id,"{IdAllegato}==> $wpdb->insert_id
+    	albopc_insert_log(3,1,$wpdb->insert_id,"{IdAllegato}==> $wpdb->insert_id
 											{".__("Titolo","albo-pretorio-considera")."}==> $TitoloAllegato 
 											{".__("Allegato","albo-pretorio-considera")."}==> $Allegato 
 											{IdAtto}==> $IdAtto
@@ -2135,30 +2135,30 @@ global $wpdb;
 	return $Impronta;
 }
 
-function ap_del_allegato_atto($idAllegato,$idAtto=0,$nomeAllegato='',$SoloFile="N"){
+function albopc_del_allegato_atto($idAllegato,$idAtto=0,$nomeAllegato='',$SoloFile="N"){
 global $wpdb;
 	$idAllegato=(int)$idAllegato;
 	$idAtto=(int)$idAtto;
-	$allegato=ap_get_allegato_atto($idAllegato);
+	$allegato=albopc_get_allegato_atto($idAllegato);
 	if (file_exists($allegato[0]->Allegato) && is_file($allegato[0]->Allegato))
 	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 		if (unlink($allegato[0]->Allegato)){
 			if($SoloFile=="N"){
 				$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Allegati WHERE IdAllegato=%d",$idAllegato));
-				ap_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." ",$idAtto);
+				albopc_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." ",$idAtto);
 			}else{
-				ap_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." Cancellato solo il file per VIOLAZIONE di LEGGE",$idAtto);
+				albopc_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." Cancellato solo il file per VIOLAZIONE di LEGGE",$idAtto);
 			}
 			return True;
 		}else{
 			return FALSE;
 		}
 }
-function ap_del_allegati_atto($idAtto){
+function albopc_del_allegati_atto($idAtto){
 global $wpdb;
 	$Del=FALSE;
 	$idAtto=(int)$idAtto;
-	$Allegati=ap_get_all_allegati_atto($idAtto);
+	$Allegati=albopc_get_all_allegati_atto($idAtto);
 	$Del=FALSE;
 	foreach($Allegati as $allegato){
 		if (file_exists($allegato->Allegato) && is_file($allegato->Allegato))
@@ -2166,24 +2166,24 @@ global $wpdb;
 				$Del=TRUE;
 			}
 		if (FALSE!==$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Allegati WHERE IdAllegato=%d",$allegato->IdAllegato))){
-			ap_insert_log(3,3,$allegato->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato->Allegato,$idAtto);
+			albopc_insert_log(3,3,$allegato->IdAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato->Allegato,$idAtto);
 			$Del=TRUE;
 		}
 	}
 	return $Del;
 }
 
-function ap_get_all_allegati(){
+function albopc_get_all_allegati(){
 	global $wpdb;
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati;");
 }
 
-function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
+function albopc_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 	global $wpdb;
 //	echo $OldPathAllegati;exit;
 //Backup Automatico dati e allegati
 	$msg="";
-	ap_BackupDatiFiles("Sposta_Allegati","Automatico");
+	albopc_BackupDatiFiles("Sposta_Allegati","Automatico");
 //	$DirLog=str_replace("\\","/",Albo_DIR.'/BackupDatiAlbo/log');
 	$DirLog=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/BackupDatiAlbo/log');
 	$nomefileLog=$DirLog."/Backup_Automatico_AlboPretorio_Sposta_Allegati.log";
@@ -2198,13 +2198,13 @@ function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 		$NewAllegato=$BaseCurDir."/".basename($allegato['Allegato']);
 		if (is_file($allegato['Allegato'])){
 			if (!copy($allegato['Allegato'], $NewAllegato)) {
-				ap_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nello spostamento Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." => $NewAllegato",0);	
+				albopc_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nello spostamento Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." => $NewAllegato",0);	
 				$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-considera").'</spam> '.__("nello spostamento dell'Allegato","albo-pretorio-considera").' '.$allegato['Allegato'].' in '. $NewAllegato."%%br%%";
 				fwrite($fplog,__("Non sono riuscito a copiare il file","albo-pretorio-considera")." ".$allegato['Allegato']." ".__("in","albo-pretorio-considera")." ". $NewAllegato."\n");
 			}
 			else{
 				if (!unlink($allegato['Allegato'])){
-					ap_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nella cancellazione Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato'],0);
+					albopc_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nella cancellazione Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato'],0);
 					$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-considera").'</spam> '.__("errata cancellazione dell'Allegato","albo-pretorio-considera").' </spam>'.$allegato['Allegato']."%%br%%";
 					fwrite($fplog,__("Non sono riuscito a cancellare il file","albo-pretorio-considera")." ".$allegato['Allegato']."\n");
 			}
@@ -2215,7 +2215,7 @@ function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 									array('IdAllegato' => $allegato['IdAllegato'] ),
 									array('%s'),
 									array('%d'))>0){
-				ap_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-considera")." $NewAllegato",0);
+				albopc_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-considera")." $NewAllegato",0);
 				$msg.='<spam style="color:green;">'.__("Aggiornamento Link Allegato","albo-pretorio-considera").'</spam> '.$allegato['Allegato']."%%br%%";
 				fwrite($fplog,__("Aggiornato il link nel Data Base per","albo-pretorio-considera")." ".$allegato['Allegato']." in ".$NewAllegato."\n");
 			}
@@ -2237,7 +2237,7 @@ function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 				fwrite($fplog,__("Errore nella Cancellazione del file","albo-pretorio-considera")." ".$fName."\n");
 		else
 			fwrite($fplog,"File ".$fName." inesistente\n");
-		$fName=str_replace("\\","/",$OldPathAllegati)."/".ap_decodenamefile();
+		$fName=str_replace("\\","/",$OldPathAllegati)."/".albopc_decodenamefile();
 		if (is_file($fName))
 			if (unlink($fName))
 				fwrite($fplog,"File ".$fName." ".__("Cancellato","albo-pretorio-considera")."\n");
@@ -2250,7 +2250,7 @@ function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 			fwrite($fplog,"Directory ".$tmpdir." ".__("non cancellata","albo-pretorio-considera")."\n");	
 		}else{
 			if (is_dir($tmpdir)){
-				if (!ap_is_dir_empty($tmpdir)){
+				if (!albopc_is_dir_empty($tmpdir)){
 					$msg.="La directory ".$tmpdir." ".__("non vuota","albo-pretorio-considera")."%%br%%";
 					fwrite($fplog,"La directory ".$tmpdir." ".__("non vuota","albo-pretorio-considera")." \n");					
 				}else{
@@ -2274,7 +2274,7 @@ function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 	}
 	fclose($fplog);
 	if (stripslashes(get_option('opt_AP_FolderUpload'))!="wp-content/uploads"){
-		ap_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
+		albopc_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
 	}
 	$FileMsg=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/BackupDatiAlbo/tmp/msg.txt');
 	$fpmsg = @fopen($FileMsg, "wb");
@@ -2283,7 +2283,7 @@ function ap_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
 	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
 }
 
-function ap_allinea_allegati(){
+function albopc_allinea_allegati(){
 	global $wpdb;
 	$msg="";
 	$allegati=$wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati ;",ARRAY_A );
@@ -2291,7 +2291,7 @@ function ap_allinea_allegati(){
 	$BaseCurDir=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
 	foreach ( $allegati as $allegato) {
 		if (get_option('opt_AP_FolderUploadMeseAnno')=="Si") {
-			$NewPath=ap_get_PathAllegati($allegato["IdAtto"]);
+			$NewPath=albopc_get_PathAllegati($allegato["IdAtto"]);
 			$NewAllegato=$NewPath."/".basename($allegato["Allegato"]);
 		}else{
 			$NewAllegato=$BaseCurDir."/".basename($allegato['Allegato']);			
@@ -2301,7 +2301,7 @@ function ap_allinea_allegati(){
 									array('IdAllegato' => $allegato['IdAllegato'] ),
 									array('%s'),
 									array('%d'))){
-				ap_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." spostato in $NewAllegato",0);
+				albopc_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-considera")."}==> ".$allegato['Allegato']." spostato in $NewAllegato",0);
 				$msg.='<spam style="color:green;">'.__('Aggiornamento Link Allegato','albo-pretorio-considera').'</spam> '.$allegato['Allegato']."%%br%%";
 			}
 //	echo "<p>Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error."</p>";
@@ -2313,7 +2313,7 @@ function ap_allinea_allegati(){
 ################################################################################
 // Funzioni Responsabili
 ################################################################################
-function ap_get_dropdown_responsabili($select_name,$id_name,$class,$tab_index_attribute="", $default="xxxx",$Funzione="") {
+function albopc_get_dropdown_responsabili($select_name,$id_name,$class,$tab_index_attribute="", $default="xxxx",$Funzione="") {
 	global $wpdb;
 	if($default=="xxxx") $default=__("Nessuno","albo-pretorio-considera");
 	$Where="";
@@ -2344,7 +2344,7 @@ function ap_get_dropdown_responsabili($select_name,$id_name,$class,$tab_index_at
 	return $output;
 }
 
-function ap_get_NumAttiSoggetto($idSoggetto){
+function albopc_get_NumAttiSoggetto($idSoggetto){
 	global $wpdb;
 	$Atti=$wpdb->get_results("SELECT * FROM $wpdb->table_name_Atti");
 	$NumAtti=0;
@@ -2354,7 +2354,7 @@ function ap_get_NumAttiSoggetto($idSoggetto){
 	}
 	return $NumAtti;
 }
-function ap_get_NumAttiSoggetti(){
+function albopc_get_NumAttiSoggetti(){
 	global $wpdb;
 	$Atti=$wpdb->get_results("SELECT * FROM $wpdb->table_name_Atti");
 	$Soggetti=array();
@@ -2372,13 +2372,13 @@ function ap_get_NumAttiSoggetti(){
 	return $Soggetti;
 }
 
-function ap_num_responsabili(){
+function albopc_num_responsabili(){
 	global $wpdb;
 	return $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_RespProc;");	
 }
-function ap_num_responsabili_inutilizzati(){
+function albopc_num_responsabili_inutilizzati(){
 	global $wpdb;
-	$NumAttiSoggetti=ap_get_NumAttiSoggetti();
+	$NumAttiSoggetti=albopc_get_NumAttiSoggetti();
 	$Sogg="";
 	foreach($NumAttiSoggetti as $Key=>$Dati)
 			$Sogg.=$Key.",";
@@ -2387,23 +2387,23 @@ function ap_num_responsabili_inutilizzati(){
 		  WHERE $wpdb->table_name_RespProc.IdResponsabile not in(".substr($Sogg,0,-1).");";
 	return $wpdb->get_var($Sql);
 }
-function ap_get_responsabili(){
+function albopc_get_responsabili(){
 	global $wpdb;
 //	echo "SELECT * FROM $wpdb->table_name_Atti $Selezione $OrderBy $Limite;";
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_RespProc ORDER BY Cognome , Nome;");	
 }
-function ap_get_alcuni_soggetti_ruolo($Soggetti){
+function albopc_get_alcuni_soggetti_ruolo($Soggetti){
 	global $wpdb;
 //	La lista deve contenere solo ID numerici separati da virgole
 	$Soggetti=implode(",",array_map('intval',explode(",",$Soggetti)));
 	$Res=$wpdb->get_results("SELECT * FROM $wpdb->table_name_RespProc Where IdResponsabile in(".$Soggetti.") ORDER BY Funzione Desc, Cognome , Nome;");
 	return $Res;
 }
-function ap_get_responsabile($Id){
+function albopc_get_responsabile($Id){
 	global $wpdb;
 	return $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->table_name_RespProc WHERE IdResponsabile=%d;",$Id));	
 }
-function ap_insert_responsabile($resp_cognome,$resp_nome,$resp_funzione,$resp_email,$resp_telefono,$resp_orario,$resp_note){
+function albopc_insert_responsabile($resp_cognome,$resp_nome,$resp_funzione,$resp_email,$resp_telefono,$resp_orario,$resp_note){
 	global $wpdb;
 	if ( false === $wpdb->insert($wpdb->table_name_RespProc,
 									array('Cognome' => stripslashes($resp_cognome),
@@ -2422,7 +2422,7 @@ function ap_insert_responsabile($resp_cognome,$resp_nome,$resp_funzione,$resp_em
 										  '%s')))	
         return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire il Nuovo Responsabile','albo-pretorio-considera').' '.$wpdb->last_error, $wpdb->last_error);
     else
-    	ap_insert_log(4,1,$wpdb->insert_id,"{IdResponsabile}==> $wpdb->insert_id
+    	albopc_insert_log(4,1,$wpdb->insert_id,"{IdResponsabile}==> $wpdb->insert_id
 		                                    {".__("Cognome","albo-pretorio-considera")."}==> $resp_cognome 
 		                                    {".__("Nome","albo-pretorio-considera")."}==> $resp_nome 
 											{".__("Funzione","albo-pretorio-considera")."}==> $resp_funzione
@@ -2431,10 +2431,10 @@ function ap_insert_responsabile($resp_cognome,$resp_nome,$resp_funzione,$resp_em
 											{".__("Orario","albo-pretorio-considera")."}==> $resp_orario
 											{".__("Note","albo-pretorio-considera")."}==> $resp_note");
 }
-function ap_memo_responsabile($Id,$resp_cognome,$resp_nome,$resp_funzione,$resp_email,$resp_telefono,$resp_orario,$resp_note){
+function albopc_memo_responsabile($Id,$resp_cognome,$resp_nome,$resp_funzione,$resp_email,$resp_telefono,$resp_orario,$resp_note){
 	global $wpdb;
 	$Id=(int)$Id;
-	$Responsabile=ap_get_responsabile($Id);
+	$Responsabile=albopc_get_responsabile($Id);
 	$Responsabile=$Responsabile[0];
 	$Log='{Id}==>'.$Id .' ' ;
 	if ($Responsabile->Cognome!=$resp_cognome)
@@ -2471,24 +2471,24 @@ function ap_memo_responsabile($Id,$resp_cognome,$resp_nome,$resp_funzione,$resp_
 					array('%d')))
 	    	return new WP_Error('db_update_error', __('Non sono riuscito a modifire il resposnabile del Trattamento','albo-pretorio-considera').' '.$wpdb->last_error, $wpdb->last_error);
 	else 
-		ap_insert_log(4,2,$Id,$Log);
+		albopc_insert_log(4,2,$Id,$Log);
 }
 
-function ap_del_responsabile($id) {
+function albopc_del_responsabile($id) {
 	global $wpdb;
 	$id=(int)$id;
-	$resp=ap_get_responsabile($id);
+	$resp=albopc_get_responsabile($id);
 	if(count($resp)==0){
 		return __("Cancellazione Soggetto Fallita, il soggetto non è presente in archivio ","albo-pretorio-considera");
 	}
 	$responsabile= __("Cancellazione Responsabile","albo-pretorio-considera")." {IdResponsabile}==> $id {".__("Cognome","albo-pretorio-considera")."}==> ".$resp[0]->Cognome." {".__("Nome","albo-pretorio-considera")."}==> ".$resp[0]->Nome; 
 	$respdel=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Cancellazione Responsabile (%1\$d) %2\$s %3\$s Avvenuta con successo","albo-pretorio-considera"),$id, $resp[0]->Cognome,$resp[0]->Nome); 
-	$N_atti=ap_get_NumAttiSoggetto($id);
+	$N_atti=albopc_get_NumAttiSoggetto($id);
 	if ($N_atti>0){
 		return array("atti" => $N_atti);
 	}else{
 	 	$result=$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_RespProc WHERE IdResponsabile=%d",$id));
-		ap_insert_log(4,3,$id,$responsabile,$id);
+		albopc_insert_log(4,3,$id,$responsabile,$id);
 		if($result==1){
 			return $respdel;
 		}else{
@@ -2496,7 +2496,7 @@ function ap_del_responsabile($id) {
 		}
 	}
 }
-function ap_responsabili_orfani(){
+function albopc_responsabili_orfani(){
 	global $wpdb;
 	$Sql="SELECT LPAD($wpdb->table_name_Atti.Numero,7,0) as Numero,$wpdb->table_name_Atti.Anno, $wpdb->table_name_Atti.RespProc 
 	      FROM $wpdb->table_name_Atti left join  $wpdb->table_name_RespProc on 
@@ -2508,7 +2508,7 @@ function ap_responsabili_orfani(){
 // Funzioni Permessi
 ################################################################################
 
-function ap_get_users(){
+function albopc_get_users(){
 	global $wpdb;  
 	$users = $wpdb->get_results('SELECT ID, user_login FROM '.$wpdb->users); 
     return $users;  
@@ -2517,7 +2517,7 @@ function ap_get_users(){
 // Funzioni Enti
 ################################################################################
 function 
-ap_get_dropdown_enti($select_name,$id_name,$class,$tab_index_attribute="", $default=-1) {
+albopc_get_dropdown_enti($select_name,$id_name,$class,$tab_index_attribute="", $default=-1) {
      global $wpdb;
      $enti = $wpdb->get_results("SELECT DISTINCT * FROM 
 $wpdb->table_name_Enti ORDER BY IdEnte;");
@@ -2538,11 +2538,11 @@ $wpdb->table_name_Enti ORDER BY IdEnte;");
      $output .= "</select>\n";
      return $output;
 }
-function ap_num_enti(){
+function albopc_num_enti(){
 	global $wpdb;
 	return $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Enti");
 }
-function ap_num_enti_Inutilizzati(){
+function albopc_num_enti_Inutilizzati(){
 	global $wpdb;
 	$Sql="SELECT COUNT(*)
 			FROM $wpdb->table_name_Enti
@@ -2550,17 +2550,17 @@ function ap_num_enti_Inutilizzati(){
 			WHERE $wpdb->table_name_Atti.IdAtto IS NULL";
 	return $wpdb->get_var($Sql);
 }
-function ap_num_enti_atto($id){
+function albopc_num_enti_atto($id){
 	global $wpdb;
 	return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->table_name_Atti WHERE Ente=%d",$id));
 }
 
-function ap_get_enti(){
+function albopc_get_enti(){
 	global $wpdb;
 //	echo "SELECT * FROM $wpdb->table_name_Enti ORDER BY Nome;";
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_Enti ORDER BY Nome;");	
 }
-function ap_get_ente($Id){
+function albopc_get_ente($Id){
 	global $wpdb;
 //	echo $wpdb->prepare("SELECT * FROM $wpdb->table_name_Enti WHERE IdEnte=%d;",$Id);die();
 	$ente=$wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->table_name_Enti WHERE IdEnte=%d;",$Id));
@@ -2571,22 +2571,22 @@ function ap_get_ente($Id){
 		return FALSE;
 	}
 }
-function ap_get_ente_me(){
+function albopc_get_ente_me(){
 	global $wpdb;
 	$ente=$wpdb->get_results("SELECT Nome FROM $wpdb->table_name_Enti WHERE IdEnte=0;");	
 	return $ente[0]->Nome;
 }
-function ap_set_ente_me($ente_nome){
+function albopc_set_ente_me($ente_nome){
 	global $wpdb;
-	if (!ap_create_ente_me($ente_nome))
+	if (!albopc_create_ente_me($ente_nome))
 		if (true==$wpdb->update($wpdb->table_name_Enti,
 						array('Nome' => stripslashes($ente_nome)),
 						array('IdEnte' => 0),
 						array( '%s')))
-			ap_insert_log(7,2,0,__("Aggiornamento Ente Sito","albo-pretorio-considera"));	
+			albopc_insert_log(7,2,0,__("Aggiornamento Ente Sito","albo-pretorio-considera"));	
 //echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
 }
-function ap_create_ente_me($nome="Ente non definito"){
+function albopc_create_ente_me($nome="Ente non definito"){
 	global $wpdb;
 		if ($wpdb->get_var("SELECT COUNT(IdEnte) FROM $wpdb->table_name_Enti  WHERE IdEnte=0;")==0){
 			$wpdb->insert($wpdb->table_name_Enti,array('Nome' =>$nome),array('%s'));
@@ -2600,7 +2600,7 @@ function ap_create_ente_me($nome="Ente non definito"){
 		return FALSE;
 }
 
-function ap_insert_ente($ente_nome,$ente_indirizzo,$ente_url,$ente_email,$ente_pec,$ente_telefono,$ente_fax,$ente_note){
+function albopc_insert_ente($ente_nome,$ente_indirizzo,$ente_url,$ente_email,$ente_pec,$ente_telefono,$ente_fax,$ente_note){
 	global $wpdb;
 	if ( false === $wpdb->insert($wpdb->table_name_Enti,array('Nome' => stripslashes($ente_nome),
                                                               'Indirizzo' => stripslashes($ente_indirizzo),
@@ -2621,7 +2621,7 @@ function ap_insert_ente($ente_nome,$ente_indirizzo,$ente_url,$ente_email,$ente_p
 //		echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
         return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire il Nuovo Ente','albo-pretorio-considera').' '.$wpdb->last_error, $wpdb->last_error);}
     else
-    	ap_insert_log(7,1,$wpdb->insert_id,"{IdEnte}==> $wpdb->insert_id
+    	albopc_insert_log(7,1,$wpdb->insert_id,"{IdEnte}==> $wpdb->insert_id
 		                                    {".__("Nome","albo-pretorio-considera")."}==> $ente_nome 
 											{".__("Indirizzo","albo-pretorio-considera")."}=> $ente_indirizzo
 											{".__("Url","albo-pretorio-considera")."}=> $ente_url
@@ -2632,10 +2632,10 @@ function ap_insert_ente($ente_nome,$ente_indirizzo,$ente_url,$ente_email,$ente_p
 											{".__("Note","albo-pretorio-considera")."}==> $ente_note");
 }
 
-function ap_memo_ente($Id,$ente_nome,$ente_indirizzo,$ente_url,$ente_email,$ente_pec,$ente_telefono,$ente_fax,$ente_note){
+function albopc_memo_ente($Id,$ente_nome,$ente_indirizzo,$ente_url,$ente_email,$ente_pec,$ente_telefono,$ente_fax,$ente_note){
 	global $wpdb;
 	$Id=(int)$Id;
-	$EnteL=ap_get_ente($Id);
+	$EnteL=albopc_get_ente($Id);
 	$Log='{Id}==>'.$Id .' ' ;
 	if ($EnteL->Nome!=$ente_nome)
 		$Log.='{'.__("Nome","albo-pretorio-considera").'}==> '.$ente_nome.' ';
@@ -2673,22 +2673,22 @@ function ap_memo_ente($Id,$ente_nome,$ente_indirizzo,$ente_url,$ente_email,$ente
 					array( '%d' )))
 	    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Ente","albo-pretorio-considera").' '.$wpdb->last_error, $wpdb->last_error);
 	else 
-		ap_insert_log(7,2,$Id,$Log);
+		albopc_insert_log(7,2,$Id,$Log);
 }
 
-function ap_del_ente($id) {
+function albopc_del_ente($id) {
 	global $wpdb;
 	$id=(int)$id;
-	$N_atti=ap_num_enti_atto($id);
+	$N_atti=albopc_num_enti_atto($id);
 	if ($N_atti>0){
 		return array("atti" => $N_atti);
 	}else{
 	 	$result=$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Enti WHERE IdEnte=%d",$id));
-		ap_insert_log(7,3,$id,__("Cancellazione Ente","albo-pretorio-considera")." {IdEnte}==> $id",$id);
+		albopc_insert_log(7,3,$id,__("Cancellazione Ente","albo-pretorio-considera")." {IdEnte}==> $id",$id);
 		return $result;
 	}
 }
-function ap_enti_orfani(){
+function albopc_enti_orfani(){
 	global $wpdb;
 	$Sql="SELECT LPAD($wpdb->table_name_Atti.Numero,7,0) as Numero,$wpdb->table_name_Atti.Anno, $wpdb->table_name_Atti.Ente 
 	      FROM $wpdb->table_name_Atti left join  $wpdb->table_name_Enti on 
@@ -2696,7 +2696,7 @@ function ap_enti_orfani(){
 		  WHERE $wpdb->table_name_Enti.IdEnte is null or $wpdb->table_name_Enti.IdEnte=-1";
 	return $wpdb->get_results($Sql);
 }
-function ap_set_ente_orfani($IDEnte){
+function albopc_set_ente_orfani($IDEnte){
 	global $wpdb;
 	return $wpdb->update($wpdb->table_name_Atti,
 		 array('Ente' => $IDEnte),
@@ -2707,7 +2707,7 @@ function ap_set_ente_orfani($IDEnte){
 ################################################################################
 // Funzioni Unità Organizzative
 ################################################################################
-function ap_get_dropdown_unitao($select_name,$id_name,$class,$tab_index_attribute="", $default=-1) {
+function albopc_get_dropdown_unitao($select_name,$id_name,$class,$tab_index_attribute="", $default=-1) {
      global $wpdb;
      $unitao = $wpdb->get_results("SELECT DISTINCT * FROM $wpdb->table_name_UO ORDER BY IdUO;");
      $output = "<select name='$select_name' id='$id_name' class='$class' $tab_index_attribute > \n";
@@ -2727,11 +2727,11 @@ function ap_get_dropdown_unitao($select_name,$id_name,$class,$tab_index_attribut
      $output .= "</select>\n";
      return $output;
 }
-function ap_num_unitao(){
+function albopc_num_unitao(){
 	global $wpdb;
 	return $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_UO");
 }
-function ap_num_unitao_Inutilizzati(){
+function albopc_num_unitao_Inutilizzati(){
 	global $wpdb;
 	$Sql="SELECT COUNT(*)
 			FROM $wpdb->table_name_UO
@@ -2739,17 +2739,17 @@ function ap_num_unitao_Inutilizzati(){
 			WHERE $wpdb->table_name_Atti.IdAtto IS NULL";
 	return $wpdb->get_var($Sql);
 }
-function ap_num_unitao_atto($id){
+function albopc_num_unitao_atto($id){
 	global $wpdb;
 	return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->table_name_Atti WHERE IdUnitaOrganizzativa=%d",$id));
 }
 
-function ap_get_unitao(){
+function albopc_get_unitao(){
 	global $wpdb;
 //	echo "SELECT * FROM $wpdb->table_name_UO ORDER BY Nome;";
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_UO ORDER BY Nome;");	
 }
-function ap_get_unitaorganizzativa($Id){
+function albopc_get_unitaorganizzativa($Id){
 	global $wpdb;
 //	echo $wpdb->prepare("SELECT * FROM $wpdb->table_name_UO WHERE IdUO=%d;",$Id);die();
 	$unitao=$wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->table_name_UO WHERE IdUO=%d;",$Id));
@@ -2759,7 +2759,7 @@ function ap_get_unitaorganizzativa($Id){
 		return FALSE;
 	}
 }
-function ap_insert_unitao($nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$note){
+function albopc_insert_unitao($nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$note){
 	global $wpdb;
 	if ( false === $wpdb->insert($wpdb->table_name_UO,array('Nome' => stripslashes($nome),
                                                               'Indirizzo' => stripslashes($indirizzo),
@@ -2780,7 +2780,7 @@ function ap_insert_unitao($nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$note
 //		echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
         return new WP_Error('db_insert_error', __('Non sono riuscito ad inserire la Nuova Unità Organizzativa','albo-pretorio-considera').' '.$wpdb->last_error, $wpdb->last_error);}
     else
-    	ap_insert_log(9,1,$wpdb->insert_id,"{IdUO}==> $wpdb->insert_id
+    	albopc_insert_log(9,1,$wpdb->insert_id,"{IdUO}==> $wpdb->insert_id
 		                                    {".__("Nome","albo-pretorio-considera")."}==> $nome 
 											{".__("Indirizzo","albo-pretorio-considera")."}=> $indirizzo
 											{".__("Url","albo-pretorio-considera")."}=> $url
@@ -2791,10 +2791,10 @@ function ap_insert_unitao($nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$note
 											{".__("Note","albo-pretorio-considera")."}==> $note");
 }
 
-function ap_memo_unitao($Id,$nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$note){
+function albopc_memo_unitao($Id,$nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$note){
 	global $wpdb;
 	$Id=intval($Id);
-	$UOL=ap_get_unitaorganizzativa($Id);
+	$UOL=albopc_get_unitaorganizzativa($Id);
 	$Log='{Id}==>'.$Id .' ' ;
 	if ($UOL->Nome!=$nome)
 		$Log.='{'.__("Nome","albo-pretorio-considera").'}==> '.$nome.' ';
@@ -2831,22 +2831,22 @@ function ap_memo_unitao($Id,$nome,$indirizzo,$url,$email,$pec,$telefono,$fax,$no
 					array( '%d' )))
 	    	return new WP_Error('db_update_error', __("Non sono riuscito a modificare l'Unità Organizzativa","albo-pretorio-considera").' '.$wpdb->last_error, $wpdb->last_error);
 	else 
-		ap_insert_log(9,2,$Id,$Log);
+		albopc_insert_log(9,2,$Id,$Log);
 }
 
-function ap_del_unitao($id) {
+function albopc_del_unitao($id) {
 	global $wpdb;
 	$id=(int)$id;
-	$N_unitao=ap_num_unitao_atto($id);
+	$N_unitao=albopc_num_unitao_atto($id);
 	if ($N_unitao>0){
 		return array("unitao" => $N_unitao);
 	}else{
 	 	$result=$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_UO WHERE IdUO=%d",$id));
-		ap_insert_log(9,3,$id,__("Cancellazione Unità Organizzativa","albo-pretorio-considera")." {IdUO}==> $id",$id);
+		albopc_insert_log(9,3,$id,__("Cancellazione Unità Organizzativa","albo-pretorio-considera")." {IdUO}==> $id",$id);
 		return $result;
 	}
 }
-function ap_unitao_orfani(){
+function albopc_unitao_orfani(){
 	global $wpdb;
 	$Sql="SELECT LPAD($wpdb->table_name_Atti.Numero,7,0) as Numero,$wpdb->table_name_Atti.Anno, $wpdb->table_name_Atti.IdUnitaOrganizzativa 
 	      FROM $wpdb->table_name_Atti left join  $wpdb->table_name_UO on 
@@ -2854,7 +2854,7 @@ function ap_unitao_orfani(){
 		  WHERE $wpdb->table_name_UO.IdUO is null or $wpdb->table_name_UO.IdUO=-1";
 	return $wpdb->get_results($Sql);
 }
-function ap_set_unitao_orfani($IdUO){
+function albopc_set_unitao_orfani($IdUO){
 	global $wpdb;
 	return $wpdb->update($wpdb->table_name_Atti,
 		 array('IdUnitaOrganizzative' => $IdUO),
@@ -2866,7 +2866,7 @@ function ap_set_unitao_orfani($IdUO){
 /**
 * Backup 
 */
-function ap_sql_addslashes($a_string = '', $is_like = false) {
+function albopc_sql_addslashes($a_string = '', $is_like = false) {
 	if(is_null($a_string))
 		return "";
 	if ($is_like) 
@@ -2876,7 +2876,7 @@ function ap_sql_addslashes($a_string = '', $is_like = false) {
 	return str_replace('\'', '\\\'', $a_string);
 } 
 
-function ap_backup_table($table,$fp,$Filtro="",$Delete=TRUE) {
+function albopc_backup_table($table,$fp,$Filtro="",$Delete=TRUE) {
 	global $wpdb;
 	if($table==$wpdb->table_name_Enti){
 	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
@@ -2914,7 +2914,7 @@ function ap_backup_table($table,$fp,$Filtro="",$Delete=TRUE) {
 		$Filtro=" Where ".$Filtro;
 	}
 	$table_data = $wpdb->get_results("SELECT * FROM $table $Filtro", ARRAY_A);
-	$entries = 'INSERT INTO ' . ap_backquote($table) . ' VALUES (';	
+	$entries = 'INSERT INTO ' . albopc_backquote($table) . ' VALUES (';	
 	//    \x08\\x09, not required
 	$search = array("\x00", "\x0a", "\x0d", "\x1a");
 	$replace = array('\0', '\n', '\r', '\Z');
@@ -2929,7 +2929,7 @@ function ap_backup_table($table,$fp,$Filtro="",$Delete=TRUE) {
 					$value = ( null === $value || '' === $value) ? $defs[strtolower($key)] : $value;
 					$values[] = ( '' === $value ) ? "''" : $value;
 				} else {
-					$values[] = "'" . str_replace($search, $replace, ap_sql_addslashes($value)) . "'";
+					$values[] = "'" . str_replace($search, $replace, albopc_sql_addslashes($value)) . "'";
 				}
 			}
 			@fwrite($fp, $entries . implode(', ', $values) . ');'."\r\n");
@@ -2937,7 +2937,7 @@ function ap_backup_table($table,$fp,$Filtro="",$Delete=TRUE) {
 	}
 } // end backup_table()
 
-function ap_SvuotaDirectory($Dir,$fplog){
+function albopc_SvuotaDirectory($Dir,$fplog){
 	//Svuoto cartella tmp che contiene i files dati
 	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($Dir));
 	if(!is_null($fplog))	
@@ -2954,7 +2954,7 @@ function ap_SvuotaDirectory($Dir,$fplog){
 	}
 }
 
-function ap_BackupDatiFiles($NomeFile,$Tipo="",$Destinazione=AlboBCK,$Echo=FALSE ){
+function albopc_BackupDatiFiles($NomeFile,$Tipo="",$Destinazione=AlboBCK,$Echo=FALSE ){
 global $wpdb;
 	$tables=array(	$wpdb->table_name_Allegati,
 					$wpdb->table_name_Atti,
@@ -3047,23 +3047,23 @@ global $wpdb;
 		}*/	
 		$fplog = @fopen($nomefileLog, "wb");
 		fwrite($fplog,__("Avvio Backup Dati ed Allegati Albo Pretrorio \n effettuato in data","albo-pretorio-considera")." ".gmdate("Ymd_Hi")."\n");
-		ap_SvuotaDirectory($DirTmp,$fplog);
+		albopc_SvuotaDirectory($DirTmp,$fplog);
 		fwrite($fplog,__("Svuotamento tabella","albo-pretorio-considera")." ".$DirTmp."\n");
 		$fp = @fopen($DirTmp."/AlboPretorio".gmdate("Ymd_Hi").".sql", "wb");
 		$Risultato="";
 		if ($Echo) echo "<h3>".esc_html__("Avvio Backup Dati (Tabelle del Data Base)","albo-pretorio-considera")."</h3>"
 			. "</ul>";
 		foreach ($tables as $table) {
-			ap_backup_table($table,$fp);
-			$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.ap_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span> <br />';
-			if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-considera').' '.esc_html(ap_backquote($table)).' '.esc_html__('Aggiunta','albo-pretorio-considera').'</span></li>';
-			fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-considera')." ".ap_backquote($table)." ".__('Aggiunta','albo-pretorio-considera')."\n");
+			albopc_backup_table($table,$fp);
+			$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.albopc_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span> <br />';
+			if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-considera').' '.esc_html(albopc_backquote($table)).' '.esc_html__('Aggiunta','albo-pretorio-considera').'</span></li>';
+			fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-considera')." ".albopc_backquote($table)." ".__('Aggiunta','albo-pretorio-considera')."\n");
 		}
-		ap_backup_table($wpdb->options,$fp,"option_name LIKE 'opt_%' ",False);
-		$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.ap_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span> <br />';
-		if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-considera').' '.esc_html(ap_backquote($wpdb->options)).' '.esc_html__('Aggiunta','albo-pretorio-considera').'</span></li>'
+		albopc_backup_table($wpdb->options,$fp,"option_name LIKE 'opt_%' ",False);
+		$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.albopc_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span> <br />';
+		if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-considera').' '.esc_html(albopc_backquote($wpdb->options)).' '.esc_html__('Aggiunta','albo-pretorio-considera').'</span></li>'
 		. '</ul>';
-		fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-considera')." ".ap_backquote($wpdb->options)." ".__('Aggiunta','albo-pretorio-considera')."\n");
+		fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-considera')." ".albopc_backquote($wpdb->options)." ".__('Aggiunta','albo-pretorio-considera')."\n");
 		$UpdateProgressivo="UPDATE `".$wpdb->options."` SET `option_value` = '".get_option('opt_AP_AnnoProgressivo')."'	WHERE `option_name` ='opt_AP_AnnoProgressivo';\n";
 		$UpdateProgressivo.="UPDATE `".$wpdb->options."` SET `option_value` = '".get_option('opt_AP_NumeroProgressivo')."' WHERE `option_name` ='opt_AP_NumeroProgressivo';";
 		fwrite($fplog,"Sql Aggiornamento Tabella ".$wpdb->options." per Progressivo ed Anno Progressivo Aggiunti\n");
@@ -3081,20 +3081,20 @@ global $wpdb;
 			// Ciclo tutti gli elementi dell'iteratore, i files estratti dall'iteratore
 			foreach ($iterator as $key=>$value) {
 				if (substr($key,-1)!="."){
-					ap_zip_add($zip, $key, dirname($key));
+					albopc_zip_add($zip, $key, dirname($key));
 					$Risultato.='<span style="color:green;">'.__("Aggiunto all'archivio","albo-pretorio-considera").':</span> '.$key.'<br />';
 					fwrite($fplog,"File ".$key." ".__("Aggiunto all'archivio","albo-pretorio-considera")."\n");
 				}
 			}
-			$allegati=ap_get_all_allegati();
+			$allegati=albopc_get_all_allegati();
 			if ($Echo) echo "<h3>".esc_html__("Avvio Backup Allegati","albo-pretorio-considera")."</h3>"
 				. "</ul>";
 			$BaseUploadAllegati=AP_BASE_DIR.get_option('opt_AP_FolderUpload');
 			foreach ($allegati as $allegato) {
 			//echo $allegato->Allegato;
 				if(is_file($allegato->Allegato)){
-					if (ap_isAllowedExtension( $allegato->Allegato)) {
-						ap_zip_add($zip, $allegato->Allegato, $BaseUploadAllegati);//dirname($allegato->Allegato));
+					if (albopc_isAllowedExtension( $allegato->Allegato)) {
+						albopc_zip_add($zip, $allegato->Allegato, $BaseUploadAllegati);//dirname($allegato->Allegato));
 						$tmp_risultato='<span style="color:green;">'.__("Aggiunto all'allegato","albo-pretorio-considera").':</span> '.$allegato->Allegato;
 						fwrite($fplog,"File ".$allegato->Allegato." ".__("Aggiunto","albo-pretorio-considera")."\n");
 					}else{
@@ -3127,7 +3127,7 @@ global $wpdb;
 		return;	
 	}
 	//Svuoto cartella tmp che contiene i files dati
-	ap_SvuotaDirectory($DirTmp,$fplog);
+	albopc_SvuotaDirectory($DirTmp,$fplog);
 	fclose($fplog);
 	$fpmsg = @fopen($Destinazione."/BackupDatiAlbo/tmp/msg.txt", "wb");
 	fwrite($fpmsg,$Risultato);
@@ -3140,7 +3140,7 @@ global $wpdb;
  * PclZip PCLZIP_OPT_REMOVE_PATH: il prefisso $removePath viene tolto dal
  * percorso con cui il file è memorizzato nell'archivio.
  */
-function ap_zip_add( $zip, $file, $removePath ) {
+function albopc_zip_add( $zip, $file, $removePath ) {
 	$real = realpath( $file );
 	if ( $real === false ) {
 		return false;
@@ -3154,7 +3154,7 @@ function ap_zip_add( $zip, $file, $removePath ) {
 	return $zip->addFile( $real, $local );
 }
 
-function ap_backquote($a_name) {
+function albopc_backquote($a_name) {
 	if (!empty($a_name) && $a_name != '*') {
 		if (is_array($a_name)) {
 			$result = array();
@@ -3170,7 +3170,7 @@ function ap_backquote($a_name) {
 	}
 } 
 
-function ap_MakeZipOblio(){
+function albopc_MakeZipOblio(){
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/OblioDatiAlbo');
 	$DirTmp=$Dir."/tmp";
 	$DirTmpBox=$DirTmp."/BoxSingAtto";
@@ -3185,19 +3185,19 @@ function ap_MakeZipOblio(){
 		// Ciclo tutti gli elementi dell'iteratore, i files estratti dall'iteratore
 		foreach ($iterator as $key=>$value) {
 			if (substr($key,-1)!="."){
-				ap_zip_add($zip, $key, dirname($key));
+				albopc_zip_add($zip, $key, dirname($key));
 			}
 		}
 		$zip->close();
 	}else
 		return FALSE;
-	ap_SvuotaDirectory($DirTmpBox,NULL);
+	albopc_SvuotaDirectory($DirTmpBox,NULL);
 	return TRUE;
 }
-function ap_BackupFilesAllegatiOblio($idAtto){
+function albopc_BackupFilesAllegatiOblio($idAtto){
 	global $wpdb;
-	$Sql=ap_get_SQL_Oggetto($wpdb->table_name_Allegati,"IdAtto","=",$idAtto);
-	$Sql.=ap_get_SQL_Oggetto($wpdb->table_name_Atti,"IdAtto","=",$idAtto);
+	$Sql=albopc_get_SQL_Oggetto($wpdb->table_name_Allegati,"IdAtto","=",$idAtto);
+	$Sql.=albopc_get_SQL_Oggetto($wpdb->table_name_Atti,"IdAtto","=",$idAtto);
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/OblioDatiAlbo');
 	$DirTmp=$Dir."/tmp";
 	$DirTmpBox=$DirTmp."/BoxSingAtto";
@@ -3236,13 +3236,13 @@ function ap_BackupFilesAllegatiOblio($idAtto){
 			// Crea l'archivio
 		 	$zip = new ZipArchive();
 			$zip->open($nomefileZip, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-			ap_zip_add($zip, $FileSql, dirname($FileSql));
-			$allegati=ap_get_all_allegati_atto($idAtto);
+			albopc_zip_add($zip, $FileSql, dirname($FileSql));
+			$allegati=albopc_get_all_allegati_atto($idAtto);
 			foreach ($allegati as $allegato) {
 			//echo $allegato->Allegato;
 				if (substr(basename( $allegato->Allegato ),-4)==".pdf" or 
 					substr(basename( $allegato->Allegato ),-4)==".p7m") 
-					ap_zip_add($zip, $allegato->Allegato, dirname($allegato->Allegato));
+					albopc_zip_add($zip, $allegato->Allegato, dirname($allegato->Allegato));
 			}
 			$zip->close();
 		}
@@ -3252,12 +3252,12 @@ function ap_BackupFilesAllegatiOblio($idAtto){
 		return FALSE;	
 	}
 	//Svuoto cartella tmp che contiene i files dati
-//	ap_SvuotaDirectory($DirTmp,NULL);
+//	albopc_SvuotaDirectory($DirTmp,NULL);
 	return $nomefileZip;
 }
 
 
-function ap_oblio_atti($Atti){
+function albopc_oblio_atti($Atti){
 	global $wpdb;
 	$Dir=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/OblioDatiAlbo');
 	$DirTmp=$Dir."/tmp";
@@ -3290,7 +3290,7 @@ function ap_oblio_atti($Atti){
 	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
 		}
 	}
-	ap_SvuotaDirectory($DirTmp,NULL);
+	albopc_SvuotaDirectory($DirTmp,NULL);
 	$Msg="";
 	if(!is_array($Atti)){
 		$Atti=array($Atti);
@@ -3300,21 +3300,21 @@ function ap_oblio_atti($Atti){
 		$Bulk=TRUE;
 	}
 	foreach($Atti as $Atto){
-		$riga=ap_get_atto($Atto);
+		$riga=albopc_get_atto($Atto);
 		if(is_array($riga) And count($riga)>0){
 			$riga=$riga[0];
 			$Msg.="Atto ".$riga->IdAtto;
 			$MsgAlle=" ".__("Allegati","albo-pretorio-considera");
-			ap_BackupFilesAllegatiOblio($riga->IdAtto);
-			if (ap_cvdate($riga->DataOblio) <= ap_cvdate(gmdate("Y-m-d"))){
-				if(ap_del_allegati_atto((int)$Atto)){
+			albopc_BackupFilesAllegatiOblio($riga->IdAtto);
+			if (albopc_cvdate($riga->DataOblio) <= albopc_cvdate(gmdate("Y-m-d"))){
+				if(albopc_del_allegati_atto((int)$Atto)){
 					$MessaggiRitorno["Message2"]=10;// Allegati all'Atto Cancellati
 					$MsgAlle.=" ".__("all'Atto Cancellati","albo-pretorio-considera");
 				}else{
 					$MessaggiRitorno["Message2"]=11;//Allegati all'Atto NON Cancellati
 					$MsgAlle.=" ".__("all'Atto NON Cancellati","albo-pretorio-considera");
 				}			
-				$res=ap_del_atto((int)$Atto);
+				$res=albopc_del_atto((int)$Atto);
 				if (!is_array($res)){
 					$MessaggiRitorno["Message"]= 2;//Atto Cancellato
 					$Msg.=" ".__("Cancellato","albo-pretorio-considera");
@@ -3336,7 +3336,7 @@ function ap_oblio_atti($Atti){
 			$Msg.="Atto ".$Atto." ".__("OPERAZIONE NON ESEGUITA!","albo-pretorio-considera");;
 		}
 	}
-	ap_MakeZipOblio();
+	albopc_MakeZipOblio();
 	if ($Bulk)
 		return $Msg;
 	else
@@ -3345,12 +3345,12 @@ function ap_oblio_atti($Atti){
 /**
  * Funzioni tipi di Files
  */
-	function ap_get_tipidifiles(){
+	function albopc_get_tipidifiles(){
 		if(get_option('opt_AP_TipidiFiles')  != '' || !get_option('opt_AP_TipidiFiles')){
 			return get_option('opt_AP_TipidiFiles');
 		}
 	}
-	function ap_icona_fallback_tipo($ext){
+	function albopc_icona_fallback_tipo($ext){
 		// Icona di ripiego per i tipi di file noti non esplicitamente registrati
 		// in opt_AP_TipidiFiles. Il percorso e' risolto a runtime da Albo_URL,
 		// quindi resta valido anche se cambia il nome della cartella del plugin.
@@ -3381,8 +3381,8 @@ function ap_oblio_atti($Atti){
 		}
 		return array('Icona'=>Albo_URL.'img/notipofile.png','Descrizione'=>__('Tipo file non definito','albo-pretorio-considera'));
 	}
-	function ap_isAllowedExtension($fileName) {
-		$TipidiFiles=ap_get_tipidifiles();
+	function albopc_isAllowedExtension($fileName) {
+		$TipidiFiles=albopc_get_tipidifiles();
 		$Estensione=explode(".", $fileName);
 		$Estensione=end($Estensione);
 		if(isset($TipidiFiles[strtolower($Estensione)])){
@@ -3392,8 +3392,8 @@ function ap_oblio_atti($Atti){
 		}
 	}
 	
-	function ap_isExtensioType($Estensione){
-		$TipidiFiles=ap_get_tipidifiles();
+	function albopc_isExtensioType($Estensione){
+		$TipidiFiles=albopc_get_tipidifiles();
 		if($TipidiFiles){
 			foreach ( $TipidiFiles as $key => $value ) {
 				if($key==$Estensione){
@@ -3403,16 +3403,16 @@ function ap_oblio_atti($Atti){
 		}
 		return FALSE;		
 	}
-	function ap_ExtensionType($fileName) {
+	function albopc_ExtensionType($fileName) {
 		$NomeFile=explode(".", $fileName);
 		$ext=strtolower($NomeFile[count($NomeFile)-1]);
-		if (!ap_isExtensioType($ext)){
+		if (!albopc_isExtensioType($ext)){
 			return "ndf";
 		}
 	  return $ext;
 	}
-	function ap_tipiFileAmmessi($Mime=False){
-		$TipidiFiles=ap_get_tipidifiles();
+	function albopc_tipiFileAmmessi($Mime=False){
+		$TipidiFiles=albopc_get_tipidifiles();
 		$Tipi=array();
 		foreach ( $TipidiFiles as $key => $value ) {
 			if($Mime){
@@ -3424,10 +3424,10 @@ function ap_oblio_atti($Atti){
 		}
 		return $Tipi;
 	}
-	function ap_num_tipidifiles_atti(){
+	function albopc_num_tipidifiles_atti(){
 		global $wpdb;
 		$Allegati=$wpdb->get_results("SELECT Allegato FROM $wpdb->table_name_Allegati");
-		$TipidiFiles=ap_get_tipidifiles();
+		$TipidiFiles=albopc_get_tipidifiles();
 		foreach ( $TipidiFiles as $key => $value ) {
 			$Tipi[$key]=0;	
 		}
@@ -3440,8 +3440,8 @@ function ap_oblio_atti($Atti){
 		}	
 		return $Tipi;
 	}
-	function ap_delete_tipofiles($ID){
-		$TipidiFiles=ap_get_tipidifiles();
+	function albopc_delete_tipofiles($ID){
+		$TipidiFiles=albopc_get_tipidifiles();
 		$NewTipidiFiles=array();
 		$Trovato=FALSE;
 		foreach ( $TipidiFiles as $key => $value ) {
@@ -3451,15 +3451,15 @@ function ap_oblio_atti($Atti){
 			}
 		}
 		if($Trovato){
-			ap_insert_log(8,2,$ID,__("Cancellazione Tipo File","albo-pretorio-considera"));
+			albopc_insert_log(8,2,$ID,__("Cancellazione Tipo File","albo-pretorio-considera"));
 			update_option('opt_AP_TipidiFiles', $NewTipidiFiles);
 		}
 		return $Trovato;
 		
 	}
-	function ap_add_tipofiles($ID,$Descrizione,$Icona,$Verifica){
+	function albopc_add_tipofiles($ID,$Descrizione,$Icona,$Verifica){
 		$ID=trim($ID);
-		$TipidiFiles=ap_get_tipidifiles();
+		$TipidiFiles=albopc_get_tipidifiles();
 		$Trovato=FALSE;
 		foreach ( $TipidiFiles as $key => $value ) {
 			if(strtolower($key)==strtolower($ID)){
@@ -3469,17 +3469,17 @@ function ap_oblio_atti($Atti){
 		if(!$Trovato){
 			$TipidiFiles[strtolower($ID)]=array("Descrizione"=>$Descrizione,"Icona"=>$Icona,"Verifica"=>htmlspecialchars($Verifica));
 			update_option('opt_AP_TipidiFiles', $TipidiFiles);
-			ap_insert_log(8,1,$ID,"{".__("Descrizione","albo-pretorio-considera")."}==> $Descrizione 
+			albopc_insert_log(8,1,$ID,"{".__("Descrizione","albo-pretorio-considera")."}==> $Descrizione 
 								  {".__("Icona","albo-pretorio-considera")."}==> $Icona
 								  {".__("Verifica","albo-pretorio-considera")."}==> $Verifica");
 		}
 		return !$Trovato;
 	}
-	function ap_memo_tipofiles($ID,$Descrizione,$Icona,$Verifica){
+	function albopc_memo_tipofiles($ID,$Descrizione,$Icona,$Verifica){
 		$ID=trim($ID);
-		$TipidiFiles=ap_get_tipidifiles();
+		$TipidiFiles=albopc_get_tipidifiles();
 		$TipidiFiles[strtolower($ID)]=array("Descrizione"=>$Descrizione,"Icona"=>$Icona,"Verifica"=>htmlspecialchars($Verifica));
-		ap_insert_log(8,2,$ID,"{".__("Descrizione","albo-pretorio-considera")."}==> $Descrizione 
+		albopc_insert_log(8,2,$ID,"{".__("Descrizione","albo-pretorio-considera")."}==> $Descrizione 
 					  {".__("Icona","albo-pretorio-considera")."}==> $Icona
 					  {".__("Verifica","albo-pretorio-considera")."}==> $Verifica");
 		return update_option('opt_AP_TipidiFiles', $TipidiFiles);
@@ -3487,7 +3487,7 @@ function ap_oblio_atti($Atti){
 /*
  * Funzioni per la gestione delle Funzioni dei Responsabili
  */
-	function ap_get_Funzioni_Responsabili($Output="Array",$ID="",$Name="",$Selezionato=""){
+	function albopc_get_Funzioni_Responsabili($Output="Array",$ID="",$Name="",$Selezionato=""){
 		$TabResponsabili=get_option('opt_AP_TabResp');
 		if((is_string($TabResponsabili) && (is_object(json_decode($TabResponsabili)) || is_array(json_decode($TabResponsabili))))){
 			$TRs=json_decode($TabResponsabili);
@@ -3518,8 +3518,8 @@ function ap_oblio_atti($Atti){
 				break;
 		}		
 	}
-	function ap_get_Funzione_StampaCertificatoSX(){
-		$Funzioni=ap_get_Funzioni_Responsabili();
+	function albopc_get_Funzione_StampaCertificatoSX(){
+		$Funzioni=albopc_get_Funzioni_Responsabili();
 		foreach($Funzioni as $Key=>$Dati){
 			if($Dati["StaCert"]=="Si"){
 				return(array($Key,$Dati["Descrizione"]));
@@ -3527,8 +3527,8 @@ function ap_oblio_atti($Atti){
 		}
 		return array("","");
 	}
-	function ap_get_Funzione_Responsabile($Funzione="",$Campo="Indice"){
-		$Funzioni=ap_get_Funzioni_Responsabili();
+	function albopc_get_Funzione_Responsabile($Funzione="",$Campo="Indice"){
+		$Funzioni=albopc_get_Funzioni_Responsabili();
 		foreach($Funzioni as $Key=>$Dati){
 			if($Key==$Funzione){
 				switch($Campo){
@@ -3549,7 +3549,7 @@ function ap_oblio_atti($Atti){
 /**
 * Funzioni per chiamate Ajax
 */
-function ap_MemoFunzioni(){
+function albopc_MemoFunzioni(){
 //	print_r($_POST);wp_die();
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
@@ -3578,14 +3578,14 @@ function ap_MemoFunzioni(){
 	echo "Memorizzazione avvenuta con successo";
 	wp_die();
 }
-function ap_dismiss_alboonline_notice(){
+function albopc_dismiss_alboonline_notice(){
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
 		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
 	update_option("alboonline-notice-dismissed",TRUE);
 	wp_die();
 }
-function ap_rimuoviallegatoPP(){
+function albopc_rimuoviallegatoPP(){
 	global $wpdb;
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('editore_atti_albo'))
@@ -3594,7 +3594,7 @@ function ap_rimuoviallegatoPP(){
 	$IDAtto= intval(filter_input(INPUT_POST, 'idAtto'));
 	$Motivo= sanitize_text_field(filter_input(INPUT_POST, 'desmotivo'));
 	
-	$allegato=ap_get_allegato_atto($IDAllegato);
+	$allegato=albopc_get_allegato_atto($IDAllegato);
 	if (file_exists($allegato[0]->Allegato) && is_file($allegato[0]->Allegato))
 	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 		if (unlink($allegato[0]->Allegato)){
@@ -3603,14 +3603,14 @@ function ap_rimuoviallegatoPP(){
 		 					array('IdAllegato' => $IDAllegato ),
 		 					array('%s','%s'),
 		 					array('%d'));
-			ap_insert_log(3,3,$IDAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." Cancellato dopo scadenza",$IDAtto);
+			albopc_insert_log(3,3,$IDAllegato,"{".__("Nome Allegato","albo-pretorio-considera")."}==> ".$allegato[0]->TitoloAllegato." Cancellato dopo scadenza",$IDAtto);
 			echo "\nCancellato correttamente";
 		}else{
 			echo "\nNon sono riuscito a Cancellarlo";
 		}	
 	wp_die();
 }
-function ap_LoadDefaultFunzioni(){
+function albopc_LoadDefaultFunzioni(){
 	check_ajax_referer('adminsecretAlboOnLine','security');
 	if (!current_user_can('admin_albo'))
 		wp_die(esc_html__("Non hai i permessi per eseguire questa operazione","albo-pretorio-considera"),403);
@@ -3623,7 +3623,7 @@ function ap_LoadDefaultFunzioni(){
 *  Funzioni per adeguamento GDPR
 *****************************************************
 */
-	function ap_del_ip_log(){
+	function albopc_del_ip_log(){
 		global $wpdb;
 		$Sql = 'UPDATE '.$wpdb->table_name_Log.' SET IPAddress="" WHERE IPAddress <>""';
 		$Result=$wpdb->query($Sql);
@@ -3633,13 +3633,13 @@ function ap_LoadDefaultFunzioni(){
 			else
 				return $wpdb->last_error;
 	}
-function ap_Rmdir($src) {
+function albopc_Rmdir($src) {
     $dir = opendir($src);
     while(false !== ( $file = readdir($dir)) ) {
         if (( $file != '.' ) && ( $file != '..' )) {
             $full = $src . '/' . $file;
             if ( is_dir($full) ) {
-                ap_Rmdir($full);
+                albopc_Rmdir($full);
             }
             else {
                 unlink($full);

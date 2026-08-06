@@ -35,7 +35,7 @@ define("AP_BASE_DIR",$uploads['basedir']."/");
 		$wpdb->table_name_RespProc=$table_prefix . "albopretorio_resprocedura";
 		$wpdb->table_name_Enti=$table_prefix . "albopretorio_enti";
 		$wpdb->table_name_UO=$table_prefix . "albopretorio_unitaorganizzative";
-		$nf=ap_BackupDatiFiles($Data);
+		$nf=albopc_BackupDatiFiles($Data);
 		copy($nf, AP_BASE_DIR."BackupAlboPretorioUninstall".$Data.".zip");
 // Eliminazioni capacità
 		$role =& get_role( 'administrator' );
@@ -102,6 +102,6 @@ define("AP_BASE_DIR",$uploads['basedir']."/");
 		delete_option( 'opt_AP_UpCSSNewInterface' );
 		delete_option( 'opt_AP_FolderUploadMeseAnno' );
 		delete_option( 'opt_AP_BootstrapItalia' );
-		ap_Rmdir(AlboBCK);
-		ap_Rmdir(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
+		albopc_Rmdir(AlboBCK);
+		albopc_Rmdir(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 ?>

@@ -13,7 +13,7 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 $ret=Lista_AttiGruppo($Parametri);								  
 function Lista_AttiGruppo($Parametri){
 	ob_start();
-	$lista=ap_get_GruppiAtti($Parametri['meta'],$Parametri['valore']); 
+	$lista=albopc_get_GruppiAtti($Parametri['meta'],$Parametri['valore']); 
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
 	$colorePari=get_option('opt_AP_ColorePari');
 	$coloreDispari=get_option('opt_AP_ColoreDispari');
@@ -57,9 +57,9 @@ function Lista_AttiGruppo($Parametri){
 		else
 			$sep="?";
 		foreach($lista as $riga){
-			$categoria=ap_get_categoria($riga->IdCategoria);
+			$categoria=albopc_get_categoria($riga->IdCategoria);
 			$cat=$categoria[0]->Nome;
-			$NumeroAtto=ap_get_num_anno($riga->IdAtto);
+			$NumeroAtto=albopc_get_num_anno($riga->IdAtto);
 	//		Bonifica_Url();
 			$classe='';
 			if ($pari And $coloreDispari)
@@ -85,12 +85,12 @@ function Lista_AttiGruppo($Parametri){
 			if (isset($FEColsOption['Data']) And $FEColsOption['Data']==1)
 				echo '
 					<td '.$classe.'>
-						'.esc_html(ap_VisualizzaData($riga->Data)) .'</a>
+						'.esc_html(albopc_VisualizzaData($riga->Data)) .'</a>
 					</td>';
 			if (isset($FEColsOption['Ente']) And $FEColsOption['Ente']==1)
 				echo '
 					<td '.$classe.'>
-						'.$Link.$Link.esc_html(stripslashes(ap_get_ente($riga->Ente)->Nome)) .'</a>
+						'.$Link.$Link.esc_html(stripslashes(albopc_get_ente($riga->Ente)->Nome)) .'</a>
 					</td>';
 			if (isset($FEColsOption['Riferimento']) And $FEColsOption['Riferimento']==1)
 				echo '
@@ -105,7 +105,7 @@ function Lista_AttiGruppo($Parametri){
 			if (isset($FEColsOption['Validita']) And $FEColsOption['Validita']==1)
 				echo '
 					<td '.$classe.'>
-						'.$Link.esc_html(ap_VisualizzaData($riga->DataInizio)) .'<br />'.esc_html(ap_VisualizzaData($riga->DataFine)) .'</a>
+						'.$Link.esc_html(albopc_VisualizzaData($riga->DataInizio)) .'<br />'.esc_html(albopc_VisualizzaData($riga->DataFine)) .'</a>
 					</td>';
 			if (isset($FEColsOption['Categoria']) And $FEColsOption['Categoria']==1)
 				echo '
@@ -120,7 +120,7 @@ function Lista_AttiGruppo($Parametri){
 			if (isset($FEColsOption['DataOblio']) And $FEColsOption['DataOblio']==1)
 				echo '
 					<td '.$classe.'>
-						'.$Link.esc_html(ap_VisualizzaData($riga->DataOblio)) .'</a>
+						'.$Link.esc_html(albopc_VisualizzaData($riga->DataOblio)) .'</a>
 					</td>';
 		echo '	
 				</tr>'; 

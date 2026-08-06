@@ -78,10 +78,10 @@ if(isset($_REQUEST['action'])){
         case 'printatto':
             if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
                 include_once(dirname (__FILE__) .'/stampe.php');
-                $AttoStampa = ap_get_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+                $AttoStampa = albopc_get_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
                 if (!empty($AttoStampa)) {
                     $AttoStampa = $AttoStampa[0];
-                    $Oggi = ap_oggi();
+                    $Oggi = albopc_oggi();
                     if (($AttoStampa->DataInizio!="0000-00-00" And $AttoStampa->DataInizio>$Oggi) Or ($AttoStampa->DataOblio!="0000-00-00" And $AttoStampa->DataOblio<=$Oggi))
                         wp_die(esc_html__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
                 }
@@ -103,7 +103,7 @@ if(isset($_REQUEST['action'])){
 			break;
 		case 'addstatall':
 			if(is_numeric(sanitize_text_field(wp_unslash($_GET['id'] ?? ''))) and is_numeric(sanitize_text_field(wp_unslash($_GET['idAtto'] ?? ''))))
-				ap_insert_log(5,5,(isset($_GET['id'])?(int)$_GET['id']:0),"Visualizzazione",(isset($_GET['idAtto'])?(int)$_GET['idAtto']:0));
+				albopc_insert_log(5,5,(isset($_GET['id'])?(int)$_GET['id']:0),"Visualizzazione",(isset($_GET['idAtto'])?(int)$_GET['idAtto']:0));
 			break;
 		default: 
 			if (isset($_REQUEST['filtra'])){
@@ -188,18 +188,18 @@ if(isset($_REQUEST['action'])){
 	
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- template di rendering front-end [Albo]: markup fisso + label i18n del plugin, con i valori DB/utente escapati singolarmente (esc_html/esc_url/esc_attr) e input gia sanitizzato a monte; le variabili $Link/$classe contengono solo markup fisso + dati gia escapati.
 function VisualizzaAtto($id){
-	$risultato=ap_get_atto($id);
+	$risultato=albopc_get_atto($id);
 	$risultato=$risultato[0];
-	$risultatocategoria=ap_get_categoria($risultato->IdCategoria);
+	$risultatocategoria=albopc_get_categoria($risultato->IdCategoria);
 	$risultatocategoria=$risultatocategoria[0];
-	ap_insert_log(5,5,$id,"Visualizzazione");
+	albopc_insert_log(5,5,$id,"Visualizzazione");
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
-	$Unitao=ap_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
+	$Unitao=albopc_get_unitaorganizzativa($risultato->IdUnitaOrganizzativa);
 	if ($Unitao!==FALSE)
 		$UnitaoNome=$Unitao->Nome;
 	else
 		$UnitaoNome="";
-	$NomeResp=ap_get_responsabile($risultato->RespProc);
+	$NomeResp=albopc_get_responsabile($risultato->RespProc);
 	if (count($NomeResp)>0) {
 		$NomeResp=$NomeResp[0];
 		$NomeResp=stripslashes($NomeResp->Nome." ".$NomeResp->Cognome);
@@ -223,7 +223,7 @@ echo '
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.esc_html__("Ente titolare dell'Atto","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
-			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(stripslashes(ap_get_ente($risultato->Ente)->Nome)).'</div>
+			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(stripslashes(albopc_get_ente($risultato->Ente)->Nome)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.esc_html__("Numero Albo","albo-pretorio-considera").'</div>
@@ -247,25 +247,25 @@ echo '
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.esc_html__("Data di registrazione","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
-			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(ap_VisualizzaData($risultato->Data)).'</div>
+			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(albopc_VisualizzaData($risultato->Data)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.esc_html__("Data inizio Pubblicazione","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
-			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(ap_VisualizzaData($risultato->DataInizio)).'</div>
+			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(albopc_VisualizzaData($risultato->DataInizio)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.esc_html__("Data fine Pubblicazione","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
-			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(ap_VisualizzaData($risultato->DataFine)).'</div>
+			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(albopc_VisualizzaData($risultato->DataFine)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.esc_html__("Data oblio","albo-pretorio-considera").'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
-			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(ap_VisualizzaData($risultato->DataOblio)).'</div>
+			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(albopc_VisualizzaData($risultato->DataOblio)).'</div>
 		</div>
 		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 			<div class="u-background-50 u-color-white u-margin-bottom-xs u-borderRadius-m u-padding-all-m">'.esc_html__("Richiedente","albo-pretorio-considera").'</div>
@@ -291,7 +291,7 @@ echo '
 		<div class="Grid-cell u-size1of2 u-lg-size1of2">
 			<div class="u-margin-bottom-xs u-padding-all-m u-border-bottom-xxs">'.esc_html(stripslashes($risultatocategoria->Nome)).'</div>
 		</div>';
-$MetaDati=ap_get_meta_atto($id);
+$MetaDati=albopc_get_meta_atto($id);
 if($MetaDati!==FALSE){
 	$Meta="";
 	foreach($MetaDati as $Metadato){
@@ -317,13 +317,13 @@ echo'		<div class="Grid-cell u-size1of2 u-lg-size1of2 HeadAtto">
 $Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
 $Ruolo="";
 if($Soggetti){
-	$Soggetti=ap_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	echo "		<h3 style=\"text-align:center;\">".__("Soggetti","albo-pretorio-considera")."</h3>";
 }else{
 	$Soggetti=array();
 }
 foreach($Soggetti as $Soggetto){
-	if(ap_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
+	if(albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Display")=="No"){
 		continue;
 	}
 	if($Soggetto->Funzione!=$Ruolo And $Ruolo!=""){
@@ -331,7 +331,7 @@ foreach($Soggetti as $Soggetto){
 	}
 	if($Soggetto->Funzione!=$Ruolo){
 		echo '<div>
-	<h\>'.esc_html(ap_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")).'</h4>';
+	<h\>'.esc_html(albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")).'</h4>';
 	}
 	$Ruolo=$Soggetto->Funzione;
 	echo'<div class="Grid Grid--withGutter u-padding-all-l">		
@@ -380,12 +380,12 @@ foreach($Soggetti as $Soggetto){
 if($Ruolo!=""){
 	echo '</div>';
 }
-$TipidiFiles=ap_get_tipidifiles();
+$TipidiFiles=albopc_get_tipidifiles();
 if (strpos(get_permalink(),"?")>0)
 	$sep="&";
 else
 	$sep="?";
-$documenti=ap_get_documenti_atto($id);
+$documenti=albopc_get_documenti_atto($id);
 $StatoAllegati= get_option('opt_AP_Allegati');
 if(count($documenti)>0){
 	echo '
@@ -393,7 +393,7 @@ if(count($documenti)>0){
 			<div class="Grid Grid--withGutter u-padding-all-l break-word">';
 	//print_r($_SERVER);
 	foreach ($documenti as $allegato) {
-		$Estensione=ap_ExtensionType($allegato->Allegato);
+		$Estensione=albopc_ExtensionType($allegato->Allegato);
 		echo'
 			<div class="Grid-cell HeadAllegati">
 				<div class="u-margin-bottom-xs u-borderRadius-m u-padding-all-m u-border-all-xxs">
@@ -401,10 +401,10 @@ if(count($documenti)>0){
 			if(!is_file($allegato->Allegato) And $allegato->Note!=""){
 				echo '<strong>'.esc_html(esc_html__("Documento rimosso","albo-pretorio-considera")).'</strong>: '.$allegato->Note.'<strong>';
 			}else{
-				echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Impronta).'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-considera")).'</strong>: '.esc_html(ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0))."<br />";
+				echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Impronta).'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-considera")).'</strong>: '.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0))."<br />";
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.esc_url(ap_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
+						echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg></a> ';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
@@ -426,14 +426,14 @@ if(count($documenti)>0){
 		}
 	echo '</div>';
 }
-$allegati=ap_get_allegati_atto($id);
+$allegati=albopc_get_allegati_atto($id);
 if(count($allegati)>0){
 	echo '
 		<h3>'. __("Allegati","albo-pretorio-considera").'</h3>
 			<div class="Grid Grid--withGutter u-padding-all-l break-word">';
 	//print_r($_SERVER);
 	foreach ($allegati as $allegato) {
-		$Estensione=ap_ExtensionType($allegato->Allegato);
+		$Estensione=albopc_ExtensionType($allegato->Allegato);
 		echo'
 			<div class="Grid-cell HeadAllegati">
 				<div class="u-margin-bottom-xs u-borderRadius-m u-padding-all-m u-border-all-xxs">
@@ -441,10 +441,10 @@ if(count($allegati)>0){
 			if(!is_file($allegato->Allegato) And $allegato->Note!=""){
 				echo '<strong>'.esc_html(esc_html__("Allegato rimosso","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Note).'<br />';
 			}else{
-				echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Impronta).'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-considera")).'</strong>: '.esc_html(ap_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0))."<br />";
+				echo '<strong>'.esc_html(esc_html__("Impronta","albo-pretorio-considera")).'</strong>: '.esc_html($allegato->Impronta).'<br /><strong>'.esc_html(esc_html__("Dimensione file","albo-pretorio-considera")).'</strong>: '.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0))."<br />";
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.esc_url(ap_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
+						echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw noUnderLine" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" title="'.esc_html__("Visualizza Allegato","albo-pretorio-considera").'" target="_blank">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> </a> ';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
@@ -497,7 +497,7 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 		$Categoria="";
 		$Categorie=explode(",",$Parametri['cat']);
 		foreach($Categorie as $Cate){
-			$DesCat=ap_get_categoria($Cate);
+			$DesCat=albopc_get_categoria($Cate);
 			$DesCategorie.=$DesCat[0]->Nome.",";
 			$Categoria.=$Cate.",";
 		}
@@ -525,8 +525,8 @@ function Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadat
 	}else{
 	        $Ente = $_REQUEST['ente'];
 	}
-	$TotAtti=ap_get_all_atti($Parametri['stato'],intval($Numero),intval($Anno),$Categorie,$Oggetto,intval($Dadata),intval($Adata),'',0,0,true,false,$Riferimento,$Ente);
-	$lista=ap_get_all_atti($Parametri['stato'],intval($Numero),intval($Anno),$Categorie,$Oggetto,intval($Dadata),intval($Adata),'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 
+	$TotAtti=albopc_get_all_atti($Parametri['stato'],intval($Numero),intval($Anno),$Categorie,$Oggetto,intval($Dadata),intval($Adata),'',0,0,true,false,$Riferimento,$Ente);
+	$lista=albopc_get_all_atti($Parametri['stato'],intval($Numero),intval($Anno),$Categorie,$Oggetto,intval($Dadata),intval($Adata),'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 
 	$titEnte=get_option('opt_AP_LivelloTitoloEnte');
 	if ($titEnte=='')
 		$titEnte="h2";
@@ -662,7 +662,7 @@ echo '	</tr>
 			$sep="?";
 		foreach($lista as $riga){
 			$Link='<a href="'.esc_url(get_permalink().$sep.'action=visatto&id='.$riga->IdAtto).'"  style="text-decoration: underline;">';
-			$categoria=ap_get_categoria($riga->IdCategoria);
+			$categoria=albopc_get_categoria($riga->IdCategoria);
 			$cat=$categoria[0]->Nome;
 			$NumeroAtto=$riga->Numero;
 			$classe='';
@@ -681,12 +681,12 @@ echo '	</tr>
 			if (isset($FEColsOption['Data']) And $FEColsOption['Data']==1)
 				echo'
 					<td '.$classe.'>
-						'.$Link.esc_html(ap_VisualizzaData($riga->Data)) .'</a>
+						'.$Link.esc_html(albopc_VisualizzaData($riga->Data)) .'</a>
 					</td>';
 			if (isset($FEColsOption['Ente']) And $FEColsOption['Ente']==1)
 				echo'
 					<td '.$classe.'>
-						'.$Link.$Link.esc_html(stripslashes(ap_get_ente($riga->Ente)->Nome)) .'</a>
+						'.$Link.$Link.esc_html(stripslashes(albopc_get_ente($riga->Ente)->Nome)) .'</a>
 					</td>';
 			if (isset($FEColsOption['Riferimento']) And $FEColsOption['Riferimento']==1)
 				echo'
@@ -701,7 +701,7 @@ echo '	</tr>
 			if (isset($FEColsOption['Validita']) And $FEColsOption['Validita']==1)
 				echo '								
 					<td '.$classe.'>
-						'.$Link.esc_html(ap_VisualizzaData($riga->DataInizio)) .'<br />'.esc_html(ap_VisualizzaData($riga->DataFine)) .'</a>  
+						'.$Link.esc_html(albopc_VisualizzaData($riga->DataInizio)) .'<br />'.esc_html(albopc_VisualizzaData($riga->DataFine)) .'</a>  
 					</td>';
 			if (isset($FEColsOption['Categoria']) And $FEColsOption['Categoria']==1)
 				echo'								
@@ -716,7 +716,7 @@ echo '	</tr>
 			if (isset($FEColsOption['DataOblio']) And $FEColsOption['DataOblio']==1)
 				echo'
 					<td '.$classe.'>
-						'.$Link.esc_html(ap_VisualizzaData($riga->DataOblio)) .'</a>
+						'.$Link.esc_html(albopc_VisualizzaData($riga->DataOblio)) .'</a>
 					</td>';
 		echo'	
 				</tr>'; 

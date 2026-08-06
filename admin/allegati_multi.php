@@ -10,14 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 	echo "<h2>Allegati Multipli</h2>";
-	$TipiAmmessi=ap_tipiFileAmmessi(TRUE);
-	$ap_exts=array();       // ["pdf","doc"]  estensioni ammesse
-	$ap_accept=array();     // [".pdf",".doc"] per attributo accept
-	$ap_icone=array();      // {"pdf":"icona.png"} mappa estensione->icona
+	$TipiAmmessi=albopc_tipiFileAmmessi(TRUE);
+	$albopc_exts=array();       // ["pdf","doc"]  estensioni ammesse
+	$albopc_accept=array();     // [".pdf",".doc"] per attributo accept
+	$albopc_icone=array();      // {"pdf":"icona.png"} mappa estensione->icona
 	foreach ( $TipiAmmessi as $Tipo) {
-		$ap_exts[]   = $Tipo["."];
-		$ap_accept[] = '.'.$Tipo["."];
-		$ap_icone[$Tipo["."]] = $Tipo["Icon"];
+		$albopc_exts[]   = $Tipo["."];
+		$albopc_accept[] = '.'.$Tipo["."];
+		$albopc_icone[$Tipo["."]] = $Tipo["Icon"];
 	}
 ?>
 <form action="?page=atti" method="post" enctype="multipart/form-data">
@@ -27,7 +27,7 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 	<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?(int)$_REQUEST['id']:0); ?>" />
 <div>
   <label for="files" id="pulCar"><span class="dashicons dashicons-portfolio" style="font-size:2em;padding-right:0.5em;margin-top:-7px;"></span> <?php echo esc_html__("Seleziona gli allegati da caricare","albo-pretorio-considera");?></label>
-  <input type="file" id="files" name="files[]" accept="<?php echo esc_attr( implode(',', $ap_accept) );?>" multiple>
+  <input type="file" id="files" name="files[]" accept="<?php echo esc_attr( implode(',', $albopc_accept) );?>" multiple>
 </div>
 <div class="preview">
   <p><?php echo esc_html__("Nessun file selezionato per il caricamento","albo-pretorio-considera");?></p>
@@ -47,7 +47,7 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
           }
           var curFiles = input.files;
           var list = document.createElement('ol');
-          var icone = <?php echo wp_json_encode($ap_icone);?>;
+          var icone = <?php echo wp_json_encode($albopc_icone);?>;
 	        preview.appendChild(list);
 	        for(var i = 0; i < curFiles.length; i++) {
 	          var icona=IconFileType(curFiles[i]);
@@ -96,7 +96,7 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 			var parti=filename.split(".");
 			return parti[(parti.length) - 1].toLowerCase();
 		}
-        var fileTypes = <?php echo wp_json_encode($ap_exts);?>;
+        var fileTypes = <?php echo wp_json_encode($albopc_exts);?>;
         function validFileType(file) {
           var estensione=getEstensione(file.name);
           for(var i = 0; i < fileTypes.length; i++) {
@@ -106,7 +106,7 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
           }
           return false;
         }
-       var icone = <?php echo wp_json_encode($ap_icone);?>;
+       var icone = <?php echo wp_json_encode($albopc_icone);?>;
         function IconFileType(file) {
         	var estensione=getEstensione(file.name);
             for(var i = 0; i < fileTypes.length; i++) {
