@@ -23,7 +23,7 @@ if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['act
 				}
 			}	
 		// Crea capacit࠵tenti di gestione ed amministrazione Al Pretorio in base a quanto scelto dall'Utente
-			foreach($_REQUEST as $albopc_key=>$val){
+			foreach($_REQUEST as $albopc_key=>$albopc_val){
 				$albopc_UID=substr($albopc_key,1);
 				if (is_numeric($albopc_UID)){
 					$albopc_users = new WP_User($albopc_UID);

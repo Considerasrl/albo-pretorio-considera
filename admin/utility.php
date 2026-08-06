@@ -370,7 +370,7 @@ switch ($passo){
 			foreach ($atti as $a) {
 //				echo "<pre>";var_dump($a);"</pre>";
 				echo "<li>(".esc_html($a->IdAtto).") ".esc_html($a->Oggetto)." del ".esc_html($a->Numero)."/".esc_html($a->Anno);
-				if($a->DataInizio>$Data){
+				if($a->DataInizio>$albopc_Data){
 					$AttoDaData=$a->DataInizio;
 				}else{
 					$AttoDaData=$albopc_Data;

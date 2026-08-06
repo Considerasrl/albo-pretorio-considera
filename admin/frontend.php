@@ -81,7 +81,7 @@ if(isset($_REQUEST['action'])){
                 if (!empty($albopc_AttoStampa)) {
                     $albopc_AttoStampa = $albopc_AttoStampa[0];
                     $albopc_Oggi = albopc_oggi();
-                    if (($albopc_AttoStampa->DataInizio!="0000-00-00" And $albopc_AttoStampa->DataInizio>$Oggi) Or ($albopc_AttoStampa->DataOblio!="0000-00-00" And $albopc_AttoStampa->DataOblio<=$albopc_Oggi))
+                    if (($albopc_AttoStampa->DataInizio!="0000-00-00" And $albopc_AttoStampa->DataInizio>$albopc_Oggi) Or ($albopc_AttoStampa->DataOblio!="0000-00-00" And $albopc_AttoStampa->DataOblio<=$albopc_Oggi))
                         wp_die(esc_html__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
                 }
                 if (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'c') {

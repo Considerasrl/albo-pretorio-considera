@@ -80,7 +80,7 @@ echo '<tr>
 			<ul>';
 if ($albopc_lista){
 	$albopc_Tipi=albopc_num_tipidifiles_atti();
-	foreach($albopc_lista as $albopc_TipoFile =>$riga){
+	foreach($albopc_lista as $albopc_TipoFile =>$albopc_riga){
 		echo'<li style="text-align:left;padding-left:1px;">';
 		$albopc_Tab=0;
 		if($albopc_Tipi[strtolower($albopc_TipoFile)]==0 and $albopc_TipoFile!="ndf")
