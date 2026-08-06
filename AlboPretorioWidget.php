@@ -32,35 +32,35 @@ class AlboPretorioWidget extends WP_Widget
         );
         $instance = wp_parse_args( (array) $instance, $defaults );?>
         <p>
-            <label for="<?php echo $this->get_field_id( 'titolo' ); ?>">
-                <?php echo __('Titolo widget','albo-pretorio-considera');?>:
+            <label for="<?php echo esc_attr($this->get_field_id( 'titolo' )); ?>">
+                <?php echo esc_html__('Titolo widget','albo-pretorio-considera');?>:
             </label>
-            <input type="text" id="<?php echo $this->get_field_id( 'titolo' ); ?>" name="<?php echo $this->get_field_name( 'titolo' ); ?>" value="<?php echo $instance['titolo']; ?>" size="30" />
+            <input type="text" id="<?php echo esc_attr($this->get_field_id( 'titolo' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'titolo' )); ?>" value="<?php echo esc_attr($instance['titolo']); ?>" size="30" />
         </p>
         <p>
-            <label for="<?php echo $this->get_field_id( 'titolo_statistiche' ); ?>">
-                <?php echo __('Titolo cartella dati atti correnti','albo-pretorio-considera');?>:
+            <label for="<?php echo esc_attr($this->get_field_id( 'titolo_statistiche' )); ?>">
+                <?php echo esc_html__('Titolo cartella dati atti correnti','albo-pretorio-considera');?>:
             </label>
-            <input type="text" id="<?php echo $this->get_field_id( 'titolo_statistiche' ); ?>" name="<?php echo $this->get_field_name( 'titolo_statistiche' ); ?>" value="<?php echo $instance['titolo_statistiche']; ?>" size="30" />
+            <input type="text" id="<?php echo esc_attr($this->get_field_id( 'titolo_statistiche' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'titolo_statistiche' )); ?>" value="<?php echo esc_attr($instance['titolo_statistiche']); ?>" size="30" />
         </p>
         <p>
-            <label for="<?php echo $this->get_field_id( 'titolo_elenco' ); ?>">
-                <?php echo __('Titolo lista atti correnti','albo-pretorio-considera');?>:
+            <label for="<?php echo esc_attr($this->get_field_id( 'titolo_elenco' )); ?>">
+                <?php echo esc_html__('Titolo lista atti correnti','albo-pretorio-considera');?>:
             </label>
-             <input type="text" id="<?php echo $this->get_field_id( 'titolo_elenco' ); ?>" name="<?php echo $this->get_field_name( 'titolo_elenco' ); ?>" value="<?php echo $instance['titolo_elenco']; ?>" size="30" />
+             <input type="text" id="<?php echo esc_attr($this->get_field_id( 'titolo_elenco' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'titolo_elenco' )); ?>" value="<?php echo esc_attr($instance['titolo_elenco']); ?>" size="30" />
         </p>        
 		<p>
-            <label for="<?php echo $this->get_field_id( 'numero_atti' ); ?>">
-                <?php echo __('Numero Atti da visualizzare','albo-pretorio-considera');?>:
+            <label for="<?php echo esc_attr($this->get_field_id( 'numero_atti' )); ?>">
+                <?php echo esc_html__('Numero Atti da visualizzare','albo-pretorio-considera');?>:
             </label>
-            <input type="text" id="<?php echo $this->get_field_id( 'numero_atti' ); ?>" name="<?php echo $this->get_field_name( 'numero_atti' ); ?>" value="<?php echo $instance['numero_atti']; ?>" size="2"/>
+            <input type="text" id="<?php echo esc_attr($this->get_field_id( 'numero_atti' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'numero_atti' )); ?>" value="<?php echo esc_attr($instance['numero_atti']); ?>" size="2"/>
 
         </p>
         <p>
-            <label for="<?php echo $this->get_field_id( 'pagina_albo' ); ?>">
-               <?php echo __('Pagina Albo','albo-pretorio-considera');?>:
+            <label for="<?php echo esc_attr($this->get_field_id( 'pagina_albo' )); ?>">
+               <?php echo esc_html__('Pagina Albo','albo-pretorio-considera');?>:
             </label>
-		<select id="<?php echo $this->get_field_id( 'pagina_albo' ); ?>" name="<?php echo $this->get_field_name( 'pagina_albo' ); ?>"> 
+		<select id="<?php echo esc_attr($this->get_field_id( 'pagina_albo' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'pagina_albo' )); ?>"> 
 		 <option value=""><?php echo esc_attr( __( 'Seleziona la pagina', 'albo-pretorio-considera' ) ); ?></option> 
 		 <?php 
 		  $pages = get_pages(); 
@@ -69,32 +69,32 @@ class AlboPretorioWidget extends WP_Widget
 				$Selezionato= 'selected="selected"';
 			else
 				$Selezionato="";
-		  	$option = '<option '.$Selezionato.' value="' . get_page_link( $pagg->ID ) . '">';
-			$option .= $pagg->post_title;
+		  	$option = '<option '.$Selezionato.' value="' . esc_url( get_page_link( $pagg->ID ) ) . '">';
+			$option .= esc_html( $pagg->post_title );
 			$option .= '</option>';
-			echo $option;
+			echo $option; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <option> con url/titolo gia' escapati
 		  }
 		 ?>
 		</select>
         </p>
-		<h3><?php echo __('Ordine Elenco','albo-pretorio-considera');?></h3>
+		<h3><?php echo esc_html__('Ordine Elenco','albo-pretorio-considera');?></h3>
         <p>
-            <label for="<?php echo $this->get_field_id( 'ordine_campo' ); ?>">
-               <?php echo __('In base a','albo-pretorio-considera');?>:
+            <label for="<?php echo esc_attr($this->get_field_id( 'ordine_campo' )); ?>">
+               <?php echo esc_html__('In base a','albo-pretorio-considera');?>:
             </label>
-		<select id="<?php echo $this->get_field_id( 'ordine_campo' ); ?>" name="<?php echo $this->get_field_name( 'ordine_campo' ); ?>"> 
-		 <option value="Pubblicazione" <?php if ($instance['ordine_campo']=="Pubblicazione") echo 'selected="selected"'?> ><?php echo __('Data Pubblicazione','albo-pretorio-considera');?> </option>
-		 <option value="Scadenza" <?php if ($instance['ordine_campo']=="Scadenza") echo 'selected="selected"'?> ><?php echo __('Data Scadenza','albo-pretorio-considera');?> </option>
+		<select id="<?php echo esc_attr($this->get_field_id( 'ordine_campo' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'ordine_campo' )); ?>"> 
+		 <option value="Pubblicazione" <?php if ($instance['ordine_campo']=="Pubblicazione") echo 'selected="selected"'?> ><?php echo esc_html__('Data Pubblicazione','albo-pretorio-considera');?> </option>
+		 <option value="Scadenza" <?php if ($instance['ordine_campo']=="Scadenza") echo 'selected="selected"'?> ><?php echo esc_html__('Data Scadenza','albo-pretorio-considera');?> </option>
 		</select>
         </p>
 
         <p>
-            <label for="<?php echo $this->get_field_id( 'ordinamento' ); ?>">
-               <?php echo __('Ordine','albo-pretorio-considera');?>:
+            <label for="<?php echo esc_attr($this->get_field_id( 'ordinamento' )); ?>">
+               <?php echo esc_html__('Ordine','albo-pretorio-considera');?>:
             </label>
-		<select id="<?php echo $this->get_field_id( 'ordinamento' ); ?>" name="<?php echo $this->get_field_name( 'ordinamento' ); ?>"> 
-		 <option value="C" <?php if ($instance['ordinamento']=="C") echo 'selected="selected"'?> ><?php echo __('Crescente','albo-pretorio-considera');?> </option>
-		 <option value="D" <?php if ($instance['ordinamento']=="D") echo 'selected="selected"'?> ><?php echo __('Decrescente','albo-pretorio-considera');?> </option>
+		<select id="<?php echo esc_attr($this->get_field_id( 'ordinamento' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'ordinamento' )); ?>"> 
+		 <option value="C" <?php if ($instance['ordinamento']=="C") echo 'selected="selected"'?> ><?php echo esc_html__('Crescente','albo-pretorio-considera');?> </option>
+		 <option value="D" <?php if ($instance['ordinamento']=="D") echo 'selected="selected"'?> ><?php echo esc_html__('Decrescente','albo-pretorio-considera');?> </option>
 		</select>
         </p>
 
@@ -114,11 +114,11 @@ public function widget( $args, $instance )
 			$titolo="Albo Pretorio";
 		$n_atti_attivi = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->table_name_Atti Where DataInizio <= CURDATE() And DataFine>= CURDATE() And Numero>0;");
 		$n_atti_attivi_annullati = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->table_name_Atti Where DataInizio <= now() And DataFine>= now() And Numero>0 And DataAnnullamento<>'0000-00-00';");
-        echo $before_widget;
-        echo $before_title .$titolo. $after_title;
+        echo $before_widget; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup wrapper del widget fornito dalla sidebar/tema
+        echo $before_title . esc_html($titolo) . $after_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $before_title/$after_title sono markup wrapper del tema; $titolo escapato
         echo "<div>";
 
-    if ($instance['ordine_campo']=="Pubblicazione") 
+    if ($instance['ordine_campo']=="Pubblicazione")
     	$Ordinamento="DataInizio";
     else
     	$Ordinamento="DataFine";
@@ -135,44 +135,44 @@ public function widget( $args, $instance )
 	if ($lista){
 		foreach($lista as $riga){
 			if($riga->DataAnnullamento!='0000-00-00'){
-				$Annullato='style="background-color: '.$coloreAnnullati.';"';
+				$Annullato='style="background-color: '.esc_attr($coloreAnnullati).';"';
 				$CeAnnullato=true;
 			}else
 				$Annullato='';
 			if (strpos($instance['pagina_albo'],"?")>0)
-				$sep="&amp;";
+				$sep="&";
 			else
 				$sep="?";
-			$HtmlW.= '<li '.$Annullato.'> <a href="'.$instance['pagina_albo'].$sep.'action=visatto&amp;id='.$riga->IdAtto.'">'.stripcslashes($riga->Oggetto) .'</a><br />
-				</li>'; 
+			$HtmlW.= '<li '.$Annullato.'> <a href="'.esc_url($instance['pagina_albo'].$sep.'action=visatto&id='.$riga->IdAtto).'">'.esc_html(stripcslashes($riga->Oggetto)) .'</a><br />
+				</li>';
 		}
 	} else {
 			$HtmlW.= '<li>
-					'. __('Nessun Atto Codificato','albo-pretorio-considera').'
+					'. esc_html__('Nessun Atto Codificato','albo-pretorio-considera').'
 				  </li>';
 	}
 	$HtmlW.= '</ul>';
-	if ($CeAnnullato) 
-		$HtmlW.= '<p>'. __('Le righe evidenziate con questo sfondo','albo-pretorio-considera').' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '. __('indicano Atti Annullati','albo-pretorio-considera').'</p>';
+	if ($CeAnnullato)
+		$HtmlW.= '<p>'. esc_html__('Le righe evidenziate con questo sfondo','albo-pretorio-considera').' <span style="background-color: '.esc_attr($coloreAnnullati).';">&nbsp;&nbsp;&nbsp;</span> '. esc_html__('indicano Atti Annullati','albo-pretorio-considera').'</p>';
 $HtmlW.= '</div>';
 ?>
 			<div id="pp-tabs-container">
 				<ul>
-					<li><a href="#pp-tab-1"><?php echo $instance['titolo_statistiche']; ?></a></li>
-					<li><a href="#pp-tab-2"><?php echo $instance['titolo_elenco']; ?></a></li>
+					<li><a href="#pp-tab-1"><?php echo esc_html($instance["titolo_statistiche"]); ?></a></li>
+					<li><a href="#pp-tab-2"><?php echo esc_html($instance["titolo_elenco"]); ?></a></li>
 				</ul>
 				<div id="pp-tab-1">
                     <p>
-				        <?php echo __('Atti Correnti','albo-pretorio-considera');?> <?php echo $n_atti_attivi; ?><br />
-				        <?php echo __('di cui Annullati','albo-pretorio-considera');?> <?php echo $n_atti_attivi_annullati; ?>
+				        <?php echo esc_html__('Atti Correnti','albo-pretorio-considera');?> <?php echo (int)$n_atti_attivi; ?><br />
+				        <?php echo esc_html__('di cui Annullati','albo-pretorio-considera');?> <?php echo (int)$n_atti_attivi_annullati; ?>
 				    </p>
                 </div>
 				<div id="pp-tab-2">
-                      <?php echo $HtmlW; ?>
+                      <?php echo $HtmlW; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup lista widget con url/oggetto/colori gia' escapati ?>
 				</div>			
 			</div>
 <?php
-	   echo $after_widget;
+	   echo $after_widget; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup wrapper del widget fornito dalla sidebar/tema
     }
 
 	public function update( $new_instance, $old_instance )
@@ -210,23 +210,23 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
             );
             $instance = wp_parse_args( (array) $instance, $defaults );?>
             <p>
-                <label for="<?php echo $this->get_field_id( 'titolo' ); ?>">
-                    <?php echo  __("Titolo widget","albo-pretorio-considera"); ?>:
+                <label for="<?php echo esc_attr($this->get_field_id( 'titolo' )); ?>">
+                    <?php echo esc_html__("Titolo widget","albo-pretorio-considera"); ?>:
                 </label>
-                <input type="text" id="<?php echo $this->get_field_id( 'titolo' ); ?>" name="<?php echo $this->get_field_name( 'titolo' ); ?>" value="<?php echo $instance['titolo']; ?>" size="30" />
+                <input type="text" id="<?php echo esc_attr($this->get_field_id( 'titolo' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'titolo' )); ?>" value="<?php echo esc_attr($instance['titolo']); ?>" size="30" />
             </p>
             <p>
-                <label for="<?php echo $this->get_field_id( 'numero_atti' ); ?>">
-                    <?php echo  __("Numero Atti da visualizzare","albo-pretorio-considera"); ?>:
+                <label for="<?php echo esc_attr($this->get_field_id( 'numero_atti' )); ?>">
+                    <?php echo esc_html__("Numero Atti da visualizzare","albo-pretorio-considera"); ?>:
                 </label>
-                <input type="text" id="<?php echo $this->get_field_id( 'numero_atti' ); ?>" name="<?php echo $this->get_field_name( 'numero_atti' ); ?>" value="<?php echo $instance['numero_atti']; ?>" size="2"/>
+                <input type="text" id="<?php echo esc_attr($this->get_field_id( 'numero_atti' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'numero_atti' )); ?>" value="<?php echo esc_attr($instance['numero_atti']); ?>" size="2"/>
 
             </p>
             <p>
-                <label for="<?php echo $this->get_field_id( 'pagina_albo' ); ?>">
-                   <?php echo  __("Pagina Albo","albo-pretorio-considera"); ?>:
+                <label for="<?php echo esc_attr($this->get_field_id( 'pagina_albo' )); ?>">
+                   <?php echo esc_html__("Pagina Albo","albo-pretorio-considera"); ?>:
                 </label>
-            <select id="<?php echo $this->get_field_id( 'pagina_albo' ); ?>" name="<?php echo $this->get_field_name( 'pagina_albo' ); ?>">
+            <select id="<?php echo esc_attr($this->get_field_id( 'pagina_albo' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'pagina_albo' )); ?>">
              <option value=""><?php echo esc_attr( __( 'Seleziona la pagina', 'albo-pretorio-considera' )  ); ?></option>
              <?php
               $pages = get_pages();
@@ -235,32 +235,32 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
                     $Selezionato= 'selected="selected"';
                 else
                     $Selezionato="";
-                  $option = '<option '.$Selezionato.' value="' . get_page_link( $pagg->ID ) . '">';
-                $option .= $pagg->post_title;
+                  $option = '<option '.$Selezionato.' value="' . esc_url( get_page_link( $pagg->ID ) ) . '">';
+                $option .= esc_html( $pagg->post_title );
                 $option .= '</option>';
-                echo $option;
+                echo $option; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup <option> con url/titolo gia' escapati
               }
              ?>
             </select>
             </p>
-            <h3><?php echo  __("Ordine Elenco","albo-pretorio-considera"); ?></h3>
+            <h3><?php echo esc_html__("Ordine Elenco","albo-pretorio-considera"); ?></h3>
             <p>
-                <label for="<?php echo $this->get_field_id( 'ordine_campo' ); ?>">
-                   <?php echo  __("In base a","albo-pretorio-considera"); ?>:
+                <label for="<?php echo esc_attr($this->get_field_id( 'ordine_campo' )); ?>">
+                   <?php echo esc_html__("In base a","albo-pretorio-considera"); ?>:
                 </label>
-            <select id="<?php echo $this->get_field_id( 'ordine_campo' ); ?>" name="<?php echo $this->get_field_name( 'ordine_campo' ); ?>">
-             <option value="Pubblicazione" <?php if ($instance['ordine_campo']=="Pubblicazione") echo 'selected="selected"'?> ><?php echo  __("Data Pubblicazione","albo-pretorio-considera"); ?> </option>
-             <option value="Scadenza" <?php if ($instance['ordine_campo']=="Scadenza") echo 'selected="selected"'?> ><?php echo  __("Data Scadenza","albo-pretorio-considera"); ?> </option>
+            <select id="<?php echo esc_attr($this->get_field_id( 'ordine_campo' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'ordine_campo' )); ?>">
+             <option value="Pubblicazione" <?php if ($instance['ordine_campo']=="Pubblicazione") echo 'selected="selected"'?> ><?php echo esc_html__("Data Pubblicazione","albo-pretorio-considera"); ?> </option>
+             <option value="Scadenza" <?php if ($instance['ordine_campo']=="Scadenza") echo 'selected="selected"'?> ><?php echo esc_html__("Data Scadenza","albo-pretorio-considera"); ?> </option>
             </select>
             </p>
 
             <p>
-                <label for="<?php echo $this->get_field_id( 'ordinamento' ); ?>">
-                   <?php echo  __("Ordine","albo-pretorio-considera"); ?>:
+                <label for="<?php echo esc_attr($this->get_field_id( 'ordinamento' )); ?>">
+                   <?php echo esc_html__("Ordine","albo-pretorio-considera"); ?>:
                 </label>
-            <select id="<?php echo $this->get_field_id( 'ordinamento' ); ?>" name="<?php echo $this->get_field_name( 'ordinamento' ); ?>">
-             <option value="C" <?php if ($instance['ordinamento']=="C") echo 'selected="selected"'?> ><?php echo  __("Crescente","albo-pretorio-considera"); ?> </option>
-             <option value="D" <?php if ($instance['ordinamento']=="D") echo 'selected="selected"'?> ><?php echo  __("Decrescente","albo-pretorio-considera"); ?> </option>
+            <select id="<?php echo esc_attr($this->get_field_id( 'ordinamento' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'ordinamento' )); ?>">
+             <option value="C" <?php if ($instance['ordinamento']=="C") echo 'selected="selected"'?> ><?php echo esc_html__("Crescente","albo-pretorio-considera"); ?> </option>
+             <option value="D" <?php if ($instance['ordinamento']=="D") echo 'selected="selected"'?> ><?php echo esc_html__("Decrescente","albo-pretorio-considera"); ?> </option>
             </select>
             </p>
            <?php
@@ -276,8 +276,8 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
             $titolo = apply_filters('widget_title', $instance['titolo'] );
              if ($titolo=='')
                 $titolo=__("Albo OnLine","albo-pretorio-considera");
-            echo $before_widget;
-            echo $before_title .$titolo. $after_title;
+            echo $before_widget; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup wrapper del widget fornito dalla sidebar/tema
+            echo $before_title . esc_html($titolo) . $after_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $before_title/$after_title sono markup wrapper del tema; $titolo escapato
             echo "<div>";
 
         if ($instance['ordine_campo']=="Pubblicazione")
@@ -296,32 +296,32 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
         if ($lista){
             foreach($lista as $riga){
                 if($riga->DataAnnullamento!='0000-00-00'){
-                    $Annullato='style="background-color: '.$coloreAnnullati.';"';
+                    $Annullato='style="background-color: '.esc_attr($coloreAnnullati).';"';
                     $CeAnnullato=true;
                 }else
                     $Annullato='';
                 if (strpos($instance['pagina_albo'],"?")>0)
-                    $sep="&amp;";
+                    $sep="&";
                 else
                     $sep="?";
-                $HtmlW.= '<li><h3><span class="dataAtto">'.date_i18n("j M y", strtotime($riga->DataInizio)).'</span> - <span class="dataAtto">'.date_i18n("j M y", strtotime($riga->DataFine)).'</span> <a href="'.$instance['pagina_albo'].$sep.'action=visatto&amp;id='.$riga->IdAtto.'"'.$Annullato.'>'.stripcslashes($riga->Oggetto) .'</a></h3>
+                $HtmlW.= '<li><h3><span class="dataAtto">'.esc_html(date_i18n("j M y", strtotime($riga->DataInizio))).'</span> - <span class="dataAtto">'.esc_html(date_i18n("j M y", strtotime($riga->DataFine))).'</span> <a href="'.esc_url($instance['pagina_albo'].$sep.'action=visatto&id='.$riga->IdAtto).'"'.$Annullato.'>'.esc_html(stripcslashes($riga->Oggetto)) .'</a></h3>
                     </li>';
             }
         } else {
                 $HtmlW.= '<li>
-                        '. __("Nessun Atto Codificato","albo-pretorio-considera").'
+                        '. esc_html__("Nessun Atto Codificato","albo-pretorio-considera").'
                       </li>';
         }
         $HtmlW.= '</ul>';
         if ($CeAnnullato)
-            $HtmlW.= '<p>'. __("Le righe evidenziate con questo sfondo","albo-pretorio-considera").' <span style="background-color: '.$coloreAnnullati.';">&nbsp;&nbsp;&nbsp;</span> '. __("indicano Atti Annullati","albo-pretorio-considera").'</p>';
+            $HtmlW.= '<p>'. esc_html__("Le righe evidenziate con questo sfondo","albo-pretorio-considera").' <span style="background-color: '.esc_attr($coloreAnnullati).';">&nbsp;&nbsp;&nbsp;</span> '. esc_html__("indicano Atti Annullati","albo-pretorio-considera").'</p>';
     $HtmlW.= '</div>';
     ?>
                 <div>
-                  <?php echo $HtmlW; ?>
+                  <?php echo $HtmlW; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup lista widget con url/oggetto/colori gia' escapati ?>
                 </div>
     <?php
-           echo $after_widget;
+           echo $after_widget; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup wrapper del widget fornito dalla sidebar/tema
         }
 
         public function update( $new_instance, $old_instance )

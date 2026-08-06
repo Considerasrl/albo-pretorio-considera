@@ -3053,12 +3053,12 @@ global $wpdb;
 		foreach ($tables as $table) {
 			ap_backup_table($table,$fp);
 			$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.ap_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span> <br />';
-			if ($Echo)	echo '<li><span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.ap_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span></li>';
+			if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-considera').' '.esc_html(ap_backquote($table)).' '.esc_html__('Aggiunta','albo-pretorio-considera').'</span></li>';
 			fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-considera')." ".ap_backquote($table)." ".__('Aggiunta','albo-pretorio-considera')."\n");
 		}
 		ap_backup_table($wpdb->options,$fp,"option_name LIKE 'opt_%' ",False);
 		$Risultato.='<span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.ap_backquote($table).' '.__('Aggiunta','albo-pretorio-considera').'</span> <br />';
-		if ($Echo)	echo '<li><span style="color:green;">'.__('Tabella','albo-pretorio-considera').' '.ap_backquote($wpdb->options).' '.__('Aggiunta','albo-pretorio-considera').'</span></li>'
+		if ($Echo)	echo '<li><span style="color:green;">'.esc_html__('Tabella','albo-pretorio-considera').' '.esc_html(ap_backquote($wpdb->options)).' '.esc_html__('Aggiunta','albo-pretorio-considera').'</span></li>'
 		. '</ul>';
 		fwrite($fplog,"Sql ".__('Tabella','albo-pretorio-considera')." ".ap_backquote($wpdb->options)." ".__('Aggiunta','albo-pretorio-considera')."\n");
 		$UpdateProgressivo="UPDATE `".$wpdb->options."` SET `option_value` = '".get_option('opt_AP_AnnoProgressivo')."'	WHERE `option_name` ='opt_AP_AnnoProgressivo';\n";
