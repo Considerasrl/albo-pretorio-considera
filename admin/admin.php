@@ -1113,7 +1113,7 @@ function albopc_Memo_allegato_atto(){
 							}
 					   		$result = 0;
 						   	$target_path = albopc_UniqueFileName($destination_path . basename(sanitize_file_name(remove_accents ( sanitize_text_field(wp_unslash($_FILES['files']['name'][$i] ?? ''))))));
-							if(@move_uploaded_file($_FILES['files']['tmp_name'][$i],$target_path)){ // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- tmp_name generato dal server; move_uploaded_file valida internamente che sia un upload reale e il path NON va sanitizzato (altrimenti si rompe lo spostamento)
+							if(isset($_FILES['files']['tmp_name'][$i]) && is_uploaded_file($_FILES['files']['tmp_name'][$i]) && @move_uploaded_file($_FILES['files']['tmp_name'][$i],$target_path)){ // phpcs:ignore WordPress.Security.ValidatedSanitizedInput, Generic.PHP.ForbiddenFunctions.Found -- upload verso una cartella di lavoro specifica del plugin (AP_BASE_DIR/opt_AP_FolderUpload), NON la uploads root: wp_handle_upload non e' adatto; tmp_name validato con is_uploaded_file() e path server non sanitizzabile
 			    				$messages= __("File caricato","albo-pretorio-considera")."%25%25br%25%25".__("Nome","albo-pretorio-considera").": " . basename( $target_path)." %25%25br%25%25".__("Percorso completo","albo-pretorio-considera")." : ".str_replace("\\","/",$target_path);
 			    				$Natura=(isset($_POST['Natura'][$i])?"D":"A");
 			    				$Integrale=(isset($_POST['Integrale'][$i])?1:0);

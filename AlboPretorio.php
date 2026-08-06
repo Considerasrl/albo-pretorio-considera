@@ -70,7 +70,7 @@ if (!class_exists('AlboPretorio')) {
 	var $plugin_name = '';
 
 	function __construct() {
-		load_plugin_textdomain( 'albo-pretorio-considera', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+		load_plugin_textdomain( 'albo-pretorio-considera', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- il plugin distribuisce le proprie traduzioni .mo nella cartella languages/; per il caricamento da fork self-hosted (non wp.org) la chiamata resta necessaria
 		if ( ! function_exists( 'get_plugins' ) )
 	 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	    $plugins = get_plugins( "/".plugin_basename( dirname( __FILE__ ) ) );
@@ -567,7 +567,7 @@ function admin_notice(){
 					@ob_end_clean();
 				}
 				/* La compressione ricalcola la lunghezza del corpo e va disattivata. */
-				@ini_set('zlib.output_compression', 'Off');
+				@ini_set('zlib.output_compression', 'Off'); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged, WordPress.PHP.NoSilencedErrors.Discouraged -- necessario per il download: la compressione zlib ricalcola il body e falserebbe Content-Length dello streaming file
 				if (function_exists('apache_setenv')) @apache_setenv('no-gzip', '1');
 				nocache_headers();
 
@@ -1006,7 +1006,8 @@ static function add_albo_plugin_visatto($plugin_array) {
 	}
 	    wp_enqueue_script('jquery');
 		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.NotInFooter -- caricati in head: gli shortcode dell'Albo emettono markup/script inline che dipendono da jQuery UI e da Albo.public.js prima del footer.
-	    wp_enqueue_script('Albo-Public-Jquery-UI',plugins_url('js/jquery-ui.min.js', __FILE__ ), array(), AP_VERSION);
+	    // jQuery UI dal core di WordPress (tabs + datepicker); il bundle jquery-ui.min.js completo era ridondante ed e' stato rimosso.
+	    wp_enqueue_script('jquery-ui-core');
 	    wp_enqueue_script('jquery-ui-tabs');
 		wp_enqueue_script( 'jquery-ui-datepicker');
 		if(get_option('opt_AP_BootstrapItalia')!="Si")

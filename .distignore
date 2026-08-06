@@ -1,0 +1,12 @@
+# File di sviluppo/build esclusi dallo ZIP di distribuzione (wp.org / build tooling)
+.git
+.github
+.gitignore
+.gitattributes
+.distignore
+.DS_Store
+**/.DS_Store
+README.md
+SECURITY.md
+CHANGELOG.md
+css/build/src

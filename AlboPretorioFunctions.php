@@ -1728,13 +1728,10 @@ function albopc_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto=''
 	$OrderBySql="";
 // Le date devono essere nel formato europeo gg/mm/aaaa: qualunque altro
 // valore viene azzerato per impedire SQL injection tramite albopc_convertiData()
-	foreach(array('Dadata','Adata') as $ParData){
-		if ($$ParData!=0){
-			$DataConv=albopc_convertiData($$ParData);
-			if (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$DataConv))
-				$$ParData=0;
-		}
-	}
+	if ($Dadata!=0 && !preg_match('/^\d{4}-\d{2}-\d{2}$/',albopc_convertiData($Dadata)))
+		$Dadata=0;
+	if ($Adata!=0 && !preg_match('/^\d{4}-\d{2}-\d{2}$/',albopc_convertiData($Adata)))
+		$Adata=0;
 	if ($OrderBy!=""){
 		$allowed_order_columns=array('Numero','Anno','Data','DataInizio','DataFine','DataOblio','Oggetto','Riferimento');
 		$order_parts=array();
