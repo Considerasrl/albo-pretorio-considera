@@ -12,39 +12,39 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['action'] ?? '')) == "memoPermessi"){
 	if (isset($_REQUEST['permessi'])){
 		if (wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['permessi'] ?? '')),'gestpermessi')){
-			$lista=albopc_get_users(); 
+			$albopc_lista=albopc_get_users(); 
 		// Azzera capacit࠵tenti di gestione ed amministrazione Albo Pretorio
-			foreach($lista as $riga){
-				if (!(user_can( $riga->ID, 'create_users') or user_can( $riga->ID, 'manage_network'))) {
-					$users = new WP_User( $riga->ID);
-					$users->remove_cap("gest_atti_albo");
-					$users->remove_cap("editore_atti_albo");
-					$users->remove_cap("admin_albo");
+			foreach($albopc_lista as $albopc_riga){
+				if (!(user_can( $albopc_riga->ID, 'create_users') or user_can( $albopc_riga->ID, 'manage_network'))) {
+					$albopc_users = new WP_User( $albopc_riga->ID);
+					$albopc_users->remove_cap("gest_atti_albo");
+					$albopc_users->remove_cap("editore_atti_albo");
+					$albopc_users->remove_cap("admin_albo");
 				}
 			}	
 		// Crea capacit࠵tenti di gestione ed amministrazione Al Pretorio in base a quanto scelto dall'Utente
-			foreach($_REQUEST as $key=>$val){
-				$UID=substr($key,1);
-				if (is_numeric($UID)){
-					$users = new WP_User($UID);
-					if ($val=="Amministratore"){
-						$users->add_cap("admin_albo");
-						$users->add_cap("editore_atti_albo");
-						$users->add_cap("gest_atti_albo");
+			foreach($_REQUEST as $albopc_key=>$val){
+				$albopc_UID=substr($albopc_key,1);
+				if (is_numeric($albopc_UID)){
+					$albopc_users = new WP_User($albopc_UID);
+					if ($albopc_val=="Amministratore"){
+						$albopc_users->add_cap("admin_albo");
+						$albopc_users->add_cap("editore_atti_albo");
+						$albopc_users->add_cap("gest_atti_albo");
 					}
-					if ($val=="Editore"){
-						$users->add_cap("editore_atti_albo");
-						$users->add_cap("gest_atti_albo");
+					if ($albopc_val=="Editore"){
+						$albopc_users->add_cap("editore_atti_albo");
+						$albopc_users->add_cap("gest_atti_albo");
 					}
-					if ($val=="Gestore")
-						$users->add_cap("gest_atti_albo");
+					if ($albopc_val=="Gestore")
+						$albopc_users->add_cap("gest_atti_albo");
 				}
 			}
 		}else{
-			$Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+			$albopc_Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 		}
 	}else{
-		$Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+		$albopc_Msg=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 	}
 }
 
@@ -52,8 +52,8 @@ echo '<div class="wrap">
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-groups" style="font-size:1em;"></span> Permessi Utente
 	</div>';
-if (isset($Msg)) {
-	echo '<div id="message" class="updated"><p>'.esc_html($Msg).'</p></div>';
+if (isset($albopc_Msg)) {
+	echo '<div id="message" class="updated"><p>'.esc_html($albopc_Msg).'</p></div>';
 }
 echo '
 		<div class="postbox-container" style="margin-top:20px;">
@@ -75,52 +75,52 @@ echo '
 					</tr>
 					</thead>
 					<tbody>';
-$lista=albopc_get_users(); 
-foreach($lista as $riga){
- 	$users = new WP_User( $riga->ID);
- 	$Utente=false;
-	if ($users->has_cap('gestore_albo') or $users->has_cap('editore_albo') or $users->has_cap('amministratore_albo'))
-		$Utente=true;
- 	if (!(user_can( $riga->ID, 'create_users') or user_can( $riga->ID, 'manage_network'))) {
-		$Stato='';
-		$StatoEditore='';
-		$StatoGestore='';
+$albopc_lista=albopc_get_users(); 
+foreach($albopc_lista as $albopc_riga){
+ 	$albopc_users = new WP_User( $albopc_riga->ID);
+ 	$albopc_Utente=false;
+	if ($albopc_users->has_cap('gestore_albo') or $albopc_users->has_cap('editore_albo') or $albopc_users->has_cap('amministratore_albo'))
+		$albopc_Utente=true;
+ 	if (!(user_can( $albopc_riga->ID, 'create_users') or user_can( $albopc_riga->ID, 'manage_network'))) {
+		$albopc_Stato='';
+		$albopc_StatoEditore='';
+		$albopc_StatoGestore='';
 		echo '<tr>
-		<td>'.esc_html($riga->user_login).'</td>';
-	 	if (user_can( $riga->ID, 'gest_atti_albo')){
-			$Stato='';
-			$StatoEditore='';
-	 		$StatoGestore='checked';	
+		<td>'.esc_html($albopc_riga->user_login).'</td>';
+	 	if (user_can( $albopc_riga->ID, 'gest_atti_albo')){
+			$albopc_Stato='';
+			$albopc_StatoEditore='';
+	 		$albopc_StatoGestore='checked';	
 		}
-	 	if (user_can( $riga->ID, 'editore_atti_albo')){
-			$Stato='';
-			$StatoEditore='checked';
-	 		$StatoGestore='';	
+	 	if (user_can( $albopc_riga->ID, 'editore_atti_albo')){
+			$albopc_Stato='';
+			$albopc_StatoEditore='checked';
+	 		$albopc_StatoGestore='';	
 		}
-	 	if (user_can( $riga->ID, 'admin_albo')){
-			$Stato='checked';
-			$StatoEditore='';
-	 		$StatoGestore='';	
+	 	if (user_can( $albopc_riga->ID, 'admin_albo')){
+			$albopc_Stato='checked';
+			$albopc_StatoEditore='';
+	 		$albopc_StatoGestore='';	
 		}
 
-		if (!$Utente)
-			echo '				  <td><input type="radio" value="Nullo" '.esc_attr($Stato).' name="U'.(int)$riga->ID.'" /></td>
-				  <td><input type="radio" value="Amministratore" '.esc_attr($Stato).' name="U'.(int)$riga->ID.'" /></td>
-				  <td><input type="radio" value="Editore" '.esc_attr($StatoEditore).' name="U'.(int)$riga->ID.'" /></td>
-				  <td><input type="radio" value="Gestore" '.esc_attr($StatoGestore).' name="U'.(int)$riga->ID.'" /></td>';
+		if (!$albopc_Utente)
+			echo '				  <td><input type="radio" value="Nullo" '.esc_attr($albopc_Stato).' name="U'.(int)$albopc_riga->ID.'" /></td>
+				  <td><input type="radio" value="Amministratore" '.esc_attr($albopc_Stato).' name="U'.(int)$albopc_riga->ID.'" /></td>
+				  <td><input type="radio" value="Editore" '.esc_attr($albopc_StatoEditore).' name="U'.(int)$albopc_riga->ID.'" /></td>
+				  <td><input type="radio" value="Gestore" '.esc_attr($albopc_StatoGestore).' name="U'.(int)$albopc_riga->ID.'" /></td>';
 		else
 			echo '				  <td>&nbsp;</td>
 			      <td>&nbsp;</td>
 				  <td>&nbsp;</td>';
-		if ($users->has_cap('amministratore_albo'))
+		if ($albopc_users->has_cap('amministratore_albo'))
 			echo '<td>si</td>';
 		else
 			echo '<td>--</td>';
-		if ($users->has_cap('editore_albo'))
+		if ($albopc_users->has_cap('editore_albo'))
 			echo '<td>si</td>';
 		else
 			echo '<td>--</td>';
-		if ($users->has_cap('gestore_albo'))
+		if ($albopc_users->has_cap('gestore_albo'))
 			echo '<td>si</td>';
 		else
 			echo '<td>--</td>';

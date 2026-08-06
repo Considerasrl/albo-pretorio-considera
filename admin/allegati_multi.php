@@ -10,14 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) { die('You are not allowed to call this page directly.'); }
 	echo "<h2>Allegati Multipli</h2>";
-	$TipiAmmessi=albopc_tipiFileAmmessi(TRUE);
+	$albopc_TipiAmmessi=albopc_tipiFileAmmessi(TRUE);
 	$albopc_exts=array();       // ["pdf","doc"]  estensioni ammesse
 	$albopc_accept=array();     // [".pdf",".doc"] per attributo accept
 	$albopc_icone=array();      // {"pdf":"icona.png"} mappa estensione->icona
-	foreach ( $TipiAmmessi as $Tipo) {
-		$albopc_exts[]   = $Tipo["."];
-		$albopc_accept[] = '.'.$Tipo["."];
-		$albopc_icone[$Tipo["."]] = $Tipo["Icon"];
+	foreach ( $albopc_TipiAmmessi as $albopc_Tipo) {
+		$albopc_exts[]   = $albopc_Tipo["."];
+		$albopc_accept[] = '.'.$albopc_Tipo["."];
+		$albopc_icone[$albopc_Tipo["."]] = $albopc_Tipo["Icon"];
 	}
 ?>
 <form action="?page=atti" method="post" enctype="multipart/form-data">

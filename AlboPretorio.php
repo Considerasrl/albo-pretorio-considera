@@ -39,23 +39,23 @@ define("Albo_DIR",dirname (__FILE__));
 define("APHomePath",substr(plugin_dir_path(__FILE__),0,strpos(plugin_dir_path(__FILE__),"wp-content")-1));
 define("AlboBCK",WP_CONTENT_DIR."/AlboOnLine");
 
-$uploads = wp_upload_dir(); 
-define("AP_BASE_DIR",$uploads['basedir']."/");
+$albopc_uploads = wp_upload_dir(); 
+define("AP_BASE_DIR",$albopc_uploads['basedir']."/");
 if (isset($_REQUEST['action'])){
 	require_once( ABSPATH . 'wp-includes/pluggable.php' );
 	switch(sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 		case "creafoblio":
 			if (!isset($_REQUEST['rigenera'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['rigenera'] ?? '')),'rigeneraoblio')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 				break;
 			} 			
 			albopc_crearobots();
-			$newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
-			albopc_NoIndexNoDirectLink($newPathAllegati);
+			$albopc_newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
+			albopc_NoIndexNoDirectLink($albopc_newPathAllegati);
 			wp_safe_redirect("?page=Albo_Pretorio");
 			break;
 	}
@@ -435,7 +435,7 @@ function admin_notice(){
 		$PagAlbo=get_option('opt_AP_PAtto');
 		if(!isset($PagAlbo) || $PagAlbo=="")
 			return new WP_REST_Response(__('Errore:Pagina visualizzazione atto non impostata','albo-pretorio-considera'),200);
-	$Stato=$request->get_param("stato");
+	$albopc_Stato=$request->get_param("stato");
 	$N_A_pp=$request->get_param("per_page");
 	$Pag=$request->get_param("page");
 	$Categorie=$request->get_param("categorie");
@@ -459,8 +459,8 @@ function admin_notice(){
 		$Da=($Pag-1)*$N_A_pp;
 		$A=$N_A_pp;
 	}
-	$TotAtti=albopc_get_all_atti($Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'',0,0,true,false,$Riferimento,$Ente);
-	$ListaAtti=albopc_get_all_atti($Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 			
+	$TotAtti=albopc_get_all_atti($albopc_Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'',0,0,true,false,$Riferimento,$Ente);
+	$ListaAtti=albopc_get_all_atti($albopc_Stato,$Numero,$Anno,$Categorie,$Oggetto,$Dadata,$Adata,'Anno DESC,Numero DESC',$Da,$A,false,false,$Riferimento,$Ente); 			
 			
 	if($N_A_pp>0){
 		$Npag=(int)($TotAtti/$N_A_pp);
@@ -884,14 +884,14 @@ static function add_albo_plugin_visatto($plugin_array) {
 	}	
 
 	static function show_menu() {
-		global $AP_OnLine;
+		global $albopc_AP_OnLine;
 
 		switch (sanitize_text_field(wp_unslash($_REQUEST['page'] ?? ''))){
 			case "Albo_Pretorio" :
-				$AP_OnLine->ShowBacheca();
+				$albopc_AP_OnLine->ShowBacheca();
 				break;
 			case "configAlboP" :
-				$AP_OnLine->AP_config();
+				$albopc_AP_OnLine->AP_config();
 				break;
 			case "categorie" :
 			// interfaccia per la gestione delle categorie
@@ -2394,7 +2394,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
    		}
 	}
 }
-	global $AP_OnLine;
-	$AP_OnLine = new AlboPretorio();
+	global $albopc_AP_OnLine;
+	$albopc_AP_OnLine = new AlboPretorio();
 }
 ?>

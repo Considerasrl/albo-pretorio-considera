@@ -11,47 +11,47 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- il plugin opera su tabelle custom proprie: nessuna API core equivalente, il caching non si applica alle query amministrative e di scrittura.
 // phpcs:disable WordPress.DB.PreparedSQL, PluginCheck.Security.DirectDB.UnescapedDBParameter -- "Describe $Tabella" usa un identificatore di tabella interno (non input utente); prepare() non supporta gli identificatori.
-// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- pagina admin di utility/configurazione: l'output e' markup fisso + label i18n del plugin (__() su stringhe letterali del plugin) + output di helper che generano markup di stato; i valori dinamici da DB/utente (Oggetto, path allegati, impronta, nome tabella, $Stato, conteggi, date) sono escapati singolarmente inline (esc_html/wp_kses_post).
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- pagina admin di utility/configurazione: l'output e' markup fisso + label i18n del plugin (__() su stringhe letterali del plugin) + output di helper che generano markup di stato; i valori dinamici da DB/utente (Oggetto, path allegati, impronta, nome tabella, $albopc_Stato, conteggi, date) sono escapati singolarmente inline (esc_html/wp_kses_post).
 if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sanitize_text_field(wp_unslash($_SERVER['PHP_SELF'])) : '')) {
 	die('You are not allowed to call this page directly.');
 }
 
-$Stato="";
+$albopc_Stato="";
 if (isset($_REQUEST['message']))
 	if(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''))==80)
-		$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+		$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 if (isset($_REQUEST['action'])){
 	switch(sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 		case "ImpostaEnteND":
 			if (!isset($_REQUEST['ImpostaEnteND'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['ImpostaEnteND'] ?? '')),'securimpostaentend')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 		
 			if(!isset($_REQUEST["Ente"]) Or (isset($_REQUEST["Ente"])?intval($_REQUEST["Ente"]):0)==-1){
-				$Stato=__("ATTENZIONE. Devi impostare un Ente valido","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Devi impostare un Ente valido","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			albopc_set_ente_orfani(sanitize_text_field(wp_unslash($_REQUEST["Ente"] ?? '')));
-			$NewEnte=albopc_get_ente(sanitize_text_field(wp_unslash($_REQUEST["Ente"] ?? '')));
-			$Stato=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Tutti gli atti con %1\$s Ente non definito sono stati assegnati all'ente %2\$s %3\$s %4\$s ","albo-pretorio-considera"),'<span style="color:red;">',"</span>","<strong>",$NewEnte->Nome,"</strong>");
-			albopc_menu($Stato);
+			$albopc_NewEnte=albopc_get_ente(sanitize_text_field(wp_unslash($_REQUEST["Ente"] ?? '')));
+			$albopc_Stato=sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("Tutti gli atti con %1\$s Ente non definito sono stati assegnati all'ente %2\$s %3\$s %4\$s ","albo-pretorio-considera"),'<span style="color:red;">',"</span>","<strong>",$albopc_NewEnte->Nome,"</strong>");
+			albopc_menu($albopc_Stato);
 			break;	
 		case "Crearobots":
 			if (!isset($_REQUEST['creasic'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['creasic'] ?? '')),'creasicurezza')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 			
 			albopc_crearobots();
@@ -62,18 +62,18 @@ if (isset($_REQUEST['action'])){
 				albopc_menu(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
-			$AttiDaAggiornare=unserialize(wp_unslash($_GET['AttiDaAgg'] ?? ''), array('allowed_classes'=>false)); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- valore serializzato (unserialize con allowed_classes=>false); sanitize_text_field ne romperebbe la struttura
-			if(!is_array($AttiDaAggiornare)){
+			$albopc_AttiDaAggiornare=unserialize(wp_unslash($_GET['AttiDaAgg'] ?? ''), array('allowed_classes'=>false)); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- valore serializzato (unserialize con allowed_classes=>false); sanitize_text_field ne romperebbe la struttura
+			if(!is_array($albopc_AttiDaAggiornare)){
 				albopc_menu(__("ATTENZIONE. Parametro non valido, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
-//			echo "<pre>";var_dump($AttiDaAggiornare);echo "</pre>";
-			$AttiAggiornati=albopc_ripubblica_atti_correnti($AttiDaAggiornare);
-			if(count($AttiDaAggiornare)==$AttiAggiornati)
-				$Stato="Tutti gli Atti(".$AttiAggiornati.") sono stati agiornati";
+//			echo "<pre>";var_dump($albopc_AttiDaAggiornare);echo "</pre>";
+			$albopc_AttiAggiornati=albopc_ripubblica_atti_correnti($albopc_AttiDaAggiornare);
+			if(count($albopc_AttiDaAggiornare)==$albopc_AttiAggiornati)
+				$albopc_Stato="Tutti gli Atti(".$albopc_AttiAggiornati.") sono stati agiornati";
 			else
-				$Stato="Purtroppo si sono verficati degli errori negli aggiornamenti degli Atti. Atti da aggiornare:".count($AttiDaAggiornare)." Aggiornati:".$AttiAggiornati;
-			albopc_menu($Stato);
+				$albopc_Stato="Purtroppo si sono verficati degli errori negli aggiornamenti degli Atti. Atti da aggiornare:".count($albopc_AttiDaAggiornare)." Aggiornati:".$albopc_AttiAggiornati;
+			albopc_menu($albopc_Stato);
 			break;
 		case "menu":
 			albopc_menu(str_replace("%%br%%","<br />",sanitize_text_field(wp_unslash($_GET['stato'] ?? ''))));
@@ -85,116 +85,116 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "posttrasf":
 			if (!isset($_REQUEST['posttrasf'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['posttrasf'] ?? '')),'posttrasferimento')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 			
-			$Msg=albopc_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload'))."<br />";
-			$Msg.=albopc_allinea_allegati();
+			$albopc_Msg=albopc_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload'))."<br />";
+			$albopc_Msg.=albopc_allinea_allegati();
 			unset($_POST['action']);
-			albopc_menu($Msg);
+			albopc_menu($albopc_Msg);
 			break;
 		case "BackupData":
 			if (!isset($_REQUEST['bckdata'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['bckdata'] ?? '')),'BackupDatiAlbo')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 			
-			$Data=gmdate('Ymd_H_i_s');
-			$nf=albopc_BackupDatiFiles($Data,"",AlboBCK,TRUE);
+			$albopc_Data=gmdate('Ymd_H_i_s');
+			$albopc_nf=albopc_BackupDatiFiles($albopc_Data,"",AlboBCK,TRUE);
 /*			$filename=WP_CONTENT_DIR."/AlboOnLine/BackupDatiAlbo/tmp/msg.txt";
 			$fpmsg = @fopen($filename, "rb");
-				$Stato=fread($fpmsg,filesize($filename));
+				$albopc_Stato=fread($fpmsg,filesize($filename));
 			fclose($fpmsg);
-*/			$Stato=__("Backup Completato e pronto per il download","albo-pretorio-considera");
-			albopc_menu($Stato);
+*/			$albopc_Stato=__("Backup Completato e pronto per il download","albo-pretorio-considera");
+			albopc_menu($albopc_Stato);
 			unset($_POST['action']);
 			break;
 		case "setData":
 			if (!isset($_REQUEST['ripub'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['ripub'] ?? '')),'ripubblicaatti')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 	
 			if (!sanitize_text_field(wp_unslash($_REQUEST['DataInterruzione'] ?? ''))){
-				$Stato="Bisogna impostare la Data inizio di interruzione del serzio";
-				albopc_menu($Stato);
+				$albopc_Stato="Bisogna impostare la Data inizio di interruzione del serzio";
+				albopc_menu($albopc_Stato);
 			}elseif (sanitize_text_field(wp_unslash($_REQUEST['ggInterruzione'] ?? ''))<1){
-				$Stato="Bisogna impostare il numero di giorni di interruzione del serzio";
-				albopc_menu($Stato);
+				$albopc_Stato="Bisogna impostare il numero di giorni di interruzione del serzio";
+				albopc_menu($albopc_Stato);
 			}else
 				albopc_menu("","1",sanitize_text_field(wp_unslash($_REQUEST['DataInterruzione'] ?? '')),sanitize_text_field(wp_unslash($_REQUEST['ggInterruzione'] ?? '')));
 			break;
 		case "verificaproc":
 			if (!isset($_REQUEST['verproc'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['verproc'] ?? '')),'verificaprocedura')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 			
 			albopc_TestProcedura();
 			break;
 		case "agghash":
 			if (!isset($_REQUEST['verproc'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['verproc'] ?? '')),'verificaprocedura')) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			albopc_AggiornaHashAllegati();
 			break;	
 		case "creaninf":
 			if (!isset($_REQUEST['rigenera'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['rigenera'] ?? '')),'rigenerasic')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 		
 			albopc_ImplementaNINF();
 			break;
 		case "DelIPLog":
 			if (!isset($_REQUEST['securdeliplog'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['securdeliplog'] ?? '')),'svuotavaloriipnelfiledilog')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
-			$Ris=albopc_del_ip_log();
-			if(is_numeric($Ris)){
-				albopc_menu(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("N° %s IP nel file di log CANCELLATI","albo-pretorio-considera"),$Ris));		
+			$albopc_Ris=albopc_del_ip_log();
+			if(is_numeric($albopc_Ris)){
+				albopc_menu(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("N° %s IP nel file di log CANCELLATI","albo-pretorio-considera"),$albopc_Ris));		
 			}else{
-				albopc_menu(__("Non è sono stati cancellati gli indirizzi IP nel file di log per il seguente errore: ","albo-pretorio-considera").$Ris);
+				albopc_menu(__("Non è sono stati cancellati gli indirizzi IP nel file di log per il seguente errore: ","albo-pretorio-considera").$albopc_Ris);
 			}
 			break;
 		case "creaTabella":
@@ -206,50 +206,50 @@ if (isset($_REQUEST['action'])){
 			break;
 		case "svuotalog":
 			if (!isset($_REQUEST['svuotalog'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['svuotalog'] ?? '')),'svuotafilelog')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 		
-			$Msg=albopc_SvuotaLog(0);
-			albopc_menu($Msg);
+			$albopc_Msg=albopc_SvuotaLog(0);
+			albopc_menu($albopc_Msg);
 			break;
 		case "puliscilog":
 			if (!isset($_REQUEST['puliscilog'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['puliscilog'] ?? '')),'puliscifilelog')){
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			} 		
-			$Msg=albopc_SvuotaLog(11);
-			albopc_menu($Msg);
+			$albopc_Msg=albopc_SvuotaLog(11);
+			albopc_menu($albopc_Msg);
 			break;
 		case "ArchivioAnnoMese":
 		if (!isset($_REQUEST['securarchivioannomese'])) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['securarchivioannomese'] ?? '')),'archivioannomese')) {
-				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
-				albopc_menu($Stato);
+				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+				albopc_menu($albopc_Stato);
 				break;
 			}
-			$Msg=albopc_ArchivioAllegati();
+			$albopc_Msg=albopc_ArchivioAllegati();
 			break;
 		default:
-			albopc_menu($Stato);
+			albopc_menu($albopc_Stato);
 	}	
 }else{
-		albopc_menu($Stato);
+		albopc_menu($albopc_Stato);
 }
 
 function albopc_ArchivioAllegati(){
@@ -302,9 +302,9 @@ function albopc_ImplementaNINF(){
 				</div>';
 }
 
-function albopc_menu($Stato="",$passo=0,$Data="",$GG=0){
+function albopc_menu($albopc_Stato="",$passo=0,$albopc_Data="",$GG=0){
 global $wpdb;
-$Stato=sanitize_text_field($Stato);
+$albopc_Stato=sanitize_text_field($albopc_Stato);
 $passo=intval($passo);
 $upload_dir = wp_upload_dir();
 $basedir=substr( $upload_dir['basedir'],0,strlen($upload_dir['basedir'])-19);
@@ -317,8 +317,8 @@ echo '<div class="wrap">
 	<div class="HeadPage">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-generic" style="font-size:1em;"></span> '.__("Utility","albo-pretorio-considera").'</h2>
 	</div>';
-if ($Stato!="") 
-	echo '<div id="message" class="updated"><p>'.wp_kses_post(str_replace("%%br%%","<br />",$Stato)).'</p></div>
+if ($albopc_Stato!="") 
+	echo '<div id="message" class="updated"><p>'.wp_kses_post(str_replace("%%br%%","<br />",$albopc_Stato)).'</p></div>
       <meta http-equiv="refresh" content="2;url=admin.php?page=utilityAlboP"/>';
 echo '
 <div id="utility-tabs-container"  style="margin-top:20px;">
@@ -360,10 +360,10 @@ switch ($passo){
 				';
 		break;
 	case 1:
-		$AData=albopc_DateAdd($Data,$GG);
-		$TotAtti=albopc_get_all_atti(10,0,0,0,'',$Data,$AData,'',0,0,true,false,'',-1,true);
-		echo'<p><span style="font-style: italic;color:green;"><strong>'.esc_html($TotAtti).'</strong> '.__("Atti in pubblicazione da data","albo-pretorio-considera").' '.esc_html(albopc_VisualizzaData($Data)).' '.__("a data","albo-pretorio-considera").' '.esc_html(albopc_VisualizzaData($AData)).'</span></p>';
-		$atti =albopc_get_all_atti(10,0,0,0,'',$Data,$AData,"Numero Desc");
+		$AData=albopc_DateAdd($albopc_Data,$GG);
+		$TotAtti=albopc_get_all_atti(10,0,0,0,'',$albopc_Data,$AData,'',0,0,true,false,'',-1,true);
+		echo'<p><span style="font-style: italic;color:green;"><strong>'.esc_html($TotAtti).'</strong> '.__("Atti in pubblicazione da data","albo-pretorio-considera").' '.esc_html(albopc_VisualizzaData($albopc_Data)).' '.__("a data","albo-pretorio-considera").' '.esc_html(albopc_VisualizzaData($AData)).'</span></p>';
+		$atti =albopc_get_all_atti(10,0,0,0,'',$albopc_Data,$AData,"Numero Desc");
 		$ArrAggSca=array();
 		if ( ! empty( $atti ) ) {	
 			echo "<ul>";
@@ -373,7 +373,7 @@ switch ($passo){
 				if($a->DataInizio>$Data){
 					$AttoDaData=$a->DataInizio;
 				}else{
-					$AttoDaData=$Data;
+					$AttoDaData=$albopc_Data;
 				}
 				if($a->DataFine>$AData){
 					$AttoAData=$AData;
@@ -909,34 +909,34 @@ switch ($Tabella){
         $wpdb->flush();
         $result=$wpdb->get_results("Describe $Tabella");
         $Verificato=true;
-        $Msg="";
+        $albopc_Msg="";
 //		var_dump($Tabella);
 		foreach ( $result as $campo ) {
 //		echo "<pre>";var_dump($campo->Field);var_dump($campo->Type);var_dump($Par[$campo->Field]["Default"]);echo "</pre>";
 			if (is_string($Par[$campo->Field]["Tipo"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Tipo"])!=strtolower($campo->Type)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo DB","albo-pretorio-considera")." <strong>". $campo->Type . "</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Tipo"]."</strong><br />";
+				$albopc_Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo DB","albo-pretorio-considera")." <strong>". $campo->Type . "</strong><br />&nbsp;&nbsp;&nbsp;".__("Tipo Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Tipo"]."</strong><br />";
 				$Verificato=false;
 			}
 			if (is_string($Par[$campo->Field]["Null"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Null"])!=strtolower($campo->Null)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Null DB <strong>". $campo->Null . "</strong><br />&nbsp;&nbsp;&nbsp;Null ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Null"]."</strong><br />";
+				$albopc_Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Null DB <strong>". $campo->Null . "</strong><br />&nbsp;&nbsp;&nbsp;Null ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Null"]."</strong><br />";
 				$Verificato=false;
 			}
 			if (is_string($Par[$campo->Field]["Default"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Default"])!=strtolower($campo->Default)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Default DB <strong>". $campo->Default . "</strong><br />&nbsp;&nbsp;&nbsp;Default ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Default"]."</strong><br />";
+				$albopc_Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Default DB <strong>". $campo->Default . "</strong><br />&nbsp;&nbsp;&nbsp;Default ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Default"]."</strong><br />";
 				$Verificato=false;
 			}
 			if (is_string($Par[$campo->Field]["Extra"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Extra"])!=strtolower($campo->Extra)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Extra DB <strong>". $campo->Extra . "</strong><br />&nbsp;&nbsp;&nbsp;Extra ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Extra"]."</strong><br />";
+				$albopc_Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Extra DB <strong>". $campo->Extra . "</strong><br />&nbsp;&nbsp;&nbsp;Extra ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Extra"]."</strong><br />";
 				$Verificato=false;
 			}
 			if (is_string($Par[$campo->Field]["Key"]) And is_string($campo->Default) And strtolower($Par[$campo->Field]["Key"])!=strtolower($campo->Key)){
-				$Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Key DB <strong>". $campo->Key . "</strong><br />&nbsp;&nbsp;&nbsp;Key ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Key"]."</strong><br />";
+				$albopc_Msg.= "<strong>".$campo->Field."</strong><br />&nbsp;&nbsp;&nbsp;Key DB <strong>". $campo->Key . "</strong><br />&nbsp;&nbsp;&nbsp;Key ".__("Originale","albo-pretorio-considera")." <strong>".$Par[$campo->Field]["Key"]."</strong><br />";
 				$Verificato=false;
 			}
 		}
 		if ($Verificato == True)
-			$Msg.= '<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span>';
-		return $Msg;
+			$albopc_Msg.= '<span class="dashicons dashicons-yes" style="color:#18b908;font-size:2em;"></span>';
+		return $albopc_Msg;
 }
 function albopc_TestCongruitaDati($Tabella){
 	global $wpdb;

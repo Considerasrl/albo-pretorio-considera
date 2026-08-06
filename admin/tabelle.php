@@ -35,14 +35,14 @@ jQuery(document).ready(function($){
 <?php	  
 		
 }
-$messages[1] = __('Elemento aggiunto.','albo-pretorio-considera');
-$messages[2] = __('Elemento cancellato.','albo-pretorio-considera');
-$messages[3] = __('Elemento aggiornato.','albo-pretorio-considera');
-$messages[4] = __('Elemento non aggiunto.','albo-pretorio-considera');
-$messages[5] = __('Elemento non aggiornato.','albo-pretorio-considera');
-$messages[6] = __('Elemento non cancellato.','albo-pretorio-considera');
-$messages[7] = __('Impossibile cancellare Enti che sono collegati ad Atti','albo-pretorio-considera');
-$messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
+$albopc_messages[1] = __('Elemento aggiunto.','albo-pretorio-considera');
+$albopc_messages[2] = __('Elemento cancellato.','albo-pretorio-considera');
+$albopc_messages[3] = __('Elemento aggiornato.','albo-pretorio-considera');
+$albopc_messages[4] = __('Elemento non aggiunto.','albo-pretorio-considera');
+$albopc_messages[5] = __('Elemento non aggiornato.','albo-pretorio-considera');
+$albopc_messages[6] = __('Elemento non cancellato.','albo-pretorio-considera');
+$albopc_messages[7] = __('Impossibile cancellare Enti che sono collegati ad Atti','albo-pretorio-considera');
+$albopc_messages[80] = __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 albopc_load_Data_Funzioni();
 ?>
 <div id="ElaborazioneTabella" style="width: 200px;height: 200px;position: absolute;top: 50%;left: 50%; margin-top: -100px; margin-left: -100px;display:none;" >

@@ -428,12 +428,12 @@ if(isset($_REQUEST['action'])){
 			
 			case "oblio-allegati-atto":
 				if ( isset( $_GET['oaatto'] ) && ! empty( $_GET['oaatto'] ) ) {
-		            $nonce  = filter_input( INPUT_GET, 'oaatto' );
+		            $albopc_nonce  = filter_input( INPUT_GET, 'oaatto' );
 		            $action = 'operazioneoblioallegati';
-		            if ( ! wp_verify_nonce( $nonce, $action ) )
+		            if ( ! wp_verify_nonce( $albopc_nonce, $action ) )
 		                wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti&stato_atti=Correnti") );
 			 		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
- 	                    $MessaggiRitorno=albopc_CancellaAllegatiAtto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+ 	                    $albopc_MessaggiRitorno=albopc_CancellaAllegatiAtto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 					}
 				}else
 					wp_die( __("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera") ,__("Problemi di sicurezza","albo-pretorio-considera"),array("back_link" => "?page=atti") );					
@@ -529,26 +529,26 @@ if(isset($_REQUEST['action'])){
 		default:
 			if(isset($_REQUEST['message'])){
 				if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''))))
-					$message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
+					$albopc_message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
 				elseif(strlen(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')))>0)
-						$message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
-				else $message="";
+						$albopc_message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
+				else $albopc_message="";
 			}else
-				$message="";
+				$albopc_message="";
 
-			albopc_Lista_Atti($message);
+			albopc_Lista_Atti($albopc_message);
 			break;
 	}	
 }else{
 	if(isset($_REQUEST['message'])){
 		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''))))
-			$message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
+			$albopc_message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
 		elseif(strlen(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')))>0)
-				$message=urldecode(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')));
+				$albopc_message=urldecode(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')));
 	}else{
-		$message="";
+		$albopc_message="";
 	}
-	albopc_Lista_Atti($message);
+	albopc_Lista_Atti($albopc_message);
 }
 
 unset($_REQUEST['action']);

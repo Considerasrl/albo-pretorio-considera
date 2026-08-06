@@ -66,8 +66,8 @@ if(isset($_REQUEST['vf']) And (sanitize_text_field(wp_unslash($_REQUEST['vf'] ??
 	$_REQUEST['vf']="undefined";
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-considera"),'<span style="color:red;">',"</span>",'<span style="color:red;">vf</span>'));
 }
-foreach($_REQUEST as $Key => $Val){
-	$_REQUEST[$Key]=htmlspecialchars(wp_strip_all_tags($_REQUEST[$Key]));
+foreach($_REQUEST as $albopc_Key => $albopc_Val){
+	$_REQUEST[$albopc_Key]=htmlspecialchars(wp_strip_all_tags($_REQUEST[$albopc_Key]));
 }
 
 include_once(dirname (__FILE__) .'/frontend_filtro.php');
@@ -77,11 +77,11 @@ if(isset($_REQUEST['action'])){
         case 'printatto':
             if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
                 include_once(dirname (__FILE__) .'/stampe.php');
-                $AttoStampa = albopc_get_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
-                if (!empty($AttoStampa)) {
-                    $AttoStampa = $AttoStampa[0];
-                    $Oggi = albopc_oggi();
-                    if (($AttoStampa->DataInizio!="0000-00-00" And $AttoStampa->DataInizio>$Oggi) Or ($AttoStampa->DataOblio!="0000-00-00" And $AttoStampa->DataOblio<=$Oggi))
+                $albopc_AttoStampa = albopc_get_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
+                if (!empty($albopc_AttoStampa)) {
+                    $albopc_AttoStampa = $albopc_AttoStampa[0];
+                    $albopc_Oggi = albopc_oggi();
+                    if (($albopc_AttoStampa->DataInizio!="0000-00-00" And $albopc_AttoStampa->DataInizio>$Oggi) Or ($albopc_AttoStampa->DataOblio!="0000-00-00" And $albopc_AttoStampa->DataOblio<=$albopc_Oggi))
                         wp_die(esc_html__("Documento non disponibile","albo-pretorio-considera"),"",array('response'=>404));
                 }
                 if (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'c') {
