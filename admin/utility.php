@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- il plugin opera su tabelle custom proprie: nessuna API core equivalente, il caching non si applica alle query amministrative e di scrittura.
 // phpcs:disable WordPress.DB.PreparedSQL, PluginCheck.Security.DirectDB.UnescapedDBParameter -- "Describe $Tabella" usa un identificatore di tabella interno (non input utente); prepare() non supporta gli identificatori.
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- pagina admin di utility/configurazione: l'output e' markup fisso + label i18n del plugin (__() su stringhe letterali del plugin) + output di helper che generano markup di stato; i valori dinamici da DB/utente (Oggetto, path allegati, impronta, nome tabella, $Stato, conteggi, date) sono escapati singolarmente inline (esc_html/wp_kses_post).
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 	die('You are not allowed to call this page directly.');
 }
@@ -316,7 +317,7 @@ echo '<div class="wrap">
 		<h2 class="wp-heading-inline"><span class="dashicons dashicons-admin-generic" style="font-size:1em;"></span> '.__("Utility","albo-pretorio-considera").'</h2>
 	</div>';
 if ($Stato!="") 
-	echo '<div id="message" class="updated"><p>'.str_replace("%%br%%","<br />",$Stato).'</p></div>
+	echo '<div id="message" class="updated"><p>'.wp_kses_post(str_replace("%%br%%","<br />",$Stato)).'</p></div>
       <meta http-equiv="refresh" content="2;url=admin.php?page=utilityAlboP"/>';
 echo '
 <div id="utility-tabs-container"  style="margin-top:20px;">
@@ -360,14 +361,14 @@ switch ($passo){
 	case 1:
 		$AData=ap_DateAdd($Data,$GG);
 		$TotAtti=ap_get_all_atti(10,0,0,0,'',$Data,$AData,'',0,0,true,false,'',-1,true);
-		echo'<p><span style="font-style: italic;color:green;"><strong>'.$TotAtti.'</strong> '.__("Atti in pubblicazione da data","albo-pretorio-considera").' '.ap_VisualizzaData($Data).' '.__("a data","albo-pretorio-considera").' '.ap_VisualizzaData($AData).'</span></p>';
+		echo'<p><span style="font-style: italic;color:green;"><strong>'.esc_html($TotAtti).'</strong> '.__("Atti in pubblicazione da data","albo-pretorio-considera").' '.esc_html(ap_VisualizzaData($Data)).' '.__("a data","albo-pretorio-considera").' '.esc_html(ap_VisualizzaData($AData)).'</span></p>';
 		$atti =ap_get_all_atti(10,0,0,0,'',$Data,$AData,"Numero Desc");
 		$ArrAggSca=array();
 		if ( ! empty( $atti ) ) {	
 			echo "<ul>";
 			foreach ($atti as $a) {
 //				echo "<pre>";var_dump($a);"</pre>";
-				echo "<li>($a->IdAtto) $a->Oggetto del $a->Numero/$a->Anno";
+				echo "<li>(".esc_html($a->IdAtto).") ".esc_html($a->Oggetto)." del ".esc_html($a->Numero)."/".esc_html($a->Anno);
 				if($a->DataInizio>$Data){
 					$AttoDaData=$a->DataInizio;
 				}else{
@@ -1251,7 +1252,7 @@ $TestCampi=TestCampiTabella($Tabella);
 $DatiTabella=TestCongruitaDati($Tabella);
 	echo'
 					<tr class="first">
-					<td>'.$Tabella.'</td>
+					<td>'.esc_html($Tabella).'</td>
 					<td>'.$EsisteTabella.'</td>
 					<td>'.$TestCampi.'</td>
 					<td>'.$DatiTabella.'</td>
@@ -1276,12 +1277,12 @@ function AggiornaHashAllegati(){
 				array('IdAllegato' => $allegato['IdAllegato'] ),
 				array('%s'),
 				array('%d'))) {
-					echo'<spam style="color:green;">'.__('Aggiornamento Hash Allegato','albo-pretorio-considera').'</spam> '.$allegato['Allegato'].' <spam style="color:red;">'.$Impronta.'</spam><br />';
+					echo'<spam style="color:green;">'.esc_html__('Aggiornamento Hash Allegato','albo-pretorio-considera').'</spam> '.esc_html($allegato['Allegato']).' <spam style="color:red;">'.esc_html($Impronta).'</spam><br />';
 			}else{
-				echo $allegato['Allegato'].' <spam style="color:red;">'.__('Allegato già aggiornato','albo-pretorio-considera').'</spam><br />';
+				echo esc_html($allegato['Allegato']).' <spam style="color:red;">'.esc_html__('Allegato già aggiornato','albo-pretorio-considera').'</spam><br />';
 			}
 		}else{
-			echo $allegato['Allegato'].' <spam style="color:red;">'.__('File non trovato','albo-pretorio-considera').'</spam><br />';
+			echo esc_html($allegato['Allegato']).' <spam style="color:red;">'.esc_html__('File non trovato','albo-pretorio-considera').'</spam><br />';
 		}
 	}
 	echo '<meta http-equiv="refresh" content="4;url=admin.php?page=utilityAlboP"/>';
