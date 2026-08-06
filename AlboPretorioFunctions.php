@@ -188,7 +188,7 @@ function ap_crearobots($Return=FALSE){
 	return $Stato;
 }
 function ap_NoIndexNoDirectLink($dir,$Return=FALSE,$Cosa="Tutto"){
-    $sito=$_SERVER['HTTP_HOST'];
+    $sito=sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'] ?? ''));
 	$Stato="";
 	if (is_ssl())
 		$Prot="https";
@@ -526,16 +526,19 @@ function ap_UniqueFileName($filename,$inc=0){
 }
 
 function ap_Bonifica_Url(){
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- helper read-only di costruzione/pulizia URL (nessuna mutazione)
 	foreach( $_REQUEST as $key => $value){
 		if ($key!="page_id")	
 			$_SERVER['REQUEST_URI'] = remove_query_arg($key, isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');		
 	}
 	$url='?';
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- helper read-only di costruzione/pulizia URL (nessuna mutazione)
 	foreach( $_REQUEST as $key => $value)
 		$url.=$key."=".$value;
 	return $url;
 }
 function ap_Estrai_PageID_Url(){
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- helper read-only di costruzione/pulizia URL (nessuna mutazione)
 	foreach( $_REQUEST as $key => $value){
 		if (strpos( $key,"page_id")!== false)		
 			return $value;

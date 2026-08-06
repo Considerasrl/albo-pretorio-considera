@@ -62,7 +62,7 @@ if (isset($_REQUEST['action'])){
 				menu(__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
 			}
-			$AttiDaAggiornare=unserialize(wp_unslash($_GET['AttiDaAgg'] ?? ''), array('allowed_classes'=>false));
+			$AttiDaAggiornare=unserialize(wp_unslash($_GET['AttiDaAgg'] ?? ''), array('allowed_classes'=>false)); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- valore serializzato (unserialize con allowed_classes=>false); sanitize_text_field ne romperebbe la struttura
 			if(!is_array($AttiDaAggiornare)){
 				menu(__("ATTENZIONE. Parametro non valido, l'operazione è stata annullata","albo-pretorio-considera"));
 				break;
@@ -131,7 +131,7 @@ if (isset($_REQUEST['action'])){
 				menu($Stato);
 				break;
 			} 	
-			if (!$_REQUEST['DataInterruzione']){
+			if (!sanitize_text_field(wp_unslash($_REQUEST['DataInterruzione'] ?? ''))){
 				$Stato="Bisogna impostare la Data inizio di interruzione del serzio";
 				menu($Stato);
 			}elseif (sanitize_text_field(wp_unslash($_REQUEST['ggInterruzione'] ?? ''))<1){

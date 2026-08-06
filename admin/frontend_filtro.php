@@ -12,16 +12,16 @@ function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
 	$anni=ap_get_dropdown_anni_atti('anno','anno','postform','',(isset($_REQUEST['anno'])?sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')):0),$Stato); 
 	$categorie=ap_get_dropdown_ricerca_categorie('categoria','categoria','postform','',(isset($_REQUEST['categoria'])?sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')):0),$Stato); 
 	ap_Bonifica_Url();
-	if (strpos($_SERVER['REQUEST_URI'],"?")>0)
+	if (strpos(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')),"?")>0)
 		$sep="&amp;";
 	else
 		$sep="?";
 	$titFiltri=get_option('opt_AP_LivelloTitoloFiltri');
 	if ($titFiltri=='')
 		$titFiltri="h3";
-	$HTML='		<form id="filtro-atti" action="'.htmlentities(wp_strip_all_tags($_SERVER['REQUEST_URI'])).'" method="post">
+	$HTML='		<form id="filtro-atti" action="'.htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))).'" method="post">
 	';
-			if (strpos(htmlentities($_SERVER['REQUEST_URI']),'page_id')>0){
+			if (strpos(htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))),'page_id')>0){
 				$HTML.= '<input type="hidden" name="page_id" value="'.ap_Estrai_PageID_Url().'" />';
 			}	
 	$HTML.= '<input type="hidden" name="categoria" value="'.$cat.'" />

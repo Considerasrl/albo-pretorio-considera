@@ -24,7 +24,7 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 	<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?(int)$_REQUEST['id']:0); ?>" />
 <?php 
 	if (isset($_REQUEST['ref']))
-		echo '<input type="hidden" name="ref" value="'.esc_attr( wp_unslash( $_REQUEST['ref'] ) ).'" />';
+		echo '<input type="hidden" name="ref" value="'.esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['ref'] ) ) ).'" />';
 ?>	
 	<table class="widefat">
 	    <thead>
