@@ -1,5 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+// phpcs:disable WordPress.Security.ValidatedSanitizedInput -- shortcode pubblico: TUTTI i parametri di $_REQUEST vengono sanitizzati a monte (htmlspecialchars(wp_strip_all_tags(...)) sull'intero $_REQUEST) e i confronti di validazione usano volutamente i valori grezzi per rilevare/neutralizzare tentativi di injection; i valori passati alle query sono castati (int) o escapati.
 // phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- shortcode/vista pubblica read-only: legge id e parametri di ricerca/filtro via GET per la sola visualizzazione (pre-sanitizzati), nessuna mutazione di stato.
 /**
  * Gestione FrontEnd.

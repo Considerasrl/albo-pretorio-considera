@@ -102,13 +102,13 @@ class AdminTableAtti extends WP_List_Table
     	$paged = 0;
       else $paged = max(0,((isset($_REQUEST['paged'])?intval($_REQUEST['paged']):0)-1)*$per_page);
 
-    if (isset($_REQUEST['orderby'])and in_array($_REQUEST['orderby'],array_keys($sortable)))
-    	$orderby = $_REQUEST['orderby']; 
+    if (isset($_REQUEST['orderby'])and in_array(sanitize_text_field(wp_unslash($_REQUEST['orderby'] ?? '')),array_keys($sortable)))
+    	$orderby = sanitize_text_field(wp_unslash($_REQUEST['orderby'] ?? '')); 
     else
     	$orderby ="Anno DESC, Numero DESC , Data DESC";
 
-    if (isset($_REQUEST['order']) and in_array($_REQUEST['order'],array('asc','desc')))
-    	$order = $_REQUEST['order']; 
+    if (isset($_REQUEST['order']) and in_array(sanitize_text_field(wp_unslash($_REQUEST['order'] ?? '')),array('asc','desc')))
+    	$order = sanitize_text_field(wp_unslash($_REQUEST['order'] ?? '')); 
     else $order = '';
 
     // Calcolo le variabili che contengono il numero dei record totali
@@ -118,9 +118,9 @@ class AdminTableAtti extends WP_List_Table
     // (WHERE 1) e i singoli filtri sono preparati a valle in ap_get_all_atti.
     $Termine = ''; $Rif = ''; $NumParz = ''; $Cat = 0;
     if ($this->stato_atti=="Cerca"){
-    	$Termine = isset($_REQUEST['s'])            ? $_REQUEST['s']                 : '';
-    	$Rif     = isset($_REQUEST['f_riferimento'])? $_REQUEST['f_riferimento']     : '';
-    	$NumParz = isset($_REQUEST['f_numero'])     ? $_REQUEST['f_numero']          : '';
+    	$Termine = isset($_REQUEST['s'])            ? sanitize_text_field(wp_unslash($_REQUEST['s'] ?? ''))                 : '';
+    	$Rif     = isset($_REQUEST['f_riferimento'])? sanitize_text_field(wp_unslash($_REQUEST['f_riferimento'] ?? ''))     : '';
+    	$NumParz = isset($_REQUEST['f_numero'])     ? sanitize_text_field(wp_unslash($_REQUEST['f_numero'] ?? ''))          : '';
     	$Cat     = isset($_REQUEST['f_categoria'])  ? (isset($_REQUEST['f_categoria'])?(int)$_REQUEST['f_categoria']:0)  : 0;
     }
     $total_items = ap_get_all_atti($this->Codstato_atti(),0,0,$Cat,$Termine, 0,0,"",0,0,true,false,$Rif,-1,false,$NumParz);
@@ -414,7 +414,7 @@ class AdminTableAtti extends WP_List_Table
 }
 
 if(isset($_REQUEST['action'])){
-	switch ($_REQUEST['action']){
+	switch (sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 		case "metadati-atto":
 			Gestione_Metadati((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
@@ -529,9 +529,9 @@ if(isset($_REQUEST['action'])){
 		default:
 			if(isset($_REQUEST['message'])){
 				if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''))))
-					$message=$_REQUEST['message'];
+					$message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
 				elseif(strlen(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')))>0)
-						$message=$_REQUEST['message'];
+						$message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
 				else $message="";
 			}else
 				$message="";
@@ -542,9 +542,9 @@ if(isset($_REQUEST['action'])){
 }else{
 	if(isset($_REQUEST['message'])){
 		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''))))
-			$message=$_REQUEST['message'];
+			$message=sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''));
 		elseif(strlen(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')))>0)
-				$message=urldecode($_REQUEST['message']);
+				$message=urldecode(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? '')));
 	}else{
 		$message="";
 	}
@@ -1064,8 +1064,8 @@ function Nuovo_atto(){
 		$Oggetto=sanitize_text_field(wp_unslash($_REQUEST['Oggetto'] ?? ''));
 	else
 		$Oggetto="";
-/*	if ($_REQUEST['DataInizio'])
-		$DataI=$_REQUEST['DataInizio'];
+/*	if (sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? '')))
+		$DataI=sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? ''));
 	else*/
 	$DataI=gmdate("d/m/Y");
 	if (isset($_REQUEST['DataFine']))
@@ -1128,7 +1128,7 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 
 		<form id="addatto" method="post" action="?page=atti" class="validate">
 		<input type="hidden" name="action" value="add-atto" />
-		<input type="hidden" name="id" value="<?php echo(int)(isset($_REQUEST['id'])?$_REQUEST['id']:0);?>" />
+		<input type="hidden" name="id" value="<?php echo(int)(isset($_REQUEST['id'])?sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')):0);?>" />
 		<input type="hidden" name="nuovoatto" value="<?php echo wp_create_nonce('nuovoatto')?>" />
 
 	<div id="poststuff">
@@ -2334,8 +2334,8 @@ echo'
   	$page = filter_input(INPUT_GET,'page' ,FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   	$paged = filter_input(INPUT_GET,'paged',FILTER_SANITIZE_NUMBER_INT);
 	// Valori correnti dei filtri di ricerca (per renderli persistenti nel form)
-	$f_rif = isset($_REQUEST['f_riferimento']) ? $_REQUEST['f_riferimento']    : '';
-	$f_num = isset($_REQUEST['f_numero'])      ? $_REQUEST['f_numero']         : '';
+	$f_rif = isset($_REQUEST['f_riferimento']) ? sanitize_text_field(wp_unslash($_REQUEST['f_riferimento'] ?? ''))    : '';
+	$f_num = isset($_REQUEST['f_numero'])      ? sanitize_text_field(wp_unslash($_REQUEST['f_numero'] ?? ''))         : '';
 	$f_cat = isset($_REQUEST['f_categoria'])   ? (isset($_REQUEST['f_categoria'])?(int)$_REQUEST['f_categoria']:0) : 0;
 	echo '<h3>'.$Titolo.'</h3>
 		</div>

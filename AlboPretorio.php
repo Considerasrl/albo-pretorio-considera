@@ -43,7 +43,7 @@ $uploads = wp_upload_dir();
 define("AP_BASE_DIR",$uploads['basedir']."/");
 if (isset($_REQUEST['action'])){
 	require_once( ABSPATH . 'wp-includes/pluggable.php' );
-	switch($_REQUEST['action']){
+	switch(sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 		case "creafoblio":
 			if (!isset($_REQUEST['rigenera'])) {
 				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
@@ -522,7 +522,7 @@ function admin_notice(){
 	}
 	function Gestione_Link(){
 		if(isset($_REQUEST['action'])){
-			switch ($_REQUEST['action']){
+			switch (sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 			case "dwnalle":
 				if(!isset($_SERVER["HTTP_REFERER"])){
 					wp_die(wp_kses_post(__('Oooooo!<br />
@@ -530,7 +530,7 @@ function admin_notice(){
 					        Non puoi accedere a questo file direttamente.','albo-pretorio-considera')));
 					break;
 				}
-				$Allegato	= ap_get_allegato_atto($_REQUEST['id']);
+				$Allegato	= ap_get_allegato_atto(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')));
 				if (empty($Allegato))
 					wp_die(esc_html__("Allegato non trovato","albo-pretorio-considera"));
 				$file_path	=$Allegato[0]->Allegato;
@@ -886,7 +886,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 	static function show_menu() {
 		global $AP_OnLine;
 
-		switch ($_REQUEST['page']){
+		switch (sanitize_text_field(wp_unslash($_REQUEST['page'] ?? ''))){
 			case "Albo_Pretorio" :
 				$AP_OnLine->ShowBacheca();
 				break;
@@ -2295,14 +2295,14 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	function deactivate() {
 	    if ( ! current_user_can( 'activate_plugins' ) )
 	        return;
-	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	    $plugin = isset( $_REQUEST['plugin'] ) ? sanitize_text_field(wp_unslash($_REQUEST['plugin'] ?? '')) : '';
 	    check_admin_referer( "deactivate-plugin_{$plugin}" );
 		flush_rewrite_rules();	
 		remove_shortcode('Albo');
 	}
 
 	function update_AlboPretorio_settings(){
-	    if(isset($_POST['AlboPretorio_submit_button']) And $_POST['AlboPretorio_submit_button'] == __('Salva Modifiche','albo-pretorio-considera')){
+	    if(isset($_POST['AlboPretorio_submit_button']) And sanitize_text_field(wp_unslash($_POST['AlboPretorio_submit_button'] ?? '')) == __('Salva Modifiche','albo-pretorio-considera')){
 	    	if (!current_user_can('admin_albo')) {
 	    		wp_die(esc_html__("Non hai i permessi per modificare la configurazione dell'Albo","albo-pretorio-considera"));
 	    	}
@@ -2312,47 +2312,47 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['confAP'] ?? '')),'configurazionealbo')){
 				wp_die(esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera"));
 			}
-		    ap_set_ente_me(wp_strip_all_tags($_POST['c_Ente']));
+		    ap_set_ente_me(sanitize_text_field(wp_unslash($_POST['c_Ente'] ?? '')));
 			if (isset($_POST['c_VEnte']) And sanitize_text_field(wp_unslash($_POST['c_VEnte'] ?? '')) == 'Si')
 			    update_option('opt_AP_VisualizzaEnte','Si' );
 			else
 				update_option('opt_AP_VisualizzaEnte','No' );
 			if (isset($_POST['defEnte']))
-			    update_option('opt_AP_DefaultEnte',$_POST['defEnte'] );
+			    update_option('opt_AP_DefaultEnte',sanitize_text_field(wp_unslash($_POST['defEnte'] ?? '')) );
 			else
 				update_option('opt_AP_DefaultEnte',0 );
 			if (isset($_POST['progressivo']))
 			    update_option('opt_AP_NumeroProgressivo',(isset($_POST['progressivo'])?(int)$_POST['progressivo']:0) );
 			if(isset($_POST['RuoliPuls'])){
-				$StRuoli=implode(",",$_POST['RuoliPuls']);
+				$StRuoli=implode(",",isset($_POST['RuoliPuls'])?array_map('sanitize_text_field',wp_unslash($_POST['RuoliPuls'])):array());
 				update_option('opt_AP_RuoliPuls',$StRuoli);
 			}
 			if(isset($_POST['RuoliPulsG'])){
-				$StRuoliG=implode(",",$_POST['RuoliPulsG']);
+				$StRuoliG=implode(",",isset($_POST['RuoliPulsG'])?array_map('sanitize_text_field',wp_unslash($_POST['RuoliPulsG'])):array());
 				update_option('opt_AP_RuoliPulsGruppi',$StRuoliG);
 			}
 			if(isset($_POST['RuoliPulsVA'])){
-				$StRuoliVA=implode(",",$_POST['RuoliPulsVA']);
+				$StRuoliVA=implode(",",isset($_POST['RuoliPulsVA'])?array_map('sanitize_text_field',wp_unslash($_POST['RuoliPulsVA'])):array());
 				update_option('opt_AP_RuoliPulsVisualizzaAtto',$StRuoliVA);
 			}
-			update_option('opt_AP_Ente',stripslashes($_POST['c_Ente']));
-		    update_option('opt_AP_AnnoProgressivo',$_POST['c_AnnoProgressivo'] );
-		    update_option('opt_AP_LivelloTitoloPagina',$_POST['c_LTP'] );
-		    update_option('opt_AP_LivelloTitoloEnte',$_POST['c_LTE'] );
-		    update_option('opt_AP_LivelloTitoloFiltri',$_POST['c_LTF'] );
-			update_option('opt_AP_ColoreAnnullati',wp_strip_all_tags($_POST['color']) );
-			update_option('opt_AP_ColorePari',wp_strip_all_tags($_POST['colorp']) );
-			update_option('opt_AP_ColoreDispari',wp_strip_all_tags($_POST['colord']) );
-			update_option('opt_AP_LogOp', $_POST['LogOperazioni']);
-			update_option('opt_AP_LogAc', $_POST['LogAccessi']);
-			update_option('opt_AP_PAttiCor', $_POST['P_AttiCor']);
-			update_option('opt_AP_PAttiSto', $_POST['P_AttiSto']);
-			update_option('opt_AP_PAtto', $_POST['P_Atto']);
-			update_option('opt_AP_Allegati', $_POST['allegati']);
-			update_option('opt_AP_AutoShortcode',(isset($_POST['AutoShortCode'])?$_POST['AutoShortCode']:0));
-			update_option('opt_AP_OldInterfaccia',(isset($_POST['visoldstyle'])?$_POST['visoldstyle']:0));
-			update_option('opt_AP_UpCSSNewInterface',(isset($_POST['uploadCSSNI'])?$_POST['uploadCSSNI']:0));
-			update_option('opt_AP_BootstrapItalia',(isset($_POST['BootstrapItalia'])?$_POST['BootstrapItalia']:0));
+			update_option('opt_AP_Ente',sanitize_text_field(wp_unslash($_POST['c_Ente'] ?? '')));
+		    update_option('opt_AP_AnnoProgressivo',sanitize_text_field(wp_unslash($_POST['c_AnnoProgressivo'] ?? '')) );
+		    update_option('opt_AP_LivelloTitoloPagina',sanitize_text_field(wp_unslash($_POST['c_LTP'] ?? '')) );
+		    update_option('opt_AP_LivelloTitoloEnte',sanitize_text_field(wp_unslash($_POST['c_LTE'] ?? '')) );
+		    update_option('opt_AP_LivelloTitoloFiltri',sanitize_text_field(wp_unslash($_POST['c_LTF'] ?? '')) );
+			update_option('opt_AP_ColoreAnnullati',sanitize_text_field(wp_unslash($_POST['color'] ?? '')) );
+			update_option('opt_AP_ColorePari',sanitize_text_field(wp_unslash($_POST['colorp'] ?? '')) );
+			update_option('opt_AP_ColoreDispari',sanitize_text_field(wp_unslash($_POST['colord'] ?? '')) );
+			update_option('opt_AP_LogOp', sanitize_text_field(wp_unslash($_POST['LogOperazioni'] ?? '')));
+			update_option('opt_AP_LogAc', sanitize_text_field(wp_unslash($_POST['LogAccessi'] ?? '')));
+			update_option('opt_AP_PAttiCor', sanitize_text_field(wp_unslash($_POST['P_AttiCor'] ?? '')));
+			update_option('opt_AP_PAttiSto', sanitize_text_field(wp_unslash($_POST['P_AttiSto'] ?? '')));
+			update_option('opt_AP_PAtto', sanitize_text_field(wp_unslash($_POST['P_Atto'] ?? '')));
+			update_option('opt_AP_Allegati', sanitize_text_field(wp_unslash($_POST['allegati'] ?? '')));
+			update_option('opt_AP_AutoShortcode',(isset($_POST['AutoShortCode'])?sanitize_text_field(wp_unslash($_POST['AutoShortCode'] ?? '')):0));
+			update_option('opt_AP_OldInterfaccia',(isset($_POST['visoldstyle'])?sanitize_text_field(wp_unslash($_POST['visoldstyle'] ?? '')):0));
+			update_option('opt_AP_UpCSSNewInterface',(isset($_POST['uploadCSSNI'])?sanitize_text_field(wp_unslash($_POST['uploadCSSNI'] ?? '')):0));
+			update_option('opt_AP_BootstrapItalia',(isset($_POST['BootstrapItalia'])?sanitize_text_field(wp_unslash($_POST['BootstrapItalia'] ?? '')):0));
 		  	$FEColsOption=array("Data"=>(isset($_POST['Data'])?1:0),
 		  					  "Ente"=>(isset($_POST['Ente'])?1:0),
 		  					  "Riferimento"=>(isset($_POST['Riferimento'])?1:0),
@@ -2367,23 +2367,23 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	  	                "CertPub"=>filter_input(INPUT_POST,"CertPub"));
 			update_option('opt_AP_Testi', json_encode($Testi)); 
 			update_option('opt_AP_IconaDocumenti', filter_input(INPUT_POST,"imgDocumenti")); 
-		  	$DefaultSoggetti=array("AM"=>(isset($_POST['resp_giu_am'])?$_POST['resp_giu_am']:0),
-		  					  	   "RP"=>(isset($_POST['resp_giu_rp'])?$_POST['resp_giu_rp']:0),
-		  					       "RB"=>(isset($_POST['resp_giu_rb'])?$_POST['resp_giu_rb']:0));
+		  	$DefaultSoggetti=array("AM"=>(isset($_POST['resp_giu_am'])?sanitize_text_field(wp_unslash($_POST['resp_giu_am'] ?? '')):0),
+		  					  	   "RP"=>(isset($_POST['resp_giu_rp'])?sanitize_text_field(wp_unslash($_POST['resp_giu_rp'] ?? '')):0),
+		  					       "RB"=>(isset($_POST['resp_giu_rb'])?sanitize_text_field(wp_unslash($_POST['resp_giu_rb'] ?? '')):0));
 			update_option('opt_AP_DefaultSoggetti', json_encode($DefaultSoggetti)); 
 	  		if(null !== get_option('opt_AP_RestApi'))
 	  			$OldRestApi= get_option('opt_AP_RestApi');
 	  		else
 	  			$OldRestApi=NULL;
 			if(isset($_POST['rest_api'])){
-				update_option('opt_AP_RestApi', $_POST['rest_api']); 
+				update_option('opt_AP_RestApi', sanitize_text_field(wp_unslash($_POST['rest_api'] ?? ''))); 
 		  		if(null !== get_option('opt_AP_RestApi_UrlEst'))
 		  			$OldUrlEstRestApi= get_option('opt_AP_RestApi_UrlEst');
 		  		else
 		  			$OldUrlEstRestApi="";
-				update_option('opt_AP_RestApi_UrlEst', $_POST['rest_api_urlest']);
-		  		if($_POST['rest_api_urlest']!=$OldUrlEstRestApi ||
-		  		   $_POST['rest_api']!=$OldRestApi){
+				update_option('opt_AP_RestApi_UrlEst', sanitize_text_field(wp_unslash($_POST['rest_api_urlest'] ?? '')));
+		  		if(sanitize_text_field(wp_unslash($_POST['rest_api_urlest'] ?? ''))!=$OldUrlEstRestApi ||
+		  		   sanitize_text_field(wp_unslash($_POST['rest_api'] ?? ''))!=$OldRestApi){
 		  			ap_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 		  		}
 		  	}else{

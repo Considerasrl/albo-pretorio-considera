@@ -24,7 +24,7 @@ function Visualizza_Atto($Parametri){
 		$Numero=$Parametri['numero'];	
 	}else{
 		if(isset($_GET["numero"]) And is_numeric(sanitize_text_field(wp_unslash($_GET["numero"] ?? '')))){
-			$Numero=$_GET["numero"];
+			$Numero=sanitize_text_field(wp_unslash($_GET["numero"] ?? ''));
 		}else{
 			echo esc_html__("Parametro Numero Atto non impostato","albo-pretorio-considera");
 			return ob_get_clean();		
@@ -34,7 +34,7 @@ function Visualizza_Atto($Parametri){
 		$Anno=$Parametri['anno'];	
 	}else{
 		if(isset($_GET["anno"]) And is_numeric(sanitize_text_field(wp_unslash($_GET["anno"] ?? '')))){
-			$Anno=$_GET["anno"];
+			$Anno=sanitize_text_field(wp_unslash($_GET["anno"] ?? ''));
 		}else{
 			echo esc_html__("Parametro Anno Atto non impostato","albo-pretorio-considera");
 			return ob_get_clean();

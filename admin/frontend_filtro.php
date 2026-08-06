@@ -9,8 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package    Albo On Line
  */
 function VisualizzaRicerca($Stato=1,$cat=0,$StatoFinestra="si"){
-	$anni=ap_get_dropdown_anni_atti('anno','anno','postform','',(isset($_REQUEST['anno'])?$_REQUEST['anno']:0),$Stato); 
-	$categorie=ap_get_dropdown_ricerca_categorie('categoria','categoria','postform','',(isset($_REQUEST['categoria'])?$_REQUEST['categoria']:0),$Stato); 
+	$anni=ap_get_dropdown_anni_atti('anno','anno','postform','',(isset($_REQUEST['anno'])?sanitize_text_field(wp_unslash($_REQUEST['anno'] ?? '')):0),$Stato); 
+	$categorie=ap_get_dropdown_ricerca_categorie('categoria','categoria','postform','',(isset($_REQUEST['categoria'])?sanitize_text_field(wp_unslash($_REQUEST['categoria'] ?? '')):0),$Stato); 
 	ap_Bonifica_Url();
 	if (strpos($_SERVER['REQUEST_URI'],"?")>0)
 		$sep="&amp;";

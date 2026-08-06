@@ -18,10 +18,10 @@ if(preg_match('#' . basename(__FILE__) . '#', isset($_SERVER['PHP_SELF']) ? sani
 
 $Stato="";
 if (isset($_REQUEST['message']))
-	if($_REQUEST['message']==80)
+	if(sanitize_text_field(wp_unslash($_REQUEST['message'] ?? ''))==80)
 		$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
 if (isset($_REQUEST['action'])){
-	switch($_REQUEST['action']){
+	switch(sanitize_text_field(wp_unslash($_REQUEST['action'] ?? ''))){
 		case "ImpostaEnteND":
 			if (!isset($_REQUEST['ImpostaEnteND'])) {
 				$Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-considera");
@@ -134,11 +134,11 @@ if (isset($_REQUEST['action'])){
 			if (!$_REQUEST['DataInterruzione']){
 				$Stato="Bisogna impostare la Data inizio di interruzione del serzio";
 				menu($Stato);
-			}elseif ($_REQUEST['ggInterruzione']<1){
+			}elseif (sanitize_text_field(wp_unslash($_REQUEST['ggInterruzione'] ?? ''))<1){
 				$Stato="Bisogna impostare il numero di giorni di interruzione del serzio";
 				menu($Stato);
 			}else
-				menu("","1",$_REQUEST['DataInterruzione'],$_REQUEST['ggInterruzione']);
+				menu("","1",sanitize_text_field(wp_unslash($_REQUEST['DataInterruzione'] ?? '')),sanitize_text_field(wp_unslash($_REQUEST['ggInterruzione'] ?? '')));
 			break;
 		case "verificaproc":
 			if (!isset($_REQUEST['verproc'])) {
