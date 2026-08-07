@@ -419,7 +419,9 @@ if(isset($_REQUEST['action'])){
 			albopc_Gestione_Metadati((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "logatto" :
-			echo json_encode(CreaLog(1,$IdAtto,0));
+			global $albopc_AP_OnLine;
+			$IdAtto = isset($_REQUEST['id']) ? (int) $_REQUEST['id'] : 0;
+			echo wp_json_encode($albopc_AP_OnLine->CreaLog(1,$IdAtto,0));
 			die();
 			break;
 		case "view-atto" :
@@ -654,8 +656,8 @@ function albopc_Gestione_Metadati($IdAtto){
 						<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">	
 					<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
-	foreach($Soggetti as $Soggetto){
+	$Soggetti=(is_array($Soggetti) && !empty($Soggetti)) ? albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti)) : array();
+	foreach((array)$Soggetti as $Soggetto){
 		echo "
 			<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> ".$Soggetto->Nome." ".$Soggetto->Cognome." 
 			</li>";
@@ -1607,8 +1609,8 @@ if($MetaDati!==FALSE){
 				<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">
 				<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
-	foreach($Soggetti as $Soggetto){
+	$Soggetti=(is_array($Soggetti) && !empty($Soggetti)) ? albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti)) : array();
+	foreach((array)$Soggetti as $Soggetto){
 		echo "
 			<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> <br />".$Soggetto->Nome." ".$Soggetto->Cognome." 
 			</li>";
@@ -2132,8 +2134,8 @@ function albopc_annulla_atto_page($IdAtto){
 						<td style="font-size:12px;font-style: italic;color: Blue;vertical-align:middle;">	
 					<ul>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
-	foreach($Soggetti as $Soggetto){
+	$Soggetti=(is_array($Soggetti) && !empty($Soggetti)) ? albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti)) : array();
+	foreach((array)$Soggetti as $Soggetto){
 		echo "
 			<li><strong>".albopc_get_Funzione_Responsabile($Soggetto->Funzione,"Descrizione")."</strong> ".$Soggetto->Nome." ".$Soggetto->Cognome." 
 			</li>";

@@ -65,7 +65,7 @@ function albopc_StampaAtto($id, $tipo) {
     }
     echo '<button class="h" onclick="printContent(\'' . esc_js($idtipo) . '\')"><span class="dashicons dashicons-migrate"></span> '.esc_html__("Stampa","albo-pretorio-on-line"). '</button>';
 	$Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+	$Soggetti=(is_array($Soggetti) && !empty($Soggetti)) ? albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti)) : array();
 	$DatiSeg=albopc_get_Funzione_StampaCertificatoSX();
 	$Segretario="";
 	$ResponsabilePub="";
