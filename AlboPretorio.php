@@ -15,7 +15,7 @@
 /*
  * Opera derivata da "Albo Pretorio On line" di Ignazio Scimone (eduva.org).
  * Copyright (C) Ignazio Scimone — opera originale (fino alla versione 4.8).
- * Copyright (C) 2024-2026 Considera S.r.l. — modifiche successive alla versione 4.8.
+ * Copyright (C) 2026 Considera S.r.l. — modifiche successive alla versione 4.8.
  * Entrambe le parti sono distribuite con licenza GPL-2.0+.
 */
 
