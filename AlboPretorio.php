@@ -13,10 +13,10 @@
  * Domain Path:       /languages
 */
 /*
- * Opera derivata da "Albo Pretorio On line" di Ignazio Scimone (eduva.org),
- * Copyright (C) Ignazio Scimone, rilasciata con licenza GPL-2.0+.
- * Le modifiche successive alla versione 4.8 sono di Considera e sono
- * distribuite con la stessa licenza.
+ * Opera derivata da "Albo Pretorio On line" di Ignazio Scimone (eduva.org).
+ * Copyright (C) Ignazio Scimone — opera originale (fino alla versione 4.8).
+ * Copyright (C) 2024-2026 Considera S.r.l. — modifiche successive alla versione 4.8.
+ * Entrambe le parti sono distribuite con licenza GPL-2.0+.
 */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
