@@ -286,6 +286,7 @@ if($MetaDati!==FALSE){
 		</div>
 <?php 		
 $Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
+if(!is_array($Soggetti)){ $Soggetti=array(); }
 if(count($Soggetti)>0){
 	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	$Ruolo="";
@@ -435,6 +436,7 @@ foreach ($allegati as $allegato) {
 }
 
 function albopc_Lista_Atti($Parametri,$Categoria=0,$Numero=0,$Anno=0,$Oggetto='',$Dadata=0,$Adata=0,$Riferimento='',$Ente=-1){
+	$TitoloAtti="";
 	ob_start();
 	switch ($Parametri['stato']){
 			case 0:

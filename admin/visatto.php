@@ -142,7 +142,7 @@ echo'		<tr>
  	    </tbody>
 	</table>';
 $Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
-$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
+$Soggetti=(is_array($Soggetti) && !empty($Soggetti)) ? albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti)) : array();
 $Ruolo="";
 if($Soggetti){
 	echo "		<h3 style=\"text-align:center;\">".__("Soggetti","albo-pretorio-considera")."</h3>";

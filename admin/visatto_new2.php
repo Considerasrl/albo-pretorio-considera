@@ -143,6 +143,7 @@ if($MetaDati!==FALSE){
 		</div>
 <?php 		
 $Soggetti=unserialize($risultato->Soggetti, array('allowed_classes'=>false));
+if(!is_array($Soggetti)){ $Soggetti=array(); }
 if(count($Soggetti)>0){
 	$Soggetti=albopc_get_alcuni_soggetti_ruolo(implode(",",$Soggetti));
 	$Ruolo="";

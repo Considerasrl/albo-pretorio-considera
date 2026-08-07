@@ -26,7 +26,7 @@ jQuery(document).ready(function($){
 	$('#GridFunzioni').appendGrid('load', [
 <?php
 	  foreach($TR as $Ruolo){
-	  	echo "{ 'ID': '".esc_js($Ruolo->ID)."', 'funzione': '".esc_js($Ruolo->Funzione)."','visualizza': ".($Ruolo->Display=="Si" ? "true" : "false").", 'staincert': ".($Ruolo->StaCert=="Si" ? "true" : "false")." },";
+	  	echo "{ 'ID': '".esc_js($Ruolo->ID ?? '')."', 'funzione': '".esc_js($Ruolo->Funzione ?? '')."','visualizza': ".(($Ruolo->Display ?? 'No')=="Si" ? "true" : "false").", 'staincert': ".(($Ruolo->StaCert ?? 'No')=="Si" ? "true" : "false")." },";
 		}
 ?>
         ]);	  

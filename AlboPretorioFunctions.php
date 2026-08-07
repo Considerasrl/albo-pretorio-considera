@@ -1468,6 +1468,7 @@ function albopc_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataF
 		else
 			$NomeResp=__("Non Definito","albo-pretorio-considera");
 		$Sogs=unserialize($Soggetti, array('allowed_classes'=>false));
+		if(!is_array($Sogs)){ $Sogs=array(); }
 		foreach($Sogs as $Soggetto){
 			$NomeResponsabile=albopc_get_responsabile($Soggetto);
 			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".albopc_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
@@ -1547,6 +1548,7 @@ function albopc_memo_atto($id,$Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$Dat
 	if($Atto->Soggetti!=$Soggetti){
 		$Responsabili="";
 		$Sogs=unserialize($Soggetti, array('allowed_classes'=>false));
+		if(!is_array($Sogs)){ $Sogs=array(); }
 		foreach($Sogs as $Soggetto){
 			$NomeResponsabile=albopc_get_responsabile($Soggetto);
 			$Responsabili.="(".$Soggetto.") ".$NomeResponsabile[0]->Nome." ".$NomeResponsabile[0]->Cognome." <strong>".albopc_get_Funzione_Responsabile($NomeResponsabile[0]->Funzione,"Descrizione")."</strong> ";
