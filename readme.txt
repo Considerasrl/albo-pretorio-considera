@@ -1,5 +1,5 @@
-=== Albo Pretorio Considera ===
-Contributors: infoconsidera
+=== Albo Pretorio On line ===
+Contributors: considera, ignazios
 Tags: albo pretorio, pubblica amministrazione, atti, trasparenza, comuni
 Requires at least: 5.0
 Tested up to: 7.0
@@ -12,7 +12,7 @@ Publish official notices on an Italian public body's online notice board ("albo 
 
 == Description ==
 
-Albo Pretorio Considera lets an Italian public body publish official acts on its
+Albo Pretorio On line lets an Italian public body publish official acts on its
 online notice board ("albo pretorio"), as required by art. 32 of Law no. 69 of
 18 June 2009, which since 1 January 2011 requires acts to be published on the
 institutional website in order to have legal effect.
@@ -84,9 +84,7 @@ stringhe tradotte, redirect interni resi sicuri, protezione contro l'accesso
 diretto ai file.
 
 = 4.11.0 =
-Icone di ripiego per i tipi di file noti. Preparazione alla distribuzione su
-wordpress.org: rinomina del plugin in "Albo Pretorio Considera" e del text
-domain in `albo-pretorio-considera`. Migrazione automatica delle icone dei
+Icone di ripiego per i tipi di file noti. Migrazione automatica delle icone dei
 tipi file al cambio di cartella.
 
 = 4.10.1 =
