@@ -1,3 +1,5 @@
 .DS_Store
 *.zip
 Repertori/*.csv
+# Metadati del working copy SVN (deploy su wordpress.org, coesiste con git)
+.svn/

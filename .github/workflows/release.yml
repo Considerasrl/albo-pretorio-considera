@@ -71,3 +71,30 @@ jobs:
           gh release create "${GITHUB_REF_NAME}" "$OUT" \
             --title "${GITHUB_REF_NAME}" \
             --notes-file RELEASE_NOTES.md
+
+  # Pubblica su WordPress.org via SVN (aggiorna trunk e crea il tag X.Y.Z).
+  # Gira solo dopo la release GitHub e richiede l'APPROVAZIONE MANUALE
+  # dell'environment "wordpress-org": nulla parte su wp.org senza un tuo click.
+  # I file di sviluppo sono esclusi automaticamente tramite .distignore.
+  deploy-wporg:
+    name: Deploy su WordPress.org
+    needs: release
+    runs-on: ubuntu-latest
+    environment: wordpress-org
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout del tag
+        uses: actions/checkout@v4
+
+      - name: Versione dal tag (senza la 'v')
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy su wp.org (trunk + tag SVN)
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: albo-pretorio-on-line
+          VERSION: ${{ steps.ver.outputs.version }}
