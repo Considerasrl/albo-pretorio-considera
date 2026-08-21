@@ -9,6 +9,30 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
+## [4.13.0] - 2026-08-21
+
+### Sicurezza / Conformità wordpress.org
+- **Rimosso il caricamento remoto del Google WebFont Loader** (`ajax.googleapis.com`):
+  l'offloading di script verso server esterni è vietato dalle linee guida di
+  wordpress.org e non è conforme al GDPR per una Pubblica Amministrazione. Il
+  font è ora gestito unicamente dallo stile locale del plugin.
+- **Rimossa la funzione legacy `albopc_sposta_allegati()`**: codice non più
+  utilizzato (nessun chiamante), segnalato nella review di sicurezza del
+  WordPress Plugins Team.
+- **Query metadati atto resa parametrizzata**: `albopc_get_meta_atto()` ora usa
+  `$wpdb->prepare()` (difesa in profondità sull'ID atto).
+
+### Corretto
+- **Compatibilità PHP 8**: protetti i `fopen()` che potevano restituire `false`
+  prima della `fwrite()` (creazione di `robots.txt`, `index.php` e del file di
+  protezione degli allegati), evitando un `TypeError` fatale quando la cartella
+  di destinazione non è scrivibile.
+- Prefissata la variabile globale `$IdAtto` → `$albopc_IdAtto` nell'azione
+  `logatto` (`admin/atti.php`).
+
+### Compatibilità
+- Dichiarata la compatibilità con **WordPress 7.1** (`Tested up to`).
+
 ## [4.12.2] - 2026-08-06
 
 ### Corretto

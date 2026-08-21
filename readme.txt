@@ -2,9 +2,9 @@
 Contributors: considera, ignazios
 Tags: albo pretorio, pubblica amministrazione, atti, trasparenza, comuni
 Requires at least: 5.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 4.12.2
+Stable tag: 4.13.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -77,6 +77,12 @@ Sì. Il plugin lavora sulle stesse tabelle e cartelle dell'originale.
 == Changelog ==
 
 Il changelog completo è mantenuto nel file CHANGELOG.md del repository.
+
+= 4.13.0 =
+Conformità wordpress.org e GDPR: rimosso il caricamento remoto del WebFont
+Loader di Google. Rimossa una funzione legacy inutilizzata segnalata in review.
+Query dei metadati resa parametrizzata. Compatibilità PHP 8 sulla creazione dei
+file di protezione. Compatibilità dichiarata con WordPress 7.1.
 
 = 4.11.1 =
 Hardening di sicurezza guidato da Plugin Check: escaping dell'output delle

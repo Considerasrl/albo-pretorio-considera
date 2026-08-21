@@ -178,13 +178,17 @@ function albopc_crearobots($Return=FALSE){
 	Disallow: ".$cartella."/";
 	if($Return)
 		return($robot);
-	$id = fopen(APHomePath."/robots.txt", "wt");
-	if (!fwrite($id,$robot )){
+	$id = @fopen(APHomePath."/robots.txt", "wt");
+	if ($id === false){
 		$Stato.=__('Non riesco a Creare il file robots.txt in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
 	}else{
-		$Stato.=__('File robots.txt creato con successo in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
+		if (!fwrite($id,$robot )){
+			$Stato.=__('Non riesco a Creare il file robots.txt in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
+		}else{
+			$Stato.=__('File robots.txt creato con successo in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
+		}
+		fclose($id);
 	}
-	fclose($id);
 	return $Stato;
 }
 function albopc_NoIndexNoDirectLink($dir,$Return=FALSE,$Cosa="Tutto"){
@@ -234,23 +238,31 @@ if($Return){
 	return;
 }
 //Creazione \.\h\t\a\c\c\e\s\s
-	$id = fopen($dir."/".albopc_decodenamefile(), "wt");
-	if (!fwrite($id,$htaccess )){
+	$id = @fopen($dir."/".albopc_decodenamefile(), "wt");
+	if ($id === false){
 		$Stato.=__("Non riesco a Creare il file","albo-pretorio-on-line")." ".albopc_decodenamefile()." ".__('in','albo-pretorio-on-line')." ".$dir."%%br%%";
 	}else{
-		$Stato.="File ".albopc_decodenamefile()." ".__('creato con successo in','albo-pretorio-on-line')." ".$dir."%%br%%";
+		if (!fwrite($id,$htaccess )){
+			$Stato.=__("Non riesco a Creare il file","albo-pretorio-on-line")." ".albopc_decodenamefile()." ".__('in','albo-pretorio-on-line')." ".$dir."%%br%%";
+		}else{
+			$Stato.="File ".albopc_decodenamefile()." ".__('creato con successo in','albo-pretorio-on-line')." ".$dir."%%br%%";
+		}
+		fclose($id);
 	}
-	fclose($id);
 //Creazione robots.txt
 	$Stato.=albopc_crearobots();
 //Creazione index.php
-	$id = fopen($dir."/index.php", "wt");
-	if (!fwrite($id,$index )){
+	$id = @fopen($dir."/index.php", "wt");
+	if ($id === false){
 		$Stato.=__("Non riesco a Creare il file index.php in","albo-pretorio-on-line")." ".$dir;
 	}else{
-		$Stato.=__("File index.php creato con successo in","albo-pretorio-on-line")." ".$dir;
+		if (!fwrite($id,$index )){
+			$Stato.=__("Non riesco a Creare il file index.php in","albo-pretorio-on-line")." ".$dir;
+		}else{
+			$Stato.=__("File index.php creato con successo in","albo-pretorio-on-line")." ".$dir;
+		}
+		fclose($id);
 	}
-	fclose($id);
 	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
 	return $Stato;
 }
@@ -959,7 +971,7 @@ function albopc_get_GruppiAtti($meta,$value){
 }
 function albopc_get_meta_atto($IDAtto=0){
 	global $wpdb;
-	$Res=$wpdb->get_results("SELECT Meta,Value FROM $wpdb->table_name_Attimeta WHERE IdAtto=$IDAtto;");
+	$Res=$wpdb->get_results($wpdb->prepare("SELECT Meta,Value FROM $wpdb->table_name_Attimeta WHERE IdAtto=%d;",$IDAtto));
 	return $Res;
 }
 function albopc_add_attimeta($IDAtto,$MetaName,$MetaValue){
@@ -2177,110 +2189,8 @@ function albopc_get_all_allegati(){
 	return $wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati;");
 }
 
-function albopc_sposta_allegati($OldPathAllegati,$eliminareOrigine=FALSE){
-	global $wpdb;
-//	echo $OldPathAllegati;exit;
-//Backup Automatico dati e allegati
-	$msg="";
-	albopc_BackupDatiFiles("Sposta_Allegati","Automatico");
-//	$DirLog=str_replace("\\","/",Albo_DIR.'/BackupDatiAlbo/log');
-	$DirLog=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/BackupDatiAlbo/log');
-	$nomefileLog=$DirLog."/Backup_Automatico_AlboPretorio_Sposta_Allegati.log";
-	$fplog = @fopen($nomefileLog, "ab");
-	fwrite($fplog,"____________________________________________________________________________\n");
-	fwrite($fplog,"Inizio spostamento file\n");
-	$allegati=$wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati ;",ARRAY_A );
-// Nuova directory Allegati Albo Pretorio
-	$BaseCurDir=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
-// Inizo Blocco che sposta gli allegati e sincronizza la tabella degli Allegati
-	foreach( $allegati as $allegato){
-		$NewAllegato=$BaseCurDir."/".basename($allegato['Allegato']);
-		if (is_file($allegato['Allegato'])){
-			if (!copy($allegato['Allegato'], $NewAllegato)) {
-				albopc_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nello spostamento Allegato","albo-pretorio-on-line")."}==> ".$allegato['Allegato']." => $NewAllegato",0);	
-				$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-on-line").'</spam> '.__("nello spostamento dell'Allegato","albo-pretorio-on-line").' '.$allegato['Allegato'].' in '. $NewAllegato."%%br%%";
-				fwrite($fplog,__("Non sono riuscito a copiare il file","albo-pretorio-on-line")." ".$allegato['Allegato']." ".__("in","albo-pretorio-on-line")." ". $NewAllegato."\n");
-			}
-			else{
-				if (!unlink($allegato['Allegato'])){
-					albopc_insert_log(3,10,$allegato['IdAllegato'] ,"{".__("Errore nella cancellazione Allegato","albo-pretorio-on-line")."}==> ".$allegato['Allegato'],0);
-					$msg.='<spam style="color:red;">'.__("Errore","albo-pretorio-on-line").'</spam> '.__("errata cancellazione dell'Allegato","albo-pretorio-on-line").' </spam>'.$allegato['Allegato']."%%br%%";
-					fwrite($fplog,__("Non sono riuscito a cancellare il file","albo-pretorio-on-line")." ".$allegato['Allegato']."\n");
-			}
-			$msg.='<spam style="color:green;">File</spam> '.$allegato['Allegato'].' <spam style="color:green;">'.__("spostato in","albo-pretorio-on-line").'</spam> '.$NewAllegato.'%%br%%';
-			fwrite($fplog,"File ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-on-line")." ".$NewAllegato."\n");
-			if ($wpdb->update($wpdb->table_name_Allegati,
-									array('Allegato' => $NewAllegato),
-									array('IdAllegato' => $allegato['IdAllegato'] ),
-									array('%s'),
-									array('%d'))>0){
-				albopc_insert_log(3,9,$allegato['IdAllegato'] ,"{".__("Allegato","albo-pretorio-on-line")."}==> ".$allegato['Allegato']." ".__("spostato in","albo-pretorio-on-line")." $NewAllegato",0);
-				$msg.='<spam style="color:green;">'.__("Aggiornamento Link Allegato","albo-pretorio-on-line").'</spam> '.$allegato['Allegato']."%%br%%";
-				fwrite($fplog,__("Aggiornato il link nel Data Base per","albo-pretorio-on-line")." ".$allegato['Allegato']." in ".$NewAllegato."\n");
-			}
-		}
-	}					
-}
-// Fine Blocco che sposta gli allegati e sincronizza la tabella degli Allegati
-	$msg.="%%br%%";
-	$tmpdir=str_replace("\\","/",$OldPathAllegati);
-	$PathAllegati=AP_BASE_DIR;
-	fwrite($fplog,"__________________________________________________________________\n");
-	fwrite($fplog,"Svuotamento e cancellazione Vecchia Directory ".$OldPathAllegati." \n");
-	if ($tmpdir!=$PathAllegati and $eliminareOrigine){
-		$fName=str_replace("\\","/",$OldPathAllegati)."/index.php";
-		if (is_file($fName))
-			if (unlink($fName))
-				fwrite($fplog,"File ".$fName." Cancellato\n");
-			else
-				fwrite($fplog,__("Errore nella Cancellazione del file","albo-pretorio-on-line")." ".$fName."\n");
-		else
-			fwrite($fplog,"File ".$fName." inesistente\n");
-		$fName=str_replace("\\","/",$OldPathAllegati)."/".albopc_decodenamefile();
-		if (is_file($fName))
-			if (unlink($fName))
-				fwrite($fplog,"File ".$fName." ".__("Cancellato","albo-pretorio-on-line")."\n");
-			else
-				fwrite($fplog,__("Errore nella Cancellazione del file","albo-pretorio-on-line")." ".$fName."\n");
-		else
-			fwrite($fplog,"File ".$fName." inesistente\n");
-		if($tmpdir==AP_BASE_DIR){
-			$msg.="Directory ".$tmpdir." non cancellata%%br%%";
-			fwrite($fplog,"Directory ".$tmpdir." ".__("non cancellata","albo-pretorio-on-line")."\n");	
-		}else{
-			if (is_dir($tmpdir)){
-				if (!albopc_is_dir_empty($tmpdir)){
-					$msg.="La directory ".$tmpdir." ".__("non vuota","albo-pretorio-on-line")."%%br%%";
-					fwrite($fplog,"La directory ".$tmpdir." ".__("non vuota","albo-pretorio-on-line")." \n");					
-				}else{
-					if (rmdir($tmpdir)){
-						$msg.="Directory ".$tmpdir." cancellata%%br%%";
-						fwrite($fplog,"Directory ".$tmpdir." ".__("cancellata","albo-pretorio-on-line")." \n");	
-					}else{
-						$msg.=__("La directory","albo-pretorio-on-line")." ".$tmpdir." ".__("non e' stata cancellata","albo-pretorio-on-line")."%%br%%";
-						fwrite($fplog,__("La directory","albo-pretorio-on-line")." ".$tmpdir." ".__("non e' stata cancellata","albo-pretorio-on-line")." \n");
-					}
-				}
-			}else{
-					$msg.=__("La directory","albo-pretorio-on-line")." ".$tmpdir." non esiste%%br%%";
-					fwrite($fplog,"La directory ".$tmpdir." ".__("non esiste","albo-pretorio-on-line")." \n");		
-			}			
-		}
-	}
-	if (!$eliminareOrigine){
-		$msg.=__("La directory","albo-pretorio-on-line")." ".$tmpdir." ".__("non essendo una sottocartella della cartella Uploads di sistema, non deve essere cancellata","albo-pretorio-on-line")."%%br%%";
-		fwrite($fplog,__("La directory","albo-pretorio-on-line")." ".$tmpdir." ".__("non essendo una sottocartella della cartella Uploads di sistema, non deve essere cancellata","albo-pretorio-on-line")." \n");	
-	}
-	fclose($fplog);
-	if (stripslashes(get_option('opt_AP_FolderUpload'))!="wp-content/uploads"){
-		albopc_NoIndexNoDirectLink(AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
-	}
-	$FileMsg=str_replace("\\","/",WP_CONTENT_DIR.'/AlboOnLine/BackupDatiAlbo/tmp/msg.txt');
-	$fpmsg = @fopen($FileMsg, "wb");
-	fwrite($fpmsg,$msg);
-	fclose($fpmsg);
 	// phpcs:enable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite
-}
+	// Rimossa la funzione legacy albopc_sposta_allegati(): codice non utilizzato (nessun chiamante), citata nella review di sicurezza.
 
 function albopc_allinea_allegati(){
 	global $wpdb;

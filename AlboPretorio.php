@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio On line
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.12.2
+ * Version:           4.13.0
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
@@ -985,25 +985,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 	$OldInterfaccia=get_option('opt_AP_OldInterfaccia');
 	$UploadCSSNI=get_option('opt_AP_UpCSSNewInterface');
 
-	if($OldInterfaccia!="Si" AND $UploadCSSNI!="Si"){
-			?>
-<script type="text/javascript">
-    WebFontConfig = {
-      google: {
-        families: ['Titillium+Web:300,400,600,700,400italic:latin']
-      }
-    };
-    (function() {
-      var wf = document.createElement('script');
-      wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-      wf.type = 'text/javascript';
-      wf.async = 'true';
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(wf, s);
-    })();
-</script>
-<?php
-	}
+	// Rimosso il WebFont Loader remoto di Google (ajax.googleapis.com): offloading vietato da wordpress.org e non conforme al GDPR per una PA; il font e'gestito dallo stile locale.
 	    wp_enqueue_script('jquery');
 		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.NotInFooter -- caricati in head: gli shortcode dell'Albo emettono markup/script inline che dipendono da jQuery UI e da Albo.public.js prima del footer.
 	    // jQuery UI dal core di WordPress (tabs + datepicker); il bundle jquery-ui.min.js completo era ridondante ed e' stato rimosso.

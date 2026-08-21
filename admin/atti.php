@@ -420,8 +420,8 @@ if(isset($_REQUEST['action'])){
 			break;
 		case "logatto" :
 			global $albopc_AP_OnLine;
-			$IdAtto = isset($_REQUEST['id']) ? (int) $_REQUEST['id'] : 0;
-			echo wp_json_encode($albopc_AP_OnLine->CreaLog(1,$IdAtto,0));
+			$albopc_IdAtto = isset($_REQUEST['id']) ? (int) $_REQUEST['id'] : 0;
+			echo wp_json_encode($albopc_AP_OnLine->CreaLog(1,$albopc_IdAtto,0));
 			die();
 			break;
 		case "view-atto" :
