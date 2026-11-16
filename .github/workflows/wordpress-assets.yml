@@ -1,0 +1,57 @@
+name: WordPress.org assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.wordpress-org/**'
+      - '.github/workflows/wordpress-assets.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wordpress-org-assets
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: wordpress-org
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Subversion
+        run: sudo apt-get update && sudo apt-get install -y subversion
+      - name: Publish icons and banners
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          svn checkout --non-interactive --depth empty \
+            https://plugins.svn.wordpress.org/albo-pretorio-on-line \
+            "$RUNNER_TEMP/wporg"
+          cd "$RUNNER_TEMP/wporg"
+          svn update --non-interactive assets
+          if [ ! -d assets ]; then
+            mkdir assets
+            svn add assets
+          fi
+          for file in icon-128x128.png icon-256x256.png icon.svg banner-772x250.png banner-1544x500.png; do
+            cp "$GITHUB_WORKSPACE/.wordpress-org/$file" "assets/$file"
+            svn add --force "assets/$file"
+            case "$file" in
+              *.png) svn propset svn:mime-type image/png "assets/$file" ;;
+              *.svg) svn propset svn:mime-type image/svg+xml "assets/$file" ;;
+            esac
+          done
+          svn status assets
+          if [ -n "$(svn status assets)" ]; then
+            svn commit assets --non-interactive --no-auth-cache \
+              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
+              -m "Update plugin icon and banners"
+          else
+            echo "WordPress.org assets are already up to date."
+          fi
