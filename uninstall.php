@@ -23,22 +23,46 @@ define("AlboBCK",WP_CONTENT_DIR."/AlboOnLine");
 $albopc_uploads = wp_upload_dir(); 
 define("AP_BASE_DIR",$albopc_uploads['basedir']."/");
 
+/* GHSA-75h3-49jg-mw5w (punto 5): l'archivio degli atti e il registro delle
+   operazioni vanno conservati dall'ente. La disinstallazione cancella i dati
+   solo se l'amministratore lo ha chiesto esplicitamente nelle impostazioni
+   (opt_AP_EliminaDatiDisinstallazione). Altrimenti tabelle, allegati e
+   opzioni restano e il plugin si puo' reinstallare senza perdite. */
+if ( get_option( 'opt_AP_EliminaDatiDisinstallazione', 'No' ) !== 'Si' ) {
+	return;
+}
+
 // Backup di sicurezza
 // creo copia dei dati e dei files allegati prima di disinstallare e cancellare tutto
 
 		$albopc_Data=gmdate('Ymd_H_i_s');
-		$wpdb->table_name_Atti = $table_prefix . "albopretorio_atti";
-		$wpdb->table_name_Attimeta = $table_prefix . "albopretorio_attimeta";
-		$wpdb->table_name_Categorie = $table_prefix . "albopretorio_categorie";
-		$wpdb->table_name_Allegati = $table_prefix . "albopretorio_allegati";
-		$wpdb->table_name_Log=$table_prefix . "albopretorio_log";
-		$wpdb->table_name_RespProc=$table_prefix . "albopretorio_resprocedura";
-		$wpdb->table_name_Enti=$table_prefix . "albopretorio_enti";
-		$wpdb->table_name_UO=$table_prefix . "albopretorio_unitaorganizzative";
+		$wpdb->table_name_Atti = $wpdb->prefix . "albopretorio_atti";
+		$wpdb->table_name_Attimeta = $wpdb->prefix . "albopretorio_attimeta";
+		$wpdb->table_name_Categorie = $wpdb->prefix . "albopretorio_categorie";
+		$wpdb->table_name_Allegati = $wpdb->prefix . "albopretorio_allegati";
+		$wpdb->table_name_Log=$wpdb->prefix . "albopretorio_log";
+		$wpdb->table_name_RespProc=$wpdb->prefix . "albopretorio_resprocedura";
+		$wpdb->table_name_Enti=$wpdb->prefix . "albopretorio_enti";
+		$wpdb->table_name_UO=$wpdb->prefix . "albopretorio_unitaorganizzative";
 		$albopc_nf=albopc_BackupDatiFiles($albopc_Data);
-		copy($albopc_nf, AP_BASE_DIR."BackupAlboPretorioUninstall".$albopc_Data.".zip");
+		/* Il backup non va nella cartella pubblica dei caricamenti: finisce in
+		   una cartella protetta fuori da uploads, che la disinstallazione non
+		   cancella. */
+		$albopc_DirBck=WP_CONTENT_DIR."/AlboOnLine-backup-disinstallazione";
+		if ( ! is_dir( $albopc_DirBck ) )
+			wp_mkdir_p( $albopc_DirBck );
+		// phpcs:disable WordPress.WP.AlternativeFunctions -- protezione della cartella di backup durante la disinstallazione
+		if ( ! is_file( $albopc_DirBck."/index.php" ) )
+			@file_put_contents( $albopc_DirBck."/index.php", "<?php\n// Silence is golden.\n" );
+		@file_put_contents( $albopc_DirBck."/.htaccess", "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\nOrder allow,deny\nDeny from all\n</IfModule>\n" );
+		$albopc_NomeBck = "BackupAlboPretorioUninstall".$albopc_Data."_".wp_generate_password( 12, false ).".zip";
+		if ( ! $albopc_nf || ! @copy( $albopc_nf, $albopc_DirBck."/".$albopc_NomeBck ) ) {
+			// senza un backup integro non si cancella nulla
+			return;
+		}
+		// phpcs:enable WordPress.WP.AlternativeFunctions
 // Eliminazioni capacità
-		$role =& get_role( 'administrator' );
+		$role = get_role( 'administrator' );
 		if ( !empty( $role ) ) {
         	$role->remove_cap( 'admin_albo' );
             $role->remove_cap( 'gest_atti_albo' );
@@ -102,6 +126,8 @@ define("AP_BASE_DIR",$albopc_uploads['basedir']."/");
 		delete_option( 'opt_AP_UpCSSNewInterface' );
 		delete_option( 'opt_AP_FolderUploadMeseAnno' );
 		delete_option( 'opt_AP_BootstrapItalia' );
+		delete_option( 'opt_AP_StoricoPubblico' );
+		delete_option( 'opt_AP_EliminaDatiDisinstallazione' );
 		albopc_Rmdir(AlboBCK);
 		albopc_Rmdir(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 ?>

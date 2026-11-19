@@ -14,6 +14,9 @@ $albopc_ret=albopc_Lista_AttiGruppo($Parametri);
 function albopc_Lista_AttiGruppo($Parametri){
 	ob_start();
 	$lista=albopc_get_GruppiAtti($Parametri['meta'],$Parametri['valore']); 
+	/* Solo atti visibili al pubblico: esclusi quelli non ancora iniziati e
+	   quelli scaduti (o oltre l'oblio, se lo storico pubblico e' attivo). */
+	$lista=array_values(array_filter((array)$lista,'albopc_atto_pubblico'));
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
 	$colorePari=get_option('opt_AP_ColorePari');
 	$coloreDispari=get_option('opt_AP_ColoreDispari');
@@ -70,7 +73,7 @@ function albopc_Lista_AttiGruppo($Parametri){
 				$CeAnnullato=true;
 			}
 			$Stato=__("Scaduto","albo-pretorio-on-line");
-			if ($riga->DataFine>gmdate("Y-m-d")){
+			if ($riga->DataFine>wp_date("Y-m-d")){
 				$Stato=__("Corrente","albo-pretorio-on-line");
 				$Link='<a href="'.esc_url($PaginaAttiCor.$sep.'action=visatto&id='.$riga->IdAtto).'"  style="text-decoration: underline;">';
 			}else{

@@ -9,6 +9,79 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
+## [4.14.0] - 2026-11-19
+
+### Sicurezza
+- **Bozze e atti non pubblici non più leggibili dal sito** (GHSA-w3m3-64pc-486v,
+  GHSA-75h3-49jg-mw5w punto 1). Una sola regola di visibilità
+  (`albopc_atto_pubblico()`: numero assegnato, inizio raggiunto, fine non
+  passata) vale per scheda `?action=visatto`, stampa `printatto`, scarico
+  `dwnalle`, shortcode `[Albo]`, `[AlboAtto]`, `[AlboGruppiAtti]` e REST
+  `alboonline/v1/atto`. Lo shortcode `[Albo]` senza `stato` (o con valori
+  diversi da 1/2) mostra ora solo gli atti in corso.
+- **Cartella degli allegati chiusa all'accesso diretto**: il `.htaccess`
+  generato nega tutto (`Require all denied`) al posto del controllo sul
+  `Referer`, aggirabile. I link "Visualizza" del sito, del pannello e della
+  REST passano dallo scarico in PHP, che verifica lo stato dell'atto. Su
+  nginx/IIS la stessa regola va configurata nel server.
+- **Atti pubblicati non più modificabili o cancellabili** (punto 2): nonce di
+  cancellazione, modifica e oblio legati al singolo atto e controllo lato
+  server che l'atto sia in bozza; per gli atti pubblicati resta solo
+  l'annullamento. Allegati aggiungibili/modificabili/cancellabili solo sulle
+  bozze. Oblio anticipato consentito solo per atti con pubblicazione conclusa.
+- **Registro delle operazioni non più cancellabile** dal menu Utility: si
+  possono eliminare solo le statistiche di accesso (tutte o oltre un anno) e
+  l'operazione viene registrata.
+- **Disinstallazione**: per default non cancella più atti, allegati e registro.
+  La cancellazione va abilitata esplicitamente nelle impostazioni; in quel caso
+  il backup completo viene salvato in `wp-content/AlboOnLine-backup-disinstallazione`
+  (cartella protetta, non cancellata) invece che nella cartella pubblica dei
+  caricamenti (punto 5).
+- Rigenerazione dei file di protezione (`creafoblio`) consentita solo agli
+  amministratori.
+
+### Conformità (Linee guida Garante privacy 15/05/2014, L. 69/2009, TUEL art. 124)
+- **Storico pubblico disattivato di default** (punto 3): gli atti scaduti non
+  sono più consultabili dal sito. L'ente può riattivare lo storico (nuova
+  opzione) assumendosi la verifica che i documenti siano privi di dati
+  personali; gli scaduti restano consultabili nel pannello. Corretta
+  l'etichetta che citava l'art. 8 del D.Lgs. 33/2013 e la data di oblio
+  proposta ora usa il parametro dei giorni di oblio (fine pubblicazione + N).
+- **Durata minima di pubblicazione** (punto 6): l'approvazione è bloccata, in
+  pagina e lato server, se la fine precede inizio + giorni della categoria;
+  l'allungamento resta libero.
+- Certificato di pubblicazione rilasciato dal sito solo a pubblicazione
+  conclusa; rimossa dal testo predefinito la frase "non sono pervenute
+  osservazioni".
+- `robots.txt` non viene più riscritto da zero: si aggiunge solo la regola
+  dell'Albo. Il widget esclude gli oggetti degli atti dagli snippet dei motori
+  di ricerca (`data-nosnippet`).
+
+### Corretto
+- **Salvataggio dei metadati di un atto** (punto 7): non cancella più tutti i
+  metadati.
+- **Utility** (punto 8): proroga solo con giorni positivi e su atti pubblicati;
+  le impronte SHA-256 si calcolano solo dove mancano e le differenze vengono
+  segnalate senza sovrascriverle; assegnazione dell'ente solo alle bozze;
+  riallineamento dei percorsi solo se nel nuovo percorso c'è lo stesso file;
+  lo spostamento per anno/mese non sovrascrive mai file esistenti.
+- **"Associa file"** (punto 9): rifiutato un file già associato a un atto; un
+  file condiviso non viene cancellato insieme a uno degli allegati.
+- **Date**: riscritta la gestione con `DateTimeImmutable` su date di
+  calendario. La vecchia combinazione `mktime()`/`gmdate()` sottraeva un
+  giorno alle scadenze quando il fuso orario di PHP non era UTC (es.
+  `Europe/Rome` impostato dall'hosting o da un altro plugin). "Oggi" è ora
+  calcolato nel fuso del sito (`wp_date()`).
+- **PHP 8.2–8.4**: errore fatale nella pagina di approvazione su server senza
+  estensione `calendar` (`easter_days()`), sostituite `split()` ed `each()`
+  rimosse in PHP 7/8, parametri array nell'URL dell'Albo non causano più
+  `TypeError`, flag espliciti per `htmlspecialchars()`/`htmlentities()`,
+  notice in disinstallazione.
+
+### Ringraziamenti
+Segnalazioni di Daniele Armentano e Francesco Otranto (GHSA-w3m3-64pc-486v)
+e di Andrea Ceravolo (GHSA-75h3-49jg-mw5w).
+
 ## [4.13.0] - 2026-08-21
 
 ### Sicurezza / Conformità wordpress.org

@@ -67,7 +67,7 @@ if(isset($_REQUEST['vf']) And (sanitize_text_field(wp_unslash($_REQUEST['vf'] ??
 	echo "<br />".wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$sATTENZIONE.%2\$s E' stato indicato un VALORE non valido per il parametro %3\$s","albo-pretorio-on-line"),'<span style="color:red;">',"</span>",'<span style="color:red;">vf</span>'));
 }
 foreach($_REQUEST as $albopc_Key => $albopc_Val){
-	$_REQUEST[$albopc_Key]=htmlspecialchars(wp_strip_all_tags($_REQUEST[$albopc_Key]));
+	$_REQUEST[$albopc_Key]=is_scalar($albopc_Val)?htmlspecialchars(wp_strip_all_tags((string)$albopc_Val), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401):""; // un parametro array (?x[]=) mandava strip_tags in TypeError su PHP 8
 }
 
 include_once(dirname (__FILE__) .'/frontend_filtro.php');
@@ -78,12 +78,14 @@ if(isset($_REQUEST['action'])){
             if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
                 include_once(dirname (__FILE__) .'/stampe.php');
                 $albopc_AttoStampa = albopc_get_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
-                if (!empty($albopc_AttoStampa)) {
-                    $albopc_AttoStampa = $albopc_AttoStampa[0];
-                    $albopc_Oggi = albopc_oggi();
-                    if (($albopc_AttoStampa->DataInizio!="0000-00-00" And $albopc_AttoStampa->DataInizio>$albopc_Oggi) Or ($albopc_AttoStampa->DataOblio!="0000-00-00" And $albopc_AttoStampa->DataOblio<=$albopc_Oggi))
-                        wp_die(esc_html__("Documento non disponibile","albo-pretorio-on-line"),"",array('response'=>404));
-                }
+                /* Stessa regola di visibilita' della scheda e dello scarico allegati:
+                   bozze, atti non ancora iniziati e atti non piu' pubblici non si stampano. */
+                if (empty($albopc_AttoStampa) Or !albopc_atto_pubblico($albopc_AttoStampa[0]))
+                    wp_die(esc_html__("Documento non disponibile","albo-pretorio-on-line"),"",array('response'=>404));
+                /* Il certificato attesta una pubblicazione conclusa: prima della data
+                   di fine non puo' essere rilasciato. */
+                if (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'c' And $albopc_AttoStampa[0]->DataFine>=albopc_oggi())
+                    wp_die(esc_html__("Il certificato di pubblicazione è disponibile solo al termine del periodo di pubblicazione","albo-pretorio-on-line"),"",array('response'=>404));
                 if (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'c') {
                     albopc_StampaAtto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0), 'c');
                 } elseif (sanitize_text_field(wp_unslash($_REQUEST['pdf'] ?? '')) == 'a') {
@@ -94,9 +96,15 @@ if(isset($_REQUEST['action'])){
 			}
             break;
 		case 'visatto':
-			if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))))
-				$albopc_ret=albopc_VisualizzaAtto($_REQUEST['id']);
-			else{
+			if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))){
+				/* GHSA-w3m3-64pc-486v: la scheda mostrava qualunque atto per id,
+				   comprese bozze e atti oltre l'oblio. */
+				if (albopc_atto_pubblico((int)$_REQUEST['id']))
+					$albopc_ret=albopc_VisualizzaAtto((int)$_REQUEST['id']);
+				else{
+					echo '<p>'.esc_html__("Documento non disponibile","albo-pretorio-on-line").'</p>';
+				}
+			}else{
 				echo wp_kses_post(sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("ATTENZIONE:%sE' stato indicato un parametro non valido che può rappresentare un ATTACCO INFORMATICO AL SITO","albo-pretorio-on-line"),"<br />"));
 			}
 			break;
@@ -368,12 +376,12 @@ if(count($documenti)>0){
 			echo' <p class="secondaColonna">'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-on-line")).'</strong>: '.esc_html(wp_strip_all_tags($allegato->TitoloAllegato)).'<br /><strong>'.esc_html(esc_html__("Impronta","albo-pretorio-on-line")).'</strong>: '.esc_html($allegato->Impronta).'<br />';
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" target="_blank" title="'.esc_html__("Visualizza Allegato","albo-pretorio-on-line").'">
+						echo '<a href="'.esc_url(albopc_url_allegato_pubblico($allegato)).'" class="addstatdw" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" target="_blank" title="'.esc_html__("Visualizza Allegato","albo-pretorio-on-line").'">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> '.
 						basename( $allegato->Allegato).'</a> ('.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')<br />';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" >'.
+						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" >'.
 						'<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg> '.__("Scarica allegato","albo-pretorio-on-line");
 						if($StatoAllegati=="dwn"){
 							echo " <strong>".esc_html(basename( $allegato->Allegato)).'</strong></a>';
@@ -409,11 +417,11 @@ if(count($allegati)>0){
 			echo '<p class="secondaColonna">'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'<strong>'.esc_html(esc_html__("Descrizione","albo-pretorio-on-line")).'</strong>: '.esc_html(wp_strip_all_tags($allegato->TitoloAllegato)).'<br /><strong>'.esc_html(esc_html__("Impronta","albo-pretorio-on-line")).'</strong>: '.esc_html($allegato->Impronta).'<br />';
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" target="_blank" title="'.esc_html__("Visualizza Allegato","albo-pretorio-on-line").'">
+						echo '<a href="'.esc_url(albopc_url_allegato_pubblico($allegato)).'" class="addstatdw" rel="'.get_permalink().$sep.'action=addstatall&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" target="_blank" title="'.esc_html__("Visualizza Allegato","albo-pretorio-on-line").'">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> '.esc_html(basename( $allegato->Allegato)).'</a> ('.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')<br />';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" >'.
+						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401).' <a href="'.get_permalink().$sep.'action=dwnalle&amp;id='.esc_attr($allegato->IdAllegato).'&amp;idAtto='.$id.'" >'.
 						'<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg> '.__("Scarica allegato","albo-pretorio-on-line");
 						if($StatoAllegati=="dwn"){
 							echo " <strong>".esc_html(basename( $allegato->Allegato)).'</strong></a>';

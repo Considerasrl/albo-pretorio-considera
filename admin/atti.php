@@ -238,7 +238,7 @@ class albopc_AdminTableAtti extends WP_List_Table
 			$Annullato = false;
 		}
 
-		if ((albopc_cvdate($item->DataInizio) <= albopc_cvdate(gmdate("Y-m-d"))) and (albopc_cvdate($item->DataFine) >= albopc_cvdate(gmdate("Y-m-d"))))
+		if ((albopc_cvdate($item->DataInizio) <= albopc_cvdate(wp_date("Y-m-d"))) and (albopc_cvdate($item->DataFine) >= albopc_cvdate(wp_date("Y-m-d"))))
 			$Scaduto=False;
 		else	
 			$Scaduto=True;
@@ -256,13 +256,13 @@ class albopc_AdminTableAtti extends WP_List_Table
 			break;		
 		case "DaPubblicare":
 			$actions['cancella'] ='<span class="trash"><a href="?page=atti&amp;action=delete-atto&amp;id='.$item->IdAtto.'&amp;cancellaatto='.
-				wp_create_nonce('deleteatto').'" rel="'.wp_strip_all_tags($item->Oggetto).'" tag="" class="ac">
+				wp_create_nonce('deleteatto-'.$item->IdAtto).'" rel="'.wp_strip_all_tags($item->Oggetto).'" tag="" class="ac">
 						<span class="dashicons dashicons-trash" title="'.__('Cancella Atto','albo-pretorio-on-line').'"></span>
 					</a></span>';
 			$this->AzioneDefault='<a href="?page=atti&amp;action=edit-atto&amp;id='.$item->IdAtto.'&amp;modificaatto='.
-			wp_create_nonce('editatto').'">';
+			wp_create_nonce('editatto-'.$item->IdAtto).'">';
 			$actions['modifica'] ='<a href="?page=atti&amp;action=edit-atto&amp;id='.$item->IdAtto.'&amp;modificaatto='.
-			wp_create_nonce('editatto').'">
+			wp_create_nonce('editatto-'.$item->IdAtto).'">
 						<span class="dashicons dashicons-edit" title="'.__('Modifica atto','albo-pretorio-on-line').'"></span>
 					</a>';
 			$actions['allegati'] ='<a href="?page=atti&amp;action=allegati-atto&amp;id='.$item->IdAtto.'&amp;allegatoatto='.
@@ -298,7 +298,7 @@ class albopc_AdminTableAtti extends WP_List_Table
 			$actions['oblioallegati'] ='<a href="?page=atti&amp;action=oblio-allegati-atto&amp;id='.$item->IdAtto.'&amp;oaatto='.wp_create_nonce('operazioneoblioallegati').'&stato_atti=Scaduti">
 				<span class="dashicons dashicons-editor-unlink" title="'.__('Cancella Allegati Atto','albo-pretorio-on-line').'"></span>
 			</a>';
-			$actions['oblioatto'] ='<a href="?page=atti&amp;action=oblia-atto&amp;id='.$item->IdAtto.'&amp;oatto='.wp_create_nonce('operazionebliaatto').'&stato_atti=Scaduti">
+			$actions['oblioatto'] ='<a href="?page=atti&amp;action=oblia-atto&amp;id='.$item->IdAtto.'&amp;oatto='.wp_create_nonce('operazionebliaatto-'.$item->IdAtto).'&stato_atti=Scaduti">
 				<span class="dashicons dashicons-hammer" title="'.__('Imposta la data di Oblio dell\'atto ad oggi','albo-pretorio-on-line').'"></span>
 			</a>';
 			break;
@@ -315,13 +315,13 @@ class albopc_AdminTableAtti extends WP_List_Table
             if( $item->Numero == 0 ){    
 				$Msg=('<span style="color: green;font-weight: bold;">'.__('Da Pubblicare','albo-pretorio-on-line').'</span>');
                 $actions['cancella'] ='<span class="trash"><a href="?page=atti&amp;action=delete-atto&amp;id='.$item->IdAtto.'&amp;cancellaatto='.
-			wp_create_nonce('deleteatto').'" rel="'.wp_strip_all_tags($item->Oggetto).'" tag="" class="ac">
+			wp_create_nonce('deleteatto-'.$item->IdAtto).'" rel="'.wp_strip_all_tags($item->Oggetto).'" tag="" class="ac">
 					<span class="delete dashicons dashicons-trash" title="'.__('Cancella Atto','albo-pretorio-on-line').'"></span>
 				</a></span>';
 				$this->AzioneDefault='<a href="?page=atti&amp;action=edit-atto&amp;id='.$item->IdAtto.'&amp;modificaatto='.
-				wp_create_nonce('editatto').'">';
+				wp_create_nonce('editatto-'.$item->IdAtto).'">';
 				$actions['modifica'] ='<a href="?page=atti&amp;action=edit-atto&amp;id='.$item->IdAtto.'&amp;modificaatto='.
-				wp_create_nonce('editatto').'">
+				wp_create_nonce('editatto-'.$item->IdAtto).'">
 					<span class="dashicons dashicons-edit" title="'.__('Modifica atto','albo-pretorio-on-line').'"></span>
 				</a>';
 				$actions['allegati'] ='<a href="?page=atti&amp;action=allegati-atto&amp;id='.$item->IdAtto.'&amp;allegatoatto='.
@@ -451,10 +451,14 @@ if(isset($_REQUEST['action'])){
 				albopc_Go_Atti();
 				break;	
 			}
-			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaatto'] ?? '')),'editatto')){
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaatto'] ?? '')),'editatto-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0))){
 				albopc_Go_Atti();
 				break;
 			} 		
+			if (!albopc_atto_in_bozza(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0)){
+				albopc_Lista_Atti(__("Operazione non consentita: l'atto è già pubblicato. Per un atto pubblicato è possibile solo l'annullamento.","albo-pretorio-on-line"));
+				break;
+			}
 			albopc_Edit_atto((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0));
 			break;
 		case "pubblica-atto":
@@ -469,14 +473,18 @@ if(isset($_REQUEST['action'])){
 				albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line"));
 				break;
 			}
-			update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
+			update_option('opt_AP_AnnoProgressivo',wp_date("Y") );
 		  	update_option('opt_AP_NumeroProgressivo',1 );
-			albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-on-line'),gmdate("Y")));
+			albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __('Anno Albo settato a %s Numero progressivo settato a 0','albo-pretorio-on-line'),wp_date("Y")));
 			break;
 		case "approva-atto" :
 			$albopc_ret="";
 			if ( ! isset( $_REQUEST['approvaatto'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['approvaatto'] ?? '')), 'approvaatto-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0) ) ) {
 				albopc_PreApprovazione((isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line"));
+				break;
+			}
+			if (!albopc_atto_in_bozza(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0)){
+				albopc_Lista_Atti(__("Operazione non consentita: l'atto è già pubblicato. Per un atto pubblicato è possibile solo l'annullamento.","albo-pretorio-on-line"));
 				break;
 			}
 			if (isset($_REQUEST['apa'])){
@@ -683,7 +691,7 @@ foreach ($allegati as $allegato) {
 			<div style="margin-top:0;">
 				<p style="margin-top:0;">'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 			if (is_file($allegato->Allegato))
-				echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
+				echo '        <a href="'.esc_url(albopc_url_allegato_admin($allegato->IdAllegato)).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401);
 			else
 				echo basename( $allegato->Allegato).__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-on-line");
 echo'				</p>
@@ -706,7 +714,7 @@ if (!current_user_can('editore_atti_albo')){
 if ($albopc_ret!=""){
 	$albopc_ret=str_replace("%%br%%","<br />",$albopc_ret);
 }
-	$NumeroDaDb=albopc_get_last_num_anno(gmdate("Y"));
+	$NumeroDaDb=albopc_get_last_num_anno(wp_date("Y"));
 	$atto=albopc_get_atto($id);
 	$atto=$atto[0];
 	//$dif=albopc_datediff("d",albopc_cvdate($atto->DataInizio),albopc_cvdate($atto->DataFine));
@@ -728,7 +736,7 @@ echo'
 		<h3>'.__("Approvazione Atto","albo-pretorio-on-line").'</h3>	
 	</div>
 	<br class="clear" />';
-if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
+if(get_option('opt_AP_AnnoProgressivo')!=wp_date("Y")){
 	echo '<div style="border: medium groove Blue;margin-top:10px;">
 			<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 				<form id="agg_anno_progressivo" method="post" action="?page=atti">
@@ -755,13 +763,13 @@ echo'<br />
 	<tr>
 		<td>'.__("Anno Atto","albo-pretorio-on-line").'</td>
 		<td>'.$atto->Anno.'</td>';
-		if ($atto->Anno==gmdate("Y")){
+		if ($atto->Anno==wp_date("Y")){
 		 	$Passato=true;
 			echo '<td>'.__("Ok","albo-pretorio-on-line").'</td>';
 		}else{
 		 	$Passato=false;
 			echo '<td>'.__("Verificata incongruenza, bisogna rimediare prima di proseguire","albo-pretorio-on-line").'</td>
-			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;apa='.gmdate("Y").'" class="add-new-h2">Imposta Anno Pubblicazione a '.gmdate("Y").'</td>';
+			      <td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;apa='.wp_date("Y").'" class="add-new-h2">Imposta Anno Pubblicazione a '.wp_date("Y").'</td>';
 		}
 		echo '</tr>';
 		if($Passato){
@@ -811,10 +819,16 @@ echo'<br />
 			if(albopc_SeDate(">=",$atto->DataFine,$atto->DataInizio)){
 				$Passato=true;
 				echo '<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s GG Pubblicazione Atto %2\$s GG Pubblicazione standard Categoria %3\$s GG Incremento per scadenza in giorno Festivo %4\$s","albo-pretorio-on-line"),albopc_VisualizzaData($atto->DataFine),$differenza,$categoria[0]->Giorni,$NggInc).'</td>';
-				if (albopc_datediff("d", $atto->DataInizio, $atto->DataFine)== $categoria[0]->Giorni){
+				$GiorniAtto=albopc_datediff("d", $atto->DataInizio, $atto->DataFine);
+				if ($GiorniAtto>= $categoria[0]->Giorni){
+					/* Durata pari o superiore a quella della categoria: l'allungamento e' libero. */
 					echo '<td>'.__("Ok","albo-pretorio-on-line").'</td>';
 				}else{
-					echo '<td>'.__("Ok","albo-pretorio-on-line").'</td>';
+					/* Una pubblicazione piu' breve del dovuto non assolve l'obbligo di
+					   pubblicita' legale (L. 69/2009 art. 32; per le deliberazioni 15
+					   giorni, TUEL art. 124): l'approvazione e' bloccata. */
+					$Passato=false;
+					echo '<td><span style="color:red;font-weight:bold;">'.sprintf(/* translators: %1$s giorni dell'atto, %2$s giorni minimi della categoria */ __("Durata della pubblicazione (%1\$s giorni) inferiore a quella prevista per la categoria (%2\$s giorni)","albo-pretorio-on-line"),$GiorniAtto,$categoria[0]->Giorni).'</span></td>';
 					echo '<td><a href="?page=atti&amp;action=approva-atto&amp;id='.$id.'&amp;approvaatto='.wp_create_nonce('approvaatto-'.$id).'&amp;udf='.$newDataFine.'" class="add-new-h2">Aggiorna a '.albopc_VisualizzaData($newDataFine).'</a></td>';
 				}
 			}else{
@@ -826,12 +840,16 @@ echo'<br />
 			echo '</tr>';
 		}
 		if($Passato){
-  			$incrementoStandard=get_option('opt_AP_GiorniOblio');
- 			$DataOblioStandard=(gmdate("Y")+6)."-01-01";
+  			/* Data di oblio proposta: fine pubblicazione + giorni impostati nei
+  			   parametri (opt_AP_GiorniOblio). Il termine dell'art. 8 del D.Lgs.
+  			   33/2013 riguarda la trasparenza, non l'albo pretorio. */
+  			$incrementoStandard=(int)get_option('opt_AP_GiorniOblio');
+  			if ($incrementoStandard<=0) $incrementoStandard=1825;
+ 			$DataOblioStandard=albopc_DateAdd($atto->DataFine,$incrementoStandard);
  			//echo $atto->DataInizio."   -  ".$incrementoStandard;
 			echo '<tr>
 					<td>'.__("Data Oblio","albo-pretorio-on-line").'</td>
-					<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s - Data Oblio da Decreto n. 33/2013 art. 8 %2\$s","albo-pretorio-on-line"),albopc_VisualizzaData($atto->DataOblio),albopc_VisualizzaData($DataOblioStandard)).'</td>';
+					<td>'.sprintf(/* translators: i segnaposto sono valori dinamici (date, numeri, etichette) inseriti a runtime */ __("%1\$s - Data Oblio proposta (fine pubblicazione + %3\$s giorni) %2\$s","albo-pretorio-on-line"),albopc_VisualizzaData($atto->DataOblio),albopc_VisualizzaData($DataOblioStandard),$incrementoStandard).'</td>';
 				//	echo $atto->DataFine.' '.$atto->DataInizio. ' '.SeDate("<=",$atto->DataFine,$atto->DataInizio);
 			if(albopc_SeDate("=",$atto->DataOblio,$DataOblioStandard)){
 				$Passato=true;
@@ -864,7 +882,7 @@ echo'<br />
 					<td>'.__("Richiedente","albo-pretorio-on-line").'</td>
 					<td>'.__("Richiesto","albo-pretorio-on-line").'</td>
 					<td>'.__("Da revisionare","albo-pretorio-on-line").'</td>
-				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-on-line").'</a></td>';
+				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto-'.$id).'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-on-line").'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -875,7 +893,7 @@ echo'<br />
 					<td>'.__("Unità Organizzativa Responsabile","albo-pretorio-on-line").'</td>
 					<td>'.__("Richiesto","albo-pretorio-on-line").'</td>
 					<td>'.__("Da revisionare","albo-pretorio-on-line").'</td>
-				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-on-line").'</a></td>';
+				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto-'.$id).'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-on-line").'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -886,7 +904,7 @@ echo'<br />
 					<td>'.__("Responsabile del procedimento amministrativo","albo-pretorio-on-line").'</td>
 					<td>'.__("Richiesto","albo-pretorio-on-line").'</td>
 					<td>'.__("Da revisionare","albo-pretorio-on-line").'</td>
-				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto').'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-on-line").'</a></td>';
+				      <td><a href="?page=atti&action=edit-atto&id='.$id.'&amp;modificaatto='.wp_create_nonce('editatto-'.$id).'" class="add-new-h2">'.__("Modifica atto","albo-pretorio-on-line").'</a></td>';
 			}
 			echo '</tr>';
 		}
@@ -928,7 +946,7 @@ echo'
 foreach ($righe as $riga) {
 	echo '<tr>
 			<td>	
-					<a href="'.albopc_DaPath_a_URL($riga->Allegato).'" target="_parent">
+					<a href="'.esc_url(albopc_url_allegato_admin($riga->IdAllegato)).'" target="_parent">
 						<span class="dashicons dashicons-search" title="'.__("Visualizza dati atto","albo-pretorio-on-line").'"></span>
 					</a>
 			</td>
@@ -1053,7 +1071,7 @@ function albopc_Nuovo_atto(){
 	if (isset($_REQUEST['Data']) And sanitize_text_field(wp_unslash($_REQUEST['Data'] ?? '')) != "")
 		$dataCorrente=sanitize_text_field(wp_unslash($_REQUEST['Data'] ?? ''));
 	else
-		$dataCorrente=gmdate("d/m/Y");
+		$dataCorrente=wp_date("d/m/Y");
 	if (isset($_REQUEST['Ente']))
 		$defEnte=(isset($_REQUEST['Ente'])?intval($_REQUEST['Ente']):0);
 	else
@@ -1069,15 +1087,15 @@ function albopc_Nuovo_atto(){
 /*	if (sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? '')))
 		$DataI=sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? ''));
 	else*/
-	$DataI=gmdate("d/m/Y");
+	$DataI=wp_date("d/m/Y");
 	if (isset($_REQUEST['DataFine']))
 		$DataF=sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? ''));
 	else
-		$DataF=gmdate("d/m/Y");
+		$DataF=wp_date("d/m/Y");
 	if (isset($_REQUEST['DataOblio']))
 		$DataO=sanitize_text_field(wp_unslash($_REQUEST['DataOblio'] ?? ''));
 	else
-		$DataO=albopc_VisualizzaData((gmdate("Y")+6)."-01-01");
+		$DataO=albopc_VisualizzaData(albopc_DateAdd(albopc_oggi(),((int)get_option('opt_AP_GiorniOblio')>0?(int)get_option('opt_AP_GiorniOblio'):1825)));
 	if (isset($_REQUEST['Note']))
 		$Note=sanitize_textarea_field(wp_unslash($_REQUEST['Note'] ?? ''));
 	else	
@@ -1110,7 +1128,7 @@ function albopc_Nuovo_atto(){
 	if(!is_array($DefaultSoggetti)){
 		$DefaultSoggetti=json_decode($DefaultSoggetti,TRUE);
 	}
-$DataOblioStandard=(gmdate("Y")+6)."-01-01";		
+$DataOblioStandard=albopc_DateAdd(albopc_oggi(),((int)get_option('opt_AP_GiorniOblio')>0?(int)get_option('opt_AP_GiorniOblio'):1825));		
 ?>
 <div id="errori" title="<?php esc_html_e("Validazione Dati","albo-pretorio-on-line");?>" style="display:none">
   <h3><?php esc_html_e("Lista Campi con Errori","albo-pretorio-on-line");?>:</h3><p id="ElencoCampiConErrori"></p><p style='color:red;font-weight: bold;'><?php esc_html_e("Correggere gli errori per continuare","albo-pretorio-on-line");?></p>
@@ -1181,7 +1199,7 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 				<h2 class='hndle'><span><?php esc_html_e("Memorizza","albo-pretorio-on-line");?>Memorizza</span></h2>
 				<div class="inside">
 					<p><?php esc_html_e("Numero Albo","albo-pretorio-on-line");?>: 
-						<span style="font-weight: bold;">0000000/<?php echo gmdate("Y");?></span>
+						<span style="font-weight: bold;">0000000/<?php echo wp_date("Y");?></span>
 					</p>
 					<p class="hide-if-no-js">
 					<input type="submit" name="MemorizzaDati" id="MemorizzaDati" class="button button-primary button-large" value="<?php esc_html_e("Memorizza Atto","albo-pretorio-on-line");?>">
@@ -1200,10 +1218,7 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 					<p><abbr title="<?php esc_html_e("Data fine validità legale dell'atto","albo-pretorio-on-line");?>"><?php esc_html_e("Data fine Pubblicazione","albo-pretorio-on-line");?></abbr>:
 						<input name="DataFine" id="Calendario3" type="text" value="<?php echo $DataF;?>" maxlength="10" size="10" />	
 					</p>		
-					<p><abbr title="<?php esc_html_e("Data in cui l'atto viene eliminato dall'archivio, in base al Decreto n. 33/2013 art.8:<br />5 anni, decorrenti dal 1° gennaio dell'anno successivo a quello
-da cui decorre l'obbligo di pubblicazione, e comunque fino a che gli atti pubblicati producono i loro effetti,
-fatti salvi i diversi termini previsti dalla normativa in materia di trattamento dei dati personali e quanto
-previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-on-line");?>"><?php esc_html_e("Data Oblio","albo-pretorio-on-line");?></abbr>:
+					<p><abbr title="<?php esc_html_e("Data dopo la quale l'atto non è più consultabile nello storico (se lo storico pubblico è attivo) e può essere eliminato dall'archivio dell'Albo. Il termine dell'art. 8 del D.Lgs. 33/2013 riguarda la trasparenza, non l'albo pretorio: dopo il periodo di pubblicazione i dati personali non vanno più diffusi (Linee guida Garante 15/05/2014)","albo-pretorio-on-line");?>"><?php esc_html_e("Data Oblio","albo-pretorio-on-line");?></abbr>:
 						<input name="DataOblio" id="Calendario4" type="text" value="<?php echo $DataO;?>" maxlength="10" size="10" />
 						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo albopc_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php esc_html_e("Aggiorna a","albo-pretorio-on-line");?> <?php echo albopc_VisualizzaData($DataOblioStandard);?></button>	
 					</p>				
@@ -1263,7 +1278,7 @@ previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-on-line");?>"
 function albopc_Edit_atto($id){
 $atto=albopc_get_atto($id);
 $atto=$atto[0];
-$DataOblioStandard=(gmdate("Y")+6)."-01-01";
+$DataOblioStandard=albopc_DateAdd(albopc_oggi(),((int)get_option('opt_AP_GiorniOblio')>0?(int)get_option('opt_AP_GiorniOblio'):1825));
 ?>
 <div id="errori" title="<?php esc_html_e("Validazione Dati","albo-pretorio-on-line");?>" style="display:none">
   <h3><?php esc_html_e("Lista Campi con Errori","albo-pretorio-on-line");?>:</h3>
@@ -1285,7 +1300,7 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 	<form id="addatto" method="post" action="?page=atti" class="validate">
 		<input type="hidden" name="action" value="memo-atto" />
 		<input type="hidden" name="id" value="<?php echo (isset($_REQUEST['id'])?(int)$_REQUEST['id']:0);?>" />
-		<input type="hidden" name="modificaatto" value="<?php echo wp_create_nonce('editatto')?>" />
+		<input type="hidden" name="modificaatto" value="<?php echo esc_attr(wp_create_nonce('editatto-'.(int)$id))?>" />
 	<div id="poststuff">
 		<div id="post-body" class="metabox-holder columns-2">
 			<div id="post-body-content">
@@ -1354,10 +1369,7 @@ $DataOblioStandard=(gmdate("Y")+6)."-01-01";
 					<p><abbr title="<?php esc_html_e("Data fine validità legale dell'atto","albo-pretorio-on-line");?>"><?php esc_html_e("Data fine Pubblicazione","albo-pretorio-on-line");?></abbr>:
 						<input name="DataFine" id="Calendario3" type="text" value="<?php echo albopc_VisualizzaData($atto->DataFine);?>" maxlength="10" size="10" />		
 					</p>		
-					<p><abbr title="<?php esc_html_e("Data in cui l'atto viene eliminato dall'archivio, in base al Decreto n. 33/2013 art.8:<br />5 anni, decorrenti dal 1° gennaio dell'anno successivo a quello
-da cui decorre l'obbligo di pubblicazione, e comunque fino a che gli atti pubblicati producono i loro effetti,
-fatti salvi i diversi termini previsti dalla normativa in materia di trattamento dei dati personali e quanto
-previsto dagli articoli 14, comma 2, e 15, comma 4","albo-pretorio-on-line");?>"><?php esc_html_e("Data Oblio","albo-pretorio-on-line");?></abbr>:
+					<p><abbr title="<?php esc_html_e("Data dopo la quale l'atto non è più consultabile nello storico (se lo storico pubblico è attivo) e può essere eliminato dall'archivio dell'Albo. Il termine dell'art. 8 del D.Lgs. 33/2013 riguarda la trasparenza, non l'albo pretorio: dopo il periodo di pubblicazione i dati personali non vanno più diffusi (Linee guida Garante 15/05/2014)","albo-pretorio-on-line");?>"><?php esc_html_e("Data Oblio","albo-pretorio-on-line");?></abbr>:
 						<input name="DataOblio" id="Calendario4" type="text" value="<?php echo albopc_VisualizzaData($atto->DataOblio);?>" maxlength="10" size="10" />
 						<button type="button" id="setta-def-data-o" class="setta-def-data" name="<?php echo albopc_VisualizzaData($DataOblioStandard);?>" style="margin-top: 5px;margin-left:10px;"> <?php esc_html_e("Aggiorna a","albo-pretorio-on-line");?> <?php echo albopc_VisualizzaData($DataOblioStandard);?></button>	
 					</p>				
@@ -1508,7 +1520,7 @@ if ($IdAllegato!=0){
 					<a href="?page=atti&amp;action=edit-allegato-atto&amp;id='.$IdAtto.'&amp;idAlle='.$riga->IdAllegato.'&amp;modificaallegatoatto='.wp_create_nonce('editallegatoatto').'" >
 						 <span class="dashicons dashicons-edit" title="'. __("Modifica allegato","albo-pretorio-on-line").'"></span>
 					</a>
-					<a href="'.albopc_DaPath_a_URL($riga->Allegato).'" target="_blank">
+					<a href="'.esc_url(albopc_url_allegato_admin($riga->IdAllegato)).'" target="_blank">
 							<span class="dashicons dashicons-search" title="'. __("Visualizza dati allegato","albo-pretorio-on-line").'"></span>
 					</a>
 				</td>
@@ -1799,7 +1811,7 @@ echo'
 							'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'
 							'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
-							echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
+							echo '        <a href="'.esc_url(albopc_url_allegato_admin($allegato->IdAllegato)).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401);
 						else{
 							echo basename( $allegato->Allegato)."<br />";
 							if( $allegato->Note=="")
@@ -1831,7 +1843,7 @@ echo'
 								'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'
 								'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
-							echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
+							echo '        <a href="'.esc_url(albopc_url_allegato_admin($allegato->IdAllegato)).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401);
 						else{
 							echo basename( $allegato->Allegato)."<br />";
 							if( $allegato->Note=="")
@@ -1898,7 +1910,7 @@ function albopc_CancellaAllegatiAtto($IdAtto){
 							'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'
 							'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
-							echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).'</p>
+							echo '        <a href="'.esc_url(albopc_url_allegato_admin($allegato->IdAllegato)).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401).'</p>
 						<p>
 							<label for="motivo'.$allegato->IdAllegato.'" style="vertical-align: text-top;" id="LblIDA'.$allegato->IdAllegato.'">Indicare il motivo della rimozione del Documento Firmato</label>
 							<input type="text" id="motivo'.$allegato->IdAllegato.'" name="motivo'.$allegato->IdAllegato.'" size="50" style="border: 1px solid #d63638;"/>
@@ -1931,7 +1943,7 @@ function albopc_CancellaAllegatiAtto($IdAtto){
 								'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'
 								'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 						if (is_file($allegato->Allegato))
-							echo '        <a id="file'.$allegato->IdAllegato.'" href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')</p>
+							echo '        <a id="file'.$allegato->IdAllegato.'" href="'.esc_url(albopc_url_allegato_admin($allegato->IdAllegato)).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')</p>
 						<p>
 							<label for="motivo'.$allegato->IdAllegato.'" style="vertical-align: text-top;" id="LblIDA'.$allegato->IdAllegato.'">Indicare il motivo della rimozione dell\'allegato</label>
 							<input type="text" id="motivo'.$allegato->IdAllegato.'" name="motivo'.$allegato->IdAllegato.'" size="50" style="border: 1px solid #d63638;"/>
@@ -2161,7 +2173,7 @@ foreach ($allegati as $allegato) {
 			<div style="margin-top:0;">
 				<p style="margin-top:0;">'.wp_strip_all_tags($allegato->TitoloAllegato).' <br />';
 			if (is_file($allegato->Allegato))
-				echo '        <a href="'.albopc_DaPath_a_URL($allegato->Allegato).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']);
+				echo '        <a href="'.esc_url(albopc_url_allegato_admin($allegato->IdAllegato)).'" >'. basename( $allegato->Allegato).'</a> ('.albopc_Formato_Dimensione_File(filesize($allegato->Allegato)).')<br />'.htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401);
 			else
 				echo basename( $allegato->Allegato)." ".__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-on-line");
 echo'				</p>

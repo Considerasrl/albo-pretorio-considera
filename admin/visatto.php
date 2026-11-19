@@ -40,8 +40,10 @@ function albopc_Visualizza_Atto($Parametri){
 			return ob_get_clean();
 		}
 	}
-	$risultato=albopc_get_all_atti(0,$Numero,$Anno);
-	if(count($risultato)==0){
+	/* Solo atti pubblicati e visibili al pubblico: con numero 0 la ricerca
+	   restituiva anche le bozze. */
+	$risultato=((int)$Numero>0 And (int)$Anno>0)?albopc_get_all_atti(9,(int)$Numero,(int)$Anno):array();
+	if(count($risultato)==0 Or !albopc_atto_pubblico($risultato[0])){
 		echo esc_html__("Nessun atto trovato con questi parametri","albo-pretorio-on-line");
 		return ob_get_clean();
 	}
@@ -60,7 +62,7 @@ function albopc_Visualizza_Atto($Parametri){
 	else
 		$Annullato='';
 	$Stato="Scaduto";
-	if ($risultato->DataFine>gmdate("Y-m-d"))
+	if ($risultato->DataFine>wp_date("Y-m-d"))
 		$Stato=__("In corso di Validità","albo-pretorio-on-line");
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- template view atto: markup fisso intercalato a valori dinamici escapati singolarmente (esc_html sui testi DB, esc_url sugli href, esc_attr sugli attributi). $Annullato e i link contengono markup fisso + dati gia' escapati.
 echo '
@@ -213,11 +215,11 @@ if(count($documenti)>0){
 					<p class="secondaColonna">'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-on-line").'</strong>: '.esc_html(wp_strip_all_tags($allegato->TitoloAllegato)).'<br /><strong>'.__("Impronta","albo-pretorio-on-line").'</strong>: '.esc_html($allegato->Impronta).'<br />';
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw" rel="'.esc_url(get_permalink().$sep.'action=addstatall&id='.$allegato->IdAllegato.'&idAtto='.$id).'" target="_blank" title="'.esc_attr__("Visualizza Allegato","albo-pretorio-on-line").'">
+						echo '<a href="'.esc_url(albopc_url_allegato_pubblico($allegato)).'" class="addstatdw" rel="'.esc_url(get_permalink().$sep.'action=addstatall&id='.$allegato->IdAllegato.'&idAtto='.$id).'" target="_blank" title="'.esc_attr__("Visualizza Allegato","albo-pretorio-on-line").'">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> '. esc_html(basename( $allegato->Allegato)).'</a> ('.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')<br />';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.esc_url(get_permalink().$sep.'action=dwnalle&id='.$allegato->IdAllegato.'&idAtto='.$id).'" >
+						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401).' <a href="'.esc_url(get_permalink().$sep.'action=dwnalle&id='.$allegato->IdAllegato.'&idAtto='.$id).'" >
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg> '.__("Scarica allegato","albo-pretorio-on-line");
 						if($StatoAllegati=="dwn"){
 							echo " <strong>".esc_html(basename( $allegato->Allegato)).'</strong></a>';
@@ -248,11 +250,11 @@ if(count($allegati)>0){
 					<p class="secondaColonna">'.($allegato->DocIntegrale!="1"?'<span class="evidenziato">'.__("Pubblicato per Estratto","albo-pretorio-on-line")."</span><br />":"").'<strong>'.__("Descrizione","albo-pretorio-on-line").'</strong>: '.esc_html(wp_strip_all_tags($allegato->TitoloAllegato)).'<br /><strong>'.__("Impronta","albo-pretorio-on-line").'</strong>: '.esc_html($allegato->Impronta).'<br />';
 				if (is_file($allegato->Allegato)){
 					if($StatoAllegati=="all" Or $StatoAllegati=="vis"){
-						echo '<a href="'.esc_url(albopc_DaPath_a_URL($allegato->Allegato)).'" class="addstatdw" rel="'.esc_url(get_permalink().$sep.'action=addstatall&id='.$allegato->IdAllegato.'&idAtto='.$id).'" target="_blank" title="'.esc_attr__("Visualizza Allegato","albo-pretorio-on-line").'">
+						echo '<a href="'.esc_url(albopc_url_allegato_pubblico($allegato)).'" class="addstatdw" rel="'.esc_url(get_permalink().$sep.'action=addstatall&id='.$allegato->IdAllegato.'&idAtto='.$id).'" target="_blank" title="'.esc_attr__("Visualizza Allegato","albo-pretorio-on-line").'">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg> '. esc_html(basename( $allegato->Allegato)).'</a> ('.esc_html(albopc_Formato_Dimensione_File(is_file($allegato->Allegato)?filesize($allegato->Allegato):0)).')<br />';
 					}
 					if($StatoAllegati=="all" Or $StatoAllegati=="dwn"){
-						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica']).' <a href="'.esc_url(get_permalink().$sep.'action=dwnalle&id='.$allegato->IdAllegato.'&idAtto='.$id).'" >
+						echo htmlspecialchars_decode($TipidiFiles[strtolower($Estensione)]['Verifica'], ENT_QUOTES | ENT_HTML401).' <a href="'.esc_url(get_permalink().$sep.'action=dwnalle&id='.$allegato->IdAllegato.'&idAtto='.$id).'" >
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" fill="currentColor"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg> '.__("Scarica allegato","albo-pretorio-on-line");
 						if($StatoAllegati=="dwn"){
 							echo " <strong>".esc_html(basename( $allegato->Allegato)).'</strong></a>';

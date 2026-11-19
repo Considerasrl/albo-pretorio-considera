@@ -29,6 +29,16 @@ function albopc_DownloadFile($filename){
  }
 }
 
+/**
+ * GHSA-75h3-49jg-mw5w (punto 2): modifica e cancellazione valgono solo per
+ * gli atti in bozza. Dopo la pubblicazione resta solo l'annullamento, che
+ * lascia l'atto visibile con il motivo (Linee guida Garante 2014, par. 2.d).
+ */
+function albopc_blocca_se_pubblicato($IdAtto){
+	if (!albopc_atto_in_bozza((int)$IdAtto))
+		wp_die(esc_html__("Operazione non consentita: l'atto è già pubblicato. Per un atto pubblicato è possibile solo l'annullamento.","albo-pretorio-on-line"),esc_html__("Operazione non consentita","albo-pretorio-on-line"),array("back_link" => true,'response'=>403));
+}
+
 function albopc_albo_post() {
 	if(!is_user_logged_in())
 		return;
@@ -139,7 +149,7 @@ function albopc_albo_post() {
 				if (isset($_GET['Anno']))
 					$AnnoRepertorio=$_GET['Anno'];
 				else
-					$AnnoRepertorio=gmdate("Y");
+					$AnnoRepertorio=wp_date("Y");
 				$ToPdf= new albopc_cls_Repertorio("Portrait","mm","A4");
 				$ToPdf->ToTable($AnnoRepertorio);
 				break;			
@@ -189,9 +199,14 @@ function albopc_albo_post() {
  			case "oblia-atto":
 				if ( isset( $_GET['oatto'] ) && ! empty( $_GET['oatto'] ) ) {
 		            $nonce  = filter_input( INPUT_GET, 'oatto', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		            $action = 'operazionebliaatto';
+		            $action = 'operazionebliaatto-'.(isset($_REQUEST['id'])?intval($_REQUEST['id']):0);
 		            if ( ! wp_verify_nonce( $nonce, $action ) )
 		                wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line") ,esc_html__("Problemi di sicurezza","albo-pretorio-on-line"),array("back_link" => "?page=atti&stato_atti=Correnti") );
+					/* L'oblio anticipato vale solo per atti la cui pubblicazione e'
+					   conclusa: non deve poter togliere dal sito un atto in corso. */
+					$albopc_AttoOblio=albopc_get_atto(isset($_REQUEST['id'])?intval($_REQUEST['id']):0);
+					if (empty($albopc_AttoOblio) Or (int)$albopc_AttoOblio[0]->Numero<=0 Or $albopc_AttoOblio[0]->DataFine>=albopc_oggi())
+						wp_die(esc_html__("Operazione non consentita: la data di oblio si può anticipare solo per atti con pubblicazione conclusa.","albo-pretorio-on-line"),esc_html__("Operazione non consentita","albo-pretorio-on-line"),array("back_link" => "?page=atti&stato_atti=Scaduti",'response'=>403));
 			 		$location = "?page=atti&stato_atti=Scaduti" ;
 			 		if (is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')))) {
  	                    $MessaggiRitorno=albopc_setOblioOggi((isset($_REQUEST['id'])?intval($_REQUEST['id']):0));
@@ -258,7 +273,14 @@ function albopc_albo_post() {
 			if ( ! isset( $_REQUEST['cancellaallegatoatto'] ) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['cancellaallegatoatto'] ?? '')), 'deleteallegatoatto' ) )
 				wp_die( esc_html__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line") );
 			$location = "?page=atti" ;
-			albopc_del_allegato_atto((isset($_REQUEST['idAllegato'])?intval($_REQUEST['idAllegato']):0),(isset($_REQUEST['idAtto'])?intval($_REQUEST['idAtto']):0),intval(htmlentities(sanitize_text_field(wp_unslash($_REQUEST['Allegato'] ?? '')))));
+			/* L'allegato deve appartenere all'atto indicato e l'atto deve essere
+			   in bozza: un documento pubblicato non si cancella (al piu' si
+			   annulla l'atto). */
+			$albopc_AllDel=albopc_get_allegato_atto(isset($_REQUEST['idAllegato'])?intval($_REQUEST['idAllegato']):0);
+			if (empty($albopc_AllDel) Or (int)$albopc_AllDel[0]->IdAtto!==(isset($_REQUEST['idAtto'])?intval($_REQUEST['idAtto']):0))
+				wp_die(esc_html__("Allegato non trovato","albo-pretorio-on-line"),"",array("back_link" => true,'response'=>404));
+			albopc_blocca_se_pubblicato((int)$albopc_AllDel[0]->IdAtto);
+			albopc_del_allegato_atto((isset($_REQUEST['idAllegato'])?intval($_REQUEST['idAllegato']):0),(isset($_REQUEST['idAtto'])?intval($_REQUEST['idAtto']):0),intval(htmlentities(sanitize_text_field(wp_unslash($_REQUEST['Allegato'] ?? '')), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401)));
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('idAllegato'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
@@ -347,7 +369,7 @@ function albopc_albo_post() {
 			$TipidiFiles=array();
 			$TipidiFiles["ndf"]= array("Descrizione"=>__('Tipo file non definito','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/notipofile.png","Verifica"=>"");
 			$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
-			$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-on-line')."</a>"));
+			$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-on-line')."</a>", ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401));
 			update_option('opt_AP_TipidiFiles', $TipidiFiles);
 			wp_safe_redirect( $location );
 			break;			
@@ -792,10 +814,11 @@ function albopc_albo_post() {
 				albopc_Go_Atti();
 				break;	
 			}
-			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['cancellaatto'] ?? '')),'deleteatto')){
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['cancellaatto'] ?? '')),'deleteatto-'.(isset($_GET['id'])?intval($_GET['id']):0))){
 				albopc_Go_Atti();
 				break;
 			} 		
+			albopc_blocca_se_pubblicato(isset($_GET['id'])?intval($_GET['id']):0);
 			$location = "?page=atti&stato_atti=Nuovi" ;
 			if(albopc_del_allegati_atto((isset($_GET['id'])?intval($_GET['id']):0)))
 				$location = add_query_arg( 'message2',10, $location );
@@ -860,10 +883,11 @@ function albopc_albo_post() {
 				albopc_Go_Atti();
 				break;	
 			}
-			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaatto'] ?? '')),'editatto')){
+			if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['modificaatto'] ?? '')),'editatto-'.(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0))){
 				albopc_Go_Atti();
 				break;
 			}	
+			albopc_blocca_se_pubblicato(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0);
 			if(isset($_POST['Soggetto'])){
 				$Soggetti=serialize((isset($_POST['Soggetto']) && is_array($_POST['Soggetto'])) ? array_map('sanitize_text_field', wp_unslash($_POST['Soggetto'])) : array());
 			}else{
@@ -909,6 +933,10 @@ function albopc_albo_post() {
 			}		
 			$location = "?page=atti&stato_atti=".filter_input(INPUT_POST,"stato_atti");	
 			$location = add_query_arg( 'message',12, $location );
+			/* Prima si rimuovono i metadati non piu' presenti nel modulo, poi si
+			   salvano quelli inviati (come in memo-atto). Prima la rimozione
+			   riceveva una stringa vuota e cancellava tutti i metadati. */
+			albopc_remove_metasatto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0),((isset($_REQUEST['newMetaName']) && is_array($_REQUEST['newMetaName']))?array_map('sanitize_text_field', wp_unslash($_REQUEST['newMetaName'])):""));
 			if((isset($_REQUEST['newMetaName']) && is_array($_REQUEST['newMetaName'])) And count(is_array($_REQUEST['newMetaName']) ? wp_unslash($_REQUEST['newMetaName']) : array())>0){
 				for($i=0;$i<count(is_array($_REQUEST['newMetaName']) ? wp_unslash($_REQUEST['newMetaName']) : array());$i++){
 					albopc_add_attimeta((isset($_REQUEST['id'])?intval($_REQUEST['id']):0),
@@ -916,7 +944,6 @@ function albopc_albo_post() {
 									albopc_sanifica_testo(sanitize_text_field(wp_unslash($_REQUEST['newValue'][$i] ?? ''))));
 				}				
 			}
-			albopc_remove_metasatto((isset($_REQUEST['id'])?intval($_REQUEST['id']):0),sanitize_text_field(wp_unslash($_REQUEST['newMetaName'] ?? '')));
 			wp_safe_redirect( $location );
 			break;
 		case "memo-allegato-atto-associato":
@@ -930,6 +957,8 @@ function albopc_albo_post() {
 				albopc_Go_Atti();
 				break;
 			}
+			if (!isset($_REQUEST['annulla']))
+				albopc_blocca_se_pubblicato(isset($_REQUEST['id'])?intval($_REQUEST['id']):0);
 			if (isset($_REQUEST['annulla'])){
 				wp_safe_redirect( $location );
 			}else{
@@ -961,6 +990,8 @@ function albopc_albo_post() {
 				albopc_Go_Atti();
 				break;
 			}
+			if (!isset($_REQUEST['annulla']))
+				albopc_blocca_se_pubblicato(isset($_REQUEST['id'])?intval($_REQUEST['id']):0);
 			if (isset($_REQUEST['annulla'])){
 				wp_safe_redirect( $location );
 			}else{
@@ -992,6 +1023,8 @@ function albopc_albo_post() {
 				albopc_Go_Atti();
 				break;
 			}
+			if (!isset($_REQUEST['annulla']))
+				albopc_blocca_se_pubblicato(isset($_REQUEST['id'])?intval($_REQUEST['id']):0);
 			if (isset($_REQUEST['annulla'])){
 				wp_safe_redirect( $location );
 			}else{
@@ -1018,6 +1051,8 @@ function albopc_albo_post() {
 				albopc_Go_Atti();
 				break;
 			}		
+			if (!isset($_REQUEST['annulla']))
+				albopc_blocca_se_pubblicato(isset($_REQUEST['id'])?intval($_REQUEST['id']):0);
 			$location='?page=atti&action=allegati-atto&id='.(isset($_REQUEST['id'])?intval($_REQUEST['id']):0).'&allegatoatto='.wp_create_nonce('gestallegatiatto');
 			if (sanitize_text_field(wp_unslash($_REQUEST['submit'] ?? '')) == "Annulla"){
 				wp_safe_redirect( $location );
@@ -1058,6 +1093,12 @@ function albopc_Memo_allegato_atto_collegato(){
 			return __("ATTENZIONE. Il file indicato non si trova nella cartella di upload dell'Albo, l'operazione è stata annullata","albo-pretorio-on-line");
 		}
 		$targetfile = $real_target;
+		/* Un file gia' registrato come documento di un altro atto non si
+		   associa una seconda volta: cancellando l'uno sparirebbe anche
+		   l'altro (GHSA-75h3-49jg-mw5w, punto 9). */
+		if (albopc_conta_riferimenti_file(str_replace("//","/",str_replace("\\","/",$targetfile)))>0){
+			return __("ATTENZIONE. Il file è già associato a un atto, l'operazione è stata annullata","albo-pretorio-on-line");
+		}
 		$Impronta=albopc_insert_allegato(sanitize_textarea_field(wp_unslash($_POST['Descrizione'] ?? '')),
 									 str_replace("//","/",str_replace("\\","/",$targetfile)),
 									 (isset($_POST['id'])?intval($_POST['id']):0), 

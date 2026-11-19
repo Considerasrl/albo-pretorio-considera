@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio On line
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.13.0
+ * Version:           4.14.0
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
@@ -53,6 +53,8 @@ if (isset($_REQUEST['action'])){
 				$albopc_Stato=__("ATTENZIONE. Rilevato potenziale pericolo di attacco informatico, l'operazione è stata annullata","albo-pretorio-on-line");
 				break;
 			} 			
+			if (!current_user_can('admin_albo') And !current_user_can('manage_options'))
+				break;
 			albopc_crearobots();
 			$albopc_newPathAllegati=AP_BASE_DIR."AllegatiAttiAlboPretorio";
 			albopc_NoIndexNoDirectLink($albopc_newPathAllegati);
@@ -102,6 +104,7 @@ if (!class_exists('AlboPretorio')) {
 		add_action( 'wp_ajax_LoadDefaultFunzioni','albopc_LoadDefaultFunzioni' );
 		add_action( 'wp_ajax_dismiss_alboonline_notice','albopc_dismiss_alboonline_notice' );
 		add_action( 'wp_ajax_rimuoviAllegato','albopc_rimuoviallegatoPP' );
+		add_action( 'admin_post_albopc_allegato','albopc_admin_vedi_allegato' );
 
 		add_filter( 'post_link',array($this,'permalinkSearchAlbo'), 10, 3);
 		$RestApi=get_option('opt_AP_RestApi');
@@ -257,7 +260,9 @@ function admin_notice(){
 		$Atto=array();
 		$IDAtto=$request->get_param("id");
 		$risultato=albopc_get_atto($IDAtto);
-		if(count($risultato)==0){
+		/* Solo atti pubblici: bozze e atti non piu' visibili rispondono 404
+		   come quelli inesistenti, per non rivelarne l'esistenza. */
+		if(count($risultato)==0 Or !albopc_atto_pubblico($risultato[0])){
 			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-on-line'), array( 'status' => 404 ) );
   		}
 		return new WP_REST_Response($this->REST_API_get_atto($risultato), 200 );
@@ -266,8 +271,8 @@ function admin_notice(){
 		$Atto=array();
 		$NumeroAtto=$request->get_param("num");
 		$AnnoAtto=$request->get_param("anno");
-		$risultato=albopc_get_all_atti(0,$NumeroAtto,$AnnoAtto);
-		if(count($risultato)==0){
+		$risultato=((int)$NumeroAtto>0 And (int)$AnnoAtto>0)?albopc_get_all_atti(9,(int)$NumeroAtto,(int)$AnnoAtto):array();
+		if(count($risultato)==0 Or !albopc_atto_pubblico($risultato[0])){
 			return new WP_Error( 'no_atto', __('Nessun atto trovato con questi parametri','albo-pretorio-on-line'), array( 'status' => 404 ) );
   		}
 
@@ -344,8 +349,11 @@ function admin_notice(){
 					$TipoFile=$Fallback['Descrizione'];
 				}
 				if (is_file($allegato->Allegato)){
-					$Link=albopc_DaPath_a_URL($allegato->Allegato);
 					$Rel=(albopc_is_atto_corrente($IdAtto)?$PagAlboCor:$PagAlboSto).$sep.'action=dwnalle&amp;id='.$allegato->IdAllegato.'&amp;idAtto='.$IdAtto;
+					/* La cartella degli allegati non e' piu' raggiungibile per
+					   indirizzo diretto: anche il link passa dallo scarico in PHP,
+					   che controlla lo stato dell'atto. */
+					$Link=str_replace('&amp;','&',$Rel).'&vis=1';
 					$Dimensione=albopc_Formato_Dimensione_File(filesize($allegato->Allegato));
 					
 				}
@@ -436,6 +444,8 @@ function admin_notice(){
 		if(!isset($PagAlbo) || $PagAlbo=="")
 			return new WP_REST_Response(__('Errore:Pagina visualizzazione atto non impostata','albo-pretorio-on-line'),200);
 	$albopc_Stato=$request->get_param("stato");
+	if ((int)$albopc_Stato==2 And !albopc_storico_pubblico())
+		return new WP_Error( 'no_storico', __('Lo storico degli atti non è consultabile pubblicamente','albo-pretorio-on-line'), array( 'status' => 403 ) );
 	$N_A_pp=$request->get_param("per_page");
 	$Pag=$request->get_param("page");
 	$Categorie=$request->get_param("categorie");
@@ -536,66 +546,19 @@ function admin_notice(){
 				$file_path	=$Allegato[0]->Allegato;
 				if (!is_file($file_path) or !is_readable($file_path))
 					wp_die(esc_html__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-on-line"));
-				/* Il controllo sul Referer non basta a limitare l'accesso: chiunque
-				   scorra gli id puo' scaricare gli allegati di atti non ancora
-				   pubblicati o oltre la data di oblio, che il front-end non mostra.
-				   Qui si replica la stessa visibilita' del front-end (unione degli
-				   atti "in corso" e "storici entro l'oblio"): DataInizio<=oggi e
-				   DataOblio>oggi. Il valore '0000-00-00' significa "non impostato"
-				   e non deve bloccare. Gli atti annullati restano scaricabili,
-				   coerentemente con il fatto che il front-end li mostra ancora. */
-				$Atto = albopc_get_atto((int)$Allegato[0]->IdAtto);
-				if (!empty($Atto)) {
-					$Atto = $Atto[0];
-					$Oggi = albopc_oggi();
-					$NonPubblicato = ($Atto->DataInizio!="0000-00-00" And $Atto->DataInizio>$Oggi);
-					$OltreOblio    = ($Atto->DataOblio !="0000-00-00" And $Atto->DataOblio <=$Oggi);
-					if ($NonPubblicato Or $OltreOblio)
-						wp_die(esc_html__("Documento non disponibile","albo-pretorio-on-line"),"",array('response'=>404));
-				}
-				$chunksize	= 2*(1024*1024);
-				$stat 		= stat($file_path);
-				$etag		= sprintf('%x-%x-%x', $stat['ino'], $stat['size'], $stat['mtime'] * 1000000);
-				/* Il log va scritto PRIMA di inviare il file: dopo l'invio del corpo
-				   qualsiasi output aggiuntivo corromperebbe il download. */
-				if(is_numeric(sanitize_text_field(wp_unslash($_REQUEST['id'] ?? ''))) and isset($_REQUEST['idAtto']) and is_numeric(sanitize_text_field(wp_unslash($_REQUEST['idAtto'] ?? ''))))
-					albopc_insert_log(6,5,(isset($_REQUEST['id'])?(int)$_REQUEST['id']:0),"Download",(isset($_REQUEST['idAtto'])?(int)$_REQUEST['idAtto']:0));
-				/* Scarta tutto l'output gia' prodotto da tema o altri plugin (righe vuote
-				   dopo il ?>, BOM, avvisi PHP): finirebbe in testa al file scaricato e,
-				   sommandosi al Content-Length dichiarato, lo troncherebbe in coda. */
-				while (ob_get_level() > 0) {
-					@ob_end_clean();
-				}
-				/* La compressione ricalcola la lunghezza del corpo e va disattivata. */
-				@ini_set('zlib.output_compression', 'Off'); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged, WordPress.PHP.NoSilencedErrors.Discouraged -- necessario per il download: la compressione zlib ricalcola il body e falserebbe Content-Length dello streaming file
-				if (function_exists('apache_setenv')) @apache_setenv('no-gzip', '1');
-				nocache_headers();
-
-				header('Pragma: public');
-				header('Expires: 0');
-				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-				header('Cache-Control: private', FALSE);
-				header('Content-Type: application/octet-stream');
-				header('Content-Disposition: attachment; filename="'.basename($file_path).'"');
-				header('Content-Transfer-Encoding: binary');
-				header('Last-Modified: ' . gmdate('r', $stat['mtime']));
-				header('Etag: "' . $etag . '"');
-				header('Content-Length: '.$stat['size']);
-				header('Accept-Ranges: bytes');
-				flush();
-				if ($stat['size'] < $chunksize) {
-	// phpcs:disable WordPress.WP.AlternativeFunctions -- I/O su file di export/download nelle cartelle di lavoro in wp-content/uploads: streaming e download non gestibili da WP_Filesystem.
-					readfile($file_path);
-				}
-				else {
-					$handle = fopen($file_path, 'rb');
-					while (!feof($handle)) {
-						echo fread($handle, $chunksize); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- streaming dei byte grezzi del file in download (Content-Type gia' impostato), non output HTML
-						flush();
-					}
-					fclose($handle);
-	// phpcs:enable WordPress.WP.AlternativeFunctions
-				}
+				/* Il controllo sul Referer non limita l'accesso: lo decide il
+				   requester. Lo scarico segue la stessa regola di visibilita' di
+				   scheda, stampa ed elenchi (albopc_atto_pubblico): niente bozze,
+				   atti non ancora iniziati o non piu' pubblici, ne' allegati
+				   orfani. */
+				if (!albopc_atto_pubblico((int)$Allegato[0]->IdAtto))
+					wp_die(esc_html__("Documento non disponibile","albo-pretorio-on-line"),"",array('response'=>404));
+				$albopc_Inline=(sanitize_text_field(wp_unslash($_REQUEST['vis'] ?? ''))=="1");
+				/* Il log va scritto PRIMA di inviare il file. In visualizzazione
+				   la statistica la registra gia' addstatall dal front-end. */
+				if(!$albopc_Inline)
+					albopc_insert_log(6,5,(int)$Allegato[0]->IdAllegato,"Download",(int)$Allegato[0]->IdAtto);
+				albopc_invia_file_allegato($file_path,$albopc_Inline);
 				exit();
 				break;
 			}
@@ -1025,6 +988,14 @@ static function add_albo_plugin_visatto($plugin_array) {
 			'minfiltri' =>'si',
 			'per_page' =>'10'
 		), $Parametri,"Albo");
+		/* Sul sito pubblico sono ammessi solo gli atti in corso (1) e, se
+		   l'ente ha attivato lo storico pubblico, gli scaduti entro l'oblio (2).
+		   Il vecchio default (-2) e i valori 0/3 elencavano anche le bozze. */
+		$Parametri['stato']=(int)$Parametri['stato'];
+		if($Parametri['stato']==2 And !albopc_storico_pubblico())
+			return '<p>'.esc_html__("Lo storico degli atti non è consultabile pubblicamente. Per gli atti la cui pubblicazione è terminata è possibile rivolgersi all'ente.","albo-pretorio-on-line").'</p>';
+		if($Parametri['stato']!=1 And $Parametri['stato']!=2)
+			$Parametri['stato']=1;
 		$OldInterfaccia=get_option('opt_AP_OldInterfaccia');
 		$BootstrapItalia= get_option('opt_AP_BootstrapItalia');
 		if(is_file(get_stylesheet_directory()."/plugins/albo-pretorio-on-line/admin/frontend.php")){
@@ -1091,7 +1062,7 @@ static function add_albo_plugin_visatto($plugin_array) {
 	global $wpdb;
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- dashboard/bacheca admin: output = markup fisso + label i18n del plugin + output di helper che generano markup; i valori dinamici da DB/utente e i value degli input sono escapati inline (esc_attr/esc_html).
 		if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['action'] ?? '')) == "setta-anno"){
-		  update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
+		  update_option('opt_AP_AnnoProgressivo',wp_date("Y") );
 		  update_option('opt_AP_NumeroProgressivo',1 );
 		  $_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 		}
@@ -1253,7 +1224,7 @@ if (albopc_num_unitao()==0) {
 				</p>
 			</div>';
 }
-if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
+if(get_option('opt_AP_AnnoProgressivo')!=wp_date("Y")){
 	echo '<div style="border: medium groove Blue;margin-top:10px;">
 			<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 				<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
@@ -1270,7 +1241,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	$stato="";
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- pagina admin Parametri/configurazione: output = markup fisso + label i18n del plugin + output di helper (dropdown/select) che generano markup; i value degli input e i valori dinamici da opzioni/DB sono escapati inline (esc_attr/esc_html).
 	  if (isset($_REQUEST['action']) And sanitize_text_field(wp_unslash($_REQUEST['action'] ?? '')) == "setta-anno"){
-		update_option('opt_AP_AnnoProgressivo',gmdate("Y") );
+		update_option('opt_AP_AnnoProgressivo',wp_date("Y") );
 		update_option('opt_AP_NumeroProgressivo',1 );
 		$_SERVER['REQUEST_URI'] = remove_query_arg(array('action'), isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '');
 	  }
@@ -1318,7 +1289,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	  $RestApiUrlEst		= get_option('opt_AP_RestApi_UrlEst');
 	  if(!is_array($Testi)){
 	  	$Testi=array("NoResp"=>"",
-	  	             "CertPub"=>__("Si attesta l'avvenuta pubblicazione del documento all'albo pretorio sopra indicato per il quale non sono pervenute osservazioni",'albo-pretorio-on-line'));
+	  	             "CertPub"=>__("Si attesta l'avvenuta pubblicazione del documento all'albo pretorio sopra indicato per il periodo indicato",'albo-pretorio-on-line'));
 	  }
 	  $RuoliPl=array();
 	  if($RuoliPuls){
@@ -1369,7 +1340,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	  else
 	  	$ve_selezionato='';
 	  if (!$nanno){
-		$nanno=gmdate("Y");
+		$nanno=wp_date("Y");
 		}
 	  $dirUpload =  stripslashes(get_option('opt_AP_FolderUpload'));
 	  if($OldInterfaccia=="Si"){
@@ -1725,6 +1696,16 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 				<th scope="row"><label for="AutoShortCode">'.__("Abilita l'inserimento automatico della visualizzazione degli atti nei Bandi di gara e contratti attraverso il MetaDato CIG",'albo-pretorio-on-line').'</label></th>
 				<td><input type="checkbox" id="AutoShortCode" name="AutoShortCode" value="Si" '.($AutoShortcode=="Si"?"checked":"").'/></td>
 			</tr>
+			<tr>
+				<th scope="row"><label for="StoricoPubblico">'.esc_html__("Rendi consultabile al pubblico lo storico degli atti scaduti (fino alla data di oblio)",'albo-pretorio-on-line').'</label></th>
+				<td><input type="checkbox" id="StoricoPubblico" name="StoricoPubblico" value="Si" '.(albopc_storico_pubblico()?"checked":"").'/>
+				<p class="description" style="color:#b32d2e;">'.esc_html__("Disattivato di default. Le Linee guida del Garante privacy del 15/05/2014 (parte II, par. 3.a) vietano di continuare a diffondere i dati personali contenuti negli atti dopo il periodo di pubblicazione: lo storico pubblico è ammesso solo se i documenti sono privi di dati personali o con dati resi anonimi. Attivandolo, l'ente se ne assume la verifica.",'albo-pretorio-on-line').'</p></td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="EliminaDatiDisinstallazione">'.esc_html__("Alla disinstallazione (Elimina) cancella atti, allegati e registro",'albo-pretorio-on-line').'</label></th>
+				<td><input type="checkbox" id="EliminaDatiDisinstallazione" name="EliminaDatiDisinstallazione" value="Si" '.(get_option('opt_AP_EliminaDatiDisinstallazione','No')=="Si"?"checked":"").'/>
+				<p class="description" style="color:#b32d2e;">'.esc_html__("Disattivato di default: eliminando il plugin i dati restano nel database e nella cartella degli allegati. Se attivato, prima della cancellazione viene creato un backup completo in wp-content/AlboOnLine-backup-disinstallazione (cartella protetta, non cancellata). L'ente resta tenuto alla conservazione dell'archivio degli atti e del registro.",'albo-pretorio-on-line').'</p></td>
+			</tr>
 				</table>
 	  	</div>		  
 	   	<div id="Conf-tab-5">
@@ -1937,7 +1918,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	    </p> 
 	    </form>
 	    </div>';
-		if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
+		if(get_option('opt_AP_AnnoProgressivo')!=wp_date("Y")){
 			echo '<div style="border: medium groove Blue;margin-top:10px;margin-right:250px;">
 					<div style="float:none;width:200px;margin-left:auto;margin-right:auto;">
 						<form id="agg_anno_progressivo" method="post" action="?page=configAlboP">
@@ -2083,7 +2064,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 		$TipidiFiles=array();
 		$TipidiFiles["ndf"]= array("Descrizione"=>__('Tipo file non definito','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/notipofile.png","Verifica"=>"");
 		$TipidiFiles["pdf"]= array("Descrizione"=>__('File Pdf','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/Pdf.png","Verifica"=>"");
-		$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-on-line')."</a>"));
+		$TipidiFiles["p7m"]= array("Descrizione"=>__('File firmato digitalmente','albo-pretorio-on-line'),"Icona"=>Albo_URL."img/firmato.png","Verifica"=>htmlspecialchars("<a href=\"http://vol.ca.notariato.it/\" onclick=\"window.open(this.href);return false;\">".__('Verifica firma con servizio fornito da Consiglio Nazionale del Notariato','albo-pretorio-on-line')."</a>", ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401));
 		add_option('opt_AP_TipidiFiles', $TipidiFiles);
 	}
 	// Migrazione: riallinea le URL delle icone dei Tipi di Files alla cartella
@@ -2103,7 +2084,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 		if ($TdF_mod) { update_option('opt_AP_TipidiFiles', $TdF); }
 	}
 	if(get_option('opt_AP_AnnoProgressivo')  == '' || !get_option('opt_AP_AnnoProgressivo')){
-		add_option('opt_AP_AnnoProgressivo', ''.gmdate("Y").'');
+		add_option('opt_AP_AnnoProgressivo', ''.wp_date("Y").'');
 	}
 	if(get_option('opt_AP_NumeroProgressivo')  == '' || !get_option('opt_AP_NumeroProgressivo')){
 		add_option('opt_AP_NumeroProgressivo', '1');
@@ -2145,6 +2126,9 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 	if(get_option('opt_AP_LogAc') == '' || !get_option('opt_AP_LogAc')){
 		add_option('opt_AP_LogAc', 'Si');
 	}
+	/* Storico pubblico disattivato di default (anche per chi aggiorna). */
+	add_option('opt_AP_StoricoPubblico', 'No');
+	add_option('opt_AP_EliminaDatiDisinstallazione', 'No');
 	if(get_option('opt_AP_GiorniOblio') == '' || !get_option('opt_AP_GiorniOblio')){
 		add_option('opt_AP_GiorniOblio', '1825');
 	}
@@ -2332,6 +2316,8 @@ if(get_option('opt_AP_AnnoProgressivo')!=gmdate("Y")){
 			update_option('opt_AP_PAttiSto', sanitize_text_field(wp_unslash($_POST['P_AttiSto'] ?? '')));
 			update_option('opt_AP_PAtto', sanitize_text_field(wp_unslash($_POST['P_Atto'] ?? '')));
 			update_option('opt_AP_Allegati', sanitize_text_field(wp_unslash($_POST['allegati'] ?? '')));
+			update_option('opt_AP_EliminaDatiDisinstallazione',(isset($_POST['EliminaDatiDisinstallazione']) And sanitize_text_field(wp_unslash($_POST['EliminaDatiDisinstallazione']))=="Si")?"Si":"No");
+			update_option('opt_AP_StoricoPubblico',(isset($_POST['StoricoPubblico']) And sanitize_text_field(wp_unslash($_POST['StoricoPubblico']))=="Si")?"Si":"No");
 			update_option('opt_AP_AutoShortcode',(isset($_POST['AutoShortCode'])?sanitize_text_field(wp_unslash($_POST['AutoShortCode'] ?? '')):0));
 			update_option('opt_AP_OldInterfaccia',(isset($_POST['visoldstyle'])?sanitize_text_field(wp_unslash($_POST['visoldstyle'] ?? '')):0));
 			update_option('opt_AP_UpCSSNewInterface',(isset($_POST['uploadCSSNI'])?sanitize_text_field(wp_unslash($_POST['uploadCSSNI'] ?? '')):0));

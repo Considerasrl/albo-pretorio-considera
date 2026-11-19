@@ -130,7 +130,7 @@ public function widget( $args, $instance )
 	$coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
 	$lista=albopc_get_all_atti(1,0,0,0,'',0,0,$Ordinamento,0,$instance['numero_atti']); 
 
-	$HtmlW='<ul>';
+	$HtmlW='<div data-nosnippet><ul>'; /* oggetti degli atti esclusi dagli snippet dei motori di ricerca (Linee guida Garante 2014, par. 3.a) */
 	$CeAnnullato=FALSE;
 	if ($lista){
 		foreach($lista as $riga){
@@ -151,7 +151,7 @@ public function widget( $args, $instance )
 					'. esc_html__('Nessun Atto Codificato','albo-pretorio-on-line').'
 				  </li>';
 	}
-	$HtmlW.= '</ul>';
+	$HtmlW.= '</ul></div>';
 	if ($CeAnnullato)
 		$HtmlW.= '<p>'. esc_html__('Le righe evidenziate con questo sfondo','albo-pretorio-on-line').' <span style="background-color: '.esc_attr($coloreAnnullati).';">&nbsp;&nbsp;&nbsp;</span> '. esc_html__('indicano Atti Annullati','albo-pretorio-on-line').'</p>';
 $HtmlW.= '</div>';
@@ -291,7 +291,7 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
             $Ordinamento.=" DESC";
         $coloreAnnullati=get_option('opt_AP_ColoreAnnullati');
         $lista=albopc_get_all_atti(1,0,0,0,'',0,0,$Ordinamento,0,$instance['numero_atti']);
-        $HtmlW='<ul>';
+        $HtmlW='<div data-nosnippet><ul>'; /* oggetti degli atti esclusi dagli snippet dei motori di ricerca (Linee guida Garante 2014, par. 3.a) */
         $CeAnnullato=false;
         if ($lista){
             foreach($lista as $riga){
@@ -312,7 +312,7 @@ class AlboPretorioElencoAttiCorrentiWidget extends WP_Widget
                         '. esc_html__("Nessun Atto Codificato","albo-pretorio-on-line").'
                       </li>';
         }
-        $HtmlW.= '</ul>';
+        $HtmlW.= '</ul></div>';
         if ($CeAnnullato)
             $HtmlW.= '<p>'. esc_html__("Le righe evidenziate con questo sfondo","albo-pretorio-on-line").' <span style="background-color: '.esc_attr($coloreAnnullati).';">&nbsp;&nbsp;&nbsp;</span> '. esc_html__("indicano Atti Annullati","albo-pretorio-on-line").'</p>';
     $HtmlW.= '</div>';

@@ -19,8 +19,8 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 	$titFiltri=get_option('opt_AP_LivelloTitoloFiltri');
 	if ($titFiltri=='')
 		$titFiltri="h3";
-	$HTML='<form id="filtro-atti" action="'.htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))).'" method="post">';
-	if (strpos(htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))),'page_id')>0){
+	$HTML='<form id="filtro-atti" action="'.htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401).'" method="post">';
+	if (strpos(htmlentities(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401),'page_id')>0){
 		$HTML.= '<input type="hidden" name="page_id" value="'.albopc_Estrai_PageID_Url().'" />';
 	}	
 	$HTML.= '<input type="hidden" name="categoria" value="'.$cat.'" />
@@ -72,7 +72,7 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 					<label for="DataInizio" class="font-weight-bold">'.__("da Data", 'albo-pretorio-on-line').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
-					<input name="DataInizio" id="DataInizio" type="date" value="'.htmlentities((isset($_REQUEST['DataInizio'])?sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? '')):"")).'" size="10"/>
+					<input name="DataInizio" id="DataInizio" type="date" value="'.esc_attr(isset($_REQUEST['DataInizio'])?sanitize_text_field(wp_unslash($_REQUEST['DataInizio'] ?? '')):"").'" size="10"/>
 				</div>
 			</div>
        		<div class="row mb-2">
@@ -80,7 +80,7 @@ function albopc_get_FiltriParametri($Stato=1,$cat=0,$StatoFinestra="si"){
 					<label for="DataFine" class="font-weight-bold">'.__("a Data", 'albo-pretorio-on-line').'</label>
 				</div>
         		<div class="col-12 col-lg-8">				
-					<input name="DataFine" id="DataFine" type="date" value="'.htmlentities((isset($_REQUEST['DataFine'])?sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? '')):"")).'" size="10"/>
+					<input name="DataFine" id="DataFine" type="date" value="'.esc_attr(isset($_REQUEST['DataFine'])?sanitize_text_field(wp_unslash($_REQUEST['DataFine'] ?? '')):"").'" size="10"/>
 				</div>
 			</div>
       		<div class="row mt-2">

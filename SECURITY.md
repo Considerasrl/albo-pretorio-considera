@@ -62,6 +62,6 @@ Non c'è un programma di ricompense.
 
 | Versione | Supporto |
 |---|---|
-| 4.10.x (questo fork) | sì |
-| 4.9.x (questo fork) | solo aggiornamento alla 4.10.x consigliato |
+| 4.14.x (questo fork) | sì |
+| 4.13.x e precedenti di questo fork | no, aggiornare alla 4.14.x (correzioni di sicurezza) |
 | 4.8 e precedenti (upstream) | no, non più mantenute dall'autore |

@@ -65,8 +65,21 @@ function albopc_Move_Allegati_CartellaMeseAnno(){
 	foreach ( $allegati as $allegato) {
 		$NewPath=albopc_get_PathAllegati($allegato->IdAtto);
 		$NewAllegato=$NewPath."/".basename($allegato->Allegato);
+		if (is_file($allegato->Allegato) And str_replace("\\","/",$allegato->Allegato)==str_replace("\\","/",$NewAllegato)) {
+			echo "<hr />";
+			continue;
+		}
+		/* Mai sovrascrivere: due documenti con lo stesso nome nella stessa
+		   cartella si cancellerebbero a vicenda e un atto (anche pubblicato)
+		   si ritroverebbe il documento di un altro. */
+		if (is_file($allegato->Allegato) And file_exists($NewAllegato)) {
+			echo '<spam style="color:red;">'.esc_html__('Errore','albo-pretorio-on-line').'</spam> '.esc_html__("esiste già un file con lo stesso nome nella cartella di destinazione, allegato non spostato:",'albo-pretorio-on-line').' '.esc_html($allegato->Allegato).' -> '.esc_html($NewAllegato)."<br /><hr />";
+			fwrite($fplog, __('File di destinazione già esistente, allegato non spostato','albo-pretorio-on-line')." ".$allegato->Allegato." -> ".$NewAllegato."\n");
+			continue;
+		}
 		if (is_file($allegato->Allegato)) {
-			if (!copy($allegato->Allegato, $NewAllegato)) {
+			if (!copy($allegato->Allegato, $NewAllegato) Or hash_file("sha256",$allegato->Allegato)!==hash_file("sha256",$NewAllegato)) {
+				if (is_file($NewAllegato)) @unlink($NewAllegato);
 				echo '<spam style="color:red;">'.esc_html__('Errore','albo-pretorio-on-line').'</spam> '.esc_html__("nello spostamento dell'Allegato ",'albo-pretorio-on-line').esc_html($allegato->Allegato).' in '. esc_html($NewAllegato)."<br />";
 				fwrite($fplog, __('Non sono riuscito a copiare il file','albo-pretorio-on-line')." ".$allegato->Allegato." ".__('in','albo-pretorio-on-line')." ". $NewAllegato."\n");
 			} else {
@@ -174,47 +187,39 @@ function albopc_crearobots($Return=FALSE){
 	$Stato="";
 	$cartellabase=str_replace("\\","/",AP_BASE_DIR.get_option('opt_AP_FolderUpload'));
 	$cartella=substr($cartellabase,strlen(APHomePath));
-	$robot="User-agent: *
-	Disallow: ".$cartella."/";
+	$Regola="Disallow: ".$cartella."/";
+	$robot="User-agent: *\n".$Regola."\n";
 	if($Return)
 		return($robot);
-	$id = @fopen(APHomePath."/robots.txt", "wt");
-	if ($id === false){
+	/* Il robots.txt del sito non va riscritto da zero: si aggiunge la sola
+	   regola dell'Albo, conservando quelle esistenti. */
+	$File=APHomePath."/robots.txt";
+	$Esistente=is_file($File)?(string)@file_get_contents($File):"";
+	if($Esistente!=="" And stristr($Esistente,$cartella."/")){
+		return __('File robots.txt già aggiornato in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
+	}
+	$Nuovo=($Esistente!==""?rtrim($Esistente)."\n\n# Albo Pretorio On line\n":"").$robot;
+	if (false===@file_put_contents($File,$Nuovo)){
 		$Stato.=__('Non riesco a Creare il file robots.txt in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
 	}else{
-		if (!fwrite($id,$robot )){
-			$Stato.=__('Non riesco a Creare il file robots.txt in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
-		}else{
-			$Stato.=__('File robots.txt creato con successo in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
-		}
-		fclose($id);
+		$Stato.=__('File robots.txt creato con successo in','albo-pretorio-on-line')." ".APHomePath."%%br%%";
 	}
 	return $Stato;
 }
 function albopc_NoIndexNoDirectLink($dir,$Return=FALSE,$Cosa="Tutto"){
-    $sito=sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'] ?? ''));
 	$Stato="";
-	if (is_ssl())
-		$Prot="https";
-	else
-		$Prot="http";
-	if (substr($sito,0,4)=="www.")
-		$sito=substr($sito,4);
-	$RestApi=get_option('opt_AP_RestApi');
-	if($RestApi=="Si"){
-	  	$UrlRestApi=get_option('opt_AP_RestApi_UrlEst');
-	  }else{
-	  	$UrlRestApi="";	
-	}
-	$htaccess="#Blocco Accesso diretto Allegati Albo Pretorio\n
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteCond %{HTTP_REFERER} !^$Prot://www.".$sito.".* [NC]
-	RewriteCond %{HTTP_REFERER} !^$Prot://".$sito.".* [NC]\n";
-	if ($UrlRestApi!=""){
-		$htaccess.="	RewriteCond %{HTTP_REFERER} !^".$UrlRestApi.".* [NC]\n";
-	}
-	$htaccess.="	RewriteRule \. ".home_url()."/index.php [R,L]
+	/* Accesso diretto alla cartella degli allegati negato a tutti. Il vecchio
+	   controllo sul Referer era aggirabile (l'intestazione la decide chi fa
+	   la richiesta): i file si leggono solo tramite ?action=dwnalle, che
+	   verifica lo stato dell'atto. Su nginx/IIS la regola va replicata nella
+	   configurazione del server. */
+	$htaccess="#Blocco Accesso diretto Allegati Albo Pretorio
+<IfModule mod_authz_core.c>
+	Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+	Order allow,deny
+	Deny from all
 </IfModule>";
 $index="<?php
 /**
@@ -518,6 +523,82 @@ function albopc_ModificaParametriCampo($Tabella, $Campo, $Tipo, $Parametro){
 	}
 }
 
+/**
+ * Invia al browser un file allegato e termina la richiesta. Unico punto da
+ * cui escono i file: la cartella degli allegati e' chiusa all'accesso diretto.
+ */
+function albopc_invia_file_allegato($file_path,$Inline=FALSE){
+	$chunksize	= 2*(1024*1024);
+	$stat 		= stat($file_path);
+	$etag		= sprintf('%x-%x-%x', $stat['ino'], $stat['size'], $stat['mtime'] * 1000000);
+	/* Scarta tutto l'output gia' prodotto da tema o altri plugin (righe vuote
+	   dopo il ?>, BOM, avvisi PHP): finirebbe in testa al file scaricato e,
+	   sommandosi al Content-Length dichiarato, lo troncherebbe in coda. */
+	while (ob_get_level() > 0) {
+		@ob_end_clean();
+	}
+	/* La compressione ricalcola la lunghezza del corpo e va disattivata. */
+	@ini_set('zlib.output_compression', 'Off'); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged, WordPress.PHP.NoSilencedErrors.Discouraged -- necessario per il download: la compressione zlib ricalcola il body e falserebbe Content-Length dello streaming file
+	if (function_exists('apache_setenv')) @apache_setenv('no-gzip', '1');
+	nocache_headers();
+	$Mime=wp_check_filetype(basename($file_path));
+	$Mime=($Inline And !empty($Mime['type']))?$Mime['type']:'application/octet-stream';
+	$NomeFile=str_replace(array('"',"\r","\n"),'',basename($file_path));
+	header('Pragma: public');
+	header('Expires: 0');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Cache-Control: private', FALSE);
+	header('Content-Type: '.$Mime);
+	header('X-Content-Type-Options: nosniff');
+	header('X-Robots-Tag: noindex, nofollow, noarchive');
+	header('Content-Disposition: '.($Inline?'inline':'attachment').'; filename="'.$NomeFile.'"');
+	header('Content-Transfer-Encoding: binary');
+	header('Last-Modified: ' . gmdate('r', $stat['mtime']));
+	header('Etag: "' . $etag . '"');
+	header('Content-Length: '.$stat['size']);
+	header('Accept-Ranges: bytes');
+	flush();
+	// phpcs:disable WordPress.WP.AlternativeFunctions -- I/O su file di export/download nelle cartelle di lavoro in wp-content/uploads: streaming e download non gestibili da WP_Filesystem.
+	if ($stat['size'] < $chunksize) {
+		readfile($file_path);
+	}else{
+		$handle = fopen($file_path, 'rb');
+		while (!feof($handle)) {
+			echo fread($handle, $chunksize); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- streaming dei byte grezzi del file in download (Content-Type gia' impostato), non output HTML
+			flush();
+		}
+		fclose($handle);
+	}
+	// phpcs:enable WordPress.WP.AlternativeFunctions
+	exit();
+}
+
+/**
+ * Indirizzo pubblico di un allegato: passa sempre da ?action=dwnalle.
+ */
+function albopc_url_allegato_pubblico($allegato,$Inline=TRUE){
+	return add_query_arg(array('action'=>'dwnalle','id'=>(int)$allegato->IdAllegato,'idAtto'=>(int)$allegato->IdAtto,'vis'=>($Inline?1:0)),get_permalink());
+}
+
+/**
+ * Indirizzo per il personale (pannello): visualizza qualunque allegato,
+ * anche di bozze, previa verifica di permessi e nonce.
+ */
+function albopc_url_allegato_admin($IdAllegato){
+	return wp_nonce_url(admin_url('admin-post.php?action=albopc_allegato&id='.(int)$IdAllegato),'albopc_allegato-'.(int)$IdAllegato);
+}
+
+function albopc_admin_vedi_allegato(){
+	$IdAllegato=(int)($_GET['id'] ?? 0);
+	check_admin_referer('albopc_allegato-'.$IdAllegato);
+	if (!current_user_can('admin_albo') And !current_user_can('editore_atti_albo') And !current_user_can('gest_atti_albo'))
+		wp_die(esc_html__("Non hai i permessi per visualizzare questo allegato","albo-pretorio-on-line"),"",array('response'=>403));
+	$Allegato=albopc_get_allegato_atto($IdAllegato);
+	if (empty($Allegato) Or !is_file($Allegato[0]->Allegato) Or !is_readable($Allegato[0]->Allegato))
+		wp_die(esc_html__("File non trovato, il file è stato cancellato o spostato!","albo-pretorio-on-line"),"",array('response'=>404));
+	albopc_invia_file_allegato($Allegato[0]->Allegato,TRUE);
+}
+
 function albopc_DaPath_a_URL($File){
 //	$base=substr(WP_PLUGIN_URL,0,strpos(WP_PLUGIN_URL,"wp-content", 0));
 //	$allegato=$base.strstr($File, "wp-content");
@@ -565,54 +646,53 @@ function albopc_ListaElementiArray($var) {
      return $output;
 }
 
+/**
+ * Gestione date: le date dell'Albo sono date di calendario (Y-m-d) senza
+ * ora. Si usano DateTimeImmutable in UTC, indipendenti dal fuso di default
+ * di PHP: la vecchia combinazione mktime() (fuso locale) + gmdate() + 86400
+ * secondi dava un giorno in meno quando il fuso non era UTC (es. un plugin o
+ * il server con Europe/Rome), accorciando le pubblicazioni.
+ */
+function albopc_data_obj($data){
+	if (!is_string($data) And !is_int($data))
+		return null;
+	$data=substr(trim((string)$data),0,10);
+	if (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$data) Or $data==='0000-00-00')
+		return null;
+	$Obj=DateTimeImmutable::createFromFormat('!Y-m-d',$data,new DateTimeZone('UTC'));
+	return $Obj ?: null;
+}
+
 function albopc_cvdate($data){
-//	echo $data." - <br />";
-	$rsl = explode ('-',$data);
-//print("mm=".$rsl[1]." gg=". $rsl[2]."  aaaa=".$rsl[0]);
-	if(is_array($rsl) And count($rsl)>2){
-		return mktime(0,0,0,(int)$rsl[1],(int)$rsl[2],(int)$rsl[0]);
-	}else{
-		return 0;
-	}
+	$Obj=albopc_data_obj($data);
+	return $Obj ? $Obj->getTimestamp() : 0;
 }
 
 function albopc_oggi(){
-	return gmdate('Y-m-d');
+	/* Data nel fuso orario del sito: con gmdate() fra mezzanotte e l'una/le
+	   due (ora italiana) un atto scaduto restava visibile e un atto approvato
+	   prendeva la data del giorno precedente. */
+	return wp_date('Y-m-d');
 }
 
 function albopc_DateAdd($data,$incremento){
-	$secondi=albopc_cvdate($data)+($incremento*86400);
-	return gmdate("Y-m-d",$secondi);
+	$Obj=albopc_data_obj($data);
+	if (!$Obj)
+		return $data;
+	$incremento=(int)$incremento;
+	return $Obj->modify(($incremento>=0?'+':'').$incremento.' days')->format('Y-m-d');
 }
 
 function albopc_SeDate($test,$data1,$data2){
 	$data1=albopc_cvdate($data1);
 	$data2=albopc_cvdate($data2);
 	switch ($test){
-		case "=": 
-			if ($data1==$data2)
-				return true;
-			break;
-		case "<": 
-			if ($data1<$data2)
-				return true;
-			break;
-		case ">": 
-			if ($data1>$data2)
-				return true;
-			break;
-		case ">=": 
-			if ($data1>=$data2)
-				return true;
-			break;
-		case "<=": 
-			if ($data1<=$data2)
-				return true;
-			break;
-		case "!=": 
-			if ($data1!=$data2)
-				return true;
-			break;
+		case "=":  return $data1==$data2;
+		case "<":  return $data1<$data2;
+		case ">":  return $data1>$data2;
+		case ">=": return $data1>=$data2;
+		case "<=": return $data1<=$data2;
+		case "!=": return $data1!=$data2;
 	}
 	return false;
 }
@@ -637,72 +717,39 @@ function albopc_daGiorniaAnniMesiGiorni($nGiorni){
 	return "Anni: ".$nAnni." Mesi: ".$nMesi." Giorni: ".$nGiorni;
 }
 function albopc_datediff($interval, $date1, $date2) {
-    if(($date2==0) Or ($date2<$date1))
-    	return -1;
-	$seconds = albopc_cvdate($date2) - albopc_cvdate($date1);
-    switch ($interval) {
-        case "y":    // years
-            list($year1, $month1, $day1) = split('-', gmdate('Y-m-d', $date1));
-            list($year2, $month2, $day2) = split('-', gmdate('Y-m-d', $date2));
-            $time1 = (gmdate('H',$date1)*3600) + (gmdate('i',$date1)*60) + (gmdate('s',$date1));
-            $time2 = (gmdate('H',$date2)*3600) + (gmdate('i',$date2)*60) + (gmdate('s',$date2));
-            $diff = $year2 - $year1;
-            if($month1 > $month2) {
-                $diff -= 1;
-            } elseif($month1 == $month2) {
-                if($day1 > $day2) {
-                    $diff -= 1;
-                } elseif($day1 == $day2) {
-                    if($time1 > $time2) {
-                        $diff -= 1;
-                    }
-                }
-            }
-            break;
-        case "m":    // months
-            list($year1, $month1, $day1) = split('-', gmdate('Y-m-d', $date1));
-            list($year2, $month2, $day2) = split('-', gmdate('Y-m-d', $date2));
-            $time1 = (gmdate('H',$date1)*3600) + (gmdate('i',$date1)*60) + (gmdate('s',$date1));
-            $time2 = (gmdate('H',$date2)*3600) + (gmdate('i',$date2)*60) + (gmdate('s',$date2));
-            $diff = ($year2 * 12 + $month2) - ($year1 * 12 + $month1);
-            if($day1 > $day2) {
-                $diff -= 1;
-            } elseif($day1 == $day2) {
-                if($time1 > $time2) {
-                    $diff -= 1;
-                }
-            }
-            break;
-       case "w":    // weeks
-            // Only simple seconds calculation needed from here on
-            $diff = floor($seconds / 604800);
-            break;
-       case "d":    // days
-            $diff = floor($seconds / 86400);
-            break;
-       case "h":    // hours
-            $diff = floor($seconds / 3600);
-            break;
-       case "i":    // minutes
-            $diff = floor($seconds / 60);
-            break;
-       case "s":    // seconds
-            $diff = $seconds;
-            break;
-    }
-    return $diff;
+	$Obj1=albopc_data_obj($date1);
+	$Obj2=albopc_data_obj($date2);
+	if (!$Obj1 Or !$Obj2 Or $Obj2<$Obj1)
+		return -1;
+	$Diff=$Obj1->diff($Obj2);
+	list($y1,$m1,$d1)=array_map('intval',explode('-',$Obj1->format('Y-m-d')));
+	list($y2,$m2,$d2)=array_map('intval',explode('-',$Obj2->format('Y-m-d')));
+	switch ($interval) {
+		case "y": return ($y2-$y1)-(($m1>$m2 Or ($m1==$m2 And $d1>$d2))?1:0);
+		case "m": return (($y2*12+$m2)-($y1*12+$m1))-($d1>$d2?1:0);
+		case "w": return intdiv((int)$Diff->days,7);
+		case "d": return (int)$Diff->days;
+		case "h": return (int)$Diff->days*24;
+		case "i": return (int)$Diff->days*1440;
+		case "s": return (int)$Diff->days*86400;
+	}
+	return -1;
 }
 
 function albopc_convertiData($dataEur){
-$rsl = explode ('/',$dataEur);
-$rsl = array_reverse($rsl);
-return implode('-',$rsl);
+	/* gg/mm/aaaa -> aaaa-mm-gg. Valori in altri formati vengono girati come
+	   prima (compatibilita'): i chiamanti validano il risultato. */
+	$dataEur=trim((string)$dataEur);
+	$Obj=DateTimeImmutable::createFromFormat('!d/m/Y',$dataEur,new DateTimeZone('UTC'));
+	if ($Obj And $Obj->format('d/m/Y')===$dataEur)
+		return $Obj->format('Y-m-d');
+	return implode('-',array_reverse(explode('/',$dataEur)));
 }
 function albopc_VisualizzaData($dataDB){
-	$dataDB=substr($dataDB,0,10);
-	$rsl = explode ('-',$dataDB);
-	$rsl = array_reverse($rsl);
-	return implode('/',$rsl);
+	$Obj=albopc_data_obj($dataDB);
+	if ($Obj)
+		return $Obj->format('d/m/Y');
+	return implode('/',array_reverse(explode('-',substr((string)$dataDB,0,10))));
 }
 function albopc_VisualizzaOra($dataDB){
 return substr($dataDB,10);
@@ -710,10 +757,30 @@ return substr($dataDB,10);
 /**
  * Funzione che calcola se la data in formato TimeStampa YYY-MM-DD è una data festiva Festa/Domenica
  */
+/**
+ * Giorni fra il 21 marzo e la Pasqua (calendario gregoriano). Usa
+ * easter_days() se l'estensione calendar e' presente, altrimenti l'algoritmo
+ * di Meeus/Jones/Butcher: su molte installazioni PHP 8 l'estensione manca e
+ * la chiamata diretta causava un errore fatale nella pagina di approvazione.
+ */
+function albopc_easter_days($anno){
+	if (function_exists('easter_days'))
+		return easter_days($anno);
+	$a=$anno%19; $b=intdiv($anno,100); $c=$anno%100;
+	$d=intdiv($b,4); $e=$b%4; $f=intdiv($b+8,25); $g=intdiv($b-$f+1,3);
+	$h=(19*$a+$b-$d-$g+15)%30; $i=intdiv($c,4); $k=$c%4;
+	$l=(32+2*$e+2*$i-$h-$k)%7; $m=intdiv($a+11*$h+22*$l,451);
+	$mese=intdiv($h+$l-7*$m+114,31); $giorno=(($h+$l-7*$m+114)%31)+1;
+	$Utc=new DateTimeZone('UTC');
+	$Marzo21=(new DateTimeImmutable('now',$Utc))->setDate($anno,3,21)->setTime(0,0);
+	return (int)$Marzo21->diff($Marzo21->setDate($anno,$mese,$giorno))->days;
+}
 function albopc_IsDataFestiva($Data){
-	$d_ex=explode("-", $Data);
-	$anno=$d_ex[0];
-	// creo un vettore con le festività  italiane
+	$Obj=albopc_data_obj($Data);
+	if (!$Obj)
+		return FALSE;
+	$anno=(int)$Obj->format('Y');
+	// festivita' nazionali italiane a data fissa
 	$feste = Array(
 		'01-01' => 'Capodanno', 
 		'01-06' => 'Epifania', 
@@ -726,29 +793,14 @@ function albopc_IsDataFestiva($Data){
 		'12-25' => 'Natale', 
 		'12-26' => 'Santo Stefano'
 	); 
-	
-	// calcolo le date di Pasqua e Pasquetta
-	$gg_pasqua = easter_days($anno);
-	$gg_pasquetta = $gg_pasqua+1;
-	$tmp = gmdate('Y-m-d', strtotime('21 march ' . $anno));
-	$data_pasqua = gmdate('m-d', strtotime($tmp . ' +' . $gg_pasqua . 'day'));
-	$data_pasquetta = gmdate('m-d', strtotime($tmp . ' +' . $gg_pasquetta . 'day'));
-	
-	// aggiungo le date di Pasqua e Pasquetta nel nostro elenco di festività
-	$feste[$data_pasqua] = 'Pasqua';
-	$feste[$data_pasquetta] = 'Pasquetta';
-//echo "<pre>";var_dump($gg_pasqua);var_dump($feste);echo "</pre>";
-	$dataAnno=$d_ex[1]."-".$d_ex[2];
-	foreach($feste as $D=>$Festa){
-		if($D==$dataAnno)
-			return TRUE;
-	}
-    $d_ts=mktime(0,0,0,$d_ex[1],$d_ex[2],$d_ex[0]);
-    $num_gg=(int)gmdate("N",$d_ts);
-	if($num_gg==7)
+	// Pasqua e Pasquetta
+	$Pasqua=$Obj->setDate($anno,3,21)->modify('+'.albopc_easter_days($anno).' days');
+	$feste[$Pasqua->format('m-d')] = 'Pasqua';
+	$feste[$Pasqua->modify('+1 day')->format('m-d')] = 'Pasquetta';
+	if (isset($feste[$Obj->format('m-d')]))
 		return TRUE;
-	else
-		return FALSE;
+	// domenica
+	return $Obj->format('N')==='7';
 }
 ################################################################################
 // Funzioni Log
@@ -814,12 +866,30 @@ global $wpdb;
 											  '%s'));	
 }
 
+/**
+ * GHSA-75h3-49jg-mw5w (punto 2): il registro delle operazioni (chi ha
+ * pubblicato, modificato, annullato cosa e quando) e' la traccia richiesta
+ * dall'art. 5 par. 2 GDPR e dalle Linee guida del Garante (par. 2.d) e non
+ * si cancella piu' dal pannello. Si possono eliminare solo le statistiche
+ * di accesso (visualizzazioni e download, Oggetto 5 e 6):
+ *  $Tipo 0  - tutte le statistiche di accesso
+ *  $Tipo 11 - statistiche di accesso piu' vecchie di un anno
+ * L'operazione stessa viene registrata nel log.
+ */
 function albopc_svuota_log($Tipo=0){
 global $wpdb;
 	if ($Tipo==0)
-		$nr=$wpdb->query("DELETE FROM $wpdb->table_name_Log");
+		$nr=$wpdb->query("DELETE FROM $wpdb->table_name_Log WHERE Oggetto IN (5,6)");
 	else
-		$nr=$wpdb->query("Delete FROM $wpdb->table_name_Log WHERE Oggetto<>5 and Oggetto<>6");
+		$nr=$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->table_name_Log WHERE Oggetto IN (5,6) AND Data < %s", wp_date('Y-m-d', strtotime('-1 year'))));
+	$current_user = wp_get_current_user();
+	$wpdb->insert($wpdb->table_name_Log,array('IPAddress' => "",
+	                                          'Utente' => $current_user->user_login,
+											  'Oggetto' => 7,
+										      'IdOggetto' => 0,
+										      'IdAtto' => 0,
+											  'TipoOperazione' => 3,
+											  'Operazione' => sprintf("Cancellazione statistiche di accesso (%s): %d righe", ($Tipo==0?"tutte":"oltre un anno"), (int)$nr)));
 	return $nr;
 }
 function albopc_get_all_Oggetto_log($Oggetto,$IdOggetto=0,$IdAtto=0){
@@ -1340,7 +1410,7 @@ function albopc_categorie_orfane(){
 
 function albopc_setOblioOggi($IdAtto){
 	global $wpdb;
-	$DataOblio=gmdate('Y-m-d');
+	$DataOblio=wp_date('Y-m-d');
 	if ( $wpdb->update($wpdb->table_name_Atti,
 			array('DataOblio' => $DataOblio),
 			array( 'IdAtto' => $IdAtto),
@@ -1349,7 +1419,7 @@ function albopc_setOblioOggi($IdAtto){
 	albopc_insert_log(1,2,$IdAtto,"{Data Oblio}==> ".$DataOblio);
 	$atto=albopc_get_atto($IdAtto);
 	$atto=$atto[0];
-	return "Data Oblio dell'Atto:".$atto->Numero."/".$atto->Anno." Impostata ad oggi:".gmdate('d/m/Y');	}
+	return "Data Oblio dell'Atto:".$atto->Numero."/".$atto->Anno." Impostata ad oggi:".wp_date('d/m/Y');	}
 }
 function albopc_AnniAtti(){
 	global $wpdb;
@@ -1419,7 +1489,7 @@ function albopc_SetDefaultDataScadenza(){
 }
 function albopc_insert_atto($Ente,$Data,$Riferimento,$Oggetto,$DataInizio,$DataFine,$DataOblio,$Note,$Categoria,$Responsabile,$Soggetti,$IdUI,$Richiedente){
 	global $wpdb;
-	$Anno=gmdate("Y");
+	$Anno=wp_date("Y");
 	$Numero=0;
 	$Data=albopc_convertiData($Data);
 	$DataInizio=albopc_convertiData($DataInizio);
@@ -1625,12 +1695,18 @@ function albopc_update_selettivo_atto($id,$ArrayCampiValori,$ArrayTipi,$TestaMsg
 function albopc_approva_atto($IdAtto){
 	global $wpdb;
 	$IdAtto=(int)$IdAtto;
-	$NumeroDaDb=albopc_get_last_num_anno(gmdate("Y"));
+	$NumeroDaDb=albopc_get_last_num_anno(wp_date("Y"));
 	$risultato=albopc_get_atto($IdAtto);
 	$risultato=$risultato[0];
 	$NumeroOpzione=get_option('opt_AP_NumeroProgressivo');
 	if($risultato->Numero!=0)
 		return __("Atto gia' PUBBLICATO con Numero Progressivo ","albo-pretorio-on-line").$risultato->Numero;
+	/* Controllo lato server della durata minima: la fine non puo' precedere
+	   inizio + giorni della categoria (L. 69/2009 art. 32, TUEL art. 124). */
+	$Categoria=albopc_get_categoria($risultato->IdCategoria);
+	$GiorniMinimi=(!empty($Categoria))?(int)$Categoria[0]->Giorni:0;
+	if($risultato->DataInizio=="0000-00-00" Or $risultato->DataFine=="0000-00-00" Or $risultato->DataFine<albopc_DateAdd($risultato->DataInizio,$GiorniMinimi))
+		return __("Atto non PUBBLICATO","albo-pretorio-on-line").":%%br%%".sprintf(/* translators: %s giorni minimi della categoria */ __("la durata della pubblicazione è inferiore ai %s giorni previsti per la categoria","albo-pretorio-on-line"),$GiorniMinimi);
 	if (($NumeroDaDb!=$NumeroOpzione) And albopc_get_all_atti(9,0,0,0,"",0,0,"",0,0,TRUE)>0){
 		return __("Atto non PUBBLICATO","albo-pretorio-on-line").":%%br%%".__("Progressivo da ultima pubblicazione","albo-pretorio-on-line")."=$NumeroDaDb%%br%% ".__("Progressivo da parametri","albo-pretorio-on-line")."=$NumeroOpzione";
 	}else{
@@ -1658,7 +1734,7 @@ function albopc_annulla_atto($IdAtto,$Motivo,$Allegati=array()){
 	$IdAtto=(int)$IdAtto;
 //	$risultato=albopc_get_atto($IdAtto);
 //	$risultato=$risultato[0];
-	$Sql = "UPDATE `$wpdb->table_name_Atti` SET DataAnnullamento='".gmdate('Y-m-d')."', MotivoAnnullamento=%s  WHERE IdAtto=%d";
+	$Sql = "UPDATE `$wpdb->table_name_Atti` SET DataAnnullamento='".wp_date('Y-m-d')."', MotivoAnnullamento=%s  WHERE IdAtto=%d";
 	$Sql=$wpdb->prepare($Sql,array($Motivo,$IdAtto));
 	$Result=$wpdb->query($Sql);
 //	echo "Sql==".$wpdb->last_query ."    Ultimo errore==".$wpdb->last_error;exit;
@@ -1885,6 +1961,55 @@ function albopc_get_atto($id){
 	return $wpdb->get_results("SELECT IdAtto,LPAD(Numero,7,0) as Numero,Anno,Data,Riferimento,Oggetto,DataInizio,DataFine,Informazioni,IdCategoria,RespProc,DataAnnullamento,MotivoAnnullamento,Ente,DataOblio,Soggetti,IdUnitaOrganizzativa, Richiedente FROM $wpdb->table_name_Atti Where IdAtto=$id;");
 }	
 
+/**
+ * Lo storico pubblico (atti scaduti ancora consultabili dal sito fino alla
+ * data di oblio) e' disattivato di default: le Linee guida del Garante del
+ * 15/05/2014 (parte II, 3.a) vietano di continuare a diffondere i dati
+ * personali dopo il periodo di pubblicazione, salvo archivi con dati oscurati.
+ */
+function albopc_storico_pubblico(){
+	return get_option('opt_AP_StoricoPubblico','No')=="Si";
+}
+
+/**
+ * Unica regola di visibilita' pubblica di un atto, usata da scheda, stampa,
+ * scarico allegati, elenchi e REST:
+ * - numero di pubblicazione assegnato (non bozza);
+ * - data di inizio impostata e raggiunta;
+ * - data di fine non passata, oppure storico pubblico attivo e data di
+ *   oblio futura.
+ * Gli atti annullati restano visibili (con il motivo) per lo stesso periodo.
+ *
+ * @param object|int $Atto riga restituita da albopc_get_atto() o IdAtto.
+ */
+function albopc_atto_pubblico($Atto){
+	if (!is_object($Atto)){
+		$Atto=albopc_get_atto((int)$Atto);
+		if (empty($Atto))
+			return FALSE;
+		$Atto=$Atto[0];
+	}
+	$Oggi=albopc_oggi();
+	if ((int)$Atto->Numero<=0)
+		return FALSE;
+	if (empty($Atto->DataInizio) Or $Atto->DataInizio=="0000-00-00" Or $Atto->DataInizio>$Oggi)
+		return FALSE;
+	if (!empty($Atto->DataFine) And $Atto->DataFine!="0000-00-00" And $Atto->DataFine>=$Oggi)
+		return TRUE;
+	if (albopc_storico_pubblico() And !empty($Atto->DataOblio) And $Atto->DataOblio!="0000-00-00" And $Atto->DataOblio>$Oggi)
+		return TRUE;
+	return FALSE;
+}
+
+/**
+ * Un atto e' modificabile o cancellabile solo finche' e' in bozza
+ * (Numero=0). Dopo la pubblicazione resta disponibile solo l'annullamento.
+ */
+function albopc_atto_in_bozza($IdAtto){
+	$Atto=albopc_get_atto((int)$IdAtto);
+	return !empty($Atto) And (int)$Atto[0]->Numero===0;
+}
+
 function albopc_is_atto_corrente($id){
 	$atto=albopc_get_atto($id);
 	$atto=$atto[0];
@@ -1947,7 +2072,14 @@ function albopc_ripubblica_atti_correnti($ArrayAtti){
 	echo "</pre>";
 	wp_die();
 */	foreach($ArrayAtti as $IDAtto => $Ngg){
-		$Atto=albopc_get_atto($IDAtto);
+		/* Solo proroghe (giorni positivi, al massimo un anno) di atti pubblicati:
+		   un valore negativo accorcerebbe pubblicazioni in corso. */
+		$Ngg=(int)$Ngg;
+		if ($Ngg<1 Or $Ngg>366)
+			continue;
+		$Atto=albopc_get_atto((int)$IDAtto);
+		if (empty($Atto) Or (int)$Atto[0]->Numero<=0)
+			continue;
 		$Atto=$Atto[0];
 		$DataFine=albopc_DateAdd($Atto->DataFine,$Ngg);
 		if(strlen($Atto->Informazioni)>0)
@@ -2146,11 +2278,30 @@ global $wpdb;
 	return $Impronta;
 }
 
+/**
+ * Numero di righe allegato che puntano allo stesso file (escludendo
+ * eventualmente quella indicata).
+ */
+function albopc_conta_riferimenti_file($Percorso,$EscludiIdAllegato=0){
+	global $wpdb;
+	return (int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->table_name_Allegati WHERE Allegato=%s AND IdAllegato<>%d",$Percorso,(int)$EscludiIdAllegato));
+}
 function albopc_del_allegato_atto($idAllegato,$idAtto=0,$nomeAllegato='',$SoloFile="N"){
 global $wpdb;
 	$idAllegato=(int)$idAllegato;
 	$idAtto=(int)$idAtto;
 	$allegato=albopc_get_allegato_atto($idAllegato);
+	if (empty($allegato))
+		return FALSE;
+	/* Se lo stesso file e' il documento di un altro atto non si cancella:
+	   si elimina solo la riga di questo allegato. */
+	if ($SoloFile=="N" And albopc_conta_riferimenti_file($allegato[0]->Allegato,$idAllegato)>0){
+		$wpdb->query($wpdb->prepare( "DELETE FROM $wpdb->table_name_Allegati WHERE IdAllegato=%d",$idAllegato));
+		albopc_insert_log(3,3,$allegato[0]->IdAllegato,"{".__("Nome Allegato","albo-pretorio-on-line")."}==> ".$allegato[0]->TitoloAllegato." (file condiviso con altri allegati, non cancellato)",$idAtto);
+		return True;
+	}
+	if ($SoloFile!="N" And albopc_conta_riferimenti_file($allegato[0]->Allegato,$idAllegato)>0)
+		return FALSE;
 	if (file_exists($allegato[0]->Allegato) && is_file($allegato[0]->Allegato))
 	// phpcs:disable WordPress.WP.AlternativeFunctions, PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite -- I/O diretto sulle cartelle di lavoro in wp-content/uploads (backup, allegati, protezione dir): streaming SQL e download non gestibili da WP_Filesystem, cartelle gia scrivibili.
 		if (unlink($allegato[0]->Allegato)){
@@ -2172,7 +2323,7 @@ global $wpdb;
 	$Allegati=albopc_get_all_allegati_atto($idAtto);
 	$Del=FALSE;
 	foreach($Allegati as $allegato){
-		if (file_exists($allegato->Allegato) && is_file($allegato->Allegato))
+		if (albopc_conta_riferimenti_file($allegato->Allegato,$allegato->IdAllegato)==0 && file_exists($allegato->Allegato) && is_file($allegato->Allegato))
 			if (unlink($allegato->Allegato)){
 				$Del=TRUE;
 			}
@@ -2204,6 +2355,15 @@ function albopc_allinea_allegati(){
 			$NewAllegato=$NewPath."/".basename($allegato["Allegato"]);
 		}else{
 			$NewAllegato=$BaseCurDir."/".basename($allegato['Allegato']);			
+		}
+		if ($NewAllegato==$allegato['Allegato'])
+			continue;
+		/* Il percorso si aggiorna solo se nella nuova posizione c'e' davvero lo
+		   stesso documento (stessa impronta): altrimenti l'atto resterebbe senza
+		   documento o punterebbe al file omonimo di un altro atto. */
+		if (!is_file($NewAllegato) Or (!empty($allegato['Impronta']) And hash_file("sha256",$NewAllegato)!==$allegato['Impronta'])){
+			$msg.='<spam style="color:red;">'.__('Percorso non aggiornato: file assente o diverso nella nuova posizione','albo-pretorio-on-line').'</spam> '.$allegato['Allegato']."%%br%%";
+			continue;
 		}
 		if ($wpdb->update($wpdb->table_name_Allegati,
 									array('Allegato' => $NewAllegato),
@@ -2607,11 +2767,12 @@ function albopc_enti_orfani(){
 }
 function albopc_set_ente_orfani($IDEnte){
 	global $wpdb;
+	/* Solo le bozze: gli atti pubblicati non si modificano. */
 	return $wpdb->update($wpdb->table_name_Atti,
-		 array('Ente' => $IDEnte),
-		 array('Ente' => -1 ),
+		 array('Ente' => (int)$IDEnte),
+		 array('Ente' => -1, 'Numero' => 0 ),
 		 array('%d'),
-		 array('%d'));
+		 array('%d','%d'));
 }
 ################################################################################
 // Funzioni Unità Organizzative
@@ -3068,7 +3229,7 @@ function albopc_backquote($a_name) {
 		if (is_array($a_name)) {
 			$result = array();
 			reset($a_name);
-			while(list($key, $val) = each($a_name)) 
+			foreach($a_name as $key => $val) 
 				$result[$key] = '`' . $val . '`';
 			return $result;
 		} else {
@@ -3215,7 +3376,7 @@ function albopc_oblio_atti($Atti){
 			$Msg.="Atto ".$riga->IdAtto;
 			$MsgAlle=" ".__("Allegati","albo-pretorio-on-line");
 			albopc_BackupFilesAllegatiOblio($riga->IdAtto);
-			if (albopc_cvdate($riga->DataOblio) <= albopc_cvdate(gmdate("Y-m-d"))){
+			if (albopc_cvdate($riga->DataOblio) <= albopc_cvdate(wp_date("Y-m-d"))){
 				if(albopc_del_allegati_atto((int)$Atto)){
 					$MessaggiRitorno["Message2"]=10;// Allegati all'Atto Cancellati
 					$MsgAlle.=" ".__("all'Atto Cancellati","albo-pretorio-on-line");
@@ -3376,7 +3537,7 @@ function albopc_oblio_atti($Atti){
 			}
 		}
 		if(!$Trovato){
-			$TipidiFiles[strtolower($ID)]=array("Descrizione"=>$Descrizione,"Icona"=>$Icona,"Verifica"=>htmlspecialchars($Verifica));
+			$TipidiFiles[strtolower($ID)]=array("Descrizione"=>$Descrizione,"Icona"=>$Icona,"Verifica"=>htmlspecialchars($Verifica, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401));
 			update_option('opt_AP_TipidiFiles', $TipidiFiles);
 			albopc_insert_log(8,1,$ID,"{".__("Descrizione","albo-pretorio-on-line")."}==> $Descrizione 
 								  {".__("Icona","albo-pretorio-on-line")."}==> $Icona
@@ -3387,7 +3548,7 @@ function albopc_oblio_atti($Atti){
 	function albopc_memo_tipofiles($ID,$Descrizione,$Icona,$Verifica){
 		$ID=trim($ID);
 		$TipidiFiles=albopc_get_tipidifiles();
-		$TipidiFiles[strtolower($ID)]=array("Descrizione"=>$Descrizione,"Icona"=>$Icona,"Verifica"=>htmlspecialchars($Verifica));
+		$TipidiFiles[strtolower($ID)]=array("Descrizione"=>$Descrizione,"Icona"=>$Icona,"Verifica"=>htmlspecialchars($Verifica, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401));
 		albopc_insert_log(8,2,$ID,"{".__("Descrizione","albo-pretorio-on-line")."}==> $Descrizione 
 					  {".__("Icona","albo-pretorio-on-line")."}==> $Icona
 					  {".__("Verifica","albo-pretorio-on-line")."}==> $Verifica");

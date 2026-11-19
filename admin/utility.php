@@ -348,7 +348,7 @@ switch ($passo){
 				<table class="widefat" style="border: thin solid #f9f9f9;">
 					<tr>
 						<th style="width:10em;">'.__("Giorno di inizio Interruzione","albo-pretorio-on-line").'</th>
-						<td><input name="DataInterruzione" id="DataInterruzione" type="date" max="'.gmdate("Y-m-d").'"/></td>
+						<td><input name="DataInterruzione" id="DataInterruzione" type="date" max="'.wp_date("Y-m-d").'"/></td>
 					</tr>
 					<tr>
 						<th>'.__("Giorni di Interruzione","albo-pretorio-on-line").'</th>
@@ -427,12 +427,12 @@ echo '		</div>
 			<p style="font-style: italic;font-weight: bold;">'.__("Questa procedura può cancellare una grossa quantità di dati, se non si vuole perderli si consiglia di fare un backup del DataBase o della tabella","albo-pretorio-on-line").' <span style="font-style: normal;">'.$wpdb->table_name_Log.'</span>
 				</p>
 					<ul style="list-style: none;">
-						<li>'.__("Questa procedura cancella tutte le registrazioni presenti nel file di log","albo-pretorio-on-line").'&nbsp;&nbsp;
-							<button  type="button" onclick="location.href=\'?page=utilityAlboP&action=svuotalog&amp;svuotalog='.wp_create_nonce('svuotafilelog').'\'"> '.__("Svuota file di Log","albo-pretorio-on-line").' 
+						<li>'.__("Questa procedura cancella tutte le statistiche di accesso (visualizzazioni e download). Il registro delle operazioni sugli atti non viene mai cancellato","albo-pretorio-on-line").'&nbsp;&nbsp;
+							<button  type="button" onclick="location.href=\'?page=utilityAlboP&action=svuotalog&amp;svuotalog='.wp_create_nonce('svuotafilelog').'\'"> '.__("Cancella statistiche di accesso","albo-pretorio-on-line").' 
 							</button>
 						</li>
-						<li>'.__("Questa procedura cancella tutte le registrazioni di gestione dal file di log mantenendo le statistiche di accesso","albo-pretorio-on-line").'
-							<button type="button" onclick="location.href=\'?page=utilityAlboP&action=puliscilog&amp;puliscilog='.wp_create_nonce('puliscifilelog').'\'"> '.__("Pulisci file di Log","albo-pretorio-on-line").' 
+						<li>'.__("Questa procedura cancella le statistiche di accesso più vecchie di un anno. Il registro delle operazioni sugli atti non viene mai cancellato","albo-pretorio-on-line").'
+							<button type="button" onclick="location.href=\'?page=utilityAlboP&action=puliscilog&amp;puliscilog='.wp_create_nonce('puliscifilelog').'\'"> '.__("Cancella statistiche oltre un anno","albo-pretorio-on-line").' 
 							</button>
 						</li>
 					</ul>
@@ -474,7 +474,7 @@ echo '  <div id="utility-tab-5" style="margin-bottom:20px;">
 	if (isset($_GET['Anno']))
 		$AnnoRepertorio=(isset($_GET['Anno'])?intval($_GET['Anno']):0);
 	else
-		$AnnoRepertorio=gmdate("Y");
+		$AnnoRepertorio=wp_date("Y");
 		if (($Anni=albopc_AnniAtti())!=FALSE){
 			echo '<div style="display:inline">
 			'.__("Repertorio","albo-pretorio-on-line").' <select id="Anno" onchange="document.location.href=this.options[this.selectedIndex].value;">
@@ -1268,19 +1268,28 @@ echo'
 </div>';
 }	
 function albopc_AggiornaHashAllegati(){
+	/* L'impronta e' la prova che il documento pubblicato non e' cambiato:
+	   si calcola solo per gli allegati che non ce l'hanno. Per gli altri si
+	   verifica e si segnala ogni differenza senza sovrascriverla. */
 	global $wpdb;
 	$allegati=$wpdb->get_results("SELECT * FROM $wpdb->table_name_Allegati ;",ARRAY_A );
 	foreach ( $allegati as $allegato) {
 		if (is_file($allegato['Allegato'])){
 			$Impronta=hash_file("sha256", $allegato['Allegato']);
-			if ($wpdb->update($wpdb->table_name_Allegati,
-				array('Impronta' => $Impronta),
-				array('IdAllegato' => $allegato['IdAllegato'] ),
-				array('%s'),
-				array('%d'))) {
-					echo'<spam style="color:green;">'.esc_html__('Aggiornamento Hash Allegato','albo-pretorio-on-line').'</spam> '.esc_html($allegato['Allegato']).' <spam style="color:red;">'.esc_html($Impronta).'</spam><br />';
+			if (empty($allegato['Impronta'])){
+				if ($wpdb->update($wpdb->table_name_Allegati,
+					array('Impronta' => $Impronta),
+					array('IdAllegato' => $allegato['IdAllegato'] ),
+					array('%s'),
+					array('%d'))) {
+						albopc_insert_log(3,2,(int)$allegato['IdAllegato'],"{".__("Impronta","albo-pretorio-on-line")."}==> ".$Impronta,(int)$allegato['IdAtto']);
+						echo'<spam style="color:green;">'.esc_html__('Impronta calcolata','albo-pretorio-on-line').'</spam> '.esc_html($allegato['Allegato']).' <spam style="color:red;">'.esc_html($Impronta).'</spam><br />';
+				}
+			}elseif (hash_equals((string)$allegato['Impronta'],$Impronta)){
+				echo esc_html($allegato['Allegato']).' <spam style="color:green;">'.esc_html__('Impronta verificata','albo-pretorio-on-line').'</spam><br />';
 			}else{
-				echo esc_html($allegato['Allegato']).' <spam style="color:red;">'.esc_html__('Allegato già aggiornato','albo-pretorio-on-line').'</spam><br />';
+				albopc_insert_log(3,2,(int)$allegato['IdAllegato'],"{".__("Impronta NON corrispondente","albo-pretorio-on-line")."}==> registrata ".$allegato['Impronta']." attuale ".$Impronta,(int)$allegato['IdAtto']);
+				echo esc_html($allegato['Allegato']).' <spam style="color:red;font-weight:bold;">'.esc_html__('ATTENZIONE: il file non corrisponde all\'impronta registrata, impronta NON aggiornata','albo-pretorio-on-line').'</spam><br />';
 			}
 		}else{
 			echo esc_html($allegato['Allegato']).' <spam style="color:red;">'.esc_html__('File non trovato','albo-pretorio-on-line').'</spam><br />';

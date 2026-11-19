@@ -93,7 +93,7 @@ function albopc_StampaAtto($id, $tipo) {
     $Testi=json_decode(get_option('opt_AP_Testi'),TRUE);
 	if(!is_array($Testi)){
 	  	$Testi=array("NoResp"=>"",
-	  	             "CertPub"=>__("Si attesta l'avvenuta pubblicazione del documento all'albo pretorio sopra indicato per il quale non sono pervenute osservazioni","albo-pretorio-on-line"));
+	  	             "CertPub"=>__("Si attesta l'avvenuta pubblicazione del documento all'albo pretorio sopra indicato per il periodo indicato","albo-pretorio-on-line"));
 	  }
     ?>
     <div class="printalbo" id="<?php echo esc_attr($idtipo); ?>" style="width: 90%;">
