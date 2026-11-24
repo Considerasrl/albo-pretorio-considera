@@ -9,6 +9,15 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
+## [4.14.1] - 2026-11-24
+
+### Sicurezza
+- Elenchi pubblici, conteggi e API REST: il filtro "da data" non sostituisce più la condizione di visibilità, quindi gli atti numerati con pubblicazione futura non compaiono più prima della data di inizio (completamento di GHSA-w3m3-64pc-486v).
+- Protezione della cartella degli allegati verificata a ogni caricamento dell'area amministrativa, indipendentemente dal numero di versione: se il `.htaccess` non è quello atteso il plugin riprova a scriverlo e, se non ci riesce, mostra un avviso agli amministratori.
+
+### Ringraziamenti
+- Daniele Armentano e Francesco Otranto per la verifica della correzione e la segnalazione dei due punti residui.
+
 ## [4.14.0] - 2026-11-19
 
 ### Sicurezza

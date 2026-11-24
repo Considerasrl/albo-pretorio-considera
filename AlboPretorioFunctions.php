@@ -272,6 +272,55 @@ if($Return){
 	return $Stato;
 }
 
+/**
+ * Verifica che la cartella degli allegati abbia il .htaccess attuale (deny-all).
+ * Serve perche' la scrittura in activate() puo' fallire (permessi) e il
+ * controllo di versione non la ripeterebbe: le vecchie regole basate sul
+ * Referer resterebbero attive.
+ */
+function albopc_protezione_allegati_ok($dir=''){
+	if ($dir==='')
+		$dir=AP_BASE_DIR.'AllegatiAttiAlboPretorio';
+	if (!is_dir($dir))
+		return true; // nessun allegato ancora caricato: la cartella verra' creata protetta
+	$file=$dir."/".albopc_decodenamefile();
+	if (!is_readable($file))
+		return false;
+	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- file locale del plugin
+	$attuale=@file_get_contents($file);
+	if ($attuale===false)
+		return false;
+	$atteso=albopc_NoIndexNoDirectLink($dir,TRUE,'htaccess');
+	return str_replace("\r","",trim($attuale))===str_replace("\r","",trim($atteso));
+}
+
+/**
+ * Controllo in area amministrativa: se la protezione non e' quella attesa
+ * riprova a scriverla e, se non ci riesce, mostra un avviso persistente agli
+ * amministratori finche' il problema non e' risolto.
+ */
+function albopc_controlla_protezione_allegati(){
+	if (albopc_protezione_allegati_ok())
+		return;
+	albopc_NoIndexNoDirectLink(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
+	if (albopc_protezione_allegati_ok())
+		return;
+	add_action('admin_notices','albopc_avviso_protezione_allegati');
+}
+
+function albopc_avviso_protezione_allegati(){
+	if (!current_user_can('admin_albo') And !current_user_can('manage_options'))
+		return;
+	$dir=AP_BASE_DIR.'AllegatiAttiAlboPretorio';
+	echo '<div class="notice notice-error"><p><strong>'.esc_html__('Albo Pretorio On line: allegati non protetti','albo-pretorio-on-line').'</strong><br />'
+		.esc_html(sprintf(
+			/* translators: 1: nome del file, 2: percorso della cartella */
+			__('Non è stato possibile aggiornare il file %1$s nella cartella %2$s: i file allegati potrebbero essere raggiungibili direttamente. Rendere il file scrivibile dal server web (il plugin riproverà a ogni caricamento dell\'area amministrativa) oppure sostituirne il contenuto con "Require all denied". Su nginx/IIS negare l\'accesso alla cartella nella configurazione del server.','albo-pretorio-on-line'),
+			albopc_decodenamefile(),
+			$dir
+		)).'</p></div>';
+}
+
 function albopc_Formato_Dimensione_File($a_bytes)
 {
     if ($a_bytes < 1024) {
@@ -1851,27 +1900,28 @@ function albopc_get_all_atti($Stato=0,$Numero=0,$Anno=0,$Categoria=0,$Oggetto=''
 					$Selezione.=' AND DataFine>="'.albopc_convertiData($Dadata);
 				$Selezione.='" AND Numero<>0 '; 
 				break;
+		/* Stati 1 e 2 alimentano elenchi pubblici, conteggi e REST: il vincolo di
+		   visibilita' (numerato, DataInizio<=oggi) resta sempre nella query e i
+		   filtri di ricerca si aggiungono solo come condizioni ulteriori. Prima
+		   il filtro "dadata" sostituiva DataInizio<=oggi e faceva comparire gli
+		   atti con pubblicazione futura (segnalazione su GHSA-w3m3-64pc-486v). */
 		case 1:
-			if ($Dadata!=0 and albopc_SeDate("<",albopc_convertiData($Dadata),albopc_oggi()))
-				$Selezione.=' WHERE DataInizio>="'.albopc_convertiData($Dadata).'" ';
-			else
-				$Selezione.=' WHERE DataInizio<="'.albopc_oggi().'" ';
-			if ($Adata!=0  and albopc_SeDate(">",albopc_convertiData($Adata),albopc_oggi()))
-				$Selezione.=' AND DataFine<="'.albopc_convertiData($Adata).'" And DataFine>="'.albopc_oggi();
-			else
-				$Selezione.=' AND DataFine>="'.albopc_oggi();
-			$Selezione.='" AND Numero>0'; 
+			$albopc_oggi=albopc_oggi();
+			$Selezione=$wpdb->prepare(' WHERE Numero>0 AND DataInizio<=%s AND DataFine>=%s',$albopc_oggi,$albopc_oggi);
+			if ($Dadata!=0 and albopc_SeDate("<",albopc_convertiData($Dadata),$albopc_oggi))
+				$Selezione.=$wpdb->prepare(' AND DataInizio>=%s',albopc_convertiData($Dadata));
+			if ($Adata!=0  and albopc_SeDate(">",albopc_convertiData($Adata),$albopc_oggi))
+				$Selezione.=$wpdb->prepare(' AND DataFine<=%s',albopc_convertiData($Adata));
 			break;
 		case 2:
-			if ($Dadata!=0  and albopc_SeDate("<",albopc_convertiData($Dadata),albopc_oggi()))
-				$Selezione.=' WHERE DataInizio>="'.albopc_convertiData($Dadata).'" ';
+			$albopc_oggi=albopc_oggi();
+			$Selezione=$wpdb->prepare(' WHERE Numero>0 AND DataInizio<=%s AND DataOblio>%s',$albopc_oggi,$albopc_oggi);
+			if ($Dadata!=0  and albopc_SeDate("<",albopc_convertiData($Dadata),$albopc_oggi))
+				$Selezione.=$wpdb->prepare(' AND DataInizio>=%s',albopc_convertiData($Dadata));
+			if ($Adata!=0   and albopc_SeDate("<",albopc_convertiData($Adata),$albopc_oggi))
+				$Selezione.=$wpdb->prepare(' AND DataFine<%s',albopc_convertiData($Adata));
 			else
-				$Selezione.=' WHERE DataInizio<="'.albopc_oggi().'" ';
-			if ($Adata!=0   and albopc_SeDate("<",albopc_convertiData($Adata),albopc_oggi()))
-				$Selezione.=' AND DataFine<"'.albopc_convertiData($Adata);
-			else
-				$Selezione.=' AND DataFine<"'.albopc_oggi();
-			$Selezione.='" AND Numero>0 And DataOblio>"'.albopc_oggi().'" '; 
+				$Selezione.=$wpdb->prepare(' AND DataFine<%s',$albopc_oggi);
 			break;
 		case 3:
 			$Selezione=' WHERE Numero=0'; 

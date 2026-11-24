@@ -4,7 +4,7 @@ Tags: albo pretorio, pubblica amministrazione, atti, trasparenza, comuni
 Requires at least: 5.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 4.14.0
+Stable tag: 4.14.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -78,6 +78,10 @@ Sì. Il plugin lavora sulle stesse tabelle e cartelle dell'originale.
 
 Il changelog completo è mantenuto nel file CHANGELOG.md del repository.
 
+= 4.14.1 =
+* Sicurezza: gli atti con pubblicazione futura non compaiono più negli elenchi pubblici e nella REST quando si usa il filtro "da data".
+* Sicurezza: la protezione della cartella degli allegati viene verificata e, se necessario, riscritta in area amministrativa, con avviso se non è possibile.
+
 = 4.14.0 =
 Correzioni di sicurezza: bozze e atti non pubblici non più accessibili dal sito,
 cartella allegati chiusa all'accesso diretto, atti pubblicati non modificabili,
@@ -116,6 +120,12 @@ AJAX, SQL injection nella ricerca e via ORDER BY, XSS memorizzato, object
 injection, accesso agli allegati.
 
 == Upgrade Notice ==
+
+= 4.14.1 =
+Aggiornamento di sicurezza: corregge vulnerabilità che esponevano atti non
+pubblici e allegati (GHSA-w3m3-64pc-486v, GHSA-75h3-49jg-mw5w). Aggiornare
+subito. Su nginx/IIS negare l'accesso diretto alla cartella
+uploads/AllegatiAttiAlboPretorio nella configurazione del server.
 
 = 4.11.0 =
 Include tutte le correzioni di sicurezza fino alla 4.10.1. Aggiornamento
