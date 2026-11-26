@@ -128,6 +128,7 @@ if ( get_option( 'opt_AP_EliminaDatiDisinstallazione', 'No' ) !== 'Si' ) {
 		delete_option( 'opt_AP_BootstrapItalia' );
 		delete_option( 'opt_AP_StoricoPubblico' );
 		delete_option( 'opt_AP_EliminaDatiDisinstallazione' );
+		delete_option( 'opt_AP_AvvisoStorico' );
 		albopc_Rmdir(AlboBCK);
 		albopc_Rmdir(AP_BASE_DIR.'AllegatiAttiAlboPretorio');
 ?>

@@ -4,7 +4,7 @@
  * Plugin Name:       Albo Pretorio On line
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.14.1
+ * Version:           4.14.2
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
@@ -106,6 +106,8 @@ if (!class_exists('AlboPretorio')) {
 		add_action( 'wp_ajax_rimuoviAllegato','albopc_rimuoviallegatoPP' );
 		add_action( 'admin_post_albopc_allegato','albopc_admin_vedi_allegato' );
 		add_action( 'admin_init','albopc_controlla_protezione_allegati' );
+		add_action( 'admin_notices','albopc_avviso_storico_pubblico' );
+		add_action( 'admin_post_albopc_chiudi_avviso_storico','albopc_chiudi_avviso_storico' );
 
 		add_filter( 'post_link',array($this,'permalinkSearchAlbo'), 10, 3);
 		$RestApi=get_option('opt_AP_RestApi');
@@ -1956,7 +1958,13 @@ if(get_option('opt_AP_AnnoProgressivo')!=wp_date("Y")){
 * 
 */
 	$PData = get_plugin_data( __FILE__ );
-	$PVer = $PData['Version'];	
+	$PVer = $PData['Version'];
+	/* Dalla 4.14.0 lo storico pubblico e' disattivato di default: chi aggiorna
+	   da una versione precedente alla 4.14.2 (incluse 4.14.0 e 4.14.1, che non
+	   lo segnalavano) riceve un avviso in bacheca. Le nuove installazioni no. */
+	$albopc_VerPrec=get_option('opt_AP_Versione');
+	if (!empty($albopc_VerPrec) && $albopc_VerPrec!=='0' && version_compare($albopc_VerPrec,'4.14.2','<'))
+		update_option('opt_AP_AvvisoStorico','Si');
 	update_option('opt_AP_Versione', $PVer);
 	delete_option( 'alboonline-notice-dismissed' );
 /**

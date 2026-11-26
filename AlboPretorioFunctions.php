@@ -321,6 +321,37 @@ function albopc_avviso_protezione_allegati(){
 		)).'</p></div>';
 }
 
+/**
+ * Avviso in bacheca dopo l'aggiornamento: dalla 4.14.0 lo storico pubblico
+ * degli atti scaduti e' disattivato di default (Garante privacy, Linee guida
+ * 15/05/2014, parte II, par. 3.a). Resta visibile agli amministratori
+ * dell'albo finche' non lo chiudono o non attivano consapevolmente lo storico.
+ */
+function albopc_avviso_storico_pubblico(){
+	if (get_option('opt_AP_AvvisoStorico','No')!=='Si' || albopc_storico_pubblico())
+		return;
+	if (!current_user_can('admin_albo') And !current_user_can('manage_options'))
+		return;
+	$albopc_UrlParametri=admin_url('admin.php?page=configAlboP#Conf-tab-4');
+	$albopc_UrlChiudi=wp_nonce_url(admin_url('admin-post.php?action=albopc_chiudi_avviso_storico'),'albopc_chiudi_avviso_storico');
+	$albopc_UrlGarante='https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/3134436';
+	echo '<div class="notice notice-warning"><p><strong>'.esc_html__('Albo Pretorio On line: lo storico pubblico degli atti scaduti è disattivato','albo-pretorio-on-line').'</strong></p>'
+		.'<p>'.esc_html__('Dalla versione 4.14.0 gli atti la cui pubblicazione è terminata non sono più consultabili sul sito pubblico: la pagina degli atti scaduti mostra un messaggio informativo e i link diretti a questi atti rispondono "Documento non disponibile". Le Linee guida del Garante per la protezione dei dati personali del 15 maggio 2014 (parte II, par. 3.a, "Albo pretorio online") vietano di continuare a diffondere i dati personali contenuti negli atti dopo il periodo di pubblicazione previsto dalla norma.','albo-pretorio-on-line').'</p>'
+		.'<p>'.esc_html__("Lo storico può essere riattivato solo se i documenti scaduti sono privi di dati personali o con dati resi anonimi: la verifica è responsabilità dell'ente.",'albo-pretorio-on-line').'</p>'
+		.'<p><a href="'.esc_url($albopc_UrlGarante).'" target="_blank" rel="noopener noreferrer">'.esc_html__('Linee guida del Garante privacy (provv. n. 243 del 15/05/2014)','albo-pretorio-on-line').'</a>'
+		.' | <a href="'.esc_url($albopc_UrlParametri).'">'.esc_html__('Parametri → Shortcode','albo-pretorio-on-line').'</a>'
+		.' | <a href="'.esc_url($albopc_UrlChiudi).'">'.esc_html__('Ho capito, non mostrare più','albo-pretorio-on-line').'</a></p></div>';
+}
+
+function albopc_chiudi_avviso_storico(){
+	if (!current_user_can('admin_albo') And !current_user_can('manage_options'))
+		wp_die(esc_html__('Non hai i permessi per questa operazione','albo-pretorio-on-line'),403);
+	check_admin_referer('albopc_chiudi_avviso_storico');
+	update_option('opt_AP_AvvisoStorico','No');
+	wp_safe_redirect(wp_get_referer() ? wp_get_referer() : admin_url('admin.php?page=Albo_Pretorio'));
+	exit;
+}
+
 function albopc_Formato_Dimensione_File($a_bytes)
 {
     if ($a_bytes < 1024) {

@@ -9,6 +9,11 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
+## [4.14.2] - 2026-11-26
+
+### Aggiunto
+- Avviso in bacheca per gli amministratori dei siti aggiornati da versioni precedenti: dalla 4.14.0 lo storico pubblico degli atti scaduti è disattivato di default, in base alle Linee guida del Garante privacy del 15/05/2014 (parte II, par. 3.a). L'avviso spiega la modifica, rimanda al provvedimento del Garante e all'impostazione, e si può chiudere.
+
 ## [4.14.1] - 2026-11-24
 
 ### Sicurezza
