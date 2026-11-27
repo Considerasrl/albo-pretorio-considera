@@ -4,7 +4,9 @@
  * Plugin Name:       Albo Pretorio On line
  * Plugin URI:        https://www.considera.it/
  * Description:       Plugin utilizzato per la pubblicazione degli atti da inserire nell'albo pretorio dell'ente. Fork mantenuto da Considera della versione 4.8 di Ignazio Scimone, non piu' aggiornata dall'autore originale.
- * Version:           4.14.2
+ * Version:           4.14.3
+ * Requires at least: 5.3
+ * Requires PHP:      7.4
  * Author:            Considera
  * Author URI:        https://www.considera.it/
  * License:           GPL-2.0+
@@ -67,12 +69,13 @@ if (!class_exists('AlboPretorio')) {
  class AlboPretorio {
 	
 	var $version;
-	var $minium_WP   = '3.1';
+	var $minium_WP   = '5.3';
 	var $options     = '';
 	var $plugin_name = '';
 
 	function __construct() {
-		load_plugin_textdomain( 'albo-pretorio-on-line', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- il plugin distribuisce le proprie traduzioni .mo nella cartella languages/; per il caricamento da fork self-hosted (non wp.org) la chiamata resta necessaria
+		/* Da WordPress 6.7 le traduzioni vanno caricate da init in poi. */
+		add_action( 'init', array( $this, 'carica_traduzioni' ), 0 );
 		if ( ! function_exists( 'get_plugins' ) )
 	 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	    $plugins = get_plugins( "/".plugin_basename( dirname( __FILE__ ) ) );
@@ -114,9 +117,9 @@ if (!class_exists('AlboPretorio')) {
 	  	if($RestApi=="Si"){
 			add_action( 'rest_api_init', array($this, 'Reg_rest_api_route'));
 		}
-		if (get_option( 'opt_AP_Versione' ) != $this->version) {
-			$this->activate();
-		} 
+		/* L'aggiornamento (activate) usa testi tradotti: va eseguito dopo il
+		   caricamento delle traduzioni, non durante il caricamento del plugin. */
+		add_action( 'init', array( $this, 'aggiorna_se_necessario' ), 1 );
 		$this->load_dependencies();
 		$MsgLetto=get_option( 'alboonline-notice-dismissed' );
 //		var_dump($MsgLetto);
@@ -124,6 +127,14 @@ if (!class_exists('AlboPretorio')) {
   			add_action( 'admin_notices', array($this, 'admin_notice' ));
 		}
 	}
+function carica_traduzioni(){
+	load_plugin_textdomain( 'albo-pretorio-on-line', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- il plugin distribuisce le proprie traduzioni .mo nella cartella languages/; per il caricamento da fork self-hosted (non wp.org) la chiamata resta necessaria
+}
+function aggiorna_se_necessario(){
+	if (get_option( 'opt_AP_Versione' ) != $this->version) {
+		$this->activate();
+	}
+}
 function permalinkSearchAlbo($permalink, $post, $leavename){
 //	var_dump($post);
 	if($post->post_type=="attiAlboOnLine"){
@@ -1506,7 +1517,7 @@ if(get_option('opt_AP_AnnoProgressivo')!=wp_date("Y")){
 				<tr>
 					<th scope="row"><label for="data">'.__('Data','albo-pretorio-on-line').'</label></th>
 					<td> 
-						<input type="checkbox" id="data" name="Data" value="1" '.($FEColsOption['Data']==1?"checked":"").'/>
+						<input type="checkbox" id="data" name="Data" value="1" '.(($FEColsOption['Data'] ?? 0)==1?"checked":"").'/>
 					</td>
 				</tr>
 				<tr>
@@ -2045,9 +2056,12 @@ if(get_option('opt_AP_AnnoProgressivo')!=wp_date("Y")){
 * 
 */
 //Impostazione Opzioni Plugin
-	if(get_option('opt_AP_DefaultSoggetti')  == '' || !get_option('opt_AP_DefaultSoggetti')){
+	/* Fino alla 4.14.2 qui veniva codificata una variabile inesistente e le
+	   nuove installazioni salvavano "null": si ripristina il valore corretto. */
+	$albopc_DefSogg=get_option('opt_AP_DefaultSoggetti');
+	if($albopc_DefSogg=='' || !$albopc_DefSogg || (!is_array($albopc_DefSogg) && !is_array(json_decode($albopc_DefSogg,TRUE)))){
 		$DefaultSoggetti=array("RP"=>0,"RB"=>0,"AM"=>0);
-		add_option('opt_AP_DefaultSoggetti',json_encode($opt_AP_DefaultSoggetti));
+		update_option('opt_AP_DefaultSoggetti',wp_json_encode($DefaultSoggetti));
 		}
 	if(get_option('opt_AP_ColonneFE')  == '' || !get_option('opt_AP_ColonneFE')){
 		$FEColsOption=array("Ente"=>0,"Riferimento"=>0,"Oggetto"=>1, "Validita"=>1,

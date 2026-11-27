@@ -9,6 +9,16 @@ Le release sono pubblicate anche su
 [GitHub Releases](https://github.com/Considerasrl/albo-pretorio-considera/releases),
 con il pacchetto `.zip` installabile allegato.
 
+## [4.14.3] - 2026-11-27
+
+### Modificato
+- Requisiti dichiarati allineati al codice: WordPress 5.3 o successivo (il plugin usa `wp_date()`, introdotta nella 5.3) e PHP 7.4 o successivo, anche nell'intestazione del plugin. Verificato con WordPress 5.3/PHP 7.4, 6.1/PHP 8.2, 7.1/PHP 8.4, 7.1/PHP 8.5 e 7.2-RC3/PHP 8.4.
+
+### Corretto
+- Traduzioni caricate su `init` e aggiornamento delle impostazioni dopo un cambio di versione eseguito su `init`, non più durante il caricamento del plugin: elimina l'avviso "Translation loading for the albo-pretorio-on-line domain was triggered too early" di WordPress 6.7 e successivi.
+- Nelle nuove installazioni l'opzione `opt_AP_DefaultSoggetti` veniva salvata come `null` (variabile errata); ora viene salvato il valore predefinito e i valori non validi esistenti vengono ripristinati.
+- Parametri: avviso PHP sulla colonna "Data" assente dalle opzioni delle colonne del frontend.
+
 ## [4.14.2] - 2026-11-26
 
 ### Aggiunto
